@@ -4,4 +4,6 @@ Scrappy (code-name) is the HMR command-line application for OS X, Windows, and L
 
 ## License
 
-Proprietary and confidential. Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Proprietary and confidential. See [LICENSE.md][1] for details.
+
+[1]: LICENSE.md
