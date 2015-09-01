@@ -1,0 +1,36 @@
+{
+  "name": "scrappy",
+  "version": "0.1.0",
+  "description": "An extensible command-line-based resume generator for the 21st century.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gruebait/scrappy.git"
+  },
+  "keywords": [
+    "resume",
+    "CV",
+    "portfolio",
+    "Markdown"
+  ],
+  "author": "James M. Devlin",
+  "license": "Proprietary and confidential. Copyright (c) 2015 by James M. Devlin. All rights reserved.",
+  "preferGlobal": "true",
+  "bugs": {
+    "url": "https://github.com/gruebait/scrappy/issues"
+  },
+  "bin": {
+    "scrappy": "src/index.js"
+  },
+  "homepage": "https://github.com/gruebait/scrappy",
+  "dependencies": {
+    "fs-extra": "^0.24.0",
+    "html": "0.0.10",
+    "jst": "0.0.13",
+    "marked": "^0.3.5",
+    "minimist": "^1.2.0",
+    "phantom": "^0.7.2",
+    "underscore": "^1.8.3",
+    "wkhtmltopdf": "^0.1.5",
+    "xml-escape": "^1.0.0"
+  }
+}
