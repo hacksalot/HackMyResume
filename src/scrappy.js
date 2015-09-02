@@ -73,10 +73,10 @@ module.exports = function () {
       var fOut = path.join( process.cwd(),
         f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
       console.log( 'Generating ' + fName.toUpperCase() + ' resume: ' + fOut );
-      var themeFile = path.join( __dirname, '/../themes/', _opts.theme,
+      var themeFile = path.join( __dirname, '../../blueprint/', _opts.theme,
         fName + '.' + (fObj.fmt || fObj.ext));
       var cssData = (fName != 'html' && fName != 'pdf') ? null :
-        FS.readFileSync( path.join( __dirname, '/../themes/', _opts.theme, 'html.css' ), 'utf8' );
+        FS.readFileSync( path.join( __dirname, '../../blueprint/', _opts.theme, 'html.css' ), 'utf8' );
       var mk = FS.readFileSync( themeFile, 'utf8' );
 
       // Compile and invoke the template

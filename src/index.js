@@ -6,7 +6,7 @@ Command-line resume generation logic for Scrappy.
 */
 
 var ARGS = require( 'minimist' )
-  , HMR  = require( './hmr');
+  , HMR  = require( './scrappy');
 
 try {
 
