@@ -70,8 +70,7 @@ module.exports = function () {
       // Load the theme template
       var fName = f.substring( f.lastIndexOf('.') + 1 );
       var fObj = _fmts.filter( function(_f) { return _f.name === fName; } )[0];
-      var fOut = path.join( process.cwd(),
-        f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
+      var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
       console.log( 'Generating ' + fName.toUpperCase() + ' resume: ' + fOut );
       var themeFile = path.join( __dirname, '../../blueprint/', _opts.theme,
         fName + '.' + (fObj.fmt || fObj.ext));
