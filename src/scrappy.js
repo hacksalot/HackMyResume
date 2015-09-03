@@ -245,7 +245,7 @@ module.exports = function () {
       evaluate: /\{\%(.+?)\%\}/g,
       comment: /\{\#(.+?)\#\}/g
     },
-    pdf: 'all'
+    pdf: 'wkhtmltopdf'
   }
 
   /**
