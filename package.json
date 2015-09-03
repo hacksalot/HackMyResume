@@ -2,6 +2,7 @@
   "name": "scrappy",
   "version": "0.1.0",
   "description": "An extensible command-line-based resume generator for the 21st century.",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/gruebait/scrappy.git"
@@ -13,7 +14,7 @@
     "Markdown"
   ],
   "author": "James M. Devlin",
-  "license": "Proprietary and confidential. Copyright (c) 2015 by James M. Devlin. All rights reserved.",
+  "license": "UNLICENSED",
   "preferGlobal": "true",
   "bugs": {
     "url": "https://github.com/gruebait/scrappy/issues"
