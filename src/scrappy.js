@@ -58,7 +58,13 @@ module.exports = function () {
     });
 
     // Run the transformation!
-    targets.map( gen );
+    var finished = targets.map( gen );
+
+    return {
+      sheet: rez,
+      targets: targets,
+      processed: finished
+    };
   }
 
   /**
@@ -74,7 +80,7 @@ module.exports = function () {
       console.log( 'Generating ' + fName.toUpperCase() + ' resume: ' + fOut );
       var themeFile = path.join( __dirname, '../../blueprint/', _opts.theme,
         fName + '.' + (fObj.fmt || fObj.ext));
-      var cssData = (fName != 'html' && fName != 'pdf') ? null :
+      var cssData = (fName !== 'html' && fName !== 'pdf') ? null :
         FS.readFileSync( path.join( __dirname, '../../blueprint/', _opts.theme, 'html.css' ), 'utf8' );
       var mk = FS.readFileSync( themeFile, 'utf8' );
 
@@ -85,6 +91,8 @@ module.exports = function () {
       fName === 'html' && (mk = html( mk, themeFile, fOut ));
       fName === 'pdf' && pdf( mk, fOut );
       fName !== 'pdf' && FS.writeFileSync( fOut, mk, 'utf8' );
+
+      return mk;
     }
     catch( ex ) {
       err( ex );
