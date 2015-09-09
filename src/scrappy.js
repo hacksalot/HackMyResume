@@ -12,7 +12,8 @@ module.exports = function () {
     , XML  = require( 'xml-escape' )
     , path = require( 'path' )
     , extend = require( './extend' )
-    , _ = require('underscore');
+    , _ = require('underscore')
+    , Sheet = require('./sheet');
 
   String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
@@ -48,20 +49,19 @@ module.exports = function () {
     // Assemble input resumes
     var sheets = src.map( function( res ) {
       console.log( 'Reading JSON resume: ' + res );
-      var raw = FS.readFileSync( res, 'utf8' );
-      return JSON.parse( raw );
+      return (new Sheet()).open( res );
     });
 
     // Merge input resumes
     rez = sheets.reduce( function( acc, elem ) {
-      return extend(true, acc, elem);
+      return extend(true, acc.rep, elem.rep);
     });
 
     // Run the transformation!
     var finished = targets.map( gen );
 
     return {
-      sheet: rez,
+      sheet: rez.rep,
       targets: targets,
       processed: finished
     };
@@ -85,11 +85,11 @@ module.exports = function () {
       var mk = FS.readFileSync( themeFile, 'utf8' );
 
       // Compile and invoke the template
-      mk = single( rez, mk, fName, cssData );
+      mk = single( rez.rep, mk, fName, cssData );
 
       // Post-process and save the file
       fName === 'html' && (mk = html( mk, themeFile, fOut ));
-      fName === 'pdf' && pdf( mk, fOut );
+      //fName === 'pdf' && pdf( mk, fOut );
       fName !== 'pdf' && FS.writeFileSync( fOut, mk, 'utf8' );
 
       return mk;
