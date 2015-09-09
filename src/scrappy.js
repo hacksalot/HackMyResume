@@ -89,7 +89,7 @@ module.exports = function () {
 
       // Post-process and save the file
       fName === 'html' && (mk = html( mk, themeFile, fOut ));
-      //fName === 'pdf' && pdf( mk, fOut );
+      fName === 'pdf' && pdf( mk, fOut );
       fName !== 'pdf' && FS.writeFileSync( fOut, mk, 'utf8' );
 
       return mk;
