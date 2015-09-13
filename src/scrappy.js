@@ -69,28 +69,36 @@ module.exports = function () {
 
   /**
   Generate a single resume of a specific format.
+  @param f Full path to the destination resume to generate, for example,
+  "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
   function gen( f ) {
     try {
 
-      // Load the theme template
-      var fName = f.substring( f.lastIndexOf('.') + 1 );
-      var fObj = _fmts.filter( function(_f) { return _f.name === fName; } )[0];
+      // Get the output file type (pdf, html, txt, etc)
+      var fType = path.extname( f ).trim().toLowerCase().substr(1);
+      var fName = path.basename( f, '.' + fType );
+
+      // Get the format object (if any) corresponding to that type, and assemble
+      // thefinal output file path for the generated resume.
+      var fObj = _fmts.filter( function(_f) { return _f.name === fType; } )[0];
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
-      console.log( 'Generating ' + fName.toUpperCase() + ' resume: ' + fOut );
+      console.log( 'Generating ' + fType.toUpperCase() + ' resume: ' + fOut );
+
+      // Load the active theme file, including CSS data if req'd
       var themeFile = path.join( __dirname, '../../watermark/', _opts.theme,
-        fName + '.' + (fObj.fmt || fObj.ext));
-      var cssData = (fName !== 'html' && fName !== 'pdf') ? null :
+        fType + '.' + (fObj.fmt || fObj.ext));
+      var cssData = (fType !== 'html' && fType !== 'pdf') ? null :
         FS.readFileSync( path.join( __dirname, '../../watermark/', _opts.theme, 'html.css' ), 'utf8' );
       var mk = FS.readFileSync( themeFile, 'utf8' );
 
-      // Compile and invoke the template
-      mk = single( rez.rep, mk, fName, cssData );
+      // Compile and invoke the template!
+      mk = single( rez.rep, mk, fType, cssData, fName );
 
       // Post-process and save the file
-      fName === 'html' && (mk = html( mk, themeFile, fOut ));
-      fName === 'pdf' && pdf( mk, fOut );
-      fName !== 'pdf' && FS.writeFileSync( fOut, mk, 'utf8' );
+      fType === 'html' && (mk = html( mk, themeFile, fOut ));
+      fType === 'pdf' && pdf( mk, fOut );
+      fType !== 'pdf' && FS.writeFileSync( fOut, mk, 'utf8' );
 
       return mk;
     }
@@ -104,7 +112,7 @@ module.exports = function () {
   separate function in order to expose string-based transformations to clients
   who don't have access to filesystem resources (in-browser, etc.).
   */
-  function single( json, jst, format, styles ) {
+  function single( json, jst, format, styles, fName ) {
 
     // Freeze whitespace in the template
     _opts.keepBreaks && ( jst = freeze(jst) );
@@ -129,7 +137,7 @@ module.exports = function () {
     json.display_progress_bar = true;
 
     // Compile and run the template. TODO: avoid unnecessary recompiles.
-    jst = _.template( jst )({ r: json, css: styles, embedCss: false, filt: _opts.filters });
+    jst = _.template( jst )({ r: json, css: styles, embedCss: false, cssFile: fName, filt: _opts.filters });
 
     // Unfreeze whitespace
     _opts.keepBreaks && ( jst = unfreeze(jst) );
