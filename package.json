@@ -19,9 +19,7 @@
   "bugs": {
     "url": "https://github.com/gruebait/scrappy/issues"
   },
-  "bin": {
-    "scrappy": "src/index.js"
-  },
+  "main": "src/scrappy.js",
   "homepage": "https://github.com/gruebait/scrappy",
   "dependencies": {
     "fs-extra": "^0.24.0",
