@@ -6,6 +6,7 @@ Abstract character/resume sheet representation.
 (function() {
 
   var FS = require('fs');
+  var extend = require('./extend');
 
   function Sheet() {
     this.id = null;
@@ -15,9 +16,11 @@ Abstract character/resume sheet representation.
   }
 
   Sheet.prototype.open = function( file, title ) {
-    this.rep = JSON.parse( FS.readFileSync( file, 'utf8' ) );
+    var rep = JSON.parse( FS.readFileSync( file, 'utf8' ) );
+    extend( true, this, rep );
+    console.log( this );
     this.fileName = file;
-    this.title = title || this.rep.basics.name;
+    this.title = title || this.basics.name;
     return this;
   };
 

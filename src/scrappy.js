@@ -54,14 +54,14 @@ module.exports = function () {
 
     // Merge input resumes
     rez = sheets.reduce( function( acc, elem ) {
-      return extend(true, acc.rep, elem.rep);
+      return extend( true, acc.rep, elem.rep );
     });
 
     // Run the transformation!
     var finished = targets.map( gen );
 
     return {
-      sheet: rez.rep,
+      sheet: rez,//.rep,
       targets: targets,
       processed: finished
     };
@@ -80,7 +80,7 @@ module.exports = function () {
       var fName = path.basename( f, '.' + fType );
 
       // Get the format object (if any) corresponding to that type, and assemble
-      // thefinal output file path for the generated resume.
+      // the final output file path for the generated resume.
       var fObj = _fmts.filter( function(_f) { return _f.name === fType; } )[0];
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
       console.log( 'Generating ' + fType.toUpperCase() + ' resume: ' + fOut );
