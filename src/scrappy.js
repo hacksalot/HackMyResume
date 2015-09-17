@@ -93,7 +93,7 @@ module.exports = function () {
       var mk = FS.readFileSync( themeFile, 'utf8' );
 
       // Compile and invoke the template!
-      mk = single( rez.rep, mk, fType, cssData, fName );
+      mk = single( rez, mk, fType, cssData, fName );
 
       // Post-process and save the file
       fType === 'html' && (mk = html( mk, themeFile, fOut ));
