@@ -24,6 +24,7 @@
   "dependencies": {
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
+    "is-my-json-valid": "^2.12.2",
     "jst": "0.0.13",
     "marked": "^0.3.5",
     "minimist": "^1.2.0",

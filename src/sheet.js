@@ -7,6 +7,7 @@ Abstract character/resume sheet representation.
 
   var FS = require('fs');
   var extend = require('./extend');
+  var validator = require('is-my-json-valid');
 
   function Sheet() {
     this.id = null;
@@ -35,6 +36,16 @@ Abstract character/resume sheet representation.
     return this.basics.profiles && this.basics.profiles.filter(function(prof) {
       return prof.network.trim().toLowerCase() === socialNetwork;
     }).length > 0;
+  }
+
+  /**
+  Validate the sheet against a specific JSON schema.
+  */
+  Sheet.prototype.isValid = function( ) {
+    var schemaObj = JSON.parse( FS.readFileSync( __dirname + '/resume-schema.json', 'utf8' ) );
+    var validator = require('is-my-json-valid')
+    var validate = validator( schemaObj );
+    return validate( this );
   }
 
   module.exports = Sheet;
