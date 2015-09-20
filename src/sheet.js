@@ -72,10 +72,8 @@ Abstract character/resume sheet representation.
   by start date descending.
   */
   Sheet.prototype.duration = function() {
-    var careerStart = _fmt( this.work[ this.work.length - 1].startDate );
-    var careerLast = _fmt( _.max( this.work, function( w ) {
-      return _fmt( w.endDate ).unix();
-    }).endDate );
+    var careerStart = this.work[ this.work.length - 1].safeStartDate;
+    var careerLast = _.max( this.work, function( w ) { return w.safeEndDate.unix(); }).safeEndDate;
     return careerLast.diff( careerStart, 'years' );
   };
 
@@ -83,32 +81,21 @@ Abstract character/resume sheet representation.
   Sort dated things by start date descending.
   */
   Sheet.prototype.sort = function( ) {
-    var da, db;
-    if( this.work && this.work.length > 1 ) {
-      this.work.sort( function(a, b) {
-        return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
-      });
-    }
-    if( this.education && this.education.length > 1 ) {
-      this.education.sort( function(a, b) {
-        return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
-      });
-    }
-    if( this.volunteer && this.volunteer.length > 1 ) {
-      this.volunteer.sort( function(a, b) {
-        return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
-      });
-    }
-    if( this.awards && this.awards.length > 1 ) {
-      this.awards.sort( function(a, b) {
-        return( a.safeDate.isBefore(b.safeDate) ) ? 1 : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
-      });
-    }
-    if( this.publications && this.publications.length > 1 ) {
-      this.publications.sort( function(a, b) {
-        return( a.safeReleaseDate.isBefore(b.safeReleaseDate) ) ? 1 : ( a.safeReleaseDate.isAfter(b.safeReleaseDate) && -1 ) || 0;
-      });
-    }
+    this.work && this.work.length > 1 && this.work.sort( function(a, b) {
+      return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
+    });
+    this.education && this.education.length > 1 && this.education.sort( function(a, b) {
+      return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
+    });
+    this.volunteer && this.volunteer.length > 1 && this.volunteer.sort( function(a, b) {
+      return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1 : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
+    });
+    this.awards && this.awards.length > 1 && this.awards.sort( function(a, b) {
+      return( a.safeDate.isBefore(b.safeDate) ) ? 1 : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
+    });
+    this.publications && this.publications.length > 1 && this.publications.sort( function(a, b) {
+      return( a.safeReleaseDate.isBefore(b.safeReleaseDate) ) ? 1 : ( a.safeReleaseDate.isAfter(b.safeReleaseDate) && -1 ) || 0;
+    });
   };
 
   /**
@@ -131,6 +118,9 @@ Abstract character/resume sheet representation.
     }
   }
 
+  /**
+  Convert human-friendly dates into formal Moment.js dates for all collections.
+  */
   function _parseDates() {
     this.work.forEach( function(job) {
       job.safeStartDate = _fmt( job.startDate );
