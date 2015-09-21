@@ -103,12 +103,15 @@ Abstract character/resume sheet representation.
   */
   function _fmt( dt ) {
     dt = dt.toLowerCase().trim();
-    if( dt === 'present' ) {
+    if( /\s*(present|now)\s*/i.test(dt) ) { // "Present", "Now"
       return moment();
     }
-    else if( /^\D+/.test(dt) ) {
+    else if( /^\D+/.test(dt) ) { // "Mar 2015"
       var parts = dt.split(' ');
       return moment( parts[1] + '-' + (months[ parts[0] ] || abbr[ parts[0] ] || ( parts[0] === 'sept' && '09' )) + '-' + '01', 'YYYY-MM-DD' );
+    }
+    else if( /^\d+$/.test(dt) ) { // "2015"
+      return moment( dt, 'YYYY' );
     }
     else {
       var mt = moment( dt );
