@@ -13,7 +13,11 @@ module.exports = function () {
     , path = require( 'path' )
     , extend = require( './extend' )
     , _ = require('underscore')
-    , Sheet = require('./sheet');
+    , Sheet = require('./sheet')
+    , HtmlGenerator = require('./gen/html-generator')
+    , TextGenerator = require('./gen/text-generator')
+    , HtmlPdfGenerator = require('./gen/html-pdf-generator')
+    , WordGenerator = require('./gen/word-generator');
 
   String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
@@ -281,7 +285,12 @@ module.exports = function () {
     generate: hmr,
     transform: single,
     options: _opts,
-    formats: _fmts
+    formats: _fmts,
+    Sheet: Sheet,
+    HtmlGenerator: HtmlGenerator,
+    TextGenerator: TextGenerator,
+    HtmlPdfGenerator: HtmlPdfGenerator,
+    WordGenerator: WordGenerator
   };
 
 }();
