@@ -6,7 +6,7 @@ Abstract character/resume sheet representation.
 (function() {
 
   var FS = require('fs')
-    , extend = require('./extend')
+    , extend = require('./utils/extend')
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , moment = require('moment');

@@ -34,6 +34,11 @@ Template-based resume generator base for FluentCV.
     prettyIndent: 2
   };
 
+  /**
+  TemplateGenerator performs resume generation via Underscore-style template
+  expansion and is appropriate for text-based formats like HTML, plain text,
+  and XML versions of Microsoft Word, Excel, and OpenOffice.
+  */
   var TemplateGenerator = BaseGenerator.extend({
 
     /** outputFormat: html, txt, pdf, doc

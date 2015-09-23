@@ -4,6 +4,10 @@ Plain text resume generator for FluentCV.
 */
 
 var TemplateGenerator = require('./template-generator');
+
+/**
+The TextGenerator generates a plain-text resume via the TemplateGenerator.
+*/
 var TextGenerator = TemplateGenerator.extend({
 
   init: function(){
