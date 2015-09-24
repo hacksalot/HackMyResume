@@ -1,11 +1,11 @@
 {
-  "name": "scrappy",
+  "name": "fluentcmd",
   "version": "0.1.0",
-  "description": "An extensible command-line-based resume generator for the 21st century.",
+  "description": "The FluentCV command-line tool (an extensible command-line-based resume generator for the 21st century.)",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/gruebait/scrappy.git"
+    "url": "https://github.com/fluentcv/fluentcmd.git"
   },
   "keywords": [
     "resume",
@@ -17,11 +17,14 @@
   "license": "UNLICENSED",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/gruebait/scrappy/issues"
+    "url": "https://github.com/fluentcv/fluentcmd/issues"
   },
-  "main": "src/scrappy.js",
-  "homepage": "https://github.com/gruebait/scrappy",
+  "bin": {
+    "fluentcmd": "src/index.js"
+  },
+  "homepage": "https://github.com/fluentcv/fluentcmd",
   "dependencies": {
+    "fluentlib": "file:..\\fluentlib",
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",

@@ -1,22 +1,22 @@
 #! /usr/bin/env node
 
 /**
-Command-line resume generation logic for Scrappy.
+Command-line resume generation logic for FluentCMD.
 @license Copyright (c) 2015 by James M. Devlin. All rights reserved.
 */
 
 var ARGS = require( 'minimist' )
-  , HMR  = require( './scrappy');
+  , FCMD  = require( './fluentcmd');
 
 try {
 
-  console.log( '*** Scrappy v0.1.0 ***' );
+  console.log( '*** FluentCMD v0.1.0 ***' );
   if( process.argv.length <= 2 ) { throw 'Please specify a JSON resume file.'; }
 
   var args = ARGS( process.argv.slice(2) );
   var src = args._.filter( function( a ) { return a.endsWith('.json'); });
   var dst = args._.filter( function( a ) { return !a.endsWith('.json'); });
-  HMR.generate( src, dst, args.t || 'default' );
+  FCMD.generate( src, dst, args.t || 'default' );
 
 }
 catch( ex ) {
