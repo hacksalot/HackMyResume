@@ -13,11 +13,8 @@ module.exports = function () {
     , path = require( 'path' )
     , extend = require( './utils/extend' )
     , _ = require('underscore')
+    , unused = require('./utils/string')
     , FLUENT = require('fluentlib');
-
-  String.prototype.endsWith = function(suffix) {
-    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-  };
 
   var rez;
 
@@ -34,10 +31,6 @@ module.exports = function () {
 
     _opts.theme = theme;
     dst = (dst && dst.length && dst) || ['resume.all'];
-
-    // console.log( src );
-    // console.log( dst );
-    // console.log( theme );
 
     // Assemble output resume targets
     var targets = [];
