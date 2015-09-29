@@ -19,6 +19,7 @@
   "bugs": {
     "url": "https://github.com/fluentcv/fluentcmd/issues"
   },
+  "main": "src/fluentcmd.js",
   "bin": {
     "fluentcmd": "src/index.js"
   },
