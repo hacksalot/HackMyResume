@@ -16,7 +16,7 @@ module.exports = function () {
     , unused = require('./utils/string')
     , FLUENT = require('fluentlib');
 
-  var rez;
+  var rez, _log;
 
   /**
   Core resume generation method for HMR. Given a source JSON resume file, a
@@ -27,8 +27,9 @@ module.exports = function () {
   @param dst Path to the destination resume file(s): "rez/resume.all".
   @param theme Friendly name of the resume theme. Defaults to "default".
   */
-  function hmr( src, dst, theme ) {
+  function hmr( src, dst, theme, logger ) {
 
+    _log = logger || console.log;
     _opts.theme = theme;
     dst = (dst && dst.length && dst) || ['resume.all'];
 
@@ -46,7 +47,7 @@ module.exports = function () {
 
     // Assemble input resumes
     var sheets = src.map( function( res ) {
-      console.log( 'Reading JSON resume: ' + res );
+      _log( 'Reading JSON resume: ' + res );
       return (new FLUENT.Sheet()).open( res );
     });
 
@@ -83,7 +84,7 @@ module.exports = function () {
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
 
       // Generate!
-      console.log( 'Generating ' + fType.toUpperCase() + ' resume: ' + fOut );
+      _log( 'Generating ' + fType.toUpperCase() + ' resume: ' + fOut );
       return fObj.gen.generate( rez, fOut, _opts.theme );
     }
     catch( ex ) {
@@ -98,7 +99,7 @@ module.exports = function () {
     var msg = ex.toString();
     var idx = msg.indexOf('Error: ');
     var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-    console.error( 'ERROR: ' + trimmed.toString() );
+    _log( 'ERROR: ' + trimmed.toString() );
   }
 
   /**
