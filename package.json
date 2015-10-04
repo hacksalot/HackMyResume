@@ -36,5 +36,8 @@
     "underscore": "^1.8.3",
     "wkhtmltopdf": "^0.1.5",
     "xml-escape": "^1.0.0"
+  },
+  "devDependencies": {
+    "blueprint": "^2.1.4"
   }
 }
