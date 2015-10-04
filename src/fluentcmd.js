@@ -84,7 +84,7 @@ module.exports = function () {
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
 
       // Generate!
-      _log( 'Generating ' + fType.toUpperCase() + ' resume: ' + fOut );
+      _log( 'Generating ' + fType.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f) );
       return fObj.gen.generate( rez, fOut, _opts.theme );
     }
     catch( ex ) {
