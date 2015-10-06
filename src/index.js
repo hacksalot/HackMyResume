@@ -18,6 +18,8 @@ try {
   var dst = args._.filter( function( a ) { return !a.endsWith('.json'); });
   FCMD.generate( src, dst, args.t || 'default' );
 
+  console.log('\n');
+
 }
 catch( ex ) {
 
