@@ -6,18 +6,11 @@ Internal resume generation logic for FluentCMD.
 module.exports = function () {
 
   // We don't mind pseudo-globals here
-  var MD   = require( 'marked' )
-    , XML  = require( 'xml-escape' )
-    , HTML = require( 'html' )
-    , FS   = require( 'fs-extra' )
-    , XML  = require( 'xml-escape' )
-    , path = require( 'path' )
+  var path = require( 'path' )
     , extend = require( './utils/extend' )
-    , _ = require('underscore')
     , unused = require('./utils/string')
     , FLUENT = require('fluentlib')
-    , rez
-    , _log;
+    , rez, _log;
 
   /**
   Core workhorse method for FluentCMD. Given a source JSON resume, a destination
@@ -113,7 +106,7 @@ module.exports = function () {
   ];
 
   /**
-  Default options. TODO: Some of these are no longer necessary.
+  Default options.
   */
   var _opts = {
     theme: 'default',
