@@ -1,6 +1,6 @@
 /**
 Plain JavaScript replacement of jQuery .extend based on jQuery sources.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+@license Copyright (c) 2015 | James M. Devlin
 */
 
 function _extend() {

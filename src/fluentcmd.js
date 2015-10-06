@@ -1,10 +1,11 @@
 /**
-Core resume generation module for FluentCMD.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Internal resume generation logic for FluentCMD.
+@license Copyright (c) 2015 | James M. Devlin
 */
 
 module.exports = function () {
 
+  // We don't mind pseudo-globals here
   var MD   = require( 'marked' )
     , XML  = require( 'xml-escape' )
     , HTML = require( 'html' )
@@ -14,20 +15,19 @@ module.exports = function () {
     , extend = require( './utils/extend' )
     , _ = require('underscore')
     , unused = require('./utils/string')
-    , FLUENT = require('fluentlib');
-
-  var rez, _log;
+    , FLUENT = require('fluentlib')
+    , rez
+    , _log;
 
   /**
-  Core resume generation method for HMR. Given a source JSON resume file, a
-  destination resume spec, and a theme file, generate 0..N resumes in the
-  requested formats. Requires filesystem access. To perform generation without
-  filesystem access, use the single() method below.
+  Core workhorse method for FluentCMD. Given a source JSON resume, a destination
+  resume path, and a theme file, generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
-  @param dst Path to the destination resume file(s): "rez/resume.all".
+  @param dst An array of paths to the destination resume file(s): "rez/resume.all".
   @param theme Friendly name of the resume theme. Defaults to "default".
+  @param logger Optional logging override.
   */
-  function hmr( src, dst, theme, logger ) {
+  function gen( src, dst, theme, logger ) {
 
     _log = logger || console.log;
     _opts.theme = theme;
@@ -57,7 +57,7 @@ module.exports = function () {
     });
 
     // Run the transformation!
-    var finished = targets.map( gen );
+    var finished = targets.map( single );
 
     return {
       sheet: rez,//.rep,
@@ -71,7 +71,7 @@ module.exports = function () {
   @param f Full path to the destination resume to generate, for example,
   "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
-  function gen( f ) {
+  function single( f ) {
     try {
 
       // Get the output file type (pdf, html, txt, etc)
@@ -113,48 +113,17 @@ module.exports = function () {
   ];
 
   /**
-  Default options.
+  Default options. TODO: Some of these are no longer necessary.
   */
   var _opts = {
-    prettyPrint: true,
-    prettyIndent: 2,
-    keepBreaks: true,
-    nSym: '&newl;',
-    rSym: '&retn;',
     theme: 'default',
-    sheets: [],
-    filters: {
-      out: function( txt ) { return txt; },
-      raw: function( txt ) { return txt; },
-      xml: function( txt ) { return XML(txt); },
-      md: function( txt ) { return MD(txt); },
-      mdin: function( txt ) { return MD(txt).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, ''); },
-      lower: function( txt ) { return txt.toLowerCase(); }
-    },
-    template: {
-      interpolate: /\{\{(.+?)\}\}/g,
-      escape: /\{\{\=(.+?)\}\}/g,
-      evaluate: /\{\%(.+?)\%\}/g,
-      comment: /\{\#(.+?)\#\}/g
-    },
-    pdf: 'wkhtmltopdf'
   }
 
   /**
-  Regexes for linebreak preservation.
-  */
-  var _reg = {
-    regN: new RegExp( '\n', 'g' ),
-    regR: new RegExp( '\r', 'g' ),
-    regSymN: new RegExp( _opts.nSym, 'g' ),
-    regSymR: new RegExp( _opts.rSym, 'g' )
-  };
-
-  /**
-  Module public interface.
+  Module public interface. Used by FCV Desktop.
   */
   return {
-    generate: hmr,
+    generate: gen,
     options: _opts,
     formats: _fmts
   };

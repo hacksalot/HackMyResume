@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 
 /**
-Command-line resume generation logic for FluentCMD.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Command-line interface (CLI) for FluentCMD via Node.js.
+@license Copyright (c) 2015 | James M. Devlin
 */
 
 var ARGS = require( 'minimist' )
@@ -16,9 +16,8 @@ try {
   var args = ARGS( process.argv.slice(2) );
   var src = args._.filter( function( a ) { return a.endsWith('.json'); });
   var dst = args._.filter( function( a ) { return !a.endsWith('.json'); });
-  FCMD.generate( src, dst, args.t || 'default' );
-
-  console.log('\n');
+  FCMD.generate( src, dst, args.t || 'informatic' );
+  process.platform !== 'win32' && console.log('\n');
 
 }
 catch( ex ) {
