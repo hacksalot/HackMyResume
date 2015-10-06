@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/fluentcv/fluentcmd.git"
+    "url": "https://github.com/fluentdesk/fluentcmd.git"
   },
   "keywords": [
     "resume",
@@ -17,27 +17,15 @@
   "license": "UNLICENSED",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/fluentcv/fluentcmd/issues"
+    "url": "https://github.com/fluentdesk/fluentcmd/issues"
   },
   "main": "src/fluentcmd.js",
   "bin": {
     "fluentcmd": "src/index.js"
   },
-  "homepage": "https://github.com/fluentcv/fluentcmd",
+  "homepage": "https://github.com/fluentdesk/fluentcmd",
   "dependencies": {
     "fluentlib": "file:..\\fluentlib",
-    "fs-extra": "^0.24.0",
-    "html": "0.0.10",
-    "is-my-json-valid": "^2.12.2",
-    "jst": "0.0.13",
-    "marked": "^0.3.5",
-    "minimist": "^1.2.0",
-    "moment": "^2.10.6",
-    "underscore": "^1.8.3",
-    "wkhtmltopdf": "^0.1.5",
-    "xml-escape": "^1.0.0"
-  },
-  "devDependencies": {
-    "blueprint": "^2.1.4"
+    "minimist": "^1.2.0"
   }
 }
