@@ -45,9 +45,14 @@ module.exports = function () {
     });
 
     // Merge input resumes
+    var msg = '';
+    sheets.length > 1 && (msg += ('Merging ' + sheets[ sheets.length - 1].meta.fileName));
     rez = sheets.reduce( function( acc, elem ) {
-      return extend( true, acc.rep, elem.rep );
+      msg += (' onto ' + acc.meta.fileName);
+      return extend( true, acc, elem );
     });
+    sheets.length > 1 && _log( msg );
+
 
     // Run the transformation!
     var finished = targets.map( single );
