@@ -2,35 +2,39 @@ fluentcmd
 =========
 *Generate beautiful, targeted resumes from your command line or shell.*
 
-FluentCMD is a **hackable, data-driven, Markdown-and-JSON-friendly resume authoring tool** with support for HTML, Word, PDF, plain text, and other arbitrary-format resumes and CVs.
+FluentCMD is a **hackable, data-driven, developer-friendly resume authoring tool** with support for HTML, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
 
 [![](assets/office_space.jpg)][8]
 
-Looking for a desktop version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
+Looking for a desktop GUI version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
 
 ## Features
 
-- Runs on OS X, Linux, and Windows. If you can run Node.js, you can run fluentcmd.
+- Runs on OS X, Linux, and Windows.
 - Store your resume data as a durable, versionable JSON, YML, or XML document.
 - Generate multiple targeted resumes in multiple formats, based on your needs.
 - Output to HTML, PDF, Markdown, Word, JSON, XML, or other arbitrary formats.
-- Compatible with the [JSON Resume][6] standard and [compatible tools][7].
+- Never update one piece of information in four different resumes again.
+- Compatible with the [JSON Resume standard][6] and [authoring tools][7].
 - Free and open-source through the MIT license.
+- Forthcoming: StackOverflow and LinkedIn support.
+- Forthcoming: More themes!
 
 ## Install
 
-First make sure [Node.js][4] and [NPM][5] are installed. Then:
+FluentCMD requires a recent version of [Node.js][4] and [NPM][5]. Then:
 
 1. (Optional, for PDF support) Install the latest official [wkhtmltopdf][3] binary for your platform.
-2. Install fluentcmd by running `npm install` followed by `npm link`.
+2. Install **fluentcmd** by running `npm install fluentcmd -g`.
+3. You're ready to go!
 
 ## Use
 
-Assuming you've got a JSON-formatted resume handy, generating output resumes is easy. Just run:
+Assuming you've got a JSON-formatted resume handy, generating resumes in different formats and combinations easy. Just run:
 
-`fluentcmd inputs [outputs] [-t theme]`.
+`fluentcmd [inputs] [outputs] [-t theme]`.
 
-Where `inputs` is one or more .json resume files, `[outputs]` is one or more destination resumes, and `[theme]` is the desired theme. For example:
+Where `[inputs]` is one or more .json resume files, `[outputs]` is one or more destination resumes, and `[theme]` is the desired theme. For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT)
@@ -65,7 +69,18 @@ You can **merge multiple resumes together** by specifying them in order from mos
 fluentcmd base.json specific.json resume.all
 ```
 
-This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume. Merging follows conventional [extend()][9]-style behavior.
+This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume, or combine two partial resumes into a "complete" resume. Merging follows conventional [extend()][9]-style behavior and there's no arbitrary limit to how many resumes you can merge:
+
+```bash
+fluentcmd in1.json in2.json in3.json in4.json out.html out.doc
+Reading JSON resume: in1.json
+Reading JSON resume: in2.json
+Reading JSON resume: in3.json
+Reading JSON resume: in4.json
+Merging in4.json onto in3.json onto in2.json onto in1.json
+Generating HTML resume: out.html
+Generating WORD resume: out.doc
+```
 
 ### Multiple targets
 
@@ -101,7 +116,7 @@ fluentcmd input.json output.doc output.html output.txt output.pdf
 
 ## License
 
-MIT. Go crazy. See [LICENSE.md][1] for details.
+MIT. Go crazy, and keep a lookout for grues. See [LICENSE.md][1] for details.
 
 [1]: LICENSE.md
 [2]: http://phantomjs.org/
