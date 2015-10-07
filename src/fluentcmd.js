@@ -9,9 +9,10 @@ module.exports = function () {
   var path = require( 'path' )
     , extend = require( './utils/extend' )
     , unused = require('./utils/string')
-    , FLUENT = require('fluentlib')
+    , fs = require('fs')
     , _ = require('underscore')
-    , rez, _log;
+    , FLUENT = require('fluentlib')
+    , rez, _log, _err;
 
   /**
   Given a source JSON resume, a destination resume path, and a theme file,
@@ -21,19 +22,21 @@ module.exports = function () {
   @param theme Friendly name of the resume theme. Defaults to "informatic".
   @param logger Optional logging override.
   */
-  function gen( src, dst, theme, logger ) {
+  function gen( src, dst, theme, logger, errHandler ) {
 
     _log = logger || console.log;
-    _opts.theme = theme;
-    var msg = '';
+    _err = errHandler || error;
+    _opts.theme = (theme && theme.toLowerCase().trim()) || 'informatic';
 
     // Load input resumes...
+    if(!src || !src.length) { throw { fluenterror: 3 }; }
     var sheets = src.map( function( res ) {
       _log( 'Reading JSON resume: ' + res );
       return (new FLUENT.Sheet()).open( res );
     });
 
     // Merge input resumes...
+    var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ? 'Merging ' + a.meta.fileName : '')
         + ' onto ' + b.meta.fileName;
@@ -77,18 +80,15 @@ module.exports = function () {
       return fObj.gen.generate( rez, fOut, _opts.theme );
     }
     catch( ex ) {
-      err( ex );
+      _err( ex );
     }
   }
 
   /**
   Handle an exception.
   */
-  function err( ex ) {
-    var msg = ex.toString();
-    var idx = msg.indexOf('Error: ');
-    var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-    _log( 'ERROR: ' + trimmed.toString() );
+  function error( ex ) {
+    throw ex;
   }
 
   /**
