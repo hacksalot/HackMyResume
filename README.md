@@ -2,7 +2,7 @@ fluentcmd
 =========
 *Generate beautiful, targeted resumes from your command line or shell.*
 
-FluentCMD is a **hackable, data-driven, developer-friendly resume authoring tool** with support for HTML, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
+FluentCMD is a **hackable, data-driven, dev-friendly resume authoring tool** with support for HTML, Markdown, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
 
 [![](assets/office_space.jpg)][8]
 
@@ -116,7 +116,7 @@ fluentcmd input.json output.doc output.html output.txt output.pdf
 
 ## License
 
-MIT. Go crazy, and keep a lookout for grues. See [LICENSE.md][1] for details.
+MIT. Go crazy. See [LICENSE.md][1] for details.
 
 [1]: LICENSE.md
 [2]: http://phantomjs.org/

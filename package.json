@@ -1,8 +1,7 @@
 {
   "name": "fluentcmd",
   "version": "0.1.0",
-  "description": "The FluentCV command-line tool (an extensible command-line-based resume generator for the 21st century.)",
-  "private": true,
+  "description": "Generate beautiful, targeted resumes from your command line or shell.",
   "repository": {
     "type": "git",
     "url": "https://github.com/fluentdesk/fluentcmd.git"
