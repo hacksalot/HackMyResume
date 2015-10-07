@@ -14,7 +14,7 @@
     "Markdown"
   ],
   "author": "James M. Devlin",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
     "url": "https://github.com/fluentdesk/fluentcmd/issues"
