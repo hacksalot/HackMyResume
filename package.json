@@ -25,7 +25,8 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcmd",
   "dependencies": {
-    "fluentlib": "file:..\\fluentlib",
-    "minimist": "^1.2.0"
+    "fluentlib": "fluentdesk/fluentlib",
+    "minimist": "^1.2.0",
+    "underscore": "^1.8.3"
   }
 }
