@@ -4,9 +4,7 @@ fluentcmd
 
 FluentCMD is a **hackable, data-driven, Markdown-and-JSON-friendly resume authoring tool** with support for HTML, Word, PDF, plain text, and other arbitrary-format resumes and CVs.
 
-[![](assets/office_space.jpg)][4]
-
-**FluentCMD establishes a single source of truth for your career data**&mdash;your character sheet&mdash;in an abstract but standard format like JSON or XML, and treats individual formatted resumes as views onto this data, allowing you to generate effective, targeted resumes in specific formats or for specific audiences, in sync with your latest changes.
+[![](assets/office_space.jpg)][8]
 
 Looking for a desktop version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
 
@@ -113,3 +111,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [5]: https://www.npmjs.com/
 [6]: http://jsonresume.org
 [7]: http://fluentcv.com
+[8]: https://youtu.be/N9wsjroVlu8
