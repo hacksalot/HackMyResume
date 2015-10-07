@@ -14,9 +14,8 @@ Looking for a desktop version with pretty timelines and graphs? Check out [Fluen
 - Store your resume data as a durable, versionable JSON, YML, or XML document.
 - Generate multiple targeted resumes in multiple formats, based on your needs.
 - Output to HTML, PDF, Markdown, Word, JSON, XML, or other arbitrary formats.
-- Compatible with the [JSON Resume][6] standard and other compatible tools.
-- Compatible with [FluentCV Desktop][7] and FluentDesk tools.
-- 100% free and open-source.
+- Compatible with the [JSON Resume][6] standard and [compatible tools][7].
+- Free and open-source through the MIT license.
 
 ## Install
 
@@ -29,9 +28,9 @@ First make sure [Node.js][4] and [NPM][5] are installed. Then:
 
 Assuming you've got a JSON-formatted resume handy, generating output resumes is easy. Just run:
 
-`fluentcmd [inputs] [outputs] -t [theme]`.
+`fluentcmd inputs [outputs] [-t theme]`.
 
-Where `[inputs]` is one or more .json resume files, `[outputs]` is one or more destination resumes, and `[theme]` is the desired theme. For example:
+Where `inputs` is one or more .json resume files, `[outputs]` is one or more destination resumes, and `[theme]` is the desired theme. For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT)
@@ -66,21 +65,21 @@ You can **merge multiple resumes together** by specifying them in order from mos
 fluentcmd base.json specific.json resume.all
 ```
 
-This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override portions of your generic "software developer" resume with specific information from your targeted "game developer" resume. Merging follows standard jQuery or Underscore extends()-style behavior.
+This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume. Merging follows conventional [extend()][9]-style behavior.
 
 ### Multiple targets
 
-You can specify **multiple output targets**:
+You can specify **multiple output targets** and FluentCMD will build them:
 
 ```bash
-# Merge specific.json onto base.json and generate out1.doc and out1.pdf
-fluentcmd base.json specific.json out1.doc out1.pdf
+# Generate out1.doc, out1.pdf, and foo.txt from me.json.
+fluentcmd me.json out1.doc out1.pdf foo.txt
 ```
 
-You can omit the output file(s) and/or theme completely:
+You can also omit the output file(s) and/or theme completely:
 
 ```bash
-# Equivalent to "fluentcmd resume.json resume.all -t default"
+# Equivalent to "fluentcmd resume.json resume.all -t informatic"
 fluentcmd resume.json
 ```
 
@@ -112,3 +111,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [6]: http://jsonresume.org
 [7]: http://fluentcv.com
 [8]: https://youtu.be/N9wsjroVlu8
+[9]: https://api.jquery.com/jquery.extend/
