@@ -10,58 +10,50 @@ module.exports = function () {
     , extend = require( './utils/extend' )
     , unused = require('./utils/string')
     , FLUENT = require('fluentlib')
+    , _ = require('underscore')
     , rez, _log;
 
   /**
-  Core workhorse method for FluentCMD. Given a source JSON resume, a destination
-  resume path, and a theme file, generate 0..N resumes in the desired formats.
+  Given a source JSON resume, a destination resume path, and a theme file,
+  generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
-  @param dst An array of paths to the destination resume file(s): "rez/resume.all".
-  @param theme Friendly name of the resume theme. Defaults to "default".
+  @param dst An array of paths to the target resume file(s).
+  @param theme Friendly name of the resume theme. Defaults to "informatic".
   @param logger Optional logging override.
   */
   function gen( src, dst, theme, logger ) {
 
     _log = logger || console.log;
     _opts.theme = theme;
-    dst = (dst && dst.length && dst) || ['resume.all'];
+    var msg = '';
 
-    // Assemble output resume targets
-    var targets = [];
-    dst.forEach( function(t) {
-      t = path.resolve(t);
-      var dot = t.lastIndexOf('.');
-      var format = ( dot === -1 ) ? 'all' : t.substring( dot + 1 );
-      var temp = ( format === 'all' ) ?
-        _fmts.map( function( fmt ) { return t.replace( /all$/g, fmt.name ); }) :
-        ( format === 'doc' ? [ 'doc' ] : [ t ] ); // interim code
-      targets.push.apply(targets, temp);
-    });
-
-    // Assemble input resumes
+    // Load input resumes...
     var sheets = src.map( function( res ) {
       _log( 'Reading JSON resume: ' + res );
       return (new FLUENT.Sheet()).open( res );
     });
 
-    // Merge input resumes
-    var msg = '';
-    sheets.length > 1 && (msg += ('Merging ' + sheets[ sheets.length - 1].meta.fileName));
-    rez = sheets.reduce( function( acc, elem ) {
-      msg += (' onto ' + acc.meta.fileName);
-      return extend( true, acc, elem );
+    // Merge input resumes...
+    rez = _.reduceRight( sheets, function( a, b, idx ) {
+      msg += ((idx == sheets.length - 2) ? 'Merging ' + a.meta.fileName : '')
+        + ' onto ' + b.meta.fileName;
+      return extend( true, b, a );
     });
-    sheets.length > 1 && _log( msg );
+    msg && _log(msg);
 
+    // Expand output resumes... (can't use map() here)
+    var targets = [];
+    ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
+      var to = path.resolve(t), pa = path.parse(to), fmat = pa.ext || '.all';
+      targets.push.apply(targets, fmat === '.all' ?
+        _fmts.map(function(z){ return to.replace(/all$/g,z.name); }) : [to]);
+    });
 
     // Run the transformation!
     var finished = targets.map( single );
 
-    return {
-      sheet: rez,//.rep,
-      targets: targets,
-      processed: finished
-    };
+    // Don't send the client back empty-handed
+    return { sheet: rez, targets: targets, processed: finished };
   }
 
   /**
@@ -71,7 +63,6 @@ module.exports = function () {
   */
   function single( f ) {
     try {
-
       // Get the output file type (pdf, html, txt, etc)
       var fType = path.extname( f ).trim().toLowerCase().substr(1);
       var fName = path.basename( f, '.' + fType );
@@ -114,11 +105,11 @@ module.exports = function () {
   Default options.
   */
   var _opts = {
-    theme: 'default',
+    theme: 'informatic',
   }
 
   /**
-  Module public interface. Used by FCV Desktop.
+  Internal module interface. Used by FCV Desktop and HMR.
   */
   return {
     generate: gen,
