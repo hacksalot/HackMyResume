@@ -1,6 +1,6 @@
 {
   "name": "fluentcmd",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generate beautiful, targeted resumes from your command line or shell.",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcmd",
   "dependencies": {
-    "fluentlib": "fluentdesk/fluentlib",
+    "fluentlib": "fluentdesk/fluentlib#v0.1.0",
     "minimist": "^1.2.0",
     "underscore": "^1.8.3"
   }
