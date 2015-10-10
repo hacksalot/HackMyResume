@@ -15,7 +15,7 @@ try {
   var args = ARGS( process.argv.slice(2) );
   var src = args._.filter( function( a ) { return a.match(/\.json$/); });
   var dst = args._.filter( function( a ) { return !a.match(/\.json$/); });
-  FCMD.generate( src, dst, args.t || 'informatic' );
+  FCMD.generate( src, dst, args.t || 'modern' );
   process.platform !== 'win32' && console.log('\n');
 }
 catch( ex ) {

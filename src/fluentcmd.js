@@ -19,14 +19,14 @@ module.exports = function () {
   generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
   @param dst An array of paths to the target resume file(s).
-  @param theme Friendly name of the resume theme. Defaults to "informatic".
+  @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
   function gen( src, dst, theme, logger, errHandler ) {
 
     _log = logger || console.log;
     _err = errHandler || error;
-    _opts.theme = (theme && theme.toLowerCase().trim()) || 'informatic';
+    _opts.theme = (theme && theme.toLowerCase().trim()) || 'modern';
 
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
@@ -105,7 +105,7 @@ module.exports = function () {
   Default options.
   */
   var _opts = {
-    theme: 'informatic',
+    theme: 'modern',
   }
 
   /**

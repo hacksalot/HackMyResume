@@ -38,13 +38,13 @@ Where `[inputs]` is one or more .json resume files, `[outputs]` is one or more d
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT)
-fluentcmd resume.json resume.all -t informatic
+fluentcmd resume.json resume.all -t modern
 
 # Generate a specific resume format
-fluentcmd resume.json resume.html -t informatic
-fluentcmd resume.json resume.txt -t informatic
-fluentcmd resume.json resume.pdf -t informatic
-fluentcmd resume.json resume.doc -t informatic
+fluentcmd resume.json resume.html -t modern
+fluentcmd resume.json resume.txt -t modern
+fluentcmd resume.json resume.pdf -t modern
+fluentcmd resume.json resume.doc -t modern
 ```
 
 You should see something to the effect of:
@@ -94,7 +94,7 @@ fluentcmd me.json out1.doc out1.pdf foo.txt
 You can also omit the output file(s) and/or theme completely:
 
 ```bash
-# Equivalent to "fluentcmd resume.json resume.all -t informatic"
+# Equivalent to "fluentcmd resume.json resume.all -t modern"
 fluentcmd resume.json
 ```
 
