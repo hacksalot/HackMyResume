@@ -50,7 +50,7 @@ fluentcmd resume.json resume.doc -t modern
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.1.0 ***
+*** FluentCMD v0.3.0 ***
 Reading JSON resume: foo/resume.json
 Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
@@ -59,6 +59,17 @@ Generating PDF resume: out/resume.pdf
 ```
 
 ## Advanced
+
+### Applying a theme
+
+You can specify a predefined or custom theme via the `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
+
+```bash
+fluentcmd resume.json -t modern
+fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
+```
+
+As of v0.3.0, available predefined themes are `modern`, `minimist`, `informatic`, and `hello-world`.
 
 ### Merging resumes
 
