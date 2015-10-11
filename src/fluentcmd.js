@@ -19,14 +19,14 @@ module.exports = function () {
   generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
   @param dst An array of paths to the target resume file(s).
-  @param theme Friendly name of the resume theme. Defaults to "informatic".
+  @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
   function gen( src, dst, theme, logger, errHandler ) {
 
     _log = logger || console.log;
     _err = errHandler || error;
-    _opts.theme = (theme && theme.toLowerCase().trim()) || 'informatic';
+    _opts.theme = (theme && theme.toLowerCase().trim()) || 'modern';
 
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
@@ -49,7 +49,8 @@ module.exports = function () {
     ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
       var to = path.resolve(t), pa = path.parse(to), fmat = pa.ext || '.all';
       targets.push.apply(targets, fmat === '.all' ?
-        _fmts.map(function(z){ return to.replace(/all$/g,z.name); }) : [to]);
+        _fmts.map(function(z){ return { file: to.replace(/all$/g,z.ext), fmt: z } })
+        : [{ file: to, fmt: _.findWhere( _fmts, { ext: fmat.substring(1) }) }]);
     });
 
     // Run the transformation!
@@ -64,19 +65,12 @@ module.exports = function () {
   @param f Full path to the destination resume to generate, for example,
   "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
-  function single( f ) {
+  function single( fi ) {
     try {
-      // Get the output file type (pdf, html, txt, etc)
-      var fType = path.extname( f ).trim().toLowerCase().substr(1);
-      var fName = path.basename( f, '.' + fType );
-
-      // Get the format object (if any) corresponding to that type, and assemble
-      // the final output file path for the generated resume.
-      var fObj = _fmts.filter( function(_f) { return _f.name === fType; } )[0];
+      var f = fi.file, fType = fi.fmt.ext, fName = path.basename( f, '.' + fType );
+      var fObj = _fmts.filter( function(_f) { return _f.ext === fType; } )[0];
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
-
-      // Generate!
-      _log( 'Generating ' + fType.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f) );
+      _log( 'Generating ' + fi.fmt.name.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
       return fObj.gen.generate( rez, fOut, _opts.theme );
     }
     catch( ex ) {
@@ -98,14 +92,16 @@ module.exports = function () {
     { name: 'html', ext: 'html', gen: new FLUENT.HtmlGenerator() },
     { name: 'txt',  ext: 'txt', gen: new FLUENT.TextGenerator()  },
     { name: 'doc',  ext: 'doc',  fmt: 'xml', gen: new FLUENT.WordGenerator() },
-    { name: 'pdf',  ext: 'pdf', fmt: 'html', is: false, gen: new FLUENT.HtmlPdfGenerator() }
+    { name: 'pdf',  ext: 'pdf', fmt: 'html', is: false, gen: new FLUENT.HtmlPdfGenerator() },
+    { name: 'markdown',  ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
+    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() }
   ];
 
   /**
   Default options.
   */
   var _opts = {
-    theme: 'informatic',
+    theme: 'modern',
   }
 
   /**

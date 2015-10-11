@@ -38,19 +38,19 @@ Where `[inputs]` is one or more .json resume files, `[outputs]` is one or more d
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT)
-fluentcmd resume.json resume.all -t informatic
+fluentcmd resume.json resume.all -t modern
 
 # Generate a specific resume format
-fluentcmd resume.json resume.html -t informatic
-fluentcmd resume.json resume.txt -t informatic
-fluentcmd resume.json resume.pdf -t informatic
-fluentcmd resume.json resume.doc -t informatic
+fluentcmd resume.json resume.html -t modern
+fluentcmd resume.json resume.txt -t modern
+fluentcmd resume.json resume.pdf -t modern
+fluentcmd resume.json resume.doc -t modern
 ```
 
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.1.0 ***
+*** FluentCMD v0.3.0 ***
 Reading JSON resume: foo/resume.json
 Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
@@ -59,6 +59,17 @@ Generating PDF resume: out/resume.pdf
 ```
 
 ## Advanced
+
+### Applying a theme
+
+You can specify a predefined or custom theme via the `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
+
+```bash
+fluentcmd resume.json -t modern
+fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
+```
+
+As of v0.3.0, available predefined themes are `modern`, `minimist`, `informatic`, and `hello-world`.
 
 ### Merging resumes
 
@@ -94,7 +105,7 @@ fluentcmd me.json out1.doc out1.pdf foo.txt
 You can also omit the output file(s) and/or theme completely:
 
 ```bash
-# Equivalent to "fluentcmd resume.json resume.all -t informatic"
+# Equivalent to "fluentcmd resume.json resume.all -t modern"
 fluentcmd resume.json
 ```
 

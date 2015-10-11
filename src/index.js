@@ -13,16 +13,17 @@ try {
   console.log( '*** FluentCMD v' + PKG.version + ' ***' );
   if( process.argv.length <= 2 ) { throw { fluenterror: 3 }; }
   var args = ARGS( process.argv.slice(2) );
-  var src = args._.filter( function( a ) { return a.match(/\.json$/); });
-  var dst = args._.filter( function( a ) { return !a.match(/\.json$/); });
-  FCMD.generate( src, dst, args.t || 'informatic' );
+  var src = args._ || [];
+  var dst = (args.o && ((typeof args.o === 'string' && [ args.o ]) || args.o)) || [];
+  dst = (dst === true) ? [] : dst; // handle -o with missing output file
+  FCMD.generate( src, dst, args.t || 'modern' );
   process.platform !== 'win32' && console.log('\n');
 }
 catch( ex ) {
 
   var msg = '';
   if( ex.fluenterror ){
-    switch( ex.fluenterror ) {
+    switch( ex.fluenterror ) { // TODO: Remove magic numbers
       case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
       case 2: msg = "Couldn't copy CSS file to destination folder"; break;
       case 3: msg = "Please specify a valid JSON resume file."; break;
