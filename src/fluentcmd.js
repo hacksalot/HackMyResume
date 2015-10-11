@@ -50,7 +50,7 @@ module.exports = function () {
       var to = path.resolve(t), pa = path.parse(to), fmat = pa.ext || '.all';
       targets.push.apply(targets, fmat === '.all' ?
         _fmts.map(function(z){ return { file: to.replace(/all$/g,z.ext), fmt: z } })
-        : [{ file: to, fmt: z }]);
+        : [{ file: to, fmt: _.findWhere( _fmts, { ext: fmat.substring(1) }) }]);
     });
 
     // Run the transformation!
