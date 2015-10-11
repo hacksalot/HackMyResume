@@ -26,25 +26,32 @@ FluentCMD requires a recent version of [Node.js][4] and [NPM][5]. Then:
 
 1. (Optional, for PDF support) Install the latest official [wkhtmltopdf][3] binary for your platform.
 2. Install **fluentcmd** by running `npm install fluentcmd -g`.
-3. You're ready to go!
+3. You're ready to go.
 
 ## Use
 
 Assuming you've got a JSON-formatted resume handy, generating resumes in different formats and combinations easy. Just run:
 
-`fluentcmd [inputs] [outputs] [-t theme]`.
+```bash
+fluentcmd [inputs] [outputs] [-t theme].
+```
 
-Where `[inputs]` is one or more .json resume files, `[outputs]` is one or more destination resumes, and `[theme]` is the desired theme. For example:
+Where `[inputs]` is one or more .json resume files, separated by spaces; `[outputs]` is one or more destination resumes, each prefaced with the `-o` option; and `[theme]` is the desired theme. For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT)
-fluentcmd resume.json resume.all -t modern
+fluentcmd resume.json -o out/resume.all -t modern
 
 # Generate a specific resume format
-fluentcmd resume.json resume.html -t modern
-fluentcmd resume.json resume.txt -t modern
-fluentcmd resume.json resume.pdf -t modern
-fluentcmd resume.json resume.doc -t modern
+fluentcmd resume.json -o out/resume.html
+fluentcmd resume.json -o out/resume.pdf
+fluentcmd resume.json -o out/resume.md
+fluentcmd resume.json -o out/resume.doc
+fluentcmd resume.json -o out/resume.json
+fluentcmd resume.json -o out/resume.txt
+
+# Specify 2 inputs and 3 outputs
+fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
 ```
 
 You should see something to the effect of:
@@ -56,13 +63,15 @@ Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
 Generating DOC resume: out/resume.doc
 Generating PDF resume: out/resume.pdf
+Generating JSON resume: out/resume.json
+Generating MARKDOWN resume: out/resume.md
 ```
 
 ## Advanced
 
 ### Applying a theme
 
-You can specify a predefined or custom theme via the `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
+You can specify a predefined or custom theme via the optional `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
 
 ```bash
 fluentcmd resume.json -t modern
@@ -77,13 +86,13 @@ You can **merge multiple resumes together** by specifying them in order from mos
 
 ```bash
 # Merge specific.json onto base.json and generate all formats
-fluentcmd base.json specific.json resume.all
+fluentcmd base.json specific.json -o resume.all
 ```
 
 This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume, or combine two partial resumes into a "complete" resume. Merging follows conventional [extend()][9]-style behavior and there's no arbitrary limit to how many resumes you can merge:
 
 ```bash
-fluentcmd in1.json in2.json in3.json in4.json out.html out.doc
+fluentcmd in1.json in2.json in3.json in4.json -o out.html -o out.doc
 Reading JSON resume: in1.json
 Reading JSON resume: in2.json
 Reading JSON resume: in3.json
@@ -99,7 +108,7 @@ You can specify **multiple output targets** and FluentCMD will build them:
 
 ```bash
 # Generate out1.doc, out1.pdf, and foo.txt from me.json.
-fluentcmd me.json out1.doc out1.pdf foo.txt
+fluentcmd me.json -o out1.doc -o out1.pdf -o foo.txt
 ```
 
 You can also omit the output file(s) and/or theme completely:
@@ -115,15 +124,10 @@ The special `.all` extension tells FluentCMD to generate all supported output fo
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, etc.)
-fluentcmd input.json output.all
+fluentcmd me.json -o out/resume.all
 ```
 
-..tells FluentCV to read `input.json` and generate `output.doc`, `output.html`, `output.txt`, `output.pdf`. That's more or less equivalent to:
-
-```bash
-# Generate all resume formats (HTML, PDF, DOC, TXT)
-fluentcmd input.json output.doc output.html output.txt output.pdf
-```
+..tells FluentCV to read `me.json` and generate `out/resume.md`, `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and `out/resume.json`.
 
 ## License
 
