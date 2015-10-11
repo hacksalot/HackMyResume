@@ -93,7 +93,8 @@ module.exports = function () {
     { name: 'txt',  ext: 'txt', gen: new FLUENT.TextGenerator()  },
     { name: 'doc',  ext: 'doc',  fmt: 'xml', gen: new FLUENT.WordGenerator() },
     { name: 'pdf',  ext: 'pdf', fmt: 'html', is: false, gen: new FLUENT.HtmlPdfGenerator() },
-    { name: 'markdown',  ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() }
+    { name: 'markdown',  ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
+    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() }
   ];
 
   /**
