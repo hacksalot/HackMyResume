@@ -71,7 +71,7 @@ module.exports = function () {
       var fObj = _fmts.filter( function(_f) { return _f.ext === fType; } )[0];
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
       _log( 'Generating ' + fi.fmt.name.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
-      return fObj.gen.generate( rez, fOut, _opts.theme );
+      return fObj.gen.generate( rez, fOut, { theme: _opts.theme } );
     }
     catch( ex ) {
       _err( ex );
