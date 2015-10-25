@@ -10,17 +10,38 @@ var ARGS = require( 'minimist' )
   , PKG = require('../package.json');
 
 try {
+  main();
+}
+catch( ex ) {
+  handleError( ex );
+}
+
+function main() {
+  // Setup.
   console.log( '*** FluentCMD v' + PKG.version + ' ***' );
   if( process.argv.length <= 2 ) { throw { fluenterror: 3 }; }
+
+  // Convert arguments to source files, target files, options
   var args = ARGS( process.argv.slice(2) );
   var src = args._ || [];
   var dst = (args.o && ((typeof args.o === 'string' && [ args.o ]) || args.o)) || [];
-  dst = (dst === true) ? [] : dst; // handle -o with missing output file
-  FCMD.generate( src, dst, args.t || 'modern' );
+  dst = (dst === true) ? [] : dst; // Handle -o with missing output file
+
+  // Generate!
+  FCMD.generate( src, dst, getOpts( args ) );
   process.platform !== 'win32' && console.log('\n');
 }
-catch( ex ) {
 
+function getOpts( args ) {
+  var noPretty = args['nopretty'] || args.n;
+  noPretty = noPretty && (noPretty === true || noPretty === 'true');
+  return {
+    theme: args.t || 'modern',
+    prettify: !noPretty
+  };
+}
+
+function handleError( ex ) {
   var msg = '';
   if( ex.fluenterror ){
     switch( ex.fluenterror ) { // TODO: Remove magic numbers

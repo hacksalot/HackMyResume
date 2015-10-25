@@ -22,11 +22,14 @@ module.exports = function () {
   @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
-  function gen( src, dst, theme, logger, errHandler ) {
+  function gen( src, dst, opts, logger, errHandler ) {
 
     _log = logger || console.log;
     _err = errHandler || error;
-    _opts.theme = (theme && theme.toLowerCase().trim()) || 'modern';
+    
+    //_opts = extend( true, _opts, opts );
+    _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
+    _opts.prettify = opts.prettify === true ? _opts.prettify : false;
 
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
@@ -71,7 +74,7 @@ module.exports = function () {
       var fObj = _fmts.filter( function(_f) { return _f.ext === fType; } )[0];
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
       _log( 'Generating ' + fi.fmt.name.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
-      return fObj.gen.generate( rez, fOut, { theme: _opts.theme } );
+      return fObj.gen.generate( rez, fOut, _opts );
     }
     catch( ex ) {
       _err( ex );
@@ -98,11 +101,17 @@ module.exports = function () {
   ];
 
   /**
-  Default options.
+  Default FluentCMD options.
   */
   var _opts = {
     theme: 'modern',
-  }
+    prettify: { // ← See https://github.com/beautify-web/js-beautify#options
+      indent_size: 2,
+      unformatted: ['em','strong'],
+      max_char: 80, // ← See lib/html.js in above-linked repo
+      //wrap_line_length: 120, ← Don't use this
+    }
+  };
 
   /**
   Internal module interface. Used by FCV Desktop and HMR.
