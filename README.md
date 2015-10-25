@@ -57,7 +57,7 @@ fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.3.1 ***
+*** FluentCMD v0.4.0 ***
 Reading JSON resume: foo/resume.json
 Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
@@ -78,7 +78,7 @@ fluentcmd resume.json -t modern
 fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.3.1, available predefined themes are `modern`, `minimist`, `informatic`, and `hello-world`.
+As of v0.4.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
 
 ### Merging resumes
 
@@ -129,6 +129,14 @@ fluentcmd me.json -o out/resume.all
 
 ..tells FluentCV to read `me.json` and generate `out/resume.md`, `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and `out/resume.json`.
 
+### Prettifying
+
+FluentCMD applies [js-beautify][10]-style HTML prettification by default to HTML-formatted resumes. To disable prettification, the `--nopretty` or `-n` flag can be used:
+
+```bash
+fluentcmd resume.json out.all --nopretty
+```
+
 ## License
 
 MIT. Go crazy. See [LICENSE.md][1] for details.
@@ -142,3 +150,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [7]: http://fluentcv.com
 [8]: https://youtu.be/N9wsjroVlu8
 [9]: https://api.jquery.com/jquery.extend/
+[10]: https://github.com/beautify-web/js-beautify
