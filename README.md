@@ -4,20 +4,7 @@ fluentcmd
 
 FluentCMD is a **hackable, data-driven, dev-friendly resume authoring tool** with support for HTML, Markdown, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
 
-```bash
->fluentcmd resume.json -o out/resume.all -t modern
-
-*** FluentCMD v0.5.0 ***
-Reading JSON resume: foo/resume.json
-Applying MODERN Theme (7 formats)
-Generating HTML resume: out/resume.html
-Generating TXT resume: out/resume.txt
-Generating DOC resume: out/resume.doc
-Generating PDF resume: out/resume.pdf
-Generating JSON resume: out/resume.json
-Generating MARKDOWN resume: out/resume.md
-Generating YAML resume: out/resume.yml
-```
+![](assets/fluentcmd_ubuntu.png)
 
 Looking for a desktop GUI version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
 
