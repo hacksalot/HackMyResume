@@ -14,7 +14,7 @@ var FS = require( 'fs' )
 
 // Default options.
 var _defaultOpts = {
-  themeRelative: '../../node_modules/watermark/themes',
+  themeRelative: '../../node_modules/fluent-themes/themes',
   keepBreaks: true,
   freezeBreaks: true,
   nSym: '&newl;', // newline entity

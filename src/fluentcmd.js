@@ -51,7 +51,7 @@ module.exports = function () {
 
     // Load the active theme
     // Verify the specified theme name/path
-    var tFolder = PATH.resolve( __dirname, '../node_modules/watermark/themes', _opts.theme );
+    var tFolder = PATH.resolve( __dirname, '../node_modules/fluent-themes/themes', _opts.theme );
     var exists = require('./utils/file-exists');
     if (!exists( tFolder )) {
       tFolder = PATH.resolve( _opts.theme );
