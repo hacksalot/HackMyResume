@@ -13,7 +13,7 @@ Looking for a desktop GUI version with pretty timelines and graphs? Check out [F
 - Runs on OS X, Linux, and Windows.
 - Store your resume data as a durable, versionable JSON, YML, or XML document.
 - Generate multiple targeted resumes in multiple formats, based on your needs.
-- Output to HTML, PDF, Markdown, Word, JSON, XML, or other arbitrary formats.
+- Output to HTML, PDF, Markdown, Word, JSON, YAML, XML, or a custom format.
 - Never update one piece of information in four different resumes again.
 - Compatible with the [JSON Resume standard][6] and [authoring tools][7].
 - Free and open-source through the MIT license.
@@ -39,7 +39,7 @@ fluentcmd [inputs] [outputs] [-t theme].
 Where `[inputs]` is one or more .json resume files, separated by spaces; `[outputs]` is one or more destination resumes, each prefaced with the `-o` option; and `[theme]` is the desired theme. For example:
 
 ```bash
-# Generate all resume formats (HTML, PDF, DOC, TXT)
+# Generate all resume formats (HTML, PDF, DOC, TXT, YML, etc.)
 fluentcmd resume.json -o out/resume.all -t modern
 
 # Generate a specific resume format
@@ -49,6 +49,7 @@ fluentcmd resume.json -o out/resume.md
 fluentcmd resume.json -o out/resume.doc
 fluentcmd resume.json -o out/resume.json
 fluentcmd resume.json -o out/resume.txt
+fluentcmd resume.json -o out/resume.yml
 
 # Specify 2 inputs and 3 outputs
 fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
@@ -57,7 +58,7 @@ fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.4.0 ***
+*** FluentCMD v0.5.0 ***
 Reading JSON resume: foo/resume.json
 Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
@@ -78,7 +79,7 @@ fluentcmd resume.json -t modern
 fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.4.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
+As of v0.5.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
 
 ### Merging resumes
 

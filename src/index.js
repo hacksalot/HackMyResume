@@ -10,6 +10,7 @@ var ARGS = require( 'minimist' )
   , PKG = require('../package.json');
 
 try {
+  var opts = { };
   main();
 }
 catch( ex ) {
@@ -17,19 +18,25 @@ catch( ex ) {
 }
 
 function main() {
+
   // Setup.
-  console.log( '*** FluentCMD v' + PKG.version + ' ***' );
   if( process.argv.length <= 2 ) { throw { fluenterror: 3 }; }
+  var args = ARGS( process.argv.slice(2) );
+  opts = getOpts( args );
+  logMsg( '*** FluentCMD v' + PKG.version + ' ***' );
 
   // Convert arguments to source files, target files, options
-  var args = ARGS( process.argv.slice(2) );
   var src = args._ || [];
   var dst = (args.o && ((typeof args.o === 'string' && [ args.o ]) || args.o)) || [];
   dst = (dst === true) ? [] : dst; // Handle -o with missing output file
 
   // Generate!
-  FCMD.generate( src, dst, getOpts( args ) );
+  FCMD.generate( src, dst, opts, logMsg );
   process.platform !== 'win32' && console.log('\n');
+}
+
+function logMsg( msg ) {
+  opts.silent || console.log( msg );
 }
 
 function getOpts( args ) {
@@ -37,7 +44,8 @@ function getOpts( args ) {
   noPretty = noPretty && (noPretty === true || noPretty === 'true');
   return {
     theme: args.t || 'modern',
-    prettify: !noPretty
+    prettify: !noPretty,
+    silent: args.s || args.silent
   };
 }
 

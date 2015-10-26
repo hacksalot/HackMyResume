@@ -12,6 +12,8 @@ module.exports = function () {
     , fs = require('fs')
     , _ = require('underscore')
     , FLUENT = require('fluentlib')
+    , PATH = require('path')
+    , MKDIRP = require('mkdirp')
     , rez, _log, _err;
 
   /**
@@ -26,7 +28,7 @@ module.exports = function () {
 
     _log = logger || console.log;
     _err = errHandler || error;
-    
+
     //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
@@ -47,17 +49,32 @@ module.exports = function () {
     });
     msg && _log(msg);
 
+    // Load the active theme
+    // Verify the specified theme name/path
+    var tFolder = PATH.resolve( __dirname, '../node_modules/watermark/themes', _opts.theme );
+    var exists = require('./utils/file-exists');
+    if (!exists( tFolder )) {
+      tFolder = PATH.resolve( _opts.theme );
+      if (!exists( tFolder )) {
+        throw { fluenterror: 1, data: _opts.theme };
+      }
+    }
+    var theTheme = new FLUENT.Theme().open( tFolder );
+    _opts.themeObj = theTheme;
+    _log( 'Applying ' + theTheme.name.toUpperCase() + ' theme (' + Object.keys(theTheme.formats).length + ' formats)' );
+
     // Expand output resumes... (can't use map() here)
     var targets = [];
+    var that = this;
     ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
       var to = path.resolve(t), pa = path.parse(to), fmat = pa.ext || '.all';
       targets.push.apply(targets, fmat === '.all' ?
-        _fmts.map(function(z){ return { file: to.replace(/all$/g,z.ext), fmt: z } })
-        : [{ file: to, fmt: _.findWhere( _fmts, { ext: fmat.substring(1) }) }]);
+        Object.keys( theTheme.formats ).map(function(k){ var z = theTheme.formats[k]; return { file: to.replace(/all$/g,z.pre), fmt: z } })
+        : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
     });
 
     // Run the transformation!
-    var finished = targets.map( single );
+    var finished = targets.map( function(t) { return single(t, theTheme); } );
 
     // Don't send the client back empty-handed
     return { sheet: rez, targets: targets, processed: finished };
@@ -68,13 +85,17 @@ module.exports = function () {
   @param f Full path to the destination resume to generate, for example,
   "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
-  function single( fi ) {
+  function single( fi, theme ) {
     try {
       var f = fi.file, fType = fi.fmt.ext, fName = path.basename( f, '.' + fType );
-      var fObj = _fmts.filter( function(_f) { return _f.ext === fType; } )[0];
-      var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.ext );
-      _log( 'Generating ' + fi.fmt.name.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
-      return fObj.gen.generate( rez, fOut, _opts );
+      var fObj = _.property( fi.fmt.pre )( theme.formats );
+      var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.pre );
+      _log( 'Generating ' + fi.fmt.title.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
+      var theFormat = _fmts.filter( function( fmt ) {
+        return fmt.name === fi.fmt.pre;
+      })[0];
+      MKDIRP( path.dirname(fOut) ); // Ensure dest folder exists; don't bug user
+      theFormat.gen.generate( rez, fOut, _opts );
     }
     catch( ex ) {
       _err( ex );
@@ -96,8 +117,9 @@ module.exports = function () {
     { name: 'txt',  ext: 'txt', gen: new FLUENT.TextGenerator()  },
     { name: 'doc',  ext: 'doc',  fmt: 'xml', gen: new FLUENT.WordGenerator() },
     { name: 'pdf',  ext: 'pdf', fmt: 'html', is: false, gen: new FLUENT.HtmlPdfGenerator() },
-    { name: 'markdown',  ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
-    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() }
+    { name: 'md', ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
+    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() },
+    { name: 'yml', ext: 'yml', fmt: 'yml', gen: new FLUENT.JsonYamlGenerator() }
   ];
 
   /**
