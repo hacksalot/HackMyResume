@@ -26,7 +26,7 @@ module.exports = function () {
 
     _log = logger || console.log;
     _err = errHandler || error;
-    
+
     //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
@@ -96,8 +96,9 @@ module.exports = function () {
     { name: 'txt',  ext: 'txt', gen: new FLUENT.TextGenerator()  },
     { name: 'doc',  ext: 'doc',  fmt: 'xml', gen: new FLUENT.WordGenerator() },
     { name: 'pdf',  ext: 'pdf', fmt: 'html', is: false, gen: new FLUENT.HtmlPdfGenerator() },
-    { name: 'markdown',  ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
-    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() }
+    { name: 'markdown', ext: 'md', fmt: 'txt', gen: new FLUENT.MarkdownGenerator() },
+    { name: 'json', ext: 'json', gen: new FLUENT.JsonGenerator() },
+    { name: 'yaml', ext: 'yml', fmt: 'yml', gen: new FLUENT.JsonYamlGenerator() }
   ];
 
   /**
