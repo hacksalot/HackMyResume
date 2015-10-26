@@ -11,7 +11,7 @@ module.exports = function () {
     , unused = require('./utils/string')
     , fs = require('fs')
     , _ = require('underscore')
-    , FLUENT = require('fluentlib')
+    , FLUENT = require('./fluentlib')
     , PATH = require('path')
     , MKDIRP = require('mkdirp')
     , rez, _log, _err;
@@ -140,6 +140,7 @@ module.exports = function () {
   */
   return {
     generate: gen,
+    lib: require('./fluentlib'),
     options: _opts,
     formats: _fmts
   };
