@@ -4,7 +4,20 @@ fluentcmd
 
 FluentCMD is a **hackable, data-driven, dev-friendly resume authoring tool** with support for HTML, Markdown, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
 
-[![](assets/office_space.jpg)][8]
+```bash
+>fluentcmd resume.json -o out/resume.all -t modern
+
+*** FluentCMD v0.5.0 ***
+Reading JSON resume: foo/resume.json
+Applying MODERN Theme (7 formats)
+Generating HTML resume: out/resume.html
+Generating TXT resume: out/resume.txt
+Generating DOC resume: out/resume.doc
+Generating PDF resume: out/resume.pdf
+Generating JSON resume: out/resume.json
+Generating MARKDOWN resume: out/resume.md
+Generating YAML resume: out/resume.yml
+```
 
 Looking for a desktop GUI version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
 
@@ -60,12 +73,14 @@ You should see something to the effect of:
 ```
 *** FluentCMD v0.5.0 ***
 Reading JSON resume: foo/resume.json
+Applying MODERN Theme (7 formats)
 Generating HTML resume: out/resume.html
 Generating TXT resume: out/resume.txt
 Generating DOC resume: out/resume.doc
 Generating PDF resume: out/resume.pdf
 Generating JSON resume: out/resume.json
 Generating MARKDOWN resume: out/resume.md
+Generating YAML resume: out/resume.yml
 ```
 
 ## Advanced
@@ -136,6 +151,15 @@ FluentCMD applies [js-beautify][10]-style HTML prettification by default to HTML
 
 ```bash
 fluentcmd resume.json out.all --nopretty
+```
+
+### Silent Mode
+
+Use `-s` or `--silent` to run in silent mode:
+
+```bash
+fluentcmd resume.json -o someFile.all -s
+fluentcmd resume.json -o someFile.all --silent
 ```
 
 ## License
