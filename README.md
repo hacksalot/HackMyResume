@@ -58,7 +58,7 @@ fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.5.0 ***
+*** FluentCMD v0.6.0 ***
 Reading JSON resume: foo/resume.json
 Applying MODERN Theme (7 formats)
 Generating HTML resume: out/resume.html
@@ -81,7 +81,7 @@ fluentcmd resume.json -t modern
 fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.5.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
+As of v0.6.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
 
 ### Merging resumes
 

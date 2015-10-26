@@ -1,7 +1,7 @@
 {
   "name": "fluentcmd",
   "version": "0.6.0",
-  "description": "Generate beautiful, targeted resumes from your command line or shell.",
+  "description": "Generate beautiful, targeted resumes from your command line, shell, or in Javascript with Node.js.",
   "repository": {
     "type": "git",
     "url": "https://github.com/fluentdesk/fluentcmd.git"
@@ -24,10 +24,8 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcmd",
   "dependencies": {
-    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "underscore": "^1.8.3",
-    "watermark": "fluentdesk/watermark#v0.3.1-alpha",
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
@@ -47,6 +45,6 @@
     "grunt-simple-mocha": "*",
     "is-my-json-valid": "^2.12.2",
     "mocha": "*",
-    "resample": "fluentdesk/resample#v0.1.0-alpha"
-  }  
+    "resample": "fluentdesk/resample"
+  }
 }
