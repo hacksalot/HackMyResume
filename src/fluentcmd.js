@@ -140,6 +140,7 @@ module.exports = function () {
   */
   return {
     generate: gen,
+    lib: require('./fluentlib'),
     options: _opts,
     formats: _fmts
   };
