@@ -26,6 +26,8 @@
   "dependencies": {
     "fluentlib": "fluentdesk/fluentlib#v0.4.0",
     "minimist": "^1.2.0",
-    "underscore": "^1.8.3"
+    "mkdirp": "^0.5.1",
+    "underscore": "^1.8.3",
+    "watermark": "fluentdesk/watermark#v0.3.0-alpha"
   }
 }
