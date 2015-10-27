@@ -1,5 +1,5 @@
 /**
-Internal resume generation logic for FluentCMD.
+Internal resume generation logic for FluentCV.
 @license Copyright (c) 2015 | James M. Devlin
 */
 

@@ -1,10 +1,10 @@
 {
-  "name": "fluentcmd",
-  "version": "0.6.0",
+  "name": "fluentcv",
+  "version": "0.7.0",
   "description": "Generate beautiful, targeted resumes from your command line, shell, or in Javascript with Node.js.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fluentdesk/fluentcmd.git"
+    "url": "https://github.com/fluentdesk/fluentcv.git"
   },
   "keywords": [
     "resume",
@@ -16,13 +16,13 @@
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/fluentdesk/fluentcmd/issues"
+    "url": "https://github.com/fluentdesk/fluentcv/issues"
   },
   "main": "src/fluentcmd.js",
   "bin": {
-    "fluentcmd": "src/index.js"
+    "fluentcv": "src/index.js"
   },
-  "homepage": "https://github.com/fluentdesk/fluentcmd",
+  "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
     "fluent-themes": "0.1.0-beta",
     "fs-extra": "^0.24.0",

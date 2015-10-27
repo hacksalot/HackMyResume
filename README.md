@@ -1,10 +1,10 @@
-fluentcmd
-=========
+fluentCV
+========
 *Generate beautiful, targeted resumes from your command line or shell.*
 
-FluentCMD is a **hackable, data-driven, dev-friendly resume authoring tool** with support for HTML, Markdown, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
+FluentCV is a **hackable, data-driven, dev-friendly resume authoring tool** with support for HTML, Markdown, Word, PDF, plain text, smoke signal, carrier pigeon, and other arbitrary-format resumes and CVs.
 
-![](assets/fluentcmd_ubuntu.png)
+![](assets/fluentcv_cli_ubuntu.png)
 
 Looking for a desktop GUI version with pretty timelines and graphs? Check out [FluentCV Desktop][7].
 
@@ -22,10 +22,10 @@ Looking for a desktop GUI version with pretty timelines and graphs? Check out [F
 
 ## Install
 
-FluentCMD requires a recent version of [Node.js][4] and [NPM][5]. Then:
+FluentCV requires a recent version of [Node.js][4] and [NPM][5]. Then:
 
 1. (Optional, for PDF support) Install the latest official [wkhtmltopdf][3] binary for your platform.
-2. Install **fluentcmd** by running `npm install fluentcmd -g`.
+2. Install **fluentCV** by running `npm install fluentcv -g`.
 3. You're ready to go.
 
 ## Use
@@ -33,32 +33,32 @@ FluentCMD requires a recent version of [Node.js][4] and [NPM][5]. Then:
 Assuming you've got a JSON-formatted resume handy, generating resumes in different formats and combinations easy. Just run:
 
 ```bash
-fluentcmd [inputs] [outputs] [-t theme].
+fluentcv [inputs] [outputs] [-t theme].
 ```
 
 Where `[inputs]` is one or more .json resume files, separated by spaces; `[outputs]` is one or more destination resumes, each prefaced with the `-o` option; and `[theme]` is the desired theme. For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, YML, etc.)
-fluentcmd resume.json -o out/resume.all -t modern
+fluentcv resume.json -o out/resume.all -t modern
 
 # Generate a specific resume format
-fluentcmd resume.json -o out/resume.html
-fluentcmd resume.json -o out/resume.pdf
-fluentcmd resume.json -o out/resume.md
-fluentcmd resume.json -o out/resume.doc
-fluentcmd resume.json -o out/resume.json
-fluentcmd resume.json -o out/resume.txt
-fluentcmd resume.json -o out/resume.yml
+fluentcv resume.json -o out/resume.html
+fluentcv resume.json -o out/resume.pdf
+fluentcv resume.json -o out/resume.md
+fluentcv resume.json -o out/resume.doc
+fluentcv resume.json -o out/resume.json
+fluentcv resume.json -o out/resume.txt
+fluentcv resume.json -o out/resume.yml
 
 # Specify 2 inputs and 3 outputs
-fluentcmd in1.json in2.json -o out.html -o out.doc -o out.pdf
+fluentcv in1.json in2.json -o out.html -o out.doc -o out.pdf
 ```
 
 You should see something to the effect of:
 
 ```
-*** FluentCMD v0.6.0 ***
+*** FluentCV v0.7.0 ***
 Reading JSON resume: foo/resume.json
 Applying MODERN Theme (7 formats)
 Generating HTML resume: out/resume.html
@@ -77,11 +77,11 @@ Generating YAML resume: out/resume.yml
 You can specify a predefined or custom theme via the optional `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
 
 ```bash
-fluentcmd resume.json -t modern
-fluentcmd resume.json -t ~/foo/bar/my-custom-theme/
+fluentcv resume.json -t modern
+fluentcv resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.6.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
+As of v0.7.0, available predefined themes are `modern`, `minimist`, and `hello-world`.
 
 ### Merging resumes
 
@@ -89,13 +89,13 @@ You can **merge multiple resumes together** by specifying them in order from mos
 
 ```bash
 # Merge specific.json onto base.json and generate all formats
-fluentcmd base.json specific.json -o resume.all
+fluentcv base.json specific.json -o resume.all
 ```
 
 This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume, or combine two partial resumes into a "complete" resume. Merging follows conventional [extend()][9]-style behavior and there's no arbitrary limit to how many resumes you can merge:
 
 ```bash
-fluentcmd in1.json in2.json in3.json in4.json -o out.html -o out.doc
+fluentcv in1.json in2.json in3.json in4.json -o out.html -o out.doc
 Reading JSON resume: in1.json
 Reading JSON resume: in2.json
 Reading JSON resume: in3.json
@@ -107,37 +107,37 @@ Generating WORD resume: out.doc
 
 ### Multiple targets
 
-You can specify **multiple output targets** and FluentCMD will build them:
+You can specify **multiple output targets** and FluentCV will build them:
 
 ```bash
 # Generate out1.doc, out1.pdf, and foo.txt from me.json.
-fluentcmd me.json -o out1.doc -o out1.pdf -o foo.txt
+fluentcv me.json -o out1.doc -o out1.pdf -o foo.txt
 ```
 
 You can also omit the output file(s) and/or theme completely:
 
 ```bash
-# Equivalent to "fluentcmd resume.json resume.all -t modern"
-fluentcmd resume.json
+# Equivalent to "fluentcv resume.json resume.all -t modern"
+fluentcv resume.json
 ```
 
 ### Using .all
 
-The special `.all` extension tells FluentCMD to generate all supported output formats for the given resume. For example, this...
+The special `.all` extension tells FluentCV to generate all supported output formats for the given resume. For example, this...
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, etc.)
-fluentcmd me.json -o out/resume.all
+fluentcv me.json -o out/resume.all
 ```
 
 ..tells FluentCV to read `me.json` and generate `out/resume.md`, `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and `out/resume.json`.
 
 ### Prettifying
 
-FluentCMD applies [js-beautify][10]-style HTML prettification by default to HTML-formatted resumes. To disable prettification, the `--nopretty` or `-n` flag can be used:
+FluentCV applies [js-beautify][10]-style HTML prettification by default to HTML-formatted resumes. To disable prettification, the `--nopretty` or `-n` flag can be used:
 
 ```bash
-fluentcmd resume.json out.all --nopretty
+fluentcv resume.json out.all --nopretty
 ```
 
 ### Silent Mode
@@ -145,8 +145,8 @@ fluentcmd resume.json out.all --nopretty
 Use `-s` or `--silent` to run in silent mode:
 
 ```bash
-fluentcmd resume.json -o someFile.all -s
-fluentcmd resume.json -o someFile.all --silent
+fluentcv resume.json -o someFile.all -s
+fluentcv resume.json -o someFile.all --silent
 ```
 
 ## License

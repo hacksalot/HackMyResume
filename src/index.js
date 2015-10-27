@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 /**
-Command-line interface (CLI) for FluentCMD via Node.js.
+Command-line interface (CLI) for FluentCV via Node.js.
 @license Copyright (c) 2015 | James M. Devlin
 */
 
@@ -24,7 +24,7 @@ catch( ex ) {
 function main() {
 
   // Setup.
-  var title = '*** FluentCMD v' + PKG.version + ' ***';
+  var title = '*** FluentCV v' + PKG.version + ' ***';
   if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 3 }; }
   var args = ARGS( process.argv.slice(2) );
   opts = getOpts( args );
