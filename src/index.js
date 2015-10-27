@@ -37,8 +37,6 @@ function main() {
 
   // Generate!
   FCMD.generate( src, dst, opts, logMsg );
-
-  process.exit(0);
 }
 
 function logMsg( msg ) {
