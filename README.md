@@ -58,7 +58,7 @@ fluentcv in1.json in2.json -o out.html -o out.doc -o out.pdf
 You should see something to the effect of:
 
 ```
-*** FluentCV v0.7.1 ***
+*** FluentCV v0.7.2 ***
 Reading JSON resume: foo/resume.json
 Applying MODERN Theme (7 formats)
 Generating HTML resume: out/resume.html
@@ -81,7 +81,7 @@ fluentcv resume.json -t modern
 fluentcv resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.7.1, available predefined themes are `modern`, `minimist`, and `hello-world`.
+As of v0.7.2, available predefined themes are `modern`, `minimist`, and `hello-world`, and `compact`.
 
 ### Merging resumes
 
