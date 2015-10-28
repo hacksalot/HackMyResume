@@ -35,7 +35,7 @@ var _defaultOpts = {
   },
   prettify: { // ← See https://github.com/beautify-web/js-beautify#options
     indent_size: 2,
-    unformatted: ['em','strong'],
+    unformatted: ['em','strong','a'],
     max_char: 80, // ← See lib/html.js in above-linked repo
     //wrap_line_length: 120, <-- Don't use this
   }
