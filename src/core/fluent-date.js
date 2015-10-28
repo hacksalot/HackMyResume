@@ -28,7 +28,7 @@ function FluentDate( dt ) {
 FluentDate/*.prototype*/.fmt = function( dt ) {
   if( (typeof dt === 'string' || dt instanceof String) ) {
     dt = dt.toLowerCase().trim();
-    if( /^(present|now)$/.test(dt) ) { // "Present", "Now"
+    if( /^(present|now|current)$/.test(dt) ) { // "Present", "Now"
       return moment();
     }
     else if( /^\D+\s+\d{4}$/.test(dt) ) { // "Mar 2015"
