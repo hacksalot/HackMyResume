@@ -40,7 +40,7 @@ FluentDate/*.prototype*/.fmt = function( dt ) {
     else if( /^\d{4}-\d{1,2}$/.test(dt) ) { // "2015-03", "1998-4"
       return moment( dt, 'YYYY-MM' );
     }
-    else if( /^\s\d{4}$/.test(dt) ) { // "2015"
+    else if( /^\s*\d{4}\s*$/.test(dt) ) { // "2015"
       return moment( dt, 'YYYY' );
     }
     else if( /^\s*$/.test(dt) ) { // "", " "
