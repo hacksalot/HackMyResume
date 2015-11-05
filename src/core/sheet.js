@@ -119,6 +119,7 @@ Abstract character/resume sheet representation.
     delete this.publications;
     delete this.interests;
     delete this.skills;
+    delete this.basics.profiles;
   };
 
   /**
