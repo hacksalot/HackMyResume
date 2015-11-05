@@ -31,6 +31,8 @@ Abstract theme representation.
       return friendly[val] || val;
     }
 
+    // Remember the theme folder; might be custom
+    this.folder = themeFolder;
     var tplFolder = PATH.join( themeFolder, 'templates' );
     var fmts = FS.readdirSync( tplFolder ).map( function( file ) {
       var absPath = PATH.join( tplFolder, file );
