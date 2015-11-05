@@ -33,6 +33,9 @@ Abstract theme representation.
 
     // Remember the theme folder; might be custom
     this.folder = themeFolder;
+
+    // Iterate over all files in the theme folder, producing an array, fmts,
+    // containing info for each file.
     var tplFolder = PATH.join( themeFolder, 'templates' );
     var fmts = FS.readdirSync( tplFolder ).map( function( file ) {
       var absPath = PATH.join( tplFolder, file );
@@ -48,20 +51,24 @@ Abstract theme representation.
       return temp;
     });
 
-    // Freebie formats every theme gets
+    // Add freebie formats every theme gets
     fmts.push( [ 'json', { title: 'json', pre: 'json', ext: 'json', path: null, data: null } ] );
     fmts.push( [ 'yml', { title: 'yaml', pre: 'yml', ext: 'yml', path: null, data: null } ] );
 
-    // Handle CSS files
-    var cssFiles = fmts.filter(function( fmt ){
-      return fmt[1].ext === 'css';
-    });
-    cssFiles.forEach(function( cssf ) {
+    // Now, get all the CSS files...
+    this.cssFiles = fmts.filter(function( fmt ){ return fmt[1].ext === 'css'; });
+
+    // ...and assemble information on them
+    this.cssFiles.forEach(function( cssf ) {
       // For each CSS file, get its corresponding HTML file
-      var idx = _.findIndex(fmts, function( fmt ) { return fmt[1].pre === cssf[1].pre && fmt[1].ext === 'html' });
+      var idx = _.findIndex(fmts, function( fmt ) {
+        return fmt[1].pre === cssf[1].pre && fmt[1].ext === 'html'
+      });
       fmts[ idx ][1].css = cssf[1].data;
       fmts[ idx ][1].cssPath = cssf[1].path;
     });
+
+    // Remove CSS files from the formats array
     fmts = fmts.filter( function( fmt) {
       return fmt[1].ext !== 'css';
     });
@@ -69,7 +76,9 @@ Abstract theme representation.
     // Create a hash out of the formats for this theme
     this.formats = _.object( fmts );
 
+    // Set the official theme name
     this.name = PATH.parse( themeFolder ).name;
+
     return this;
   };
 
