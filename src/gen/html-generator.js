@@ -1,32 +1,40 @@
 /**
 HTML resume generator for FluentCV.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+@license Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
-var TemplateGenerator = require('./template-generator');
-var FS = require('fs-extra');
-var HTML = require( 'html' );
+(function() {
 
-var HtmlGenerator = module.exports = TemplateGenerator.extend({
+  var TemplateGenerator = require('./template-generator')
+    , FS = require('fs-extra')
+    , HTML = require( 'html' )
+    , PATH = require('path');
 
-  init: function() {
-    this._super( 'html' );
-  },
+  var HtmlGenerator = module.exports = TemplateGenerator.extend({
 
-  /**
-  Generate an HTML resume with optional pretty printing.
-  */
-  onBeforeSave: function( mk, theme, outputFile ) {
-    var themeFile = theme.getFormat('html').path;
-    var cssSrc = themeFile.replace( /.html$/g, '.css' );
-    var cssDst = outputFile.replace( /.html$/g, '.css' );
-    var that = this;
-    FS.copySync( cssSrc, cssDst, { clobber: true }, function( e ) {
-      throw { fluenterror: that.codes.copyCss, data: [cssSrc,cssDst] };
-    });
+    init: function() {
+      this._super( 'html' );
+    },
 
-    return this.opts.prettify ?
-      HTML.prettyPrint( mk, this.opts.prettify ) : mk;
-  }
+    /**
+    Copy satellite CSS files to the destination and optionally pretty-print
+    the HTML resume prior to saving.
+    */
+    onBeforeSave: function( info ) {
+      var cssSrc = PATH.join( info.theme.folder, 'templates', '*.css' )
+        , outFolder = PATH.parse( info.outputFile ).dir, that = this;
 
-});
+      info.theme.cssFiles.forEach( function( f ) {
+        var fi = PATH.parse( f[1].path );
+        FS.copySync( f[1].path, PATH.join( outFolder, fi.base ), { clobber: true }, function( e ) {
+          throw { fluenterror: that.codes.copyCss, data: [cssSrc,cssDst] };
+        });
+      });
+
+      return this.opts.prettify ?
+        HTML.prettyPrint( info.mk, this.opts.prettify ) : info.mk;
+    }
+
+  });
+
+}());
