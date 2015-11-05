@@ -6,6 +6,7 @@ Core resume generation module for FluentCV.
 module.exports = {
   Sheet: require('./core/sheet'),
   Theme: require('./core/theme'),
+  FluentDate: require('./core/fluent-date'),
   HtmlGenerator: require('./gen/html-generator'),
   TextGenerator: require('./gen/text-generator'),
   HtmlPdfGenerator: require('./gen/html-pdf-generator'),
