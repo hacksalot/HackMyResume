@@ -39,8 +39,8 @@ Abstract character/resume sheet representation.
   Save the sheet to disk (for environments that have disk access).
   */
   Sheet.prototype.save = function( filename ) {
-    filename = filename || this.meta.fileName;
-    FS.writeFileSync( filename, this.stringify(), 'utf8' );
+    this.meta.fileName = filename || this.meta.fileName;
+    FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
     return this;
   };
 
