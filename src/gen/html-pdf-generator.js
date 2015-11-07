@@ -23,7 +23,7 @@ Definition of the HtmlPdfGenerator class.
     */
     onBeforeSave: function( info ) {
       pdf(info.mk, info.outputFile);
-      return mk;
+      return info.mk;
     }
 
   });
