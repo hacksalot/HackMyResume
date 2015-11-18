@@ -123,7 +123,7 @@ module.exports = function () {
   ];
 
   /**
-  Default FluentCMD options.
+  Default FluentCV options.
   */
   var _opts = {
     theme: 'modern',

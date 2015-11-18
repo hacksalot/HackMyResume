@@ -89,11 +89,11 @@ var TemplateGenerator = module.exports = BaseGenerator.extend({
     // Load theme and CSS data
     var tplFolder = PATH.join( tFolder, 'templates' );
     var curFmt = theme.getFormat( this.format );
-    var ctx = { file: curFmt.css ? curFmt.cssPath : null, data: curFmt.css || null };
+    var cssInfo = { file: curFmt.css ? curFmt.cssPath : null, data: curFmt.css || null };
 
     // Compile and invoke the template!
-    var mk = this.single( rez, curFmt.data, this.format, ctx, opts );
-    this.onBeforeSave && (mk = this.onBeforeSave( mk, theme, f ));
+    var mk = this.single( rez, curFmt.data, this.format, cssInfo, opts );
+    this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
     FS.writeFileSync( f, mk, { encoding: 'utf8', flags: 'w' } );
 
   },

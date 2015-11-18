@@ -1,6 +1,6 @@
 {
   "name": "fluentcv",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Generate beautiful, targeted resumes from your command line, shell, or in Javascript with Node.js.",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
-    "fluent-themes": "0.2.0-beta",
+    "fluent-themes": "0.4.0-beta",
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",

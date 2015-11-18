@@ -39,8 +39,8 @@ Abstract character/resume sheet representation.
   Save the sheet to disk (for environments that have disk access).
   */
   Sheet.prototype.save = function( filename ) {
-    filename = filename || this.meta.fileName;
-    FS.writeFileSync( filename, this.stringify(), 'utf8' );
+    this.meta.fileName = filename || this.meta.fileName;
+    FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
     return this;
   };
 
@@ -52,7 +52,7 @@ Abstract character/resume sheet representation.
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-      'isModified', 'htmlPreview'],
+      'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }
@@ -119,6 +119,7 @@ Abstract character/resume sheet representation.
     delete this.publications;
     delete this.interests;
     delete this.skills;
+    delete this.basics.profiles;
   };
 
   /**
