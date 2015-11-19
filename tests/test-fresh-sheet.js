@@ -9,14 +9,14 @@ var chai = require('chai')
 
 chai.config.includeStack = false;
 
-describe('fresh-resume-exemplar.json (FRESH)', function () {
+describe('jane-doe.json (FRESH)', function () {
 
     var _sheet;
 
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
         _sheet = new FRESHResume().open(
-          'node_modules/FRESCA/examples/fresh-resume-exemplar.json' );
+          'node_modules/FRESCA/exemplar/jane-doe.json' );
       }
       tryOpen.should.not.Throw();
     });
