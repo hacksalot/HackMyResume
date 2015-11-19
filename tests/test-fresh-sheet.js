@@ -23,7 +23,7 @@ describe('fullstack.json (FRESH)', function () {
     it('should have one or more of each section', function() {
       expect(
         //(_sheet.basics) &&
-        (_sheet.name && _sheet.label && _sheet.class && _sheet.summary) &&
+        (_sheet.name && _sheet.info && _sheet.location) &&
         (_sheet.employment.history && _sheet.employment.history.length > 0) &&
         (_sheet.skills && _sheet.skills.length > 0) &&
         (_sheet.education.history && _sheet.education.history.length > 0) &&
