@@ -246,7 +246,7 @@ FRESH character/resume sheet representation.
   */
   FreshSheet.prototype.hasProfile = function( socialNetwork ) {
     socialNetwork = socialNetwork.trim().toLowerCase();
-    return this.basics.profiles && _.some( this.basics.profiles, function(p) {
+    return this.social && _.some( this.social, function(p) {
       return p.network.trim().toLowerCase() === socialNetwork;
     });
   };
