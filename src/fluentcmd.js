@@ -1,6 +1,6 @@
 /**
 Internal resume generation logic for FluentCV.
-@license Copyright (c) 2015 | James M. Devlin
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
 module.exports = function () {

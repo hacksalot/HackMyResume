@@ -1,6 +1,6 @@
 /**
-Core resume generation module for FluentCV.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+External API surface for FluentCV:CLI.
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
 module.exports = {

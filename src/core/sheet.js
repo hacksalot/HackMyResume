@@ -1,6 +1,6 @@
 /**
 Abstract character/resume sheet representation.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
 (function() {

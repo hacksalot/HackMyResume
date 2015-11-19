@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 
 /**
-Command-line interface (CLI) for FluentCV via Node.js.
-@license Copyright (c) 2015 | James M. Devlin
+Command-line interface (CLI) for FluentCV:CLI.
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 */
 
 var ARGS = require( 'minimist' )
