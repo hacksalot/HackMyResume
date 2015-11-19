@@ -9,13 +9,14 @@ var chai = require('chai')
 
 chai.config.includeStack = false;
 
-describe('fullstack.json (FRESH)', function () {
+describe('fresh-resume-exemplar.json (FRESH)', function () {
 
     var _sheet;
 
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
-        _sheet = new FRESHResume().open( 'tests/exemplars/fresh-exemplar.json' );
+        _sheet = new FRESHResume().open(
+          'node_modules/FRESCA/examples/fresh-resume-exemplar.json' );
       }
       tryOpen.should.not.Throw();
     });
@@ -23,13 +24,16 @@ describe('fullstack.json (FRESH)', function () {
     it('should have one or more of each section', function() {
       expect(
         //(_sheet.basics) &&
-        (_sheet.name && _sheet.info && _sheet.location) &&
+        _sheet.name && _sheet.info && _sheet.location && _sheet.contact &&
         (_sheet.employment.history && _sheet.employment.history.length > 0) &&
         (_sheet.skills && _sheet.skills.length > 0) &&
         (_sheet.education.history && _sheet.education.history.length > 0) &&
         (_sheet.service.history && _sheet.service.history.length > 0) &&
-        (_sheet.publications && _sheet.publications.length > 0) //&&
-        //(_sheet.awards && _sheet.awards.length > 0)
+        (_sheet.publications && _sheet.publications.length > 0) &&
+        (_sheet.recognition && _sheet.recognition.length > 0) &&
+        (_sheet.samples && _sheet.samples.length > 0) &&
+        (_sheet.references && _sheet.references.length > 0) &&
+        (_sheet.interests && _sheet.interests.length > 0)
       ).to.equal( true );
     });
 
@@ -45,7 +49,7 @@ describe('fullstack.json (FRESH)', function () {
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new FRESHResume().open( 'tests/sandbox/fullstack.json' );
+      var savedSheet = new FRESHResume().open('tests/sandbox/fullstack.json');
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 

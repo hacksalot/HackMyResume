@@ -24,8 +24,8 @@ FRESH to JSON Resume conversion routiens.
         info: {
           label: jrs.basics.label,
           class: jrs.basics.label,
-          picture: jrs.basics.picture,
-          summary: jrs.basics.summary
+          image: jrs.basics.picture,
+          brief: jrs.basics.summary
         },
 
         contact: {
@@ -39,9 +39,7 @@ FRESH to JSON Resume conversion routiens.
           region: jrs.basics.location.region,
           country: jrs.basics.location.countryCode,
           code: jrs.basics.location.postalCode,
-          address: [
-            jrs.basics.location.address,
-          ]
+          address: jrs.basics.location.address
         },
 
         employment: {
@@ -132,7 +130,9 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        interests: jrs.interests
+        interests: jrs.interests,
+
+        references: jrs.references
       };
     },
 
@@ -145,11 +145,11 @@ FRESH to JSON Resume conversion routiens.
 
         basics: {
           name: fresh.name,
-          summary: fresh.info.summary,
+          summary: fresh.info.brief,
           website: fresh.info.website,
           phone: fresh.info.phone,
           email: fresh.info.email,
-          picture: fresh.info.picture,
+          picture: fresh.info.image,
           location: {
             address: fresh.location.address.join('\n'),
             postalCode: fresh.location.code,
@@ -233,7 +233,9 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        interests: fresh.interests
+        interests: fresh.interests,
+
+        references: fresh.references
 
       };
 
