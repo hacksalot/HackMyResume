@@ -10,7 +10,8 @@ FRESH character/resume sheet representation.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
-    , moment = require('moment');
+    , moment = require('moment')
+    , CONVERTER = require('./convert');
 
   /**
   A FRESH-style resume in JSON or YAML.
@@ -66,7 +67,7 @@ FRESH character/resume sheet representation.
     var rep = JSON.parse( stringData );
 
     // Convert JSON Resume to FRESH if necessary
-    rep.basics && (rep = FreshSheet.convert( rep ));
+    rep.basics && (rep = CONVERTER.toFRESH( rep ));
 
     // Now apply the resume representation onto this object
     extend( true, this, rep );
@@ -85,106 +86,6 @@ FRESH character/resume sheet representation.
        keywords: this.keywords()
     });
     return this;
-  };
-
-  /**
-  Convert from JSON Resume format
-  */
-  FreshSheet.convert = function( jrs ) {
-
-    return {
-
-      name: jrs.basics.name,
-      label: jrs.basics.label,
-      class: jrs.basics.label,
-      summary: jrs.basics.summary,
-
-      contact: {
-        email: jrs.basics.email,
-        phone: jrs.basics.phone,
-        website: jrs.basics.website,
-        postal: {
-          city: jrs.basics.location.city,
-          region: jrs.basics.location.region,
-          country: jrs.basics.location.countryCode,
-          code: jrs.basics.location.postalCode,
-          address: [
-            jrs.basics.location.address,
-          ]
-        }
-      },
-
-      employment: {
-        history: jrs.work.map( function( job ) {
-          return {
-            position: job.position,
-            employer: job.company,
-            summary: job.summary,
-            current: !job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current',
-            start: job.startDate,
-            end: job.endDate,
-            url: job.website,
-            keywords: "",
-            highlights: job.highlights
-          };
-        })
-      },
-
-      education: {
-        history: jrs.education.map(function(edu){
-          return {
-            institution: edu.institution,
-            start: edu.startDate,
-            end: edu.endDate,
-            grade: edu.gpa,
-            curriculum: edu.courses,
-            url: edu.website || edu.url || null,
-            summary: null,
-            // ???: edu.area, TODO
-            // ???: edu.studyType TODO
-          };
-        })
-      },
-
-      service: {
-        history: jrs.volunteer.map(function(vol) {
-          return {
-            type: 'volunteer',
-            position: vol.position,
-            organization: vol.organization,
-            start: vol.startDate,
-            end: vol.endDate,
-            url: vol.website,
-            summary: vol.summary,
-            highlights: vol.highlights
-          };
-        })
-      },
-
-      skills: jrs.skills.map(function(sk){
-        return {
-          name: sk.name,
-          summary: "",
-          level: sk.level,
-          summary: sk.keywords.join(', '),
-          years: null,
-          proof: null
-        };
-      }),
-
-      publications: jrs.publications.map(function(pub){
-        return {
-          title: pub.name,
-          publisher: pub.publisher,
-          link: [
-            { 'url': pub.website }
-          ],
-          year: pub.releaseDate
-        };
-      }),
-
-      interests: jrs.interests
-    };
   };
 
   /**
@@ -266,12 +167,17 @@ FRESH character/resume sheet representation.
   /**
   Validate the sheet against the FRESH Resume schema.
   */
-  FreshSheet.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
-    var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
-    var schemaObj = JSON.parse( schema );
+  FreshSheet.prototype.isValid = function( info ) {
+    var schemaObj = require('FRESCA');
+    //var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid')
     var validate = validator( schemaObj );
-    return validate( this );
+    var ret = validate( this );
+    if( !ret ) {
+      this.meta = this.meta || { };
+      this.meta.validationErrors = validate.errors;
+    }
+    return ret;
   };
 
   /**

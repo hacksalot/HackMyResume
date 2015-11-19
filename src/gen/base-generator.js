@@ -29,7 +29,9 @@ Base resume generator for FluentCV.
       success: 0,
       themeNotFound: 1,
       copyCss: 2,
-      resumeNotFound: 3
+      resumeNotFound: 3,
+      missingCommand: 4,
+      invalidCommand: 5
     },
 
     /**

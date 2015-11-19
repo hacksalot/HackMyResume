@@ -9,7 +9,7 @@ module.exports = function () {
   var path = require( 'path' )
     , extend = require( './utils/extend' )
     , unused = require('./utils/string')
-    , fs = require('fs')
+    , FS = require('fs')
     , _ = require('underscore')
     , FLUENT = require('./fluentlib')
     , PATH = require('path')
@@ -110,6 +110,46 @@ module.exports = function () {
   }
 
   /**
+  Validate 1 to N resumes as vanilla JSON.
+  */
+  // function validateAsJSON( src, logger ) {
+  //   _log = logger || console.log;
+  //   if( !src || !src.length ) { throw { fluenterror: 3 }; }
+  //   var isValid = true;
+  //   var sheets = src.map( function( res ) {
+  //     try {
+  //       var rawJson = FS.readFileSync( res, 'utf8' );
+  //       var testObj = JSON.parse( rawJson );
+  //     }
+  //     catch(ex) {
+  //       if (!(ex instanceof SyntaxError)) { throw ex; } // [1]
+  //       isValid = false;
+  //     }
+  //
+  //     _log( 'Validating JSON resume: ' + res + (isValid ? ' (VALID)' : ' (INVALID)'));
+  //     return isValid;
+  //   });
+  // }
+
+  /**
+  Validate 1 to N resumes in either FRESH or JSON Resume format.
+  */
+  function validate( src, unused, opts, logger ) {
+    _log = logger || console.log;
+    if( !src || !src.length ) { throw { fluenterror: 3 }; }
+    var isValid = true;
+    var sheets = src.map( function( res ) {
+      var sheet = (new FLUENT.Sheet()).open( res );
+      var valid = sheet.isValid();
+      _log( 'Validating JSON resume: ' + res +
+        (valid ? ' (VALID)' : ' (INVALID)'));
+      if( !valid ) {
+        _log( sheet.meta.validationErrors );
+      }
+    });
+  }
+
+  /**
   Supported resume formats.
   */
   var _fmts = [
@@ -139,10 +179,17 @@ module.exports = function () {
   Internal module interface. Used by FCV Desktop and HMR.
   */
   return {
-    generate: gen,
+    verbs: {
+      generate: gen,
+      validate: validate,
+      convert: convert
+    },
     lib: require('./fluentlib'),
     options: _opts,
     formats: _fmts
   };
 
 }();
+
+// [1]: JSON.parse throws SyntaxError on invalid JSON. See:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse

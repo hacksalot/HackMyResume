@@ -23,20 +23,27 @@ catch( ex ) {
 
 function main() {
 
-  // Setup.
+  // Setup
   var title = '*** FluentCV v' + PKG.version + ' ***';
-  if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 3 }; }
-  var args = ARGS( process.argv.slice(2) );
-  opts = getOpts( args );
+  if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 4 }; }
+  var a = ARGS( process.argv.slice(2) );
+  opts = getOpts( a );
   logMsg( title );
 
-  // Convert arguments to source files, target files, options
-  var src = args._ || [];
-  var dst = (args.o && ((typeof args.o === 'string' && [ args.o ]) || args.o)) || [];
-  dst = (dst === true) ? [] : dst; // Handle -o with missing output file
+  // Get the action to be performed
+  var verb = a._[0].toLowerCase().trim();
+  if( !FCMD.verbs[ verb ] ) {
+    throw 'Invalid command: "' + verb + '"';
+  }
 
-  // Generate!
-  FCMD.generate( src, dst, opts, logMsg );
+  // Preload our params array
+  var dst = (a.o && ((typeof a.o === 'string' && [ a.o ]) || a.o)) || [];
+  dst = (dst === true) ? [] : dst; // Handle -o with missing output file
+  var parms = [ a._.slice(1) || [], dst, opts, logMsg ];
+
+  // Invoke the action
+  FCMD.verbs[ verb ].apply( null, parms );
+
 }
 
 function logMsg( msg ) {
@@ -60,6 +67,7 @@ function handleError( ex ) {
       case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
       case 2: msg = "Couldn't copy CSS file to destination folder"; break;
       case 3: msg = "Please specify a valid JSON resume file."; break;
+      case 4: msg = "Please specify a valid command (GENERATE, VALIDATE, or CONVERT)."
     };
     exitCode = ex.fluenterror;
   }
