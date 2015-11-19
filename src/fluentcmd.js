@@ -37,7 +37,7 @@ module.exports = function () {
     if(!src || !src.length) { throw { fluenterror: 3 }; }
     var sheets = src.map( function( res ) {
       _log( 'Reading JSON resume: ' + res );
-      return (new FLUENT.Sheet()).open( res );
+      return (new FLUENT.FRESHResume()).open( res );
     });
 
     // Merge input resumes...
@@ -139,7 +139,7 @@ module.exports = function () {
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
     var isValid = true;
     var sheets = src.map( function( res ) {
-      var sheet = (new FLUENT.Sheet()).open( res );
+      var sheet = (new FLUENT.FRESHResume()).open( res );
       var valid = sheet.isValid();
       _log( 'Validating JSON resume: ' + res +
         (valid ? ' (VALID)' : ' (INVALID)'));

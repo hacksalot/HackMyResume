@@ -4,7 +4,7 @@ var chai = require('chai')
   , should = chai.should()
   , path = require('path')
   , _ = require('underscore')
-	, Sheet = require('../src/core/sheet')
+	, JRSResume = require('../src/core/jrs-resume')
   , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;
@@ -15,7 +15,7 @@ describe('fullstack.json (JRS)', function () {
 
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
-        _sheet = new Sheet().open( 'node_modules/resample/fullstack/in/resume.json' );
+        _sheet = new JRSResume().open( 'node_modules/resample/fullstack/in/resume.json' );
       }
       tryOpen.should.not.Throw();
     });
@@ -44,7 +44,7 @@ describe('fullstack.json (JRS)', function () {
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new Sheet().open( 'tests/sandbox/fullstack.json' );
+      var savedSheet = new JRSResume().open( 'tests/sandbox/fullstack.json' );
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 

@@ -4,7 +4,9 @@ External API surface for FluentCV:CLI.
 */
 
 module.exports = {
-  Sheet: require('./core/fresh-sheet'),
+  Sheet: require('./core/fresh-resume'),
+  FRESHResume: require('./core/fresh-resume'),
+  JRSResume: require('./core/jrs-resume'),
   Theme: require('./core/theme'),
   FluentDate: require('./core/fluent-date'),
   HtmlGenerator: require('./gen/html-generator'),

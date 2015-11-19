@@ -4,7 +4,7 @@ var chai = require('chai')
   , should = chai.should()
   , path = require('path')
   , _ = require('underscore')
-	, FreshSheet = require('../src/core/fresh-sheet')
+	, FRESHResume = require('../src/core/fresh-resume')
   , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;
@@ -15,7 +15,7 @@ describe('fullstack.json (FRESH)', function () {
 
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
-        _sheet = new FreshSheet().open( 'tests/exemplars/fresh-exemplar.json' );
+        _sheet = new FRESHResume().open( 'tests/exemplars/fresh-exemplar.json' );
       }
       tryOpen.should.not.Throw();
     });
@@ -45,7 +45,7 @@ describe('fullstack.json (FRESH)', function () {
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new FreshSheet().open( 'tests/sandbox/fullstack.json' );
+      var savedSheet = new FRESHResume().open( 'tests/sandbox/fullstack.json' );
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 

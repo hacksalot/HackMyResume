@@ -1,5 +1,5 @@
 /**
-Abstract character/resume sheet representation.
+Definition of the FRESHResume class.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
@@ -10,26 +10,23 @@ Abstract character/resume sheet representation.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
-    , moment = require('moment');
+    , moment = require('moment')
+    , CONVERTER = require('./convert');
 
   /**
-  The Sheet class represent a specific JSON character sheet. When Sheet.open
-  is called, we merge the loaded JSON sheet properties onto the Sheet instance
-  via extend(), so a full-grown sheet object will have all of the methods here,
-  plus a complement of JSON properties from the backing JSON file. That allows
-  us to treat Sheet objects interchangeably with the loaded JSON model.
-  @class Sheet
+  A FRESH-style resume in JSON or YAML.
+  @class FreshResume
   */
-  function Sheet() {
+  function FreshResume() {
 
   }
 
   /**
-  Open and parse the specified JSON resume sheet. Merge the JSON object model
+  Open and parse the specified FRESH resume sheet. Merge the JSON object model
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
   */
-  Sheet.prototype.open = function( file, title ) {
+  FreshResume.prototype.open = function( file, title ) {
     this.meta = { fileName: file };
     this.meta.raw = FS.readFileSync( file, 'utf8' );
     return this.parse( this.meta.raw, title );
@@ -38,7 +35,7 @@ Abstract character/resume sheet representation.
   /**
   Save the sheet to disk (for environments that have disk access).
   */
-  Sheet.prototype.save = function( filename ) {
+  FreshResume.prototype.save = function( filename ) {
     this.meta.fileName = filename || this.meta.fileName;
     FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
     return this;
@@ -48,11 +45,10 @@ Abstract character/resume sheet representation.
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */
-  Sheet.prototype.stringify = function() {
+  FreshResume.prototype.stringify = function() {
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
-        'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-      'isModified', 'htmlPreview', 'display_progress_bar'],
+        'safe', 'result', 'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }
@@ -64,21 +60,29 @@ Abstract character/resume sheet representation.
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
   */
-  Sheet.prototype.parse = function( stringData, opts ) {
-    opts = opts || { };
+  FreshResume.prototype.parse = function( stringData, opts ) {
+
+    // Parse the incoming JSON representation
     var rep = JSON.parse( stringData );
+
+    // Convert JSON Resume to FRESH if necessary
+    rep.basics && (rep = CONVERTER.toFRESH( rep ));
+
+    // Now apply the resume representation onto this object
     extend( true, this, rep );
+
     // Set up metadata
+    opts = opts || { };
     if( opts.meta === undefined || opts.meta ) {
       this.meta = this.meta || { };
-      this.meta.title = (opts.title || this.meta.title) || this.basics.name;
+      this.meta.title = (opts.title || this.meta.title) || this.name;
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
     (opts.sort === undefined || opts.sort) && this.sort();
     (opts.compute === undefined || opts.compute) && (this.computed = {
-      numYears: this.duration(),
-      keywords: this.keywords()
+       numYears: this.duration(),
+       keywords: this.keywords()
     });
     return this;
   };
@@ -86,20 +90,17 @@ Abstract character/resume sheet representation.
   /**
   Return a unique list of all keywords across all skills.
   */
-  Sheet.prototype.keywords = function() {
+  FreshResume.prototype.keywords = function() {
     var flatSkills = [];
-    if( this.skills && this.skills.length ) {
-      this.skills.forEach( function( s ) {
-        flatSkills = _.union( flatSkills, s.keywords );
-      });
-    }
+    this.skills && this.skills.length &&
+      (flatSkills = this.skills.map(function(sk) { return sk.name;  }));
     return flatSkills;
   },
 
   /**
   Update the sheet's raw data. TODO: remove/refactor
   */
-  Sheet.prototype.updateData = function( str ) {
+  FreshResume.prototype.updateData = function( str ) {
     this.clear( false );
     this.parse( str )
     return this;
@@ -108,32 +109,32 @@ Abstract character/resume sheet representation.
   /**
   Reset the sheet to an empty state.
   */
-  Sheet.prototype.clear = function( clearMeta ) {
+  FreshResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
     clearMeta && (delete this.meta);
     delete this.computed; // Don't use Object.keys() here
-    delete this.work;
-    delete this.volunteer;
+    delete this.employment;
+    delete this.service;
     delete this.education;
-    delete this.awards;
+    //delete this.awards;
     delete this.publications;
-    delete this.interests;
+    //delete this.interests;
     delete this.skills;
-    delete this.basics.profiles;
+    delete this.social;
   };
 
   /**
   Get the default (empty) sheet.
   */
-  Sheet.default = function() {
-    return new Sheet().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
+  FreshResume.default = function() {
+    return new FreshResume().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
   }
 
   /**
   Add work experience to the sheet.
   */
-  Sheet.prototype.add = function( moniker ) {
-    var defSheet = Sheet.default();
+  FreshResume.prototype.add = function( moniker ) {
+    var defSheet = FreshResume.default();
     var newObject = $.extend( true, {}, defSheet[ moniker ][0] );
     this[ moniker ] = this[ moniker ] || [];
     this[ moniker ].push( newObject );
@@ -143,9 +144,9 @@ Abstract character/resume sheet representation.
   /**
   Determine if the sheet includes a specific social profile (eg, GitHub).
   */
-  Sheet.prototype.hasProfile = function( socialNetwork ) {
+  FreshResume.prototype.hasProfile = function( socialNetwork ) {
     socialNetwork = socialNetwork.trim().toLowerCase();
-    return this.basics.profiles && _.some( this.basics.profiles, function(p) {
+    return this.social && _.some( this.social, function(p) {
       return p.network.trim().toLowerCase() === socialNetwork;
     });
   };
@@ -153,7 +154,7 @@ Abstract character/resume sheet representation.
   /**
   Determine if the sheet includes a specific skill.
   */
-  Sheet.prototype.hasSkill = function( skill ) {
+  FreshResume.prototype.hasSkill = function( skill ) {
     skill = skill.trim().toLowerCase();
     return this.skills && _.some( this.skills, function(sk) {
       return sk.keywords && _.some( sk.keywords, function(kw) {
@@ -163,14 +164,19 @@ Abstract character/resume sheet representation.
   };
 
   /**
-  Validate the sheet against the JSON Resume schema.
+  Validate the sheet against the FRESH Resume schema.
   */
-  Sheet.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
-    var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
-    var schemaObj = JSON.parse( schema );
+  FreshResume.prototype.isValid = function( info ) {
+    var schemaObj = require('FRESCA');
+    //var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid')
     var validate = validator( schemaObj );
-    return validate( this );
+    var ret = validate( this );
+    if( !ret ) {
+      this.meta = this.meta || { };
+      this.meta.validationErrors = validate.errors;
+    }
+    return ret;
   };
 
   /**
@@ -181,15 +187,15 @@ Abstract character/resume sheet representation.
   *latest end date of all jobs in the work history*. This last condition is for
   sheets that have overlapping jobs.
   */
-  Sheet.prototype.duration = function() {
-    if( this.work && this.work.length ) {
-      var careerStart = this.work[ this.work.length - 1].safeStartDate;
+  FreshResume.prototype.duration = function() {
+    if( this.employment.history && this.employment.history.length ) {
+      var careerStart = this.employment.history[ this.employment.history.length - 1].safe.start;
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
           !careerStart.trim())
         return 0;
-      var careerLast = _.max( this.work, function( w ) {
-        return w.safeEndDate.unix();
-      }).safeEndDate;
+      var careerLast = _.max( this.employment.history, function( w ) {
+        return w.safe.end.unix();
+      }).safe.end;
       return careerLast.diff( careerStart, 'years' );
     }
     return 0;
@@ -199,24 +205,24 @@ Abstract character/resume sheet representation.
   Sort dated things on the sheet by start date descending. Assumes that dates
   on the sheet have been processed with _parseDates().
   */
-  Sheet.prototype.sort = function( ) {
+  FreshResume.prototype.sort = function( ) {
 
-    this.work && this.work.sort( byDateDesc );
-    this.education && this.education.sort( byDateDesc );
-    this.volunteer && this.volunteer.sort( byDateDesc );
+    this.employment.history && this.employment.history.sort( byDateDesc );
+    this.education.history && this.education.history.sort( byDateDesc );
+    this.service.history && this.service.history.sort( byDateDesc );
 
-    this.awards && this.awards.sort( function(a, b) {
-      return( a.safeDate.isBefore(b.safeDate) ) ? 1
-        : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
-    });
+    // this.awards && this.awards.sort( function(a, b) {
+    //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
+    //     : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
+    // });
     this.publications && this.publications.sort( function(a, b) {
-      return( a.safeReleaseDate.isBefore(b.safeReleaseDate) ) ? 1
-        : ( a.safeReleaseDate.isAfter(b.safeReleaseDate) && -1 ) || 0;
+      return( a.safe.date.isBefore(b.safe.date) ) ? 1
+        : ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0;
     });
 
     function byDateDesc(a,b) {
-      return( a.safeStartDate.isBefore(b.safeStartDate) ) ? 1
-        : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
+      return( a.safe.start.isBefore(b.safe.start) ) ? 1
+        : ( a.safe.start.isAfter(b.safe.start) && -1 ) || 0;
     }
 
   };
@@ -232,29 +238,37 @@ Abstract character/resume sheet representation.
 
     var _fmt = require('./fluent-date').fmt;
 
-    this.work && this.work.forEach( function(job) {
-      job.safeStartDate = _fmt( job.startDate );
-      job.safeEndDate = _fmt( job.endDate );
+    this.employment.history && this.employment.history.forEach( function(job) {
+      job.safe = {
+        start: _fmt( job.start ),
+        end: _fmt( job.end || 'current' )
+      };
     });
-    this.education && this.education.forEach( function(edu) {
-      edu.safeStartDate = _fmt( edu.startDate );
-      edu.safeEndDate = _fmt( edu.endDate );
+    this.education.history && this.education.history.forEach( function(edu) {
+      edu.safe = {
+        start: _fmt( edu.start ),
+        end: _fmt( edu.end || 'current' )
+      };
     });
-    this.volunteer && this.volunteer.forEach( function(vol) {
-      vol.safeStartDate = _fmt( vol.startDate );
-      vol.safeEndDate = _fmt( vol.endDate );
+    this.service.history && this.service.history.forEach( function(vol) {
+      vol.safe = {
+        start: _fmt( vol.start ),
+        end: _fmt( vol.end || 'current' )
+      };
     });
-    this.awards && this.awards.forEach( function(awd) {
-      awd.safeDate = _fmt( awd.date );
-    });
+    // this.awards && this.awards.forEach( function(awd) {
+    //   awd.safeDate = _fmt( awd.date );
+    // });
     this.publications && this.publications.forEach( function(pub) {
-      pub.safeReleaseDate = _fmt( pub.releaseDate );
+      pub.safe = {
+        date: _fmt( pub.year )
+      };
     });
   }
 
   /**
   Export the Sheet function/ctor.
   */
-  module.exports = Sheet;
+  module.exports = FreshResume;
 
 }());
