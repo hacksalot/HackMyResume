@@ -168,9 +168,10 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.isValid = function( info ) {
     var schemaObj = require('FRESCA');
-    //var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid')
-    var validate = validator( schemaObj );
+    var validate = validator( schemaObj, { // Note [1]
+      formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+    });
     var ret = validate( this );
     if( !ret ) {
       this.meta = this.meta || { };
@@ -272,3 +273,9 @@ Definition of the FRESHResume class.
   module.exports = FreshResume;
 
 }());
+
+// Note 1: Adjust default date validation to allow YYYY and YYYY-MM formats
+// in addition to YYYY-MM-DD. The original regex:
+//
+//     /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-[0-9]{2}$/
+//
