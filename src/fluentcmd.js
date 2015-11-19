@@ -181,8 +181,7 @@ module.exports = function () {
   return {
     verbs: {
       generate: gen,
-      validate: validate,
-      convert: convert
+      validate: validate
     },
     lib: require('./fluentlib'),
     options: _opts,
