@@ -9,7 +9,7 @@ var chai = require('chai')
 
 chai.config.includeStack = false;
 
-describe('fullstack.json', function () {
+describe('fullstack.json (JRS)', function () {
 
     var _sheet;
 
