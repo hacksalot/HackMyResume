@@ -15,55 +15,45 @@ FRESH to JSON Resume conversion routiens.
     /**
     Convert from JSON Resume format to FRESH.
     */
-    toFRESH: function( jrs ) {
+    toFRESH: function( src, foreign ) {
+
+      foreign = (foreign === undefined || foreign === null) ? true : foreign;
 
       return {
 
-        name: jrs.basics.name,
+        name: src.basics.name,
 
         info: {
-          label: jrs.basics.label,
-          //class: jrs.basics.label,
-          image: jrs.basics.picture,
-          brief: jrs.basics.summary
+          label: src.basics.label,
+          class: src.basics.class, // <--> round-trip
+          image: src.basics.picture,
+          brief: src.basics.summary
         },
 
         contact: {
-          email: jrs.basics.email,
-          phone: jrs.basics.phone,
-          website: jrs.basics.website
-          //other: [none]
+          email: src.basics.email,
+          phone: src.basics.phone,
+          website: src.basics.website,
+          other: src.basics.other // <--> round-trip
         },
 
-        meta: meta2FRESH( jrs.meta ),
-
-        // disposition: {
-        //   travel: 25,
-        //   relocation: true,
-        //   authorization: "citizen",
-        //   commitment: ["full-time","permanent","contract"],
-        //   remote: true,
-        //   relocation: {
-        //     willing: true,
-        //     destinations: [ "Austin, TX", "California", "New York" ]
-        //   }
-        // },
+        meta: meta( true, src.meta ),
 
         location: {
-          city: jrs.basics.location.city,
-          region: jrs.basics.location.region,
-          country: jrs.basics.location.countryCode,
-          code: jrs.basics.location.postalCode,
-          address: jrs.basics.location.address
+          city: src.basics.location.city,
+          region: src.basics.location.region,
+          country: src.basics.location.countryCode,
+          code: src.basics.location.postalCode,
+          address: src.basics.location.address
         },
 
         employment: {
-          history: jrs.work.map( function( job ) {
+          history: src.work.map( function( job ) {
             return {
               position: job.position,
               employer: job.company,
               summary: job.summary,
-              current: !job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current',
+              current: (!job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current') || undefined,
               start: job.startDate,
               end: job.endDate,
               url: job.website,
@@ -74,7 +64,7 @@ FRESH to JSON Resume conversion routiens.
         },
 
         education: {
-          history: jrs.education.map(function(edu){
+          history: src.education.map(function(edu){
             return {
               institution: edu.institution,
               start: edu.startDate,
@@ -90,7 +80,7 @@ FRESH to JSON Resume conversion routiens.
         },
 
         service: {
-          history: jrs.volunteer.map(function(vol) {
+          history: src.volunteer.map(function(vol) {
             return {
               type: 'volunteer',
               position: vol.position,
@@ -104,22 +94,20 @@ FRESH to JSON Resume conversion routiens.
           })
         },
 
-        skills: skillsToFRESH( jrs.skills ),
+        skills: skillsToFRESH( src.skills ),
 
-        writing: jrs.publications.map(function(pub){
+        writing: src.publications.map(function(pub){
           return {
             title: pub.name,
+            flavor: undefined,
             publisher: pub.publisher,
-            link: [
-              { 'url': pub.website }
-            ],
-            year: pub.releaseDate,
+            url: pub.website,
             date: pub.releaseDate,
             summary: pub.summary
           };
         }),
 
-        recognition: jrs.awards.map(function(awd){
+        recognition: src.awards.map(function(awd){
           return {
             title: awd.title,
             date: awd.date,
@@ -129,7 +117,7 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        social: jrs.basics.profiles.map(function(pro){
+        social: src.basics.profiles.map(function(pro){
           return {
             label: pro.network,
             network: pro.network,
@@ -138,37 +126,41 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        interests: jrs.interests,
-
-        references: jrs.references,
-
-        languages: jrs.languages
+        interests: src.interests,
+        references: src.references,
+        languages: src.languages,
+        disposition: src.disposition // <--> round-trip
       };
     },
 
     /**
     Convert from FRESH format to JSON Resume.
+    @param foreign True if non-JSON-Resume properties should be included in
+    the result, false if those properties should be excluded.
     */
-    toJRS: function( fresh ) {
+    toJRS: function( src, foreign ) {
+
+      foreign = (foreign === undefined || foreign === null) ? false : foreign;
 
       return {
 
         basics: {
-          name: fresh.name,
-          label: fresh.info.label,
-          summary: fresh.info.brief,
-          website: fresh.contact.website,
-          phone: fresh.contact.phone,
-          email: fresh.contact.email,
-          picture: fresh.info.image,
+          name: src.name,
+          label: src.info.label,
+          class: foreign ? src.info.class : undefined,
+          summary: src.info.brief,
+          website: src.contact.website,
+          phone: src.contact.phone,
+          email: src.contact.email,
+          picture: src.info.image,
           location: {
-            address: fresh.location.address,
-            postalCode: fresh.location.code,
-            city: fresh.location.city,
-            countryCode: fresh.location.country,
-            region: fresh.location.region
+            address: src.location.address,
+            postalCode: src.location.code,
+            city: src.location.city,
+            countryCode: src.location.country,
+            region: src.location.region
           },
-          profiles: fresh.social.map(function(soc){
+          profiles: src.social.map(function(soc){
             return {
               network: soc.network,
               username: soc.user,
@@ -177,7 +169,7 @@ FRESH to JSON Resume conversion routiens.
           })
         },
 
-        work: fresh.employment.history.map(function(emp){
+        work: src.employment.history.map(function(emp){
           return {
             company: emp.employer,
             website: emp.url,
@@ -189,7 +181,7 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        education: fresh.education.history.map(function(edu){
+        education: src.education.history.map(function(edu){
           return {
             institution: edu.institution,
             gpa: edu.grade,
@@ -201,11 +193,11 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        skills: skillsToJRS( fresh.skills ),
+        skills: skillsToJRS( src.skills ),
 
-        volunteer: fresh.service.history.map(function(srv){
+        volunteer: src.service.history.map(function(srv){
           return {
-            //???: srv.type,
+            flavor: foreign ? srv.flavor : undefined,
             organization: srv.organization,
             position: srv.position,
             startDate: srv.start,
@@ -216,10 +208,10 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        awards: fresh.recognition.map(function(awd){
+        awards: src.recognition.map(function(awd){
           return {
-            //???: awd.type, // TODO
-            //???: awd.url,
+            flavor: foreign ? awd.type : undefined,
+            url: foreign ? awd.url: undefined,
             title: awd.title,
             date: awd.date,
             awarder: awd.from,
@@ -227,21 +219,21 @@ FRESH to JSON Resume conversion routiens.
           };
         }),
 
-        publications: fresh.writing.map(function(pub){
+        publications: src.writing.map(function(pub){
           return {
             name: pub.title,
             publisher: pub.publisher,
             releaseDate: pub.date,
-            website: pub.link[0].url,
+            website: pub.url,
             summary: pub.summary
           };
         }),
 
-        interests: fresh.interests,
-
-        references: fresh.references,
-
-        languages: fresh.languages
+        interests: src.interests,
+        references: src.references,
+        samples: foreign ? src.samples : undefined,
+        disposition: foreign ? src.disposition : undefined,
+        languages: src.languages
 
       };
 
@@ -249,10 +241,12 @@ FRESH to JSON Resume conversion routiens.
 
   };
 
-  function meta2FRESH( obj ) {
-    obj = obj || { };
-    obj.format = obj.format || "FRESH@0.1.0";
-    obj.version = obj.version || "0.1.0";
+  function meta( direction, obj ) {
+    if( direction ) {
+      obj = obj || { };
+      obj.format = obj.format || "FRESH@0.1.0";
+      obj.version = obj.version || "0.1.0";
+    }
     return obj;
   }
 
