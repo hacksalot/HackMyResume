@@ -42,17 +42,40 @@ Definition of the FRESHResume class.
   };
 
   /**
-  Convert this object to a JSON string, sanitizing meta-properties along the
-  way. Don't override .toString().
+  Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   */
-  FreshResume.prototype.stringify = function() {
+  FreshResume.prototype.saveAs = function( filename, format ) {
+    this.meta.fileName = filename || this.meta.fileName;
+    if( format !== 'JRS' ) {
+      FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
+    }
+    else {
+      var newRep = CONVERTER.toJRS( this );
+      FS.writeFileSync( this.meta.fileName, FreshResume.stringify( newRep ), 'utf8' );
+    }
+    return this;
+  }
+
+  /**
+  Convert the supplied object to a JSON string, sanitizing meta-properties along
+  the way.
+  */
+  FreshResume.stringify = function( obj ) {
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safe', 'result', 'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }
-    return JSON.stringify( this, replacer, 2 );
+    return JSON.stringify( obj, replacer, 2 );
+  },
+
+  /**
+  Convert this object to a JSON string, sanitizing meta-properties along the
+  way. Don't override .toString().
+  */
+  FreshResume.prototype.stringify = function() {
+    return FreshResume.stringify( this );
   };
 
   /**
@@ -66,7 +89,7 @@ Definition of the FRESHResume class.
     var rep = JSON.parse( stringData );
 
     // Convert JSON Resume to FRESH if necessary
-    rep.basics && (rep = CONVERTER.toFRESH( rep ));
+    rep.basics && ( rep = CONVERTER.toFRESH( rep ) );
 
     // Now apply the resume representation onto this object
     extend( true, this, rep );

@@ -150,6 +150,16 @@ module.exports = function () {
   }
 
   /**
+  Convert between FRESH and JRS formats.
+  */
+  function convert( src, dst, opts, logger ) {
+    _log = logger || console.log;
+    if( !src || src.length !== 1 ) { throw { fluenterror: 3 }; }
+    var sheet = (new FLUENT.FRESHResume()).open( src[ 0 ] );
+    sheet.saveAs( dst[0], sheet.meta.orgFormat === 'JRS' ? 'FRESH' : 'JRS' );
+  }
+
+  /**
   Supported resume formats.
   */
   var _fmts = [
@@ -181,7 +191,8 @@ module.exports = function () {
   return {
     verbs: {
       generate: gen,
-      validate: validate
+      validate: validate,
+      convert: convert
     },
     lib: require('./fluentlib'),
     options: _opts,
