@@ -30,17 +30,17 @@ Definition of the JRSResume class.
   consistent format. Then sort each section by startDate descending.
   */
   JRSResume.prototype.open = function( file, title ) {
-    this.meta = { fileName: file };
-    this.meta.raw = FS.readFileSync( file, 'utf8' );
-    return this.parse( this.meta.raw, title );
+    this.imp = { fileName: file };
+    this.imp.raw = FS.readFileSync( file, 'utf8' );
+    return this.parse( this.imp.raw, title );
   };
 
   /**
   Save the sheet to disk (for environments that have disk access).
   */
   JRSResume.prototype.save = function( filename ) {
-    this.meta.fileName = filename || this.meta.fileName;
-    FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
+    this.imp.fileName = filename || this.imp.fileName;
+    FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     return this;
   };
 
@@ -69,9 +69,9 @@ Definition of the JRSResume class.
     var rep = JSON.parse( stringData );
     extend( true, this, rep );
     // Set up metadata
-    if( opts.meta === undefined || opts.meta ) {
-      this.meta = this.meta || { };
-      this.meta.title = (opts.title || this.meta.title) || this.basics.name;
+    if( opts.imp === undefined || opts.imp ) {
+      this.imp = this.imp || { };
+      this.imp.title = (opts.title || this.imp.title) || this.basics.name;
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
@@ -110,7 +110,7 @@ Definition of the JRSResume class.
   */
   JRSResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
-    clearMeta && (delete this.meta);
+    clearMeta && (delete this.imp);
     delete this.computed; // Don't use Object.keys() here
     delete this.work;
     delete this.volunteer;

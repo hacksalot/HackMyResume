@@ -57,9 +57,9 @@ describe('jane-doe.json (FRESH)', function () {
       var result = _sheet.isValid();
       // var schemaJson = require('FRESCA');
       // var validate = validator( schemaJson, { verbose: true } );
-      // var result = validate( JSON.parse( _sheet.meta.raw ) );
+      // var result = validate( JSON.parse( _sheet.imp.raw ) );
       result || console.log("\n\nOops, resume didn't validate. " +
-        "Validation errors:\n\n", _sheet.meta.validationErrors, "\n\n");
+        "Validation errors:\n\n", _sheet.imp.validationErrors, "\n\n");
       result.should.equal( true );
     });
 

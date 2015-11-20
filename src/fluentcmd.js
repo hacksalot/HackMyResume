@@ -43,8 +43,8 @@ module.exports = function () {
     // Merge input resumes...
     var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
-      msg += ((idx == sheets.length - 2) ? 'Merging ' + a.meta.fileName : '')
-        + ' onto ' + b.meta.fileName;
+      msg += ((idx == sheets.length - 2) ? 'Merging ' + a.imp.fileName : '')
+        + ' onto ' + b.imp.fileName;
       return extend( true, b, a );
     });
     msg && _log(msg);
@@ -144,7 +144,7 @@ module.exports = function () {
       _log( 'Validating JSON resume: ' + res +
         (valid ? ' (VALID)' : ' (INVALID)'));
       if( !valid ) {
-        _log( sheet.meta.validationErrors );
+        _log( sheet.imp.validationErrors );
       }
     });
   }
@@ -156,7 +156,7 @@ module.exports = function () {
     _log = logger || console.log;
     if( !src || src.length !== 1 ) { throw { fluenterror: 3 }; }
     var sheet = (new FLUENT.FRESHResume()).open( src[ 0 ] );
-    sheet.saveAs( dst[0], sheet.meta.orgFormat === 'JRS' ? 'FRESH' : 'JRS' );
+    sheet.saveAs( dst[0], sheet.imp.orgFormat === 'JRS' ? 'FRESH' : 'JRS' );
   }
 
   /**

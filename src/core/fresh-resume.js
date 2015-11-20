@@ -27,17 +27,17 @@ Definition of the FRESHResume class.
   consistent format. Then sort each section by startDate descending.
   */
   FreshResume.prototype.open = function( file, title ) {
-    this.meta = { fileName: file };
-    this.meta.raw = FS.readFileSync( file, 'utf8' );
-    return this.parse( this.meta.raw, title );
+    this.imp = { fileName: file };
+    this.imp.raw = FS.readFileSync( file, 'utf8' );
+    return this.parse( this.imp.raw, title );
   };
 
   /**
   Save the sheet to disk (for environments that have disk access).
   */
   FreshResume.prototype.save = function( filename ) {
-    this.meta.fileName = filename || this.meta.fileName;
-    FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
+    this.imp.fileName = filename || this.imp.fileName;
+    FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     return this;
   };
 
@@ -45,13 +45,13 @@ Definition of the FRESHResume class.
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   */
   FreshResume.prototype.saveAs = function( filename, format ) {
-    this.meta.fileName = filename || this.meta.fileName;
+    this.imp.fileName = filename || this.imp.fileName;
     if( format !== 'JRS' ) {
-      FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
+      FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     }
     else {
       var newRep = CONVERTER.toJRS( this );
-      FS.writeFileSync( this.meta.fileName, FreshResume.stringify( newRep ), 'utf8' );
+      FS.writeFileSync( this.imp.fileName, FreshResume.stringify( newRep ), 'utf8' );
     }
     return this;
   }
@@ -62,7 +62,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.stringify = function( obj ) {
     function replacer( key,value ) { // Exclude these keys from stringification
-      return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
+      return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safe', 'result', 'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
@@ -89,16 +89,20 @@ Definition of the FRESHResume class.
     var rep = JSON.parse( stringData );
 
     // Convert JSON Resume to FRESH if necessary
-    rep.basics && ( rep = CONVERTER.toFRESH( rep ) );
+    if( rep.basics ) {
+      rep = CONVERTER.toFRESH( rep );
+      rep.imp = rep.imp || { };
+      rep.imp.orgFormat = 'JRS';
+    }
 
     // Now apply the resume representation onto this object
     extend( true, this, rep );
 
     // Set up metadata
     opts = opts || { };
-    if( opts.meta === undefined || opts.meta ) {
-      this.meta = this.meta || { };
-      this.meta.title = (opts.title || this.meta.title) || this.name;
+    if( opts.imp === undefined || opts.imp ) {
+      this.imp = this.imp || { };
+      this.imp.title = (opts.title || this.imp.title) || this.name;
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
@@ -134,7 +138,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
-    clearMeta && (delete this.meta);
+    clearMeta && (delete this.imp);
     delete this.computed; // Don't use Object.keys() here
     delete this.employment;
     delete this.service;
@@ -197,8 +201,8 @@ Definition of the FRESHResume class.
     });
     var ret = validate( this );
     if( !ret ) {
-      this.meta = this.meta || { };
-      this.meta.validationErrors = validate.errors;
+      this.imp = this.imp || { };
+      this.imp.validationErrors = validate.errors;
     }
     return ret;
   };

@@ -51,7 +51,7 @@ describe('fullstack.json (JRS)', function () {
     it('should validate against the JSON Resume schema', function() {
       var schemaJson = require('../src/core/resume.json');
       var validate = validator( schemaJson, { verbose: true } );
-      var result = validate( JSON.parse( _sheet.meta.raw ) );
+      var result = validate( JSON.parse( _sheet.imp.raw ) );
       result || console.log("\n\nOops, resume didn't validate. " +
        "Validation errors:\n\n", validate.errors, "\n\n");
       result.should.equal( true );

@@ -35,7 +35,7 @@ FRESH to JSON Resume conversion routiens.
           //other: [none]
         },
 
-        meta: jrs.meta,
+        meta: meta2FRESH( jrs.meta ),
 
         // disposition: {
         //   travel: 25,
@@ -248,6 +248,13 @@ FRESH to JSON Resume conversion routiens.
     }
 
   };
+
+  function meta2FRESH( obj ) {
+    obj = obj || { };
+    obj.format = obj.format || "FRESH@0.1.0";
+    obj.version = obj.version || "0.1.0";
+    return obj;
+  }
 
   function skillsToFRESH( skills ) {
 
