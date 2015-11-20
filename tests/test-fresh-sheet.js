@@ -26,10 +26,10 @@ describe('jane-doe.json (FRESH)', function () {
         //(_sheet.basics) &&
         _sheet.name && _sheet.info && _sheet.location && _sheet.contact &&
         (_sheet.employment.history && _sheet.employment.history.length > 0) &&
-        (_sheet.skills && _sheet.skills.length > 0) &&
+        (_sheet.skills && _sheet.skills.list.length > 0) &&
         (_sheet.education.history && _sheet.education.history.length > 0) &&
         (_sheet.service.history && _sheet.service.history.length > 0) &&
-        (_sheet.publications && _sheet.publications.length > 0) &&
+        (_sheet.writing && _sheet.writing.length > 0) &&
         (_sheet.recognition && _sheet.recognition.length > 0) &&
         (_sheet.samples && _sheet.samples.length > 0) &&
         (_sheet.references && _sheet.references.length > 0) &&
@@ -43,13 +43,13 @@ describe('jane-doe.json (FRESH)', function () {
 
     it('should save without throwing an exception', function(){
       function trySave() {
-        _sheet.save( 'tests/sandbox/fullstack.json' );
+        _sheet.save( 'tests/sandbox/jane-doe.json' );
       }
       trySave.should.not.Throw();
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new FRESHResume().open('tests/sandbox/fullstack.json');
+      var savedSheet = new FRESHResume().open('tests/sandbox/jane-doe.json');
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 
