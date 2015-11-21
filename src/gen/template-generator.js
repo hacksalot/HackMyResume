@@ -127,7 +127,6 @@ var TemplateGenerator = module.exports = BaseGenerator.extend({
 
     // Strip {# comments #}
     jst = jst.replace( _.templateSettings.comment, '');
-    json.display_progress_bar = true;
 
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     jst = _.template(jst)({ r: json, filt: this.opts.filters, cssInfo: cssInfo, headFragment: this.opts.headFragment || '' });

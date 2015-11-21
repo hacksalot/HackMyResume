@@ -104,7 +104,7 @@ module.exports = function () {
 
       var theFormat = _fmts.filter(
         function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
-      MKDIRP( path.dirname(fOut) ); // Ensure dest folder exists;
+      MKDIRP.sync( path.dirname(fOut) ); // Ensure dest folder exists;
       theFormat.gen.generate( rez, fOut, _opts );
     }
     catch( ex ) {
@@ -196,7 +196,8 @@ module.exports = function () {
   */
   function convert( src, dst, opts, logger ) {
     _log = logger || console.log;
-    if( !src || src.length !== 1 ) { throw { fluenterror: 3 }; }
+    if( !src || !src.length ) { throw { fluenterror: 3 }; }
+    if( !dst || !dst.length ) { throw { fluenterror: 5 }; }
     var sheet = loadSourceResumes( src )[ 0 ];
     var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
     var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
@@ -243,7 +244,7 @@ module.exports = function () {
   */
   return {
     verbs: {
-      generate: generate,
+      build: generate,
       validate: validate,
       convert: convert
     },
