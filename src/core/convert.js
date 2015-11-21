@@ -210,7 +210,7 @@ FRESH to JSON Resume conversion routiens.
 
         awards: src.recognition.map(function(awd){
           return {
-            flavor: foreign ? awd.type : undefined,
+            flavor: foreign ? awd.flavor : undefined,
             url: foreign ? awd.url: undefined,
             title: awd.title,
             date: awd.date,

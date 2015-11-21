@@ -284,12 +284,14 @@ Definition of the FRESHResume class.
         end: _fmt( vol.end || 'current' )
       };
     });
-    // this.awards && this.awards.forEach( function(awd) {
-    //   awd.safeDate = _fmt( awd.date );
-    // });
-    this.publications && this.publications.forEach( function(pub) {
+    this.recognition && this.recognition.forEach( function(rec) {
+      rec.safe = {
+        date: _fmt( rec.date )
+      };
+    });
+    this.writing && this.writing.forEach( function(pub) {
       pub.safe = {
-        date: _fmt( pub.year )
+        date: _fmt( pub.date )
       };
     });
   }
