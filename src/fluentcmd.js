@@ -37,10 +37,7 @@ module.exports = function () {
 
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
-    var sheets = src.map( function( res ) {
-      _log( 'Reading '.gray + 'SOURCE' + ' resume: '.gray + res.cyan.bold );
-      return (new FLUENT.FRESHResume()).open( res );
-    });
+    var sheets = loadSourceResumes( src );
 
     // Merge input resumes...
     var msg = '';
@@ -136,19 +133,30 @@ module.exports = function () {
       jars: require('./core/resume.json')
     };
 
-    var sheets = src.map( function( file ) {
-
-      var textData = '';
+    // Load input resumes...
+    var sheets = loadSourceResumes(src, function( res ) {
       try {
-        textData = FS.readFileSync( file, 'utf8' );
-        var rez = JSON.parse( textData );
+        return {
+          file: res,
+          raw: FS.readFileSync( res, 'utf8' )
+        };
       }
       catch( ex ) {
-        _log('Validating ' + file.cyan.bold + ' against FRESH/JRS schema: ' + 'ERROR!'.red.bold);
+        throw ex;
+      }
+    });
+
+    sheets.forEach( function( rep ) {
+
+      try {
+        var rez = JSON.parse( rep.raw );
+      }
+      catch( ex ) {
+        _log('Validating '.gray + rep.file.cyan.bold + ' against FRESH/JRS schema: '.gray + 'ERROR!'.red.bold);
 
         if (ex instanceof SyntaxError) {
           // Invalid JSON
-          _log( '--> '.bold.red + file.toUpperCase().red + ' contains invalid JSON. Unable to validate.'.red );
+          _log( '--> '.bold.red + rep.file.toUpperCase().red + ' contains invalid JSON. Unable to validate.'.red );
           _log( ('    INTERNAL: ' + ex).red );
         }
         else {
@@ -159,8 +167,8 @@ module.exports = function () {
       }
 
       var fmt = rez.meta && rez.meta.format === 'FRESH@0.1.0' ? 'fresh':'jars';
-      process.stdout.write( 'Validating ' + file.cyan.bold + ' against ' +
-        fmt.replace('jars','JSON Resume').toUpperCase() + ' schema: ' );
+      process.stdout.write( 'Validating '.gray + rep.file + ' against '.gray +
+        fmt.replace('jars','JSON Resume').toUpperCase() + ' schema: '.gray );
 
       var validate = validator( schemas[ fmt ], { // Note [1]
         formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
@@ -189,13 +197,19 @@ module.exports = function () {
   function convert( src, dst, opts, logger ) {
     _log = logger || console.log;
     if( !src || src.length !== 1 ) { throw { fluenterror: 3 }; }
-    _log( 'Reading JSON resume: ' + src[0] );
-    var sheet = (new FLUENT.FRESHResume()).open( src[ 0 ] );
+    var sheet = loadSourceResumes( src )[ 0 ];
     var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
     var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
-    _log( 'Converting ' + src[0] + ' (' + sourceFormat + ') to ' + dst[0] +
-      ' (' + targetFormat + ').' );
+    _log( 'Converting '.gray + src[0] + (' (' + sourceFormat + ') to ').gray + dst[0] +
+      (' (' + targetFormat + ').').gray );
     sheet.saveAs( dst[0], targetFormat );
+  }
+
+  function loadSourceResumes( src, fn ) {
+    return src.map( function( res ) {
+      _log( 'Reading '.gray + 'SOURCE' + ' resume: '.gray + res.cyan.bold );
+      return (fn && fn(res)) || (new FLUENT.FRESHResume()).open( res );
+    });
   }
 
   /**

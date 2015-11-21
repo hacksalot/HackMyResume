@@ -8,7 +8,8 @@ Command-line interface (CLI) for FluentCV:CLI.
 var ARGS = require( 'minimist' )
   , FCMD  = require( './fluentcmd')
   , PKG = require('../package.json')
-  , opts = { };
+  , opts = { }
+  , title = ('*** FluentCV v' + PKG.version + ' ***').white.bold;
 
 
 
@@ -23,9 +24,7 @@ catch( ex ) {
 
 function main() {
 
-  // Setup
-  var title = ('*** FluentCV v' + PKG.version + ' ***').bold;
-  if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 4 }; }
+  if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
   var a = ARGS( process.argv.slice(2) );
   opts = getOpts( a );
   logMsg( title );
@@ -33,7 +32,8 @@ function main() {
   // Get the action to be performed
   var verb = a._[0].toLowerCase().trim();
   if( !FCMD.verbs[ verb ] ) {
-    throw 'Invalid command: "' + verb + '"';
+    logMsg('Invalid command: "'.yellow + verb.yellow.bold + '"'.yellow);
+    return;
   }
 
   // Preload our params array
@@ -66,8 +66,12 @@ function handleError( ex ) {
     switch( ex.fluenterror ) { // TODO: Remove magic numbers
       case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
       case 2: msg = "Couldn't copy CSS file to destination folder"; break;
-      case 3: msg = "Please specify a valid JSON resume file."; break;
-      case 4: msg = "Please specify a valid command (GENERATE, VALIDATE, or CONVERT)."
+      case 3: msg = "Please specify a valid SOURCE resume in FRESH or JSON Resume format.".gray; break;
+      case 4: msg = title + "\nPlease specify a valid command (".gray +
+        Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
+          return (idx === ar.length - 1 ? 'or '.gray : '')
+            +  v.toUpperCase().white.bold;
+        }).join(', ') + ")";
     };
     exitCode = ex.fluenterror;
   }
@@ -78,7 +82,10 @@ function handleError( ex ) {
 
   var idx = msg.indexOf('Error: ');
   var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-  console.log( ('ERROR: ' + trimmed.toString()).red.bold );
+  if( !ex.fluenterror || ex.fluenterror !== 4 && ex.fluenterror !== 3 )
+    console.log( ('ERROR: ' + trimmed.toString()).red.bold );
+  else
+    console.log( trimmed.toString() );
   process.exit( exitCode );
 
 }
