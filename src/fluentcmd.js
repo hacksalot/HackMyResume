@@ -1,6 +1,7 @@
 /**
 Internal resume generation logic for FluentCV.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
+@module fluentcmd.js
 */
 
 module.exports = function () {
@@ -14,6 +15,7 @@ module.exports = function () {
     , FLUENT = require('./fluentlib')
     , PATH = require('path')
     , MKDIRP = require('mkdirp')
+    , COLORS = require('colors')
     , rez, _log, _err;
 
   /**
@@ -36,15 +38,15 @@ module.exports = function () {
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
     var sheets = src.map( function( res ) {
-      _log( 'Reading JSON resume: ' + res );
+      _log( 'Reading '.gray + 'SOURCE' + ' resume: '.gray + res.cyan.bold );
       return (new FLUENT.FRESHResume()).open( res );
     });
 
     // Merge input resumes...
     var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
-      msg += ((idx == sheets.length - 2) ? 'Merging ' + a.imp.fileName : '')
-        + ' onto ' + b.imp.fileName;
+      msg += ((idx == sheets.length - 2) ? 'Merging '.gray + a.imp.fileName : '')
+        + ' onto '.gray + b.imp.fileName;
       return extend( true, b, a );
     });
     msg && _log(msg);
@@ -63,8 +65,8 @@ module.exports = function () {
     // Load the theme
     var theTheme = new FLUENT.Theme().open( tFolder );
     _opts.themeObj = theTheme;
-    _log( 'Applying ' + theTheme.name.toUpperCase() + ' theme (' +
-      Object.keys(theTheme.formats).length + ' formats)' );
+    _log( 'Applying '.yellow + theTheme.name.toUpperCase().yellow.bold + (' theme (' +
+      Object.keys(theTheme.formats).length + ' formats)').yellow );
 
     // Expand output resumes... (can't use map() here)
     var targets = [], that = this;
@@ -100,8 +102,8 @@ module.exports = function () {
       var fObj = _.property( fi.fmt.pre )( theme.formats );
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.')+1 ) + fObj.pre);
 
-      _log( 'Generating ' + fi.fmt.title.toUpperCase() + ' resume: ' +
-        path.relative(process.cwd(), f ) );
+      _log( 'Generating '.green + fi.fmt.title.toUpperCase().green.bold + ' resume: '.green +
+        path.relative(process.cwd(), f ).green.bold );
 
       var theFormat = _fmts.filter(
         function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
@@ -127,14 +129,57 @@ module.exports = function () {
     _log = logger || console.log;
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
     var isValid = true;
-    var sheets = src.map( function( res ) {
-      var sheet = (new FLUENT.FRESHResume()).open( res );
-      var valid = sheet.isValid();
-      _log( 'Validating JSON resume: ' + res +
-        (valid ? ' (VALID)' : ' (INVALID)'));
-      if( !valid ) {
-        _log( sheet.imp.validationErrors );
+
+    var validator = require('is-my-json-valid');
+    var schemas = {
+      fresh: require('FRESCA'),
+      jars: require('./core/resume.json')
+    };
+
+    var sheets = src.map( function( file ) {
+
+      var textData = '';
+      try {
+        textData = FS.readFileSync( file, 'utf8' );
+        var rez = JSON.parse( textData );
       }
+      catch( ex ) {
+        _log('Validating ' + file.cyan.bold + ' against FRESH/JRS schema: ' + 'ERROR!'.red.bold);
+
+        if (ex instanceof SyntaxError) {
+          // Invalid JSON
+          _log( '--> '.bold.red + file.toUpperCase().red + ' contains invalid JSON. Unable to validate.'.red );
+          _log( ('    INTERNAL: ' + ex).red );
+        }
+        else {
+
+          _log(('ERROR: ' + ex.toString()).red.bold);
+        }
+        return;
+      }
+
+      var fmt = rez.meta && rez.meta.format === 'FRESH@0.1.0' ? 'fresh':'jars';
+      process.stdout.write( 'Validating ' + file.cyan.bold + ' against ' +
+        fmt.replace('jars','JSON Resume').toUpperCase() + ' schema: ' );
+
+      var validate = validator( schemas[ fmt ], { // Note [1]
+        formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+      });
+
+      var ret = validate( rez );
+      if( !ret ) {
+        rez.imp = rez.imp || { };
+        rez.imp.validationErrors = validate.errors;
+        _log('INVALID'.bold.yellow);
+        rez.imp.validationErrors.forEach(function(err,idx){
+          _log( '--> '.bold.yellow + ( err.field.replace('data.','resume.').toUpperCase()
+            + ' ' + err.message).yellow );
+        });
+      }
+      else {
+        _log('VALID!'.bold.green);
+      }
+
     });
   }
 

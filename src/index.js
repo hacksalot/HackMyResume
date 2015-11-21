@@ -24,7 +24,7 @@ catch( ex ) {
 function main() {
 
   // Setup
-  var title = '*** FluentCV v' + PKG.version + ' ***';
+  var title = ('*** FluentCV v' + PKG.version + ' ***').bold;
   if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 4 }; }
   var a = ARGS( process.argv.slice(2) );
   opts = getOpts( a );
@@ -78,7 +78,7 @@ function handleError( ex ) {
 
   var idx = msg.indexOf('Error: ');
   var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-  console.log( 'ERROR: ' + trimmed.toString() );
+  console.log( ('ERROR: ' + trimmed.toString()).red.bold );
   process.exit( exitCode );
 
 }
