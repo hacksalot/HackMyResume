@@ -8,8 +8,11 @@ Command-line interface (CLI) for FluentCV:CLI.
 var ARGS = require( 'minimist' )
   , FCMD  = require( './fluentcmd')
   , PKG = require('../package.json')
+  , COLORS = require('colors')
+  , FS = require('fs')
+  , PATH = require('path')
   , opts = { }
-  , title = ('*** FluentCV v' + PKG.version + ' ***').white.bold
+  , title = ('*** FluentCV v' + PKG.version + ' ***').bold.white
   , _ = require('underscore');
 
 
@@ -25,16 +28,30 @@ catch( ex ) {
 
 function main() {
 
+  // Colorize
+  COLORS.setTheme({
+    title: ['white','bold'],
+    info: process.platform === 'win32' ? 'gray' : ['white','dim'],
+    infoBold: ['white','dim'],
+    warn: 'yellow',
+    error: 'red',
+    guide: 'yellow',
+    status: 'gray',//['white','dim'],
+    useful: 'green',
+  });
+
+  // Setup
   if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
   var a = ARGS( process.argv.slice(2) );
   opts = getOpts( a );
   logMsg( title );
 
+
   // Get the action to be performed
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
   var verb = params[0];
   if( !FCMD.verbs[ verb ] ) {
-    logMsg('Invalid command: "'.yellow + verb.yellow.bold + '"'.yellow);
+    logMsg('Invalid command: "'.warn + verb.warn.bold + '"'.warn);
     return;
   }
 
@@ -42,7 +59,8 @@ function main() {
   var splitAt = _.indexOf( params, 'to' );
   if( splitAt === a._.length - 1 ) {
     // 'TO' cannot be the last argument
-    logMsg('Please '.gray + 'specify an output file' + ' for this operation or '.gray + 'omit the TO keyword' + '.'.gray);
+    logMsg('Please '.warn + 'specify an output file'.warnBold +
+      ' for this operation or '.warn + 'omit the TO keyword'.warnBold + '.'.warn );
     return;
   }
 
@@ -75,20 +93,27 @@ function getOpts( args ) {
 
 function handleError( ex ) {
   var msg = '', exitCode;
+
+
+
   if( ex.fluenterror ){
     switch( ex.fluenterror ) { // TODO: Remove magic numbers
       case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
       case 2: msg = "Couldn't copy CSS file to destination folder"; break;
-      case 3: msg = 'Please '.gray + 'specify a valid input resume' + ' in '.gray + 'FRESH' + ' or '.gray + 'JSON Resume' + ' format.'.gray; break;
-      case 4: msg = title + "\nPlease specify a command (".gray +
+      case 3: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in FRESH or JSON Resume format.'.guide; break;
+      case 4: msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
         Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
-          return (idx === ar.length - 1 ? 'or '.gray : '')
-            +  v.toUpperCase();
-        }).join(', ') + ")";
+          return (idx === ar.length - 1 ? 'or '.guide : '')
+            + v.toUpperCase().guide;
+        }).join(', '.guide) + ") to get started.\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
         break;
-      case 5: msg = "Please specify the name of the TARGET file to convert to.".gray;
+      //case 4: msg = title + '\n' + ; break;
+      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created in the new format.'.guide; break;
+      case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
+      case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
     };
     exitCode = ex.fluenterror;
+
   }
   else {
     msg = ex.toString();
@@ -101,6 +126,7 @@ function handleError( ex ) {
     console.log( ('ERROR: ' + trimmed.toString()).red.bold );
   else
     console.log( trimmed.toString() );
+
   process.exit( exitCode );
 
 }

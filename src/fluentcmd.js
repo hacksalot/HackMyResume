@@ -15,7 +15,7 @@ module.exports = function () {
     , FLUENT = require('./fluentlib')
     , PATH = require('path')
     , MKDIRP = require('mkdirp')
-    , COLORS = require('colors')
+    //, COLORS = require('colors')
     , rez, _log, _err;
 
   /**
@@ -62,8 +62,8 @@ module.exports = function () {
     // Load the theme
     var theTheme = new FLUENT.Theme().open( tFolder );
     _opts.themeObj = theTheme;
-    _log( 'Applying '.yellow + theTheme.name.toUpperCase().yellow.bold + (' theme (' +
-      Object.keys(theTheme.formats).length + ' formats)').yellow );
+    _log( 'Applying '.status + theTheme.name.toUpperCase().infoBold + (' theme (' +
+      Object.keys(theTheme.formats).length + ' formats)').status );
 
     // Expand output resumes... (can't use map() here)
     var targets = [], that = this;
@@ -99,8 +99,8 @@ module.exports = function () {
       var fObj = _.property( fi.fmt.pre )( theme.formats );
       var fOut = path.join( f.substring( 0, f.lastIndexOf('.')+1 ) + fObj.pre);
 
-      _log( 'Generating '.green + fi.fmt.title.toUpperCase().green.bold + ' resume: '.green +
-        path.relative(process.cwd(), f ).green.bold );
+      _log( 'Generating '.useful + fi.fmt.title.toUpperCase().useful.bold + ' resume: '.useful +
+        path.relative(process.cwd(), f ).useful.bold );
 
       var theFormat = _fmts.filter(
         function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
@@ -124,7 +124,7 @@ module.exports = function () {
   */
   function validate( src, unused, opts, logger ) {
     _log = logger || console.log;
-    if( !src || !src.length ) { throw { fluenterror: 3 }; }
+    if( !src || !src.length ) { throw { fluenterror: 6 }; }
     var isValid = true;
 
     var validator = require('is-my-json-valid');
@@ -152,7 +152,7 @@ module.exports = function () {
         var rez = JSON.parse( rep.raw );
       }
       catch( ex ) {
-        _log('Validating '.gray + rep.file.cyan.bold + ' against FRESH/JRS schema: '.gray + 'ERROR!'.red.bold);
+        _log('Validating '.info + rep.file.infoBold + ' against FRESH/JRS schema: '.info + 'ERROR!'.error.bold);
 
         if (ex instanceof SyntaxError) {
           // Invalid JSON
@@ -166,27 +166,39 @@ module.exports = function () {
         return;
       }
 
-      var fmt = rez.meta && rez.meta.format === 'FRESH@0.1.0' ? 'fresh':'jars';
-      process.stdout.write( 'Validating '.gray + rep.file + ' against '.gray +
-        fmt.replace('jars','JSON Resume').toUpperCase() + ' schema: '.gray );
+      var isValid = false;
+      var style = 'useful';
+      var errors = [];
 
-      var validate = validator( schemas[ fmt ], { // Note [1]
-        formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+      try {
+
+
+
+        var fmt = rez.meta && rez.meta.format === 'FRESH@0.1.0' ? 'fresh':'jars';
+        var validate = validator( schemas[ fmt ], { // Note [1]
+          formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+        });
+
+        isValid = validate( rez );
+        if( !isValid ) {
+          style = 'warn';
+          errors = validate.errors;
+        }
+
+      }
+      catch(ex) {
+
+      }
+
+      _log( 'Validating '.info + rep.file.infoBold + ' against '.info +
+        fmt.replace('jars','JSON Resume').toUpperCase().infoBold + ' schema: '.info + (isValid ? 'VALID!' : 'INVALID')[style].bold );
+
+      errors.forEach(function(err,idx){
+        _log( '--> '.bold.yellow + ( err.field.replace('data.','resume.').toUpperCase()
+          + ' ' + err.message).yellow );
       });
 
-      var ret = validate( rez );
-      if( !ret ) {
-        rez.imp = rez.imp || { };
-        rez.imp.validationErrors = validate.errors;
-        _log('INVALID'.bold.yellow);
-        rez.imp.validationErrors.forEach(function(err,idx){
-          _log( '--> '.bold.yellow + ( err.field.replace('data.','resume.').toUpperCase()
-            + ' ' + err.message).yellow );
-        });
-      }
-      else {
-        _log('VALID!'.bold.green);
-      }
+
 
     });
   }
@@ -196,19 +208,35 @@ module.exports = function () {
   */
   function convert( src, dst, opts, logger ) {
     _log = logger || console.log;
-    if( !src || !src.length ) { throw { fluenterror: 3 }; }
-    if( !dst || !dst.length ) { throw { fluenterror: 5 }; }
-    var sheet = loadSourceResumes( src )[ 0 ];
-    var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
-    var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
-    _log( 'Converting '.gray + src[0] + (' (' + sourceFormat + ') to ').gray + dst[0] +
-      (' (' + targetFormat + ').').gray );
-    sheet.saveAs( dst[0], targetFormat );
+    if( !src || !src.length ) { throw { fluenterror: 6 }; }
+    if( !dst || !dst.length ) {
+      if( src.length === 1 ) { throw { fluenterror: 5 }; }
+      else if( src.length === 2 ) { dst = [ src[1] ]; src = [ src[0] ]; }
+      else { throw { fluenterror: 5 }; }
+    }
+    if( src && dst && src.length && dst.length && src.length !== dst.length ) {
+      throw { fluenterror: 7 };
+    }    
+    var sheets = loadSourceResumes( src );
+    sheets.forEach(function(sheet, idx){
+      var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
+      var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
+      _log( 'Converting '.useful + sheet.imp.fileName.useful.bold + (' (' + sourceFormat + ') to ').useful + dst[0].useful.bold +
+        (' (' + targetFormat + ').').useful );
+      sheet.saveAs( dst[idx], targetFormat );
+    });
+  }
+
+  /**
+  Display help documentation.
+  */
+  function help() {
+    console.log( FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).useful.bold );
   }
 
   function loadSourceResumes( src, fn ) {
     return src.map( function( res ) {
-      _log( 'Reading '.gray + 'SOURCE' + ' resume: '.gray + res.cyan.bold );
+      _log( 'Reading '.info + 'SOURCE'.infoBold + ' resume: '.status + res.cyan.bold );
       return (fn && fn(res)) || (new FLUENT.FRESHResume()).open( res );
     });
   }
@@ -246,7 +274,8 @@ module.exports = function () {
     verbs: {
       build: generate,
       validate: validate,
-      convert: convert
+      convert: convert,
+      help: help
     },
     lib: require('./fluentlib'),
     options: _opts,
