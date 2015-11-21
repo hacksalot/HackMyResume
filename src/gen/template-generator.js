@@ -31,7 +31,9 @@ var _defaultOpts = {
     xml: function( txt ) { return XML(txt); },
     md: function( txt ) { return MD(txt); },
     mdin: function( txt ) { return MD(txt).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, ''); },
-    lower: function( txt ) { return txt.toLowerCase(); }
+    lower: function( txt ) { return txt.toLowerCase(); },
+    link: function( name, url ) { return url ?
+      '<a href="' + url + '">' + name + '</a>' : name }
   },
   prettify: { // ← See https://github.com/beautify-web/js-beautify#options
     indent_size: 2,
