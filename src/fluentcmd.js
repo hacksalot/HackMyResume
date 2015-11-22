@@ -62,8 +62,8 @@ module.exports = function () {
     // Load the theme
     var theTheme = new FLUENT.Theme().open( tFolder );
     _opts.themeObj = theTheme;
-    _log( 'Applying '.status + theTheme.name.toUpperCase().infoBold + (' theme (' +
-      Object.keys(theTheme.formats).length + ' formats)').status );
+    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold + (' theme (' +
+      Object.keys(theTheme.formats).length + ' formats)').info );
 
     // Expand output resumes... (can't use map() here)
     var targets = [], that = this;
