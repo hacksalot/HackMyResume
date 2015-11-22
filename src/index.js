@@ -1,14 +1,19 @@
 #! /usr/bin/env node
 
 /**
-Command-line interface (CLI) for FluentCV via Node.js.
-@license Copyright (c) 2015 | James M. Devlin
+Command-line interface (CLI) for FluentCV:CLI.
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 */
 
 var ARGS = require( 'minimist' )
   , FCMD  = require( './fluentcmd')
   , PKG = require('../package.json')
-  , opts = { };
+  , COLORS = require('colors')
+  , FS = require('fs')
+  , PATH = require('path')
+  , opts = { }
+  , title = ('*** FluentCV v' + PKG.version + ' ***').bold.white
+  , _ = require('underscore');
 
 
 
@@ -23,20 +28,53 @@ catch( ex ) {
 
 function main() {
 
-  // Setup.
-  var title = '*** FluentCV v' + PKG.version + ' ***';
-  if( process.argv.length <= 2 ) { logMsg(title); throw { fluenterror: 3 }; }
-  var args = ARGS( process.argv.slice(2) );
-  opts = getOpts( args );
+  // Colorize
+  COLORS.setTheme({
+    title: ['white','bold'],
+    info: process.platform === 'win32' ? 'gray' : ['white','dim'],
+    infoBold: ['white','dim'],
+    warn: 'yellow',
+    error: 'red',
+    guide: 'yellow',
+    status: 'gray',//['white','dim'],
+    useful: 'green',
+  });
+
+  // Setup
+  if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
+  var a = ARGS( process.argv.slice(2) );
+  opts = getOpts( a );
   logMsg( title );
 
-  // Convert arguments to source files, target files, options
-  var src = args._ || [];
-  var dst = (args.o && ((typeof args.o === 'string' && [ args.o ]) || args.o)) || [];
-  dst = (dst === true) ? [] : dst; // Handle -o with missing output file
 
-  // Generate!
-  FCMD.generate( src, dst, opts, logMsg );
+  // Get the action to be performed
+  var params = a._.map( function(p){ return p.toLowerCase().trim(); });
+  var verb = params[0];
+  if( !FCMD.verbs[ verb ] ) {
+    logMsg('Invalid command: "'.warn + verb.warn.bold + '"'.warn);
+    return;
+  }
+
+  // Get source and dest params
+  var splitAt = _.indexOf( params, 'to' );
+  if( splitAt === a._.length - 1 ) {
+    // 'TO' cannot be the last argument
+    logMsg('Please '.warn + 'specify an output file'.warnBold +
+      ' for this operation or '.warn + 'omit the TO keyword'.warnBold + '.'.warn );
+    return;
+  }
+
+  var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
+  var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
+
+  // Preload our params array
+  //var dst = (a.o && ((typeof a.o === 'string' && [ a.o ]) || a.o)) || [];
+  //dst = (dst === true) ? [] : dst; // Handle -o with missing output file
+  var parms = [ src, dst, opts, logMsg ];
+
+  // Invoke the action
+  FCMD.verbs[ verb ].apply( null, parms );
+
 }
 
 function logMsg( msg ) {
@@ -55,13 +93,27 @@ function getOpts( args ) {
 
 function handleError( ex ) {
   var msg = '', exitCode;
+
+
+
   if( ex.fluenterror ){
     switch( ex.fluenterror ) { // TODO: Remove magic numbers
       case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
       case 2: msg = "Couldn't copy CSS file to destination folder"; break;
-      case 3: msg = "Please specify a valid JSON resume file."; break;
+      case 3: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in FRESH or JSON Resume format.'.guide; break;
+      case 4: msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
+        Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
+          return (idx === ar.length - 1 ? 'or '.guide : '')
+            + v.toUpperCase().guide;
+        }).join(', '.guide) + ") to get started.\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
+        break;
+      //case 4: msg = title + '\n' + ; break;
+      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created in the new format.'.guide; break;
+      case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
+      case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
     };
     exitCode = ex.fluenterror;
+
   }
   else {
     msg = ex.toString();
@@ -70,7 +122,11 @@ function handleError( ex ) {
 
   var idx = msg.indexOf('Error: ');
   var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-  console.log( 'ERROR: ' + trimmed.toString() );
+  if( !ex.fluenterror || ex.fluenterror < 3 )
+    console.log( ('ERROR: ' + trimmed.toString()).red.bold );
+  else
+    console.log( trimmed.toString() );
+
   process.exit( exitCode );
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "fluentcv",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Generate beautiful, targeted resumes from your command line, shell, or in Javascript with Node.js.",
   "repository": {
     "type": "git",
@@ -10,7 +10,15 @@
     "resume",
     "CV",
     "portfolio",
-    "Markdown"
+    "employment",
+    "career",
+    "Markdown",
+    "JSON",
+    "Word",
+    "PDF",
+    "YAML",
+    "HTML",
+    "CLI"
   ],
   "author": "James M. Devlin",
   "license": "MIT",
@@ -24,7 +32,9 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
-    "fluent-themes": "0.4.0-beta",
+    "FRESCA": "fluentdesk/FRESCA#v0.1.0",
+    "colors": "^1.1.2",
+    "fluent-themes": "0.5.0-beta",
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
@@ -41,6 +51,7 @@
   "devDependencies": {
     "chai": "*",
     "grunt": "*",
+    "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
     "is-my-json-valid": "^2.12.2",
     "mocha": "*",

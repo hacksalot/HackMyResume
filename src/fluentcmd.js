@@ -1,6 +1,7 @@
 /**
 Internal resume generation logic for FluentCV.
-@license Copyright (c) 2015 | James M. Devlin
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
+@module fluentcmd.js
 */
 
 module.exports = function () {
@@ -9,11 +10,12 @@ module.exports = function () {
   var path = require( 'path' )
     , extend = require( './utils/extend' )
     , unused = require('./utils/string')
-    , fs = require('fs')
+    , FS = require('fs')
     , _ = require('underscore')
     , FLUENT = require('./fluentlib')
     , PATH = require('path')
     , MKDIRP = require('mkdirp')
+    //, COLORS = require('colors')
     , rez, _log, _err;
 
   /**
@@ -24,7 +26,7 @@ module.exports = function () {
   @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
-  function gen( src, dst, opts, logger, errHandler ) {
+  function generate( src, dst, opts, logger, errHandler ) {
 
     _log = logger || console.log;
     _err = errHandler || error;
@@ -35,23 +37,20 @@ module.exports = function () {
 
     // Load input resumes...
     if(!src || !src.length) { throw { fluenterror: 3 }; }
-    var sheets = src.map( function( res ) {
-      _log( 'Reading JSON resume: ' + res );
-      return (new FLUENT.Sheet()).open( res );
-    });
+    var sheets = loadSourceResumes( src );
 
     // Merge input resumes...
     var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
-      msg += ((idx == sheets.length - 2) ? 'Merging ' + a.meta.fileName : '')
-        + ' onto ' + b.meta.fileName;
+      msg += ((idx == sheets.length - 2) ? 'Merging '.gray + a.imp.fileName : '')
+        + ' onto '.gray + b.imp.fileName;
       return extend( true, b, a );
     });
     msg && _log(msg);
 
-    // Load the active theme
     // Verify the specified theme name/path
-    var tFolder = PATH.resolve( __dirname, '../node_modules/fluent-themes/themes', _opts.theme );
+    var relativeThemeFolder = '../node_modules/fluent-themes/themes';
+    var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme );
     var exists = require('./utils/file-exists');
     if (!exists( tFolder )) {
       tFolder = PATH.resolve( _opts.theme );
@@ -59,18 +58,27 @@ module.exports = function () {
         throw { fluenterror: 1, data: _opts.theme };
       }
     }
+
+    // Load the theme
     var theTheme = new FLUENT.Theme().open( tFolder );
     _opts.themeObj = theTheme;
-    _log( 'Applying ' + theTheme.name.toUpperCase() + ' theme (' + Object.keys(theTheme.formats).length + ' formats)' );
+    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold + (' theme (' +
+      Object.keys(theTheme.formats).length + ' formats)').info );
 
     // Expand output resumes... (can't use map() here)
-    var targets = [];
-    var that = this;
+    var targets = [], that = this;
     ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
-      var to = path.resolve(t), pa = path.parse(to), fmat = pa.ext || '.all';
+
+      var to = path.resolve(t),
+          pa = path.parse(to),
+          fmat = pa.ext || '.all';
+
       targets.push.apply(targets, fmat === '.all' ?
-        Object.keys( theTheme.formats ).map(function(k){ var z = theTheme.formats[k]; return { file: to.replace(/all$/g,z.pre), fmt: z } })
-        : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+        Object.keys( theTheme.formats ).map(function(k){
+          var z = theTheme.formats[k];
+          return { file: to.replace(/all$/g,z.pre), fmt: z }
+        }) : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+
     });
 
     // Run the transformation!
@@ -87,14 +95,16 @@ module.exports = function () {
   */
   function single( fi, theme ) {
     try {
-      var f = fi.file, fType = fi.fmt.ext, fName = path.basename( f, '.' + fType );
+      var f = fi.file, fType = fi.fmt.ext, fName = path.basename(f,'.'+fType);
       var fObj = _.property( fi.fmt.pre )( theme.formats );
-      var fOut = path.join( f.substring( 0, f.lastIndexOf('.') + 1 ) + fObj.pre );
-      _log( 'Generating ' + fi.fmt.title.toUpperCase() + ' resume: ' + path.relative(process.cwd(), f ) );
-      var theFormat = _fmts.filter( function( fmt ) {
-        return fmt.name === fi.fmt.pre;
-      })[0];
-      MKDIRP( path.dirname(fOut) ); // Ensure dest folder exists; don't bug user
+      var fOut = path.join( f.substring( 0, f.lastIndexOf('.')+1 ) + fObj.pre);
+
+      _log( 'Generating '.useful + fi.fmt.title.toUpperCase().useful.bold + ' resume: '.useful +
+        path.relative(process.cwd(), f ).useful.bold );
+
+      var theFormat = _fmts.filter(
+        function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
+      MKDIRP.sync( path.dirname(fOut) ); // Ensure dest folder exists;
       theFormat.gen.generate( rez, fOut, _opts );
     }
     catch( ex ) {
@@ -107,6 +117,128 @@ module.exports = function () {
   */
   function error( ex ) {
     throw ex;
+  }
+
+  /**
+  Validate 1 to N resumes in either FRESH or JSON Resume format.
+  */
+  function validate( src, unused, opts, logger ) {
+    _log = logger || console.log;
+    if( !src || !src.length ) { throw { fluenterror: 6 }; }
+    var isValid = true;
+
+    var validator = require('is-my-json-valid');
+    var schemas = {
+      fresh: require('FRESCA'),
+      jars: require('./core/resume.json')
+    };
+
+    // Load input resumes...
+    var sheets = loadSourceResumes(src, function( res ) {
+      try {
+        return {
+          file: res,
+          raw: FS.readFileSync( res, 'utf8' )
+        };
+      }
+      catch( ex ) {
+        throw ex;
+      }
+    });
+
+    sheets.forEach( function( rep ) {
+
+      try {
+        var rez = JSON.parse( rep.raw );
+      }
+      catch( ex ) {
+        _log('Validating '.info + rep.file.infoBold + ' against FRESH/JRS schema: '.info + 'ERROR!'.error.bold);
+
+        if (ex instanceof SyntaxError) {
+          // Invalid JSON
+          _log( '--> '.bold.red + rep.file.toUpperCase().red + ' contains invalid JSON. Unable to validate.'.red );
+          _log( ('    INTERNAL: ' + ex).red );
+        }
+        else {
+
+          _log(('ERROR: ' + ex.toString()).red.bold);
+        }
+        return;
+      }
+
+      var isValid = false;
+      var style = 'useful';
+      var errors = [];
+
+      try {
+
+
+
+        var fmt = rez.meta && rez.meta.format === 'FRESH@0.1.0' ? 'fresh':'jars';
+        var validate = validator( schemas[ fmt ], { // Note [1]
+          formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+        });
+
+        isValid = validate( rez );
+        if( !isValid ) {
+          style = 'warn';
+          errors = validate.errors;
+        }
+
+      }
+      catch(ex) {
+
+      }
+
+      _log( 'Validating '.info + rep.file.infoBold + ' against '.info +
+        fmt.replace('jars','JSON Resume').toUpperCase().infoBold + ' schema: '.info + (isValid ? 'VALID!' : 'INVALID')[style].bold );
+
+      errors.forEach(function(err,idx){
+        _log( '--> '.bold.yellow + ( err.field.replace('data.','resume.').toUpperCase()
+          + ' ' + err.message).yellow );
+      });
+
+
+
+    });
+  }
+
+  /**
+  Convert between FRESH and JRS formats.
+  */
+  function convert( src, dst, opts, logger ) {
+    _log = logger || console.log;
+    if( !src || !src.length ) { throw { fluenterror: 6 }; }
+    if( !dst || !dst.length ) {
+      if( src.length === 1 ) { throw { fluenterror: 5 }; }
+      else if( src.length === 2 ) { dst = [ src[1] ]; src = [ src[0] ]; }
+      else { throw { fluenterror: 5 }; }
+    }
+    if( src && dst && src.length && dst.length && src.length !== dst.length ) {
+      throw { fluenterror: 7 };
+    }
+    var sheets = loadSourceResumes( src );
+    sheets.forEach(function(sheet, idx){
+      var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
+      var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
+      _log( 'Converting '.useful + sheet.imp.fileName.useful.bold + (' (' + sourceFormat + ') to ').useful + dst[0].useful.bold +
+        (' (' + targetFormat + ').').useful );
+      sheet.saveAs( dst[idx], targetFormat );
+    });
+  }
+
+  /**
+  Display help documentation.
+  */
+  function help() {
+    console.log( FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).useful.bold );
+  }
+
+  function loadSourceResumes( src, fn ) {
+    return src.map( function( res ) {
+      _log( 'Reading '.info + 'SOURCE'.infoBold + ' resume: '.info + res.cyan.bold );
+      return (fn && fn(res)) || (new FLUENT.FRESHResume()).open( res );
+    });
   }
 
   /**
@@ -139,10 +271,18 @@ module.exports = function () {
   Internal module interface. Used by FCV Desktop and HMR.
   */
   return {
-    generate: gen,
+    verbs: {
+      build: generate,
+      validate: validate,
+      convert: convert,
+      help: help
+    },
     lib: require('./fluentlib'),
     options: _opts,
     formats: _fmts
   };
 
 }();
+
+// [1]: JSON.parse throws SyntaxError on invalid JSON. See:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse

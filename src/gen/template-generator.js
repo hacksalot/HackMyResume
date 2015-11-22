@@ -31,7 +31,9 @@ var _defaultOpts = {
     xml: function( txt ) { return XML(txt); },
     md: function( txt ) { return MD(txt); },
     mdin: function( txt ) { return MD(txt).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, ''); },
-    lower: function( txt ) { return txt.toLowerCase(); }
+    lower: function( txt ) { return txt.toLowerCase(); },
+    link: function( name, url ) { return url ?
+      '<a href="' + url + '">' + name + '</a>' : name }
   },
   prettify: { // ← See https://github.com/beautify-web/js-beautify#options
     indent_size: 2,
@@ -125,7 +127,6 @@ var TemplateGenerator = module.exports = BaseGenerator.extend({
 
     // Strip {# comments #}
     jst = jst.replace( _.templateSettings.comment, '');
-    json.display_progress_bar = true;
 
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     jst = _.template(jst)({ r: json, filt: this.opts.filters, cssInfo: cssInfo, headFragment: this.opts.headFragment || '' });

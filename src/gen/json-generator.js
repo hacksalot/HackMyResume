@@ -19,9 +19,9 @@ var JsonGenerator = module.exports = BaseGenerator.extend({
   invoke: function( rez ) {
     // TODO: merge with FCVD
     function replacer( key,value ) { // Exclude these keys from stringification
-      return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
+      return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-      'isModified', 'htmlPreview'],
+      'isModified', 'htmlPreview', 'safe' ],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }

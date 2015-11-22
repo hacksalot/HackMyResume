@@ -1,0 +1,22 @@
+Usage:
+
+    fluentcv <COMMAND> <SOURCES> [TO <TARGETS>] [-t <THEME>]
+
+<COMMAND> should be BUILD, CONVERT, VALIDATE, or HELP. <SOURCES> should
+be the path to one or more FRESH or JSON Resume format resumes. <TARGETS>
+should be the name of the destination resume to be created, if any. The
+<THEME> parameter should be the name of a predefined theme (for example:
+COMPACT, MINIMIST, MODERN, or HELLO-WORLD) or the relative path to a
+custom theme.
+
+    fluentcv BUILD resume.json TO out/resume.all
+    fluentcv CONVERT resume.json TO resume-jrs.json
+    fluentcv VALIDATE resume.json
+
+Both SOURCES and TARGETS can accept multiple files:
+
+    fluentCV BUILD r1.json r2.json TO out/resume.all out2/resume.html
+    fluentCV VALIDATE resume.json resume2.json resume3.json
+
+See https://github.com/fluentdesk/fluentCV/blob/master/README.md
+for more information.

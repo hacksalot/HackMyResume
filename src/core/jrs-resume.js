@@ -1,6 +1,6 @@
 /**
-Abstract character/resume sheet representation.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Definition of the JRSResume class.
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
 */
 
 (function() {
@@ -13,14 +13,14 @@ Abstract character/resume sheet representation.
     , moment = require('moment');
 
   /**
-  The Sheet class represent a specific JSON character sheet. When Sheet.open
+  The JRSResume class represent a specific JSON character sheet. When Sheet.open
   is called, we merge the loaded JSON sheet properties onto the Sheet instance
   via extend(), so a full-grown sheet object will have all of the methods here,
   plus a complement of JSON properties from the backing JSON file. That allows
   us to treat Sheet objects interchangeably with the loaded JSON model.
-  @class Sheet
+  @class JRSResume
   */
-  function Sheet() {
+  function JRSResume() {
 
   }
 
@@ -29,18 +29,18 @@ Abstract character/resume sheet representation.
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
   */
-  Sheet.prototype.open = function( file, title ) {
-    this.meta = { fileName: file };
-    this.meta.raw = FS.readFileSync( file, 'utf8' );
-    return this.parse( this.meta.raw, title );
+  JRSResume.prototype.open = function( file, title ) {
+    this.imp = { fileName: file };
+    this.imp.raw = FS.readFileSync( file, 'utf8' );
+    return this.parse( this.imp.raw, title );
   };
 
   /**
   Save the sheet to disk (for environments that have disk access).
   */
-  Sheet.prototype.save = function( filename ) {
-    this.meta.fileName = filename || this.meta.fileName;
-    FS.writeFileSync( this.meta.fileName, this.stringify(), 'utf8' );
+  JRSResume.prototype.save = function( filename ) {
+    this.imp.fileName = filename || this.imp.fileName;
+    FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     return this;
   };
 
@@ -48,7 +48,7 @@ Abstract character/resume sheet representation.
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */
-  Sheet.prototype.stringify = function() {
+  JRSResume.prototype.stringify = function() {
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
@@ -64,14 +64,14 @@ Abstract character/resume sheet representation.
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
   */
-  Sheet.prototype.parse = function( stringData, opts ) {
+  JRSResume.prototype.parse = function( stringData, opts ) {
     opts = opts || { };
     var rep = JSON.parse( stringData );
     extend( true, this, rep );
     // Set up metadata
-    if( opts.meta === undefined || opts.meta ) {
-      this.meta = this.meta || { };
-      this.meta.title = (opts.title || this.meta.title) || this.basics.name;
+    if( opts.imp === undefined || opts.imp ) {
+      this.imp = this.imp || { };
+      this.imp.title = (opts.title || this.imp.title) || this.basics.name;
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
@@ -86,7 +86,7 @@ Abstract character/resume sheet representation.
   /**
   Return a unique list of all keywords across all skills.
   */
-  Sheet.prototype.keywords = function() {
+  JRSResume.prototype.keywords = function() {
     var flatSkills = [];
     if( this.skills && this.skills.length ) {
       this.skills.forEach( function( s ) {
@@ -99,7 +99,7 @@ Abstract character/resume sheet representation.
   /**
   Update the sheet's raw data. TODO: remove/refactor
   */
-  Sheet.prototype.updateData = function( str ) {
+  JRSResume.prototype.updateData = function( str ) {
     this.clear( false );
     this.parse( str )
     return this;
@@ -108,9 +108,9 @@ Abstract character/resume sheet representation.
   /**
   Reset the sheet to an empty state.
   */
-  Sheet.prototype.clear = function( clearMeta ) {
+  JRSResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
-    clearMeta && (delete this.meta);
+    clearMeta && (delete this.imp);
     delete this.computed; // Don't use Object.keys() here
     delete this.work;
     delete this.volunteer;
@@ -125,15 +125,15 @@ Abstract character/resume sheet representation.
   /**
   Get the default (empty) sheet.
   */
-  Sheet.default = function() {
-    return new Sheet().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
+  JRSResume.default = function() {
+    return new JRSResume().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
   }
 
   /**
   Add work experience to the sheet.
   */
-  Sheet.prototype.add = function( moniker ) {
-    var defSheet = Sheet.default();
+  JRSResume.prototype.add = function( moniker ) {
+    var defSheet = JRSResume.default();
     var newObject = $.extend( true, {}, defSheet[ moniker ][0] );
     this[ moniker ] = this[ moniker ] || [];
     this[ moniker ].push( newObject );
@@ -143,7 +143,7 @@ Abstract character/resume sheet representation.
   /**
   Determine if the sheet includes a specific social profile (eg, GitHub).
   */
-  Sheet.prototype.hasProfile = function( socialNetwork ) {
+  JRSResume.prototype.hasProfile = function( socialNetwork ) {
     socialNetwork = socialNetwork.trim().toLowerCase();
     return this.basics.profiles && _.some( this.basics.profiles, function(p) {
       return p.network.trim().toLowerCase() === socialNetwork;
@@ -153,7 +153,7 @@ Abstract character/resume sheet representation.
   /**
   Determine if the sheet includes a specific skill.
   */
-  Sheet.prototype.hasSkill = function( skill ) {
+  JRSResume.prototype.hasSkill = function( skill ) {
     skill = skill.trim().toLowerCase();
     return this.skills && _.some( this.skills, function(sk) {
       return sk.keywords && _.some( sk.keywords, function(kw) {
@@ -165,7 +165,7 @@ Abstract character/resume sheet representation.
   /**
   Validate the sheet against the JSON Resume schema.
   */
-  Sheet.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
+  JRSResume.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
     var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
     var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid')
@@ -181,7 +181,7 @@ Abstract character/resume sheet representation.
   *latest end date of all jobs in the work history*. This last condition is for
   sheets that have overlapping jobs.
   */
-  Sheet.prototype.duration = function() {
+  JRSResume.prototype.duration = function() {
     if( this.work && this.work.length ) {
       var careerStart = this.work[ this.work.length - 1].safeStartDate;
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
@@ -199,7 +199,7 @@ Abstract character/resume sheet representation.
   Sort dated things on the sheet by start date descending. Assumes that dates
   on the sheet have been processed with _parseDates().
   */
-  Sheet.prototype.sort = function( ) {
+  JRSResume.prototype.sort = function( ) {
 
     this.work && this.work.sort( byDateDesc );
     this.education && this.education.sort( byDateDesc );
@@ -253,8 +253,8 @@ Abstract character/resume sheet representation.
   }
 
   /**
-  Export the Sheet function/ctor.
+  Export the JRSResume function/ctor.
   */
-  module.exports = Sheet;
+  module.exports = JRSResume;
 
 }());
