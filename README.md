@@ -74,15 +74,15 @@ Resume schema. Use it to make sure your resume data is sufficient and complete.
 
 FluentCV supports these output formats:
 
-Output Format  | Ext | Notes
-------------- | - | -------------
+Output Format | Ext | Notes
+------------- | --- | -----
 HTML | .html | A standard HTML 5 + CSS resume format that can be viewed in a browser, deployed to a website, etc.
 Markdown | .md | A structured Markdown document that can be used as-is or used to generate HTML.
-MS Word | .doc | A Microsoft Word office document in 2003 format for widest compatibility.
+MS Word | .doc | A Microsoft Word office document.
 Adobe Acrobat (PDF) | .pdf | A binary PDF document driven by an HTML theme.
-plain text | .txt | A formatted plain text document appropriate for emails or as a source for copy-paste.
-JSON | .json | A JSON representation of the resume. Can be passed back into FluentCV as an input.
-YAML | .yml | A YAML representation of the resume. Can be passed back into FluentCV as an input.
+plain text | .txt | A formatted plain text document appropriate for emails or copy-paste.
+JSON | .json | A JSON representation of the resume.
+YAML | .yml | A YAML representation of the resume.
 RTF | .rtf | Forthcoming.
 Textile | .textile | Forthcoming.
 image | .png, .bmp | Forthcoming.
