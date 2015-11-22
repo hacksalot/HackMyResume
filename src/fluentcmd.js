@@ -216,7 +216,7 @@ module.exports = function () {
     }
     if( src && dst && src.length && dst.length && src.length !== dst.length ) {
       throw { fluenterror: 7 };
-    }    
+    }
     var sheets = loadSourceResumes( src );
     sheets.forEach(function(sheet, idx){
       var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
@@ -236,7 +236,7 @@ module.exports = function () {
 
   function loadSourceResumes( src, fn ) {
     return src.map( function( res ) {
-      _log( 'Reading '.info + 'SOURCE'.infoBold + ' resume: '.status + res.cyan.bold );
+      _log( 'Reading '.info + 'SOURCE'.infoBold + ' resume: '.info + res.cyan.bold );
       return (fn && fn(res)) || (new FLUENT.FRESHResume()).open( res );
     });
   }
