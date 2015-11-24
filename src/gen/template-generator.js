@@ -14,7 +14,6 @@ var FS = require( 'fs' )
 
 // Default options.
 var _defaultOpts = {
-  themeRelative: '../../node_modules/fluent-themes/themes',
   keepBreaks: true,
   freezeBreaks: true,
   nSym: '&newl;', // newline entity
@@ -76,7 +75,10 @@ var TemplateGenerator = module.exports = BaseGenerator.extend({
     this.opts = EXTEND( true, { }, _defaultOpts, opts );
 
     // Verify the specified theme name/path
-    var tFolder = PATH.resolve( __dirname, this.opts.themeRelative, this.opts.theme );
+    var tFolder = PATH.join(
+      PATH.parse( require.resolve('fluent-themes') ).dir,
+      this.opts.theme
+    );
     var exists = require('../utils/file-exists');
     if (!exists( tFolder )) {
       tFolder = PATH.resolve( this.opts.theme );
