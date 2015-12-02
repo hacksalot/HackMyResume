@@ -235,7 +235,7 @@ module.exports = function () {
     dst = src || ['resume.json'];
     dst.forEach( function( t ) {
       var safeFormat = opts.format.toUpperCase();
-      _log('Creating '.useful +safeFormat.useful.bold+ ' resume: '.useful + t.useful.bold);
+      _log('Creating new '.useful +safeFormat.useful.bold+ ' resume: '.useful + t.useful.bold);
       MKDIRP.sync( path.dirname( t ) ); // Ensure dest folder exists;
       FLUENT[ safeFormat + 'Resume' ].default().save( t );
     });
