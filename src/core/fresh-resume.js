@@ -143,9 +143,10 @@ Definition of the FRESHResume class.
     delete this.employment;
     delete this.service;
     delete this.education;
-    //delete this.awards;
-    delete this.publications;
-    //delete this.interests;
+    delete this.recognition;
+    delete this.reading;
+    delete this.writing;
+    delete this.interests;
     delete this.skills;
     delete this.social;
   };
@@ -154,7 +155,7 @@ Definition of the FRESHResume class.
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
-    return new FreshResume().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
+    return new FreshResume().open( PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
   }
 
   /**
@@ -243,7 +244,7 @@ Definition of the FRESHResume class.
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
     //     : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
     // });
-    this.publications && this.publications.sort( function(a, b) {
+    this.writing && this.writing.sort( function(a, b) {
       return( a.safe.date.isBefore(b.safe.date) ) ? 1
         : ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0;
     });

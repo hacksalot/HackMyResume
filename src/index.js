@@ -59,17 +59,14 @@ function main() {
   var splitAt = _.indexOf( params, 'to' );
   if( splitAt === a._.length - 1 ) {
     // 'TO' cannot be the last argument
-    logMsg('Please '.warn + 'specify an output file'.warnBold +
-      ' for this operation or '.warn + 'omit the TO keyword'.warnBold + '.'.warn );
+    logMsg('Please '.warn + 'specify an output file'.warn.bold +
+      ' for this operation or '.warn + 'omit the TO keyword'.warn.bold +
+      '.'.warn );
     return;
   }
 
   var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
   var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
-
-  // Preload our params array
-  //var dst = (a.o && ((typeof a.o === 'string' && [ a.o ]) || a.o)) || [];
-  //dst = (dst === true) ? [] : dst; // Handle -o with missing output file
   var parms = [ src, dst, opts, logMsg ];
 
   // Invoke the action
@@ -86,6 +83,7 @@ function getOpts( args ) {
   noPretty = noPretty && (noPretty === true || noPretty === 'true');
   return {
     theme: args.t || 'modern',
+    format: args.f || 'FRESH',
     prettify: !noPretty,
     silent: args.s || args.silent
   };
@@ -105,7 +103,7 @@ function handleError( ex ) {
         Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
           return (idx === ar.length - 1 ? 'or '.guide : '')
             + v.toUpperCase().guide;
-        }).join(', '.guide) + ") to get started.\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
+        }).join(', '.guide) + ").\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
         break;
       //case 4: msg = title + '\n' + ; break;
       case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created in the new format.'.guide; break;

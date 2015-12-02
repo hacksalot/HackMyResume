@@ -50,7 +50,7 @@ Definition of the JRSResume class.
   */
   JRSResume.prototype.stringify = function() {
     function replacer( key,value ) { // Exclude these keys from stringification
-      return _.some(['meta', 'warnings', 'computed', 'filt', 'ctrl', 'index',
+      return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
       'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
@@ -126,7 +126,7 @@ Definition of the JRSResume class.
   Get the default (empty) sheet.
   */
   JRSResume.default = function() {
-    return new JRSResume().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
+    return new JRSResume().open( PATH.join( __dirname, 'empty-jrs.json'), 'Empty' );
   }
 
   /**

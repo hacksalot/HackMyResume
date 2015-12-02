@@ -52,6 +52,15 @@ it when you need to submit, upload, print, or email resumes in specific formats.
     fluentcv BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
     ```
 
+- `new` creates a new resume in FRESH or JSON Resume format.
+
+    ```bash
+    # fluentcv NEW <OUTPUTS> [-f <FORMAT>]
+    fluentcv NEW resume.json
+    fluentcv NEW resume.json -f fresh
+    fluentcv NEW r1.json r2.json -f jrs
+    ```
+
 - `convert` converts your source resume between FRESH and JSON Resume formats.
 Use it to convert between the two formats to take advantage of tools and services.
 

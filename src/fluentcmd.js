@@ -104,7 +104,7 @@ module.exports = function () {
 
       var theFormat = _fmts.filter(
         function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
-      MKDIRP.sync( path.dirname(fOut) ); // Ensure dest folder exists;
+      MKDIRP.sync( path.dirname( fOut ) ); // Ensure dest folder exists;
       theFormat.gen.generate( rez, fOut, _opts );
     }
     catch( ex ) {
@@ -228,6 +228,20 @@ module.exports = function () {
   }
 
   /**
+  Create a new empty resume in either FRESH or JRS format.
+  */
+  function create( src, dst, opts, logger ) {
+    _log = logger || console.log;
+    dst = src || ['resume.json'];
+    dst.forEach( function( t ) {
+      var safeFormat = opts.format.toUpperCase();
+      _log('Creating '.useful +safeFormat.useful.bold+ ' resume: '.useful + t.useful.bold);
+      MKDIRP.sync( path.dirname( t ) ); // Ensure dest folder exists;
+      FLUENT[ safeFormat + 'Resume' ].default().save( t );
+    });
+  }
+
+  /**
   Display help documentation.
   */
   function help() {
@@ -275,6 +289,7 @@ module.exports = function () {
       build: generate,
       validate: validate,
       convert: convert,
+      new: create,
       help: help
     },
     lib: require('./fluentlib'),
