@@ -10,10 +10,11 @@ Abstract theme representation.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
+    , EXTEND = require('../utils/extend')
     , moment = require('moment');
 
   /**
-  The Theme class represents a specific presentation of a resume.
+  The Theme class is a representation of a FluentCV theme asset.
   @class Theme
   */
   function Theme() {
@@ -31,8 +32,12 @@ Abstract theme representation.
       return friendly[val] || val;
     }
 
-    // Remember the theme folder; might be custom
+    // Open the theme.json file; should have the same name as folder
     this.folder = themeFolder;
+    var pathInfo = PATH.parse( themeFolder );
+    var themeFile = PATH.join( themeFolder, pathInfo.base + '.json' );
+    var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
+    EXTEND( true, this, themeInfo );
 
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file.
