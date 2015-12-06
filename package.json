@@ -36,6 +36,7 @@
     "colors": "^1.1.2",
     "fluent-themes": "0.6.0-beta",
     "fs-extra": "^0.24.0",
+    "handlebars": "^4.0.5",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
     "jst": "0.0.13",
