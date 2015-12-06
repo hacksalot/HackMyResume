@@ -34,7 +34,7 @@
   "dependencies": {
     "FRESCA": "fluentdesk/FRESCA#v0.1.0",
     "colors": "^1.1.2",
-    "fluent-themes": "0.5.1-beta",
+    "fluent-themes": "0.6.0-beta",
     "fs-extra": "^0.24.0",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
