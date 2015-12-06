@@ -28,8 +28,8 @@ var _defaultOpts = {
     out: function( txt ) { return txt; },
     raw: function( txt ) { return txt; },
     xml: function( txt ) { return XML(txt); },
-    md: function( txt ) { return MD(txt); },
-    mdin: function( txt ) { return MD(txt).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, ''); },
+    md: function( txt ) { return MD( txt || '' ); },
+    mdin: function( txt ) { return MD(txt || '' ).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, ''); },
     lower: function( txt ) { return txt.toLowerCase(); },
     link: function( name, url ) { return url ?
       '<a href="' + url + '">' + name + '</a>' : name }
