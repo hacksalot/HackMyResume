@@ -16,5 +16,6 @@ module.exports = {
   MarkdownGenerator: require('./gen/markdown-generator'),
   JsonGenerator: require('./gen/json-generator'),
   YamlGenerator: require('./gen/yaml-generator'),
-  JsonYamlGenerator: require('./gen/json-yaml-generator')
+  JsonYamlGenerator: require('./gen/json-yaml-generator'),
+  LaTeXGenerator: require('./gen/latex-generator')
 };
