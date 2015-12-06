@@ -11,7 +11,8 @@ Abstract theme representation.
     , _ = require('underscore')
     , PATH = require('path')
     , EXTEND = require('../utils/extend')
-    , moment = require('moment');
+    , moment = require('moment')
+    , recursiveReadSync = require('recursive-readdir-sync');
 
   /**
   The Theme class is a representation of a FluentCV theme asset.
@@ -42,7 +43,7 @@ Abstract theme representation.
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file.
     var tplFolder = PATH.join( themeFolder, 'src' );
-    var fmts = FS.readdirSync( tplFolder ).map( function( file ) {
+    var fmts = recursiveReadSync( tplFolder ).map( function( file ) {
       var absPath = PATH.join( tplFolder, file );
       var pathInfo = PATH.parse(absPath);
       var temp = [ pathInfo.name, {

@@ -44,6 +44,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
+    "recursive-readdir-sync": "^1.0.6",
     "underscore": "^1.8.3",
     "wkhtmltopdf": "^0.1.5",
     "xml-escape": "^1.0.0",
