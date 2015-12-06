@@ -94,7 +94,7 @@ Template-based resume generator base for FluentCV.
       var theme = opts.themeObj || new Theme().open( tFolder );
 
       // Load theme and CSS data
-      var tplFolder = PATH.join( tFolder, 'templates' );
+      var tplFolder = PATH.join( tFolder, 'src' );
       var curFmt = theme.getFormat( this.format );
       var cssInfo = { file: curFmt.css ? curFmt.cssPath : null, data: curFmt.css || null };
 

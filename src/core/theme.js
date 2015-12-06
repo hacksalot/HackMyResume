@@ -41,7 +41,7 @@ Abstract theme representation.
 
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file.
-    var tplFolder = PATH.join( themeFolder, 'templates' );
+    var tplFolder = PATH.join( themeFolder, 'src' );
     var fmts = FS.readdirSync( tplFolder ).map( function( file ) {
       var absPath = PATH.join( tplFolder, file );
       var pathInfo = PATH.parse(absPath);

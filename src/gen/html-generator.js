@@ -21,7 +21,7 @@ HTML resume generator for FluentCV.
     the HTML resume prior to saving.
     */
     onBeforeSave: function( info ) {
-      var cssSrc = PATH.join( info.theme.folder, 'templates', '*.css' )
+      var cssSrc = PATH.join( info.theme.folder, 'src', '*.css' )
         , outFolder = PATH.parse( info.outputFile ).dir, that = this;
 
       info.theme.cssFiles.forEach( function( f ) {
