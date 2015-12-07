@@ -76,7 +76,7 @@ module.exports = function () {
       targets.push.apply(targets, fmat === '.all' ?
         Object.keys( theTheme.formats ).map(function(k){
           var z = theTheme.formats[k];
-          return { file: to.replace(/all$/g,z.pre), fmt: z }
+          return { file: to.replace(/all$/g,z.outFormat), fmt: z }
         }) : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
     });
@@ -95,17 +95,34 @@ module.exports = function () {
   */
   function single( fi, theme ) {
     try {
-      var f = fi.file, fType = fi.fmt.ext, fName = path.basename(f,'.'+fType);
-      var fObj = _.property( fi.fmt.pre )( theme.formats );
-      var fOut = path.join( f.substring( 0, f.lastIndexOf('.')+1 ) + fObj.pre);
+      var f = fi.file, fType = fi.fmt.outFormat, fName = path.basename(f,'.'+fType);
 
-      _log( 'Generating '.useful + fi.fmt.title.toUpperCase().useful.bold + ' resume: '.useful +
-        path.relative(process.cwd(), f ).useful.bold );
+      if( fi.fmt.files && fi.fmt.files.length ) {
+        fi.fmt.files.forEach( function( form ) {
 
-      var theFormat = _fmts.filter(
-        function( fmt ) { return fmt.name === fi.fmt.pre; })[0];
-      MKDIRP.sync( path.dirname( fOut ) ); // Ensure dest folder exists;
-      theFormat.gen.generate( rez, fOut, _opts );
+          if( form.ext === 'css' )
+            return;
+
+          _log( 'Generating '.useful + form.title.toUpperCase().useful.bold + ' resume: '.useful +
+            path.relative(process.cwd(), f ).useful.bold );
+
+          var theFormat = _fmts.filter(
+            function( fmt ) { return fmt.name === form.pre; })[0];
+
+          MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
+          theFormat.gen.generate( rez, f, _opts );
+
+        });
+      }
+      else {
+        _log( 'Generating '.useful + fi.fmt.outFormat.toUpperCase().useful.bold + ' resume: '.useful +
+          path.relative(process.cwd(), f ).useful.bold );
+
+        var theFormat = _fmts.filter(
+          function( fmt ) { return fmt.name === fi.fmt.outFormat; })[0];
+        MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
+        theFormat.gen.generate( rez, f, _opts );
+      }
     }
     catch( ex ) {
       _err( ex );

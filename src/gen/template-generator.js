@@ -96,12 +96,16 @@ Template-based resume generator base for FluentCV.
       // Load theme and CSS data
       var tplFolder = PATH.join( tFolder, 'src' );
       var curFmt = theme.getFormat( this.format );
-      var cssInfo = { file: curFmt.css ? curFmt.cssPath : null, data: curFmt.css || null };
 
-      // Compile and invoke the template!
-      var mk = this.single( rez, curFmt.data, this.format, cssInfo, this.opts );
-      this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
-      FS.writeFileSync( f, mk, { encoding: 'utf8', flags: 'w' } );
+      var that = this;
+      curFmt.files.forEach(function(tplInfo){
+
+        var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
+        // Compile and invoke the template!
+        var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
+        that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
+        FS.writeFileSync( f, mk, { encoding: 'utf8', flags: 'w' } );
+      });
 
     },
 

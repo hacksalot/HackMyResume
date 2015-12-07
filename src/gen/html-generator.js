@@ -25,8 +25,8 @@ HTML resume generator for FluentCV.
         , outFolder = PATH.parse( info.outputFile ).dir, that = this;
 
       info.theme.cssFiles.forEach( function( f ) {
-        var fi = PATH.parse( f[1].path );
-        FS.copySync( f[1].path, PATH.join( outFolder, fi.base ), { clobber: true }, function( e ) {
+        var fi = PATH.parse( f.path );
+        FS.copySync( f.path, PATH.join( outFolder, fi.base ), { clobber: true }, function( e ) {
           throw { fluenterror: that.codes.copyCss, data: [cssSrc,cssDst] };
         });
       });
