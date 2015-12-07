@@ -27,26 +27,62 @@ Abstract theme representation.
   */
   Theme.prototype.open = function( themeFolder ) {
 
-    function friendlyName( val ) {
-      val = val.trim().toLowerCase();
-      var friendly = { yml: 'yaml', md: 'markdown', txt: 'text' };
-      return friendly[val] || val;
-    }
-
     // Open the [theme-name].json file; should have the same name as folder
     this.folder = themeFolder;
     var pathInfo = PATH.parse( themeFolder );
     var themeFile = PATH.join( themeFolder, pathInfo.base + '.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
+    var that = this;
 
     // Move properties from the theme JSON file to the theme object
     EXTEND( true, this, themeInfo );
+
+    // Set up a formats has for the theme
+    var formatsHash = { };
+
+    // Check for an explicit "formats" entry in the theme JSON. If it has one,
+    // then this theme declares its files explicitly.
+    if( !!this.formats ) {
+      formatsHash = loadExplicit.call( this );
+    }
+    else {
+      formatsHash = loadImplicit.call( this );
+    }
+
+    // Add freebie formats every theme gets
+    formatsHash[ 'json' ] = { title: 'json', outFormat: 'json', pre: 'json', ext: 'json', path: null, data: null };
+    formatsHash[ 'yml' ] = { title: 'yaml', outFormat: 'yml', pre: 'yml', ext: 'yml', path: null, data: null };
+
+    // Cache
+    this.formats = formatsHash;
+
+    // Set the official theme name
+    this.name = PATH.parse( this.folder ).name;
+
+    return this;
+  };
+
+  /**
+  Determine if the theme supports the specified output format.
+  */
+  Theme.prototype.hasFormat = function( fmt ) {
+    return _.has( this.formats, fmt );
+  };
+
+  /**
+  Determine if the theme supports the specified output format.
+  */
+  Theme.prototype.getFormat = function( fmt ) {
+    return this.formats[ fmt ];
+  };
+
+  function loadImplicit() {
 
     // Set up a hash of formats supported by this theme.
     var formatsHash = { };
 
     // Establish the base theme folder
-    var tplFolder = PATH.join( themeFolder, 'src' );
+    var tplFolder = PATH.join( this.folder, 'src' );
 
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file. While we're doing that, also build up
@@ -73,7 +109,8 @@ Abstract theme representation.
       }
 
       // We should have a valid output format now.
-      formatsHash[ outFmt ] = formatsHash[outFmt] || { outFormat: outFmt, files: [] };
+      formatsHash[ outFmt ] =
+        formatsHash[outFmt] || { outFormat: outFmt, files: [] };
 
       // Create the file representation object.
       var obj = {
@@ -91,10 +128,6 @@ Abstract theme representation.
       return obj;
     });
 
-    // Add freebie formats every theme gets
-    formatsHash[ 'json' ] = { title: 'json', outFormat: 'json', pre: 'json', ext: 'json', path: null, data: null };
-    formatsHash[ 'yml' ] = { title: 'yaml', outFormat: 'yml', pre: 'yml', ext: 'yml', path: null, data: null };
-
     // Now, get all the CSS files...
     (this.cssFiles = fmts.filter(function( fmt ){ return fmt.ext === 'css'; }))
     .forEach(function( cssf ) {
@@ -111,28 +144,49 @@ Abstract theme representation.
       return fmt.ext !== 'css';
     });
 
-    // Cache the formats hash
-    this.formats = formatsHash;
+    return formatsHash;
+  }
 
-    // Set the official theme name
-    this.name = PATH.parse( themeFolder ).name;
+  function loadExplicit() {
 
-    return this;
-  };
+    var formatsHash = { };
+    var that = this;
 
-  /**
-  Determine if the theme supports the specified output format.
-  */
-  Theme.prototype.hasFormat = function( fmt ) {
-    return _.has( this.formats, fmt );
-  };
+    // Establish the base theme folder
+    var tplFolder = this.folder;//PATH.join( this.folder, 'src' );
 
-  /**
-  Determine if the theme supports the specified output format.
-  */
-  Theme.prototype.getFormat = function( fmt ) {
-    return this.formats[ fmt ];
-  };
+    // Iterate over all keys in the "formats" section of the theme JSON file.
+    // Each key will be a format (html, latex, pdf, etc) with some data.
+    Object.keys( this.formats ).forEach( function( k ) {
+
+      formatsHash[ k ] = {
+        outFormat: k,
+        files: that.formats[ k ].files.map(function(fi){
+
+          var absPath = PATH.join( tplFolder, fi );
+          var pathInfo = PATH.parse( absPath );
+
+
+          return {
+            path: absPath,
+            ext: pathInfo.ext.slice(1),
+            title: friendlyName( k ),
+            pre: k,
+            outFormat: k,
+            data: FS.readFileSync( absPath, 'utf8' ),
+            css: null
+          };
+        })
+      };
+    });
+    return formatsHash;
+  }
+
+  function friendlyName( val ) {
+    val = val.trim().toLowerCase();
+    var friendly = { yml: 'yaml', md: 'markdown', txt: 'text' };
+    return friendly[val] || val;
+  }
 
   module.exports = Theme;
 

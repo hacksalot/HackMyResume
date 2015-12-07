@@ -11,7 +11,7 @@ LaTeXGenerator generates a LaTeX resume via TemplateGenerator.
 var LaTeXGenerator = module.exports = TemplateGenerator.extend({
 
   init: function(){
-    this._super( 'tex', 'tex' );
+    this._super( 'latex', 'tex' );
   }
 
 });

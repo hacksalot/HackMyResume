@@ -93,21 +93,21 @@ module.exports = function () {
   @param f Full path to the destination resume to generate, for example,
   "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
-  function single( fi, theme ) {
+  function single( targetInfo, theme ) {
     try {
-      var f = fi.file, fType = fi.fmt.outFormat, fName = path.basename(f,'.'+fType);
+      var f = targetInfo.file, fType = targetInfo.fmt.outFormat, fName = path.basename(f,'.'+fType);
 
-      if( fi.fmt.files && fi.fmt.files.length ) {
-        fi.fmt.files.forEach( function( form ) {
+      if( targetInfo.fmt.files && targetInfo.fmt.files.length ) {
+        targetInfo.fmt.files.forEach( function( form ) {
 
           if( form.ext === 'css' )
             return;
 
-          _log( 'Generating '.useful + form.title.toUpperCase().useful.bold + ' resume: '.useful +
+          _log( 'Generating '.useful + targetInfo.fmt.outFormat.toUpperCase().useful.bold + ' resume: '.useful +
             path.relative(process.cwd(), f ).useful.bold );
 
           var theFormat = _fmts.filter(
-            function( fmt ) { return fmt.name === form.pre; })[0];
+            function( fmt ) { return fmt.name === targetInfo.fmt.outFormat; })[0];
 
           MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
           theFormat.gen.generate( rez, f, _opts );
@@ -115,11 +115,11 @@ module.exports = function () {
         });
       }
       else {
-        _log( 'Generating '.useful + fi.fmt.outFormat.toUpperCase().useful.bold + ' resume: '.useful +
+        _log( 'Generating '.useful + targetInfo.fmt.outFormat.toUpperCase().useful.bold + ' resume: '.useful +
           path.relative(process.cwd(), f ).useful.bold );
 
         var theFormat = _fmts.filter(
-          function( fmt ) { return fmt.name === fi.fmt.outFormat; })[0];
+          function( fmt ) { return fmt.name === targetInfo.fmt.outFormat; })[0];
         MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
         theFormat.gen.generate( rez, f, _opts );
       }
