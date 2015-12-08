@@ -10,6 +10,7 @@ Template-based resume generator base for FluentCV.
     , MD = require( 'marked' )
     , XML = require( 'xml-escape' )
     , PATH = require('path')
+    , MKDIRP = require('mkdirp')
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
     , Theme = require('../core/theme');
@@ -90,6 +91,8 @@ Template-based resume generator base for FluentCV.
         }
       }
 
+      var outFolder = PATH.parse(f).dir;
+
       // Load the theme
       var theme = opts.themeObj || new Theme().open( tFolder );
 
@@ -99,20 +102,28 @@ Template-based resume generator base for FluentCV.
 
       var that = this;
       curFmt.files.forEach(function(tplInfo){
+        if( tplInfo.action === 'transform' ) {
+          var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
+          var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
+          that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
 
-        var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
-        // Compile and invoke the template!
-        var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
-        that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
-        FS.writeFileSync( f, mk, { encoding: 'utf8', flags: 'w' } );
+          var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
+          MKDIRP.sync( PATH.dirname(thisFilePath) );
+          console.log('Would save to ' + thisFilePath);
+
+          FS.writeFileSync( thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+        }
       });
 
     },
 
     /**
-    Perform a single resume JSON-to-DEST resume transformation. Exists as a
-    separate function in order to expose string-based transformations to clients
-    who don't have access to filesystem resources (in-browser, etc.).
+    Perform a single resume JSON-to-DEST resume transformation.
+    @param json A FRESH or JRS resume object.
+    @param jst The stringified template data
+    @param format The format name, such as "html" or "latex"
+    @param cssInfo Needs to be refactored.
+    @param opts Options and passthrough data.
     */
     single: function( json, jst, format, cssInfo, opts ) {
 

@@ -180,6 +180,27 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Return the specified network profile.
+  */
+  FreshResume.prototype.getProfile = function( socialNetwork ) {
+    socialNetwork = socialNetwork.trim().toLowerCase();
+    return this.social && _.find( this.social, function(sn) {
+      return sn.network.trim().toLowerCase() === socialNetwork
+    });
+  }
+
+  /**
+  Return an array of profiles for the specified network, for when the user
+  has multiple eg. GitHub accounts.
+  */
+  FreshResume.prototype.getProfiles = function( socialNetwork ) {
+    socialNetwork = socialNetwork.trim().toLowerCase();
+    return this.social && _.filter( this.social, function(sn){
+      return sn.network.trim().toLowerCase() === socialNetwork
+    });
+  }
+
+  /**
   Determine if the sheet includes a specific skill.
   */
   FreshResume.prototype.hasSkill = function( skill ) {

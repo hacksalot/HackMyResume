@@ -149,36 +149,98 @@ Abstract theme representation.
 
   function loadExplicit() {
 
-    var formatsHash = { };
     var that = this;
+    // Set up a hash of formats supported by this theme.
+    var formatsHash = { };
 
     // Establish the base theme folder
-    var tplFolder = this.folder;//PATH.join( this.folder, 'src' );
+    var tplFolder = PATH.join( this.folder, 'src' );
 
-    // Iterate over all keys in the "formats" section of the theme JSON file.
-    // Each key will be a format (html, latex, pdf, etc) with some data.
-    Object.keys( this.formats ).forEach( function( k ) {
+    var act = null;
 
-      formatsHash[ k ] = {
-        outFormat: k,
-        files: that.formats[ k ].files.map(function(fi){
+    // Iterate over all files in the theme folder, producing an array, fmts,
+    // containing info for each file. While we're doing that, also build up
+    // the formatsHash object.
+    var fmts = RECURSIVE_READ_DIR( tplFolder ).map( function( absPath ) {
 
-          var absPath = PATH.join( tplFolder, fi );
-          var pathInfo = PATH.parse( absPath );
+      act = null;
+      // If this file is mentioned in the theme's JSON file under "transforms"
+      var pathInfo = PATH.parse(absPath);
+      var absPathSafe = absPath.trim().toLowerCase();
+      var outFmt = _.find( Object.keys( that.formats ), function( fmtKey ) {
+        var fmtVal = that.formats[ fmtKey ];
+        return _.some( fmtVal.transform, function( fpath ) {
+          var absPathB = PATH.join( that.folder, fpath ).trim().toLowerCase();
+          return absPathB === absPathSafe;
+        });
+      });
+      if( outFmt ) {
+        act = 'transform';
+      }
 
+      // If this file lives in a specific format folder within the theme,
+      // such as "/latex" or "/html", then that format is the output format
+      // for all files within the folder.
+      if( !outFmt ) {
+        var portion = pathInfo.dir.replace(tplFolder,'');
+        if( portion && portion.trim() ) {
+          var reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig;
+          var res = reg.exec( portion );
+          res && (outFmt = res[1]);
+        }
+      }
 
-          return {
-            path: absPath,
-            ext: pathInfo.ext.slice(1),
-            title: friendlyName( k ),
-            pre: k,
-            outFormat: k,
-            data: FS.readFileSync( absPath, 'utf8' ),
-            css: null
-          };
-        })
+      // Otherwise, the output format is inferred from the filename, as in
+      // compact-[outputformat].[extension], for ex, compact-pdf.html.
+      if( !outFmt ) {
+        var idx = pathInfo.name.lastIndexOf('-');
+        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 )
+      }
+
+      // We should have a valid output format now.
+      formatsHash[ outFmt ] =
+        formatsHash[outFmt] || { outFormat: outFmt, files: [] };
+
+      // Create the file representation object.
+      var obj = {
+        action: act,
+        orgPath: PATH.relative(that.folder, absPath),
+        path: absPath,
+        ext: pathInfo.ext.slice(1),
+        title: friendlyName( outFmt ),
+        pre: outFmt,
+        // outFormat: outFmt || pathInfo.name,
+        data: FS.readFileSync( absPath, 'utf8' ),
+        css: null
       };
+
+      // Add this file to the list of files for this format type.
+      formatsHash[ outFmt ].files.push( obj );
+      return obj;
     });
+
+    // Now, get all the CSS files...
+    (this.cssFiles = fmts.filter(function( fmt ){ return fmt.ext === 'css'; }))
+    .forEach(function( cssf ) {
+        // For each CSS file, get its corresponding HTML file
+        var idx = _.findIndex(fmts, function( fmt ) {
+          return fmt.pre === cssf.pre && fmt.ext === 'html'
+      });
+      fmts[ idx ].css = cssf.data;
+      fmts[ idx ].cssPath = cssf.path;
+    });
+
+    // Remove CSS files from the formats array
+    fmts = fmts.filter( function( fmt) {
+      return fmt.ext !== 'css';
+    });
+
+    // Object.keys( formatsHash ).forEach(function(k){
+    //   formatsHash[ k ].files.forEach(function(xhs){
+    //     console.log(xhs.orgPath);
+    //   });
+    // });
+
     return formatsHash;
   }
 

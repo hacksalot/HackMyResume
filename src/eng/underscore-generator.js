@@ -23,10 +23,10 @@ Underscore template generate for FluentCV.
     jst = jst.replace( delims.interpolate, function replace(m, p1) {
       if( p1.indexOf('|') > -1 ) {
         var terms = p1.split('|');
-        return '[~ print( filt.' + terms[1] + '( ' + terms[0] + ' )) ]]';
+        return '[~ print( filt.' + terms[1] + '( ' + terms[0] + ' )) ~]';
       }
       else {
-        return '[~ print( filt.out(' + p1 + ') ) ]]';
+        return '[~ print( filt.out(' + p1 + ') ) ~]';
       }
     });
 
@@ -34,6 +34,7 @@ Underscore template generate for FluentCV.
     jst = jst.replace( delims.comment, '');
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     var compiled = _.template(jst);
+
     var ret = compiled({
       r: json,
       filt: opts.filters,
