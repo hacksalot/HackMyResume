@@ -5,7 +5,7 @@ Template-based resume generator base for FluentCV.
 
 (function() {
 
-  var FS = require( 'fs' )
+  var FS = require( 'fs-extra' )
     , _ = require( 'underscore' )
     , MD = require( 'marked' )
     , XML = require( 'xml-escape' )
@@ -19,7 +19,7 @@ Template-based resume generator base for FluentCV.
   var _defaultOpts = {
     engine: 'underscore',
     keepBreaks: true,
-    freezeBreaks: true,
+    freezeBreaks: false,
     nSym: '&newl;', // newline entity
     rSym: '&retn;', // return entity
     template: {
@@ -87,7 +87,7 @@ Template-based resume generator base for FluentCV.
       if (!exists( tFolder )) {
         tFolder = PATH.resolve( this.opts.theme );
         if (!exists( tFolder )) {
-          throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme };
+          throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
         }
       }
 
@@ -102,18 +102,42 @@ Template-based resume generator base for FluentCV.
 
       var that = this;
       curFmt.files.forEach(function(tplInfo){
-        if( tplInfo.action === 'transform' ) {
-          var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
-          var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
-          that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
-
-          var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
-          MKDIRP.sync( PATH.dirname(thisFilePath) );
-          console.log('Would save to ' + thisFilePath);
-
-          FS.writeFileSync( thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+        if( tplInfo.action === 'transform' || tplInfo.action === null ) {
+          if( tplInfo.action === 'transform' ) {
+            var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
+            var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
+            that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
+            var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
+            try {
+              MKDIRP.sync( PATH.dirname(thisFilePath) );
+              FS.writeFileSync( thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+            }
+            catch(ex) {
+              console.log(ex);
+            }
+          }
+          else if( tplInfo.action === null ) {
+            var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
+            try {
+              MKDIRP.sync( PATH.dirname(thisFilePath) );
+              FS.copySync( tplInfo.path, thisFilePath );
+            }
+            catch(ex) {
+              console.log(ex);
+            }
+          }
         }
       });
+
+      // Create symlinks
+      if( curFmt.symLinks ) {
+        Object.keys( curFmt.symLinks ).forEach( function(loc) {
+          var absLoc = PATH.join(outFolder, loc);
+          var absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
+          var type = PATH.parse( absLoc ).ext ? 'file' : 'junction'; // 'file', 'dir', or 'junction' (Windows only)
+          FS.symlinkSync( absTarg, absLoc, type);
+        });
+      }
 
     },
 

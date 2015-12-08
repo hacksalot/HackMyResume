@@ -80,6 +80,7 @@ Abstract theme representation.
 
     // Set up a hash of formats supported by this theme.
     var formatsHash = { };
+    var that = this;
 
     // Establish the base theme folder
     var tplFolder = PATH.join( this.folder, 'src' );
@@ -110,7 +111,7 @@ Abstract theme representation.
 
       // We should have a valid output format now.
       formatsHash[ outFmt ] =
-        formatsHash[outFmt] || { outFormat: outFmt, files: [] };
+        formatsHash[outFmt] || { outFormat: outFmt, files: [], symLinks: that.formats[ outFmt ].symLinks };
 
       // Create the file representation object.
       var obj = {
@@ -199,7 +200,11 @@ Abstract theme representation.
 
       // We should have a valid output format now.
       formatsHash[ outFmt ] =
-        formatsHash[outFmt] || { outFormat: outFmt, files: [] };
+        formatsHash[ outFmt ] || {
+          outFormat: outFmt,
+          files: [],
+          symLinks: that.formats[ outFmt ].symLinks
+        };
 
       // Create the file representation object.
       var obj = {
@@ -234,12 +239,6 @@ Abstract theme representation.
     fmts = fmts.filter( function( fmt) {
       return fmt.ext !== 'css';
     });
-
-    // Object.keys( formatsHash ).forEach(function(k){
-    //   formatsHash[ k ].files.forEach(function(xhs){
-    //     console.log(xhs.orgPath);
-    //   });
-    // });
 
     return formatsHash;
   }
