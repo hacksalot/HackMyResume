@@ -57,6 +57,12 @@ Definition of the FRESHResume class.
     return this;
   }
 
+  FreshResume.prototype.dupe = function() {
+    var rnew = new FreshResume();
+    rnew.parse( this.stringify(), { } );
+    return rnew;
+  };
+
   /**
   Convert the supplied object to a JSON string, sanitizing meta-properties along
   the way.
@@ -77,30 +83,42 @@ Definition of the FRESHResume class.
   FreshResume.prototype.markdownify = function() {
 
     var that = this;
-    var ret = extend(true, { }, this);
+    var ret = this.dupe();
+
+    function MDIN(txt){
+      return MD(txt || '' ).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, '');
+    }
 
     // TODO: refactor recursion
-    function markdownifyStringsInObject( obj ) {
+    function markdownifyStringsInObject( obj, inline ) {
 
       if( !obj ) return;
+
+      inline = inline === undefined || inline;
+
       if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
-        obj.forEach(function(elem){
-          markdownifyStringsInObject( elem );
+        obj.forEach(function(elem, idx, ar){
+          if( typeof elem === 'string' || elem instanceof String )
+            ar[idx] = inline ? MDIN(elem) : MD( elem );
+          else
+            markdownifyStringsInObject( elem );
         });
       }
       else if (typeof obj === 'object') {
-        if( obj._isAMomentObject || obj.safe )
-         return;
         Object.keys( obj ).forEach(function(key) {
           var sub = obj[key];
-          if( typeof sub === 'string' || sub instanceof String )
-            obj[key] = MD( obj[key] );
+          if( typeof sub === 'string' || sub instanceof String ) {
+            if( key !== 'url' )
+              obj[key] = inline ? MDIN( obj[key] ) : MD( obj[key] );
+          }
+          else
+            markdownifyStringsInObject( sub );
         });
       }
     }
 
     Object.keys( ret ).forEach(function(member){
-      markdownifyStringsInObject( that[ member ] );
+      markdownifyStringsInObject( ret[ member ] );
     });
 
     return ret;
@@ -191,7 +209,8 @@ Definition of the FRESHResume class.
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
-    return new FreshResume().open( PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
+    return new FreshResume().open(
+      PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
   }
 
   /**

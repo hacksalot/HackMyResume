@@ -22,12 +22,11 @@ Underscore template generate for FluentCV.
     jst = jst.replace( delims.comment, '');
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     var compiled = _.template(jst);
-
-    var mr = json.markdownify();
-
     var ret = compiled({
       r: json.markdownify(),
       filt: opts.filters,
+      XML: require('xml-escape'),
+      RAW: json,
       cssInfo: cssInfo,
       headFragment: opts.headFragment || ''
     });

@@ -136,10 +136,11 @@ Abstract theme representation.
     // Now, get all the CSS files...
     (this.cssFiles = fmts.filter(function( fmt ){ return fmt.ext === 'css'; }))
     .forEach(function( cssf ) {
-        // For each CSS file, get its corresponding HTML file
-        var idx = _.findIndex(fmts, function( fmt ) {
-          return fmt.pre === cssf.pre && fmt.ext === 'html'
+      // For each CSS file, get its corresponding HTML file
+      var idx = _.findIndex(fmts, function( fmt ) {
+        return fmt.pre === cssf.pre && fmt.ext === 'html'
       });
+      cssf.action = null;
       fmts[ idx ].css = cssf.data;
       fmts[ idx ].cssPath = cssf.path;
     });
