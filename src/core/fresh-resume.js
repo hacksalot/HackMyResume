@@ -287,35 +287,39 @@ Definition of the FRESHResume class.
   function _parseDates() {
 
     var _fmt = require('./fluent-date').fmt;
+    var that = this;
 
-    this.employment.history && this.employment.history.forEach( function(job) {
-      job.safe = {
-        start: _fmt( job.start ),
-        end: _fmt( job.end || 'current' )
-      };
+    // TODO: refactor recursion
+    function replaceDatesInObject( obj ) {
+
+      if( !obj ) return;
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem){
+          replaceDatesInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        if( obj._isAMomentObject || obj.safe )
+         return;
+        Object.keys( obj ).forEach(function(key) {
+          replaceDatesInObject( obj[key] );
+        });
+        ['start','end','date'].forEach( function(val) {
+          if( obj[val] && (!obj.safe || !obj.safe[val] )) {
+            obj.safe = obj.safe || { };
+            obj.safe[ val ] = _fmt( obj[val] );
+            if( obj[val] && (val === 'start') && !obj.end ) {
+              obj.safe.end = _fmt('current');
+            }
+          }
+        });
+      }
+    }
+
+    Object.keys( this ).forEach(function(member){
+      replaceDatesInObject( that[ member ] );
     });
-    this.education.history && this.education.history.forEach( function(edu) {
-      edu.safe = {
-        start: _fmt( edu.start ),
-        end: _fmt( edu.end || 'current' )
-      };
-    });
-    this.service.history && this.service.history.forEach( function(vol) {
-      vol.safe = {
-        start: _fmt( vol.start ),
-        end: _fmt( vol.end || 'current' )
-      };
-    });
-    this.recognition && this.recognition.forEach( function(rec) {
-      rec.safe = {
-        date: _fmt( rec.date )
-      };
-    });
-    this.writing && this.writing.forEach( function(pub) {
-      pub.safe = {
-        date: _fmt( pub.date )
-      };
-    });
+
   }
 
   /**
