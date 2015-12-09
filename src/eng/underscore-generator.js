@@ -23,7 +23,7 @@ Underscore template generate for FluentCV.
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     var compiled = _.template(jst);
     var ret = compiled({
-      r: json.markdownify(),
+      r: format === 'html' || format === 'pdf' ? json.markdownify() : json,
       filt: opts.filters,
       XML: require('xml-escape'),
       RAW: json,

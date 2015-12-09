@@ -78,7 +78,8 @@ Definition of the FRESHResume class.
   },
 
   /**
-
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
   */
   FreshResume.prototype.markdownify = function() {
 
@@ -108,7 +109,11 @@ Definition of the FRESHResume class.
         Object.keys( obj ).forEach(function(key) {
           var sub = obj[key];
           if( typeof sub === 'string' || sub instanceof String ) {
-            if( key !== 'url' )
+            if( _.contains(['skills','url','start','end','date'], key) )
+              return;
+            if( key === 'summary' )
+              obj[key] = MD( obj[key] );
+            else
               obj[key] = inline ? MDIN( obj[key] ) : MD( obj[key] );
           }
           else
