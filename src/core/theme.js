@@ -110,12 +110,16 @@ Abstract theme representation.
       }
 
       // We should have a valid output format now.
-      formatsHash[ outFmt ] =
-        formatsHash[outFmt] || { outFormat: outFmt, files: [], symLinks: that.formats[ outFmt ].symLinks };
+      formatsHash[ outFmt ] = formatsHash[outFmt] || {
+        outFormat: outFmt,
+        files: []
+      };
 
       // Create the file representation object.
       var obj = {
+        action: 'transform',
         path: absPath,
+        orgPath: PATH.relative(that.folder, absPath),
         ext: pathInfo.ext.slice(1),
         title: friendlyName( outFmt ),
         pre: outFmt,
