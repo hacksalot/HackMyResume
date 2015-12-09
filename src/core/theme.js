@@ -81,6 +81,7 @@ Abstract theme representation.
     // Set up a hash of formats supported by this theme.
     var formatsHash = { };
     var that = this;
+    var major = false;
 
     // Establish the base theme folder
     var tplFolder = PATH.join( this.folder, 'src' );
@@ -94,7 +95,7 @@ Abstract theme representation.
       // such as "/latex" or "/html", then that format is the output format
       // for all files within the folder.
       var pathInfo = PATH.parse(absPath);
-      var outFmt = '';
+      var outFmt = '', isMajor = false;
       var portion = pathInfo.dir.replace(tplFolder,'');
       if( portion && portion.trim() ) {
         var reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig;
@@ -106,7 +107,8 @@ Abstract theme representation.
       // compact-[outputformat].[extension], for ex, compact-pdf.html.
       if( !outFmt ) {
         var idx = pathInfo.name.lastIndexOf('-');
-        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 )
+        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 );
+        isMajor = true;
       }
 
       // We should have a valid output format now.
@@ -119,6 +121,7 @@ Abstract theme representation.
       var obj = {
         action: 'transform',
         path: absPath,
+        major: isMajor,
         orgPath: PATH.relative(that.folder, absPath),
         ext: pathInfo.ext.slice(1),
         title: friendlyName( outFmt ),
