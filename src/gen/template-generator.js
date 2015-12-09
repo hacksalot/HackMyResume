@@ -5,6 +5,8 @@ Template-based resume generator base for FluentCV.
 
 (function() {
 
+
+
   var FS = require( 'fs-extra' )
     , _ = require( 'underscore' )
     , MD = require( 'marked' )
@@ -14,6 +16,8 @@ Template-based resume generator base for FluentCV.
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
     , Theme = require('../core/theme');
+
+
 
   // Default options.
   var _defaultOpts = {
@@ -46,90 +50,73 @@ Template-based resume generator base for FluentCV.
     }
   };
 
+
+
   /**
   TemplateGenerator performs resume generation via local Handlebar or Underscore
   style template expansion and is appropriate for text-based formats like HTML,
   plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
+  @class TemplateGenerator
   */
   var TemplateGenerator = module.exports = BaseGenerator.extend({
 
-    /** outputFormat: html, txt, pdf, doc
-        templateFormat: html or txt
-    **/
+
+
     init: function( outputFormat, templateFormat, cssFile ){
       this._super( outputFormat );
       this.tplFormat = templateFormat || outputFormat;
     },
 
-    /** Default generation method for template-based generators. */
-    invoke: function( rez, themeMarkup, cssInfo, opts ) {
 
-      // Compile and invoke the template!
+
+    invoke: function( rez, themeMarkup, cssInfo, opts ) {
       this.opts = EXTEND( true, {}, _defaultOpts, opts );
       mk = this.single( rez, themeMarkup, this.format, cssInfo, { } );
       this.onBeforeSave && (mk = this.onBeforeSave( mk, themeFile, f ));
       return mk;
-
     },
 
-    /** Default generation method for template-based generators. */
+
+
+    /**
+    Default generation method for template-based generators.
+    @method generate
+    @param rez A FreshResume object.
+    @param f Full path to the output resume file to generate.
+    @param opts Generator options.
+    */
     generate: function( rez, f, opts ) {
 
       // Carry over options
       this.opts = EXTEND( true, { }, _defaultOpts, opts );
 
-      // Verify the specified theme name/path
-      var tFolder = PATH.join(
-        PATH.parse( require.resolve('fluent-themes') ).dir,
-        this.opts.theme
-      );
-      var exists = require('../utils/file-exists');
-      if (!exists( tFolder )) {
-        tFolder = PATH.resolve( this.opts.theme );
-        if (!exists( tFolder )) {
-          throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
-        }
-      }
-
-      var outFolder = PATH.parse(f).dir;
-
       // Load the theme
-      var theme = opts.themeObj || new Theme().open( tFolder );
-
-      // Load theme and CSS data
+      var themeInfo = themeFromMoniker.call( this );
+      var theme = themeInfo.theme;
+      var tFolder = themeInfo.folder;
       var tplFolder = PATH.join( tFolder, 'src' );
+      var outFolder = PATH.parse(f).dir;
       var curFmt = theme.getFormat( this.format );
-
       var that = this;
+
+      // "Generate": process individual files within the theme
       curFmt.files.forEach(function(tplInfo){
-        if( tplInfo.action === 'transform' || tplInfo.action === null ) {
-          if( tplInfo.action === 'transform' ) {
-            var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
-            var mk = that.single( rez, tplInfo.data, that.format, cssInfo, that.opts );
-            that.onBeforeSave && (mk = that.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
-            var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
-            try {
-              MKDIRP.sync( PATH.dirname(thisFilePath) );
-              FS.writeFileSync( thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
-            }
-            catch(ex) {
-              console.log(ex);
-            }
+        if( tplInfo.action === 'transform' ) {
+          transform.call( that, rez, f, tplInfo, theme, outFolder );
+        }
+        else if( tplInfo.action === null ) {
+          var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
+          try {
+            MKDIRP.sync( PATH.dirname(thisFilePath) );
+            FS.copySync( tplInfo.path, thisFilePath );
           }
-          else if( tplInfo.action === null ) {
-            var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
-            try {
-              MKDIRP.sync( PATH.dirname(thisFilePath) );
-              FS.copySync( tplInfo.path, thisFilePath );
-            }
-            catch(ex) {
-              console.log(ex);
-            }
+          catch(ex) {
+            console.log(ex);
           }
         }
       });
 
-      // Create symlinks
+      // Some themes require a symlink structure. If so, create it.
       if( curFmt.symLinks ) {
         Object.keys( curFmt.symLinks ).forEach( function(loc) {
           var absLoc = PATH.join(outFolder, loc);
@@ -141,6 +128,8 @@ Template-based resume generator base for FluentCV.
 
     },
 
+
+
     /**
     Perform a single resume JSON-to-DEST resume transformation.
     @param json A FRESH or JRS resume object.
@@ -150,27 +139,71 @@ Template-based resume generator base for FluentCV.
     @param opts Options and passthrough data.
     */
     single: function( json, jst, format, cssInfo, opts ) {
-
-      // Freeze whitespace in the template.
       this.opts.freezeBreaks && ( jst = freeze(jst) );
-
-      // Apply the template.
       var eng = require( '../eng/' + opts.themeObj.engine + '-generator' );
       var result = eng( json, jst, format, cssInfo, opts );
-
-      // Unfreeze whitespace.
       this.opts.freezeBreaks && ( result = unfreeze(result) );
-
       return result;
     }
 
 
   });
 
+
+
   /**
   Export the TemplateGenerator function/ctor.
   */
   module.exports = TemplateGenerator;
+
+
+
+  /**
+  Given a theme title, load the corresponding theme.
+  */
+  function themeFromMoniker() {
+    // Verify the specified theme name/path
+    var tFolder = PATH.join(
+      PATH.parse( require.resolve('fluent-themes') ).dir,
+      this.opts.theme
+    );
+    var exists = require('../utils/file-exists');
+    if( !exists( tFolder ) ) {
+      tFolder = PATH.resolve( this.opts.theme );
+      if( !exists( tFolder ) ) {
+        throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
+      }
+    }
+
+    var t = this.opts.themeObj || new Theme().open( tFolder );
+
+    // Load the theme and format
+    return {
+      theme: t,
+      folder: tFolder
+    };
+  }
+
+
+
+  /**
+  Transform a single subfile.
+  */
+  function transform( rez, f, tplInfo, theme, outFolder ) {
+    var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
+    var mk = this.single( rez, tplInfo.data, this.format, cssInfo, this.opts );
+    this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
+    var thisFilePath = PATH.join( outFolder, tplInfo.orgPath );
+    try {
+      MKDIRP.sync( PATH.dirname(thisFilePath) );
+      FS.writeFileSync( thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+    }
+    catch(ex) {
+      console.log(ex);
+    }
+  }
+
+
 
   /**
   Freeze newlines for protection against errant JST parsers.
@@ -181,6 +214,8 @@ Template-based resume generator base for FluentCV.
       .replace( _reg.regR, _defaultOpts.rSym );
   }
 
+
+
   /**
   Unfreeze newlines when the coast is clear.
   */
@@ -189,6 +224,8 @@ Template-based resume generator base for FluentCV.
       .replace( _reg.regSymR, '\r' )
       .replace( _reg.regSymN, '\n' );
   }
+
+
 
   /**
   Regexes for linebreak preservation.
@@ -199,5 +236,7 @@ Template-based resume generator base for FluentCV.
     regSymN: new RegExp( _defaultOpts.nSym, 'g' ),
     regSymR: new RegExp( _defaultOpts.rSym, 'g' )
   };
+
+
 
 }());
