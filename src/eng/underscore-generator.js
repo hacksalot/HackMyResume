@@ -18,25 +18,15 @@ Underscore template generate for FluentCV.
     }
     _.templateSettings = delims;
 
-    // Convert {{ someVar }} to {% print(filt.out(someVar) %}
-    // Convert {{ someVar|someFilter }} to {% print(filt.someFilter(someVar) %}
-    jst = jst.replace( delims.interpolate, function replace(m, p1) {
-      if( p1.indexOf('|') > -1 ) {
-        var terms = p1.split('|');
-        return '[~ print( filt.' + terms[1] + '( ' + terms[0] + ' )) ~]';
-      }
-      else {
-        return '[~ print( filt.out(' + p1 + ') ) ~]';
-      }
-    });
-
     // Strip {# comments #}
     jst = jst.replace( delims.comment, '');
     // Compile and run the template. TODO: avoid unnecessary recompiles.
     var compiled = _.template(jst);
 
+    var mr = json.markdownify();
+
     var ret = compiled({
-      r: json,
+      r: json.markdownify(),
       filt: opts.filters,
       cssInfo: cssInfo,
       headFragment: opts.headFragment || ''

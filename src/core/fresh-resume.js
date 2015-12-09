@@ -11,6 +11,7 @@ Definition of the FRESHResume class.
     , _ = require('underscore')
     , PATH = require('path')
     , moment = require('moment')
+    , MD = require('marked')
     , CONVERTER = require('./convert');
 
   /**
@@ -69,6 +70,41 @@ Definition of the FRESHResume class.
     }
     return JSON.stringify( obj, replacer, 2 );
   },
+
+  /**
+
+  */
+  FreshResume.prototype.markdownify = function() {
+
+    var that = this;
+    var ret = extend(true, { }, this);
+
+    // TODO: refactor recursion
+    function markdownifyStringsInObject( obj ) {
+
+      if( !obj ) return;
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem){
+          markdownifyStringsInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        if( obj._isAMomentObject || obj.safe )
+         return;
+        Object.keys( obj ).forEach(function(key) {
+          var sub = obj[key];
+          if( typeof sub === 'string' || sub instanceof String )
+            obj[key] = MD( obj[key] );
+        });
+      }
+    }
+
+    Object.keys( ret ).forEach(function(member){
+      markdownifyStringsInObject( that[ member ] );
+    });
+
+    return ret;
+  };
 
   /**
   Convert this object to a JSON string, sanitizing meta-properties along the
