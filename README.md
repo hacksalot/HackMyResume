@@ -1,47 +1,51 @@
 fluentCV
 ========
-*Generate beautiful, targeted resumes from your command line or shell.*
+*Create polished technical résumés and CVs in multiple formats from your command
+line or shell. See [FluentCV Desktop][7] for the desktop version. OS X ~ Windows
+~ Linux.*
 
 ![](assets/fluentcv_cli_ubuntu.png)
 
-FluentCV is a Swiss Army knife for resumes and CVs. Use it to:
+FluentCV is a dev-friendly Swiss Army knife for resumes and CVs. Use it to:
 
-1. **Generate** polished multiformat resumes in HTML, Word, Markdown, PDF, plain
-text, JSON, and YAML formats&mdash;without violating DRY.
+1. **Generate** HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML,
+YAML, print, smoke signal, carrier pigeon, and other arbitrary-format resumes
+and CVs, from a single source of truth&mdash;without violating DRY.
 2. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
 3. **Validate** resumes against either format.
 
-Install it with NPM:
+FluentCV supports both the [FRESH][fresca] and [JSON Resume][6] source formats.
+
+## Features
+
+- OS X, Linux, and Windows.
+- Store your resume data as a durable, versionable JSON or YAML document.
+- Generate polished resumes in multiple formats without violating [DRY][dry].
+- Output to HTML, Markdown, LaTeX, PDF, MS Word, JSON, YAML, plain text, or XML.
+- Compatible with [FRESH][fresh], [JSON Resume][6], [FRESCA][fresca], and
+[FCV Desktop][7].
+- Validate resumes against the FRESH or JSON Resume schema.
+- Support for multiple input and output resumes.
+- Use from your command line or [desktop][7].
+- Free and open-source through the MIT license.
+
+## Install
+
+Install FluentCV with NPM:
 
 ```bash
 [sudo] npm install fluentcv -g
 ```
 
 Note: for PDF generation you'll need to install a copy of [wkhtmltopdf][3] for
-your platform.
-
-## Features
-
-- Runs on OS X, Linux, and Windows.
-- Store your resume data as a durable, versionable JSON or YAML document.
-- Generate polished resumes in multiple formats without violating [DRY][dry].
-- Output to HTML, PDF, Markdown, MS Word, JSON, YAML, plain text, or XML.
-- Compatible with [FRESH][fresh], [JSON Resume][6], [FRESCA][fresca], and
-[FCV Desktop][7].
-- Validate resumes against the FRESH or JSON Resume schema.
-- Support for multiple input and output resumes.
-- Free and open-source through the MIT license.
-- Forthcoming: StackOverflow and LinkedIn support.
-- Forthcoming: More commands and themes.
-
-Looking for a desktop GUI version for Windows / OS X / Linux? Check out
-[FluentCV Desktop][7].
+your platform. For LaTeX generation you'll need a valid LaTeX environment with
+access to `xelatex` and similar.
 
 ## Getting Started
 
 To use FluentCV you'll need to create a valid resume in either [FRESH][fresca]
 or [JSON Resume][6] format. Then you can start using the command line tool.
-There are three commands you should be aware of:
+There are four basic commands you should be aware of:
 
 - `build` generates resumes in HTML, Word, Markdown, PDF, and other formats. Use
 it when you need to submit, upload, print, or email resumes in specific formats.
@@ -50,6 +54,15 @@ it when you need to submit, upload, print, or email resumes in specific formats.
     # fluentcv BUILD <INPUTS> TO <OUTPUTS> [-t THEME]
     fluentcv BUILD resume.json TO out/resume.all
     fluentcv BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
+    ```
+
+- `new` creates a new resume in FRESH or JSON Resume format.
+
+    ```bash
+    # fluentcv NEW <OUTPUTS> [-f <FORMAT>]
+    fluentcv NEW resume.json
+    fluentcv NEW resume.json -f fresh
+    fluentcv NEW r1.json r2.json -f jrs
     ```
 
 - `convert` converts your source resume between FRESH and JSON Resume formats.
@@ -78,6 +91,7 @@ Output Format | Ext | Notes
 ------------- | --- | -----
 HTML | .html | A standard HTML 5 + CSS resume format that can be viewed in a browser, deployed to a website, etc.
 Markdown | .md | A structured Markdown document that can be used as-is or used to generate HTML.
+LaTeX | .tex | A structured LaTeX document (or collection of documents).
 MS Word | .doc | A Microsoft Word office document.
 Adobe Acrobat (PDF) | .pdf | A binary PDF document driven by an HTML theme.
 plain text | .txt | A formatted plain text document appropriate for emails or copy-paste.
@@ -92,6 +106,7 @@ image | .png, .bmp | Forthcoming.
 FluentCV requires a recent version of [Node.js][4] and [NPM][5]. Then:
 
 1. Install the latest official [wkhtmltopdf][3] binary for your platform.
+2. Optionally install an updated LaTeX environment (LaTeX resumes only).
 2. Install **fluentCV** with `[sudo] npm install fluentcv -g`.
 3. You're ready to go.
 

@@ -1,6 +1,6 @@
 {
   "name": "fluentcv",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Generate beautiful, targeted resumes from your command line, shell, or in Javascript with Node.js.",
   "repository": {
     "type": "git",
@@ -32,10 +32,11 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
-    "FRESCA": "fluentdesk/FRESCA#v0.1.0",
+    "fresca": "^0.2.0",
     "colors": "^1.1.2",
-    "fluent-themes": "0.5.1-beta",
+    "fluent-themes": "0.6.0-beta",
     "fs-extra": "^0.24.0",
+    "handlebars": "^4.0.5",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
     "jst": "0.0.13",
@@ -43,6 +44,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
+    "recursive-readdir-sync": "^1.0.6",
     "underscore": "^1.8.3",
     "wkhtmltopdf": "^0.1.5",
     "xml-escape": "^1.0.0",
@@ -51,6 +53,7 @@
   "devDependencies": {
     "chai": "*",
     "grunt": "*",
+    "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
     "is-my-json-valid": "^2.12.2",

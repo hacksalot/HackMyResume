@@ -11,6 +11,7 @@ Definition of the FRESHResume class.
     , _ = require('underscore')
     , PATH = require('path')
     , moment = require('moment')
+    , MD = require('marked')
     , CONVERTER = require('./convert');
 
   /**
@@ -54,7 +55,13 @@ Definition of the FRESHResume class.
       FS.writeFileSync( this.imp.fileName, FreshResume.stringify( newRep ), 'utf8' );
     }
     return this;
-  }
+  };
+
+  FreshResume.prototype.dupe = function() {
+    var rnew = new FreshResume();
+    rnew.parse( this.stringify(), { } );
+    return rnew;
+  };
 
   /**
   Convert the supplied object to a JSON string, sanitizing meta-properties along
@@ -68,7 +75,60 @@ Definition of the FRESHResume class.
       ) ? undefined : value;
     }
     return JSON.stringify( obj, replacer, 2 );
-  },
+  };
+
+  /**
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
+  */
+  FreshResume.prototype.markdownify = function() {
+
+    var that = this;
+    var ret = this.dupe();
+
+    function MDIN(txt){
+      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+    }
+
+    // TODO: refactor recursion
+    function markdownifyStringsInObject( obj, inline ) {
+
+      if( !obj ) return;
+
+      inline = inline === undefined || inline;
+
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem, idx, ar){
+          if( typeof elem === 'string' || elem instanceof String )
+            ar[idx] = inline ? MDIN(elem) : MD( elem );
+          else
+            markdownifyStringsInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        Object.keys( obj ).forEach(function(key) {
+          var sub = obj[key];
+          if( typeof sub === 'string' || sub instanceof String ) {
+            if( _.contains(['skills','url','start','end','date'], key) )
+              return;
+            if( key === 'summary' )
+              obj[key] = MD( obj[key] );
+            else
+              obj[key] = inline ? MDIN( obj[key] ) : MD( obj[key] );
+          }
+          else
+            markdownifyStringsInObject( sub );
+        });
+      }
+
+    }
+
+    Object.keys( ret ).forEach(function(member){
+      markdownifyStringsInObject( ret[ member ] );
+    });
+
+    return ret;
+  };
 
   /**
   Convert this object to a JSON string, sanitizing meta-properties along the
@@ -129,7 +189,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.updateData = function( str ) {
     this.clear( false );
-    this.parse( str )
+    this.parse( str );
     return this;
   };
 
@@ -143,9 +203,10 @@ Definition of the FRESHResume class.
     delete this.employment;
     delete this.service;
     delete this.education;
-    //delete this.awards;
-    delete this.publications;
-    //delete this.interests;
+    delete this.recognition;
+    delete this.reading;
+    delete this.writing;
+    delete this.interests;
     delete this.skills;
     delete this.social;
   };
@@ -154,8 +215,9 @@ Definition of the FRESHResume class.
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
-    return new FreshResume().open( PATH.join( __dirname, 'empty.json'), 'Empty' );
-  }
+    return new FreshResume().open(
+      PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
+  };
 
   /**
   Add work experience to the sheet.
@@ -179,6 +241,27 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Return the specified network profile.
+  */
+  FreshResume.prototype.getProfile = function( socialNetwork ) {
+    socialNetwork = socialNetwork.trim().toLowerCase();
+    return this.social && _.find( this.social, function(sn) {
+      return sn.network.trim().toLowerCase() === socialNetwork;
+    });
+  };
+
+  /**
+  Return an array of profiles for the specified network, for when the user
+  has multiple eg. GitHub accounts.
+  */
+  FreshResume.prototype.getProfiles = function( socialNetwork ) {
+    socialNetwork = socialNetwork.trim().toLowerCase();
+    return this.social && _.filter( this.social, function(sn){
+      return sn.network.trim().toLowerCase() === socialNetwork;
+    });
+  };
+
+  /**
   Determine if the sheet includes a specific skill.
   */
   FreshResume.prototype.hasSkill = function( skill ) {
@@ -195,7 +278,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.isValid = function( info ) {
     var schemaObj = require('FRESCA');
-    var validator = require('is-my-json-valid')
+    var validator = require('is-my-json-valid');
     var validate = validator( schemaObj, { // Note [1]
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
     });
@@ -243,7 +326,7 @@ Definition of the FRESHResume class.
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
     //     : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
     // });
-    this.publications && this.publications.sort( function(a, b) {
+    this.writing && this.writing.sort( function(a, b) {
       return( a.safe.date.isBefore(b.safe.date) ) ? 1
         : ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0;
     });
@@ -265,35 +348,39 @@ Definition of the FRESHResume class.
   function _parseDates() {
 
     var _fmt = require('./fluent-date').fmt;
+    var that = this;
 
-    this.employment.history && this.employment.history.forEach( function(job) {
-      job.safe = {
-        start: _fmt( job.start ),
-        end: _fmt( job.end || 'current' )
-      };
+    // TODO: refactor recursion
+    function replaceDatesInObject( obj ) {
+
+      if( !obj ) return;
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem){
+          replaceDatesInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        if( obj._isAMomentObject || obj.safe )
+         return;
+        Object.keys( obj ).forEach(function(key) {
+          replaceDatesInObject( obj[key] );
+        });
+        ['start','end','date'].forEach( function(val) {
+          if( obj[val] && (!obj.safe || !obj.safe[val] )) {
+            obj.safe = obj.safe || { };
+            obj.safe[ val ] = _fmt( obj[val] );
+            if( obj[val] && (val === 'start') && !obj.end ) {
+              obj.safe.end = _fmt('current');
+            }
+          }
+        });
+      }
+    }
+
+    Object.keys( this ).forEach(function(member){
+      replaceDatesInObject( that[ member ] );
     });
-    this.education.history && this.education.history.forEach( function(edu) {
-      edu.safe = {
-        start: _fmt( edu.start ),
-        end: _fmt( edu.end || 'current' )
-      };
-    });
-    this.service.history && this.service.history.forEach( function(vol) {
-      vol.safe = {
-        start: _fmt( vol.start ),
-        end: _fmt( vol.end || 'current' )
-      };
-    });
-    this.recognition && this.recognition.forEach( function(rec) {
-      rec.safe = {
-        date: _fmt( rec.date )
-      };
-    });
-    this.writing && this.writing.forEach( function(pub) {
-      pub.safe = {
-        date: _fmt( pub.date )
-      };
-    });
+
   }
 
   /**

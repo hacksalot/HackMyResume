@@ -1,6 +1,6 @@
-'use strict';
-
 module.exports = function (grunt) {
+
+  'use strict';
 
   var opts = {
 
@@ -29,19 +29,28 @@ module.exports = function (grunt) {
           outdir: 'docs/'
         }
       }
+    },
+
+    jshint: {
+      options: {
+        laxcomma: true,
+        expr: true
+      },
+      all: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js']
     }
 
   };
 
   grunt.initConfig( opts );
+
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.registerTask('test', 'Test the FluentCV library.', function( config ) {
-    grunt.task.run( ['simplemocha:all'] );
-  });
-  grunt.registerTask('document', 'Generate FluentCV library documentation.', function( config ) {
-    grunt.task.run( ['yuidoc'] );
-  });
-  grunt.registerTask('default', [ 'test', 'yuidoc' ]);
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+
+  grunt.registerTask('test', 'Test the FluentCV library.',
+    function( config ) { grunt.task.run( ['simplemocha:all'] ); });
+  grunt.registerTask('document', 'Generate FluentCV library documentation.',
+    function( config ) { grunt.task.run( ['yuidoc'] ); });
+  grunt.registerTask('default', [ 'jshint', 'test', 'yuidoc' ]);
 
 };
