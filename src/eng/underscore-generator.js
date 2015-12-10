@@ -10,8 +10,8 @@ Underscore template generate for FluentCV.
   module.exports = function( json, jst, format, cssInfo, opts ) {
 
     // Tweak underscore's default template delimeters
-    var delims = opts.themeObj.delimeters || opts.template;
-    if( opts.themeObj.delimeters ) {
+    var delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
+    if( opts.themeObj && opts.themeObj.delimeters ) {
       delims = _.mapObject( delims, function(val,key) {
         return new RegExp( val, "ig");
       });
