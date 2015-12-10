@@ -44,6 +44,7 @@ Abstract theme representation.
     // then this theme declares its files explicitly.
     if( !!this.formats ) {
       formatsHash = loadExplicit.call( this );
+      this.explicit = true;
     }
     else {
       formatsHash = loadImplicit.call( this );

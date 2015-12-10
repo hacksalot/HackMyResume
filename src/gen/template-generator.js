@@ -104,7 +104,7 @@ Template-based resume generator base for FluentCV.
         if( tplInfo.action === 'transform' ) {
           transform.call( that, rez, f, tplInfo, theme, outFolder );
         }
-        else if( tplInfo.action === null ) {
+        else if( tplInfo.action === null && theme.explicit ) {
           var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
           try {
             MKDIRP.sync( PATH.dirname(thisFilePath) );
@@ -195,7 +195,7 @@ Template-based resume generator base for FluentCV.
     this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
     var thisFilePath = PATH.join( outFolder, tplInfo.orgPath );
     try {
-      MKDIRP.sync( PATH.dirname(thisFilePath) );
+      MKDIRP.sync( PATH.dirname( tplInfo.major ? f : thisFilePath) );
       FS.writeFileSync( tplInfo.major ? f : thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
     }
     catch(ex) {
