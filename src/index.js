@@ -79,7 +79,7 @@ function logMsg( msg ) {
 }
 
 function getOpts( args ) {
-  var noPretty = args['nopretty'] || args.n;
+  var noPretty = args.nopretty || args.n;
   noPretty = noPretty && (noPretty === true || noPretty === 'true');
   return {
     theme: args.t || 'modern',
@@ -101,15 +101,15 @@ function handleError( ex ) {
       case 3: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in FRESH or JSON Resume format.'.guide; break;
       case 4: msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
         Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
-          return (idx === ar.length - 1 ? 'or '.guide : '')
-            + v.toUpperCase().guide;
+          return (idx === ar.length - 1 ? 'or '.guide : '') +
+            v.toUpperCase().guide;
         }).join(', '.guide) + ").\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
         break;
       //case 4: msg = title + '\n' + ; break;
       case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created in the new format.'.guide; break;
       case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
       case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
-    };
+    }
     exitCode = ex.fluenterror;
 
   }

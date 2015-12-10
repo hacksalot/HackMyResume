@@ -11,7 +11,7 @@ Handlebars template generate for FluentCV.
   module.exports = function( json, jst, format, cssInfo, opts ) {
 
     var template = HANDLEBARS.compile(jst);
-    return template( { r: json, filt: opts.filters, cssInfo: cssInfo, headFragment: opts.headFragment || '' } )
+    return template( { r: json, filt: opts.filters, cssInfo: cssInfo, headFragment: opts.headFragment || '' } );
 
   };
 

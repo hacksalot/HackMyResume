@@ -50,8 +50,8 @@ Abstract theme representation.
     }
 
     // Add freebie formats every theme gets
-    formatsHash[ 'json' ] = { title: 'json', outFormat: 'json', pre: 'json', ext: 'json', path: null, data: null };
-    formatsHash[ 'yml' ] = { title: 'yaml', outFormat: 'yml', pre: 'yml', ext: 'yml', path: null, data: null };
+    formatsHash.json = { title: 'json', outFormat: 'json', pre: 'json', ext: 'json', path: null, data: null };
+    formatsHash.yml = { title: 'yaml', outFormat: 'yml', pre: 'yml', ext: 'yml', path: null, data: null };
 
     // Cache
     this.formats = formatsHash;
@@ -141,7 +141,7 @@ Abstract theme representation.
     .forEach(function( cssf ) {
       // For each CSS file, get its corresponding HTML file
       var idx = _.findIndex(fmts, function( fmt ) {
-        return fmt.pre === cssf.pre && fmt.ext === 'html'
+        return fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       cssf.action = null;
       fmts[ idx ].css = cssf.data;
@@ -203,7 +203,7 @@ Abstract theme representation.
       // compact-[outputformat].[extension], for ex, compact-pdf.html.
       if( !outFmt ) {
         var idx = pathInfo.name.lastIndexOf('-');
-        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 )
+        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 );
       }
 
       // We should have a valid output format now.
@@ -237,7 +237,7 @@ Abstract theme representation.
     .forEach(function( cssf ) {
         // For each CSS file, get its corresponding HTML file
         var idx = _.findIndex(fmts, function( fmt ) {
-          return fmt.pre === cssf.pre && fmt.ext === 'html'
+          return fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       fmts[ idx ].css = cssf.data;
       fmts[ idx ].cssPath = cssf.path;

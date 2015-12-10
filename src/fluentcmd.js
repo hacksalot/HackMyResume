@@ -76,7 +76,7 @@ Internal resume generation logic for FluentCV.
         targets.push.apply(targets, fmat === '.all' ?
           Object.keys( theTheme.formats ).map(function(k){
             var z = theTheme.formats[k];
-            return { file: to.replace(/all$/g,z.outFormat), fmt: z }
+            return { file: to.replace(/all$/g,z.outFormat), fmt: z };
           }) : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
       });
@@ -97,7 +97,8 @@ Internal resume generation logic for FluentCV.
       try {
         var f = targInfo.file
           , fType = targInfo.fmt.outFormat
-          , fName = path.basename(f, '.' + fType);
+          , fName = path.basename(f, '.' + fType)
+          , theFormat;
 
         // If targInfo.fmt.files exists, this theme has an explicit "files"
         // section in its theme.json file.
@@ -107,7 +108,7 @@ Internal resume generation logic for FluentCV.
             targInfo.fmt.outFormat.toUpperCase().useful.bold +
             ' resume: '.useful + path.relative(process.cwd(), f ).useful.bold);
 
-            var theFormat = _fmts.filter(
+            theFormat = _fmts.filter(
               function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
             MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
             theFormat.gen.generate( rez, f, _opts );
@@ -134,7 +135,7 @@ Internal resume generation logic for FluentCV.
             targInfo.fmt.outFormat.toUpperCase().useful.bold +
             ' resume: '.useful + path.relative(process.cwd(), f ).useful.bold);
 
-          var theFormat = _fmts.filter(
+          theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
           MKDIRP.sync( path.dirname( f ) ); // Ensure dest folder exists;
           theFormat.gen.generate( rez, f, _opts );
@@ -181,8 +182,9 @@ Internal resume generation logic for FluentCV.
 
       sheets.forEach( function( rep ) {
 
+        var rez;
         try {
-          var rez = JSON.parse( rep.raw );
+          rez = JSON.parse( rep.raw );
         }
         catch( ex ) {
           _log('Validating '.info + rep.file.infoBold +
@@ -204,11 +206,11 @@ Internal resume generation logic for FluentCV.
         var isValid = false;
         var style = 'useful';
         var errors = [];
+        var fmt = rez.meta &&
+          (rez.meta.format === 'FRESH@0.1.0') ? 'fresh':'jars';
 
         try {
 
-          var fmt = rez.meta &&
-            (rez.meta.format === 'FRESH@0.1.0') ? 'fresh':'jars';
           var validate = validator( schemas[ fmt ], { // Note [1]
             formats: {
               date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
@@ -272,8 +274,8 @@ Internal resume generation logic for FluentCV.
       dst = src || ['resume.json'];
       dst.forEach( function( t ) {
         var safeFormat = opts.format.toUpperCase();
-        _log('Creating new '.useful +safeFormat.useful.bold+ ' resume: '.useful
-          + t.useful.bold);
+        _log('Creating new '.useful +safeFormat.useful.bold +
+          ' resume: '.useful + t.useful.bold);
         MKDIRP.sync( path.dirname( t ) ); // Ensure dest folder exists;
         FLUENT[ safeFormat + 'Resume' ].default().save( t );
       });

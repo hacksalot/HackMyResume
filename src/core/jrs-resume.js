@@ -94,14 +94,14 @@ Definition of the JRSResume class.
       });
     }
     return flatSkills;
-  },
+  };
 
   /**
   Update the sheet's raw data. TODO: remove/refactor
   */
   JRSResume.prototype.updateData = function( str ) {
     this.clear( false );
-    this.parse( str )
+    this.parse( str );
     return this;
   };
 
@@ -127,7 +127,7 @@ Definition of the JRSResume class.
   */
   JRSResume.default = function() {
     return new JRSResume().open( PATH.join( __dirname, 'empty-jrs.json'), 'Empty' );
-  }
+  };
 
   /**
   Add work experience to the sheet.
@@ -168,7 +168,7 @@ Definition of the JRSResume class.
   JRSResume.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
     var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
     var schemaObj = JSON.parse( schema );
-    var validator = require('is-my-json-valid')
+    var validator = require('is-my-json-valid');
     var validate = validator( schemaObj );
     return validate( this );
   };

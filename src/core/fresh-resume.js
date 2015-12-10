@@ -55,7 +55,7 @@ Definition of the FRESHResume class.
       FS.writeFileSync( this.imp.fileName, FreshResume.stringify( newRep ), 'utf8' );
     }
     return this;
-  }
+  };
 
   FreshResume.prototype.dupe = function() {
     var rnew = new FreshResume();
@@ -75,7 +75,7 @@ Definition of the FRESHResume class.
       ) ? undefined : value;
     }
     return JSON.stringify( obj, replacer, 2 );
-  },
+  };
 
   /**
   Create a copy of this resume in which all fields have been interpreted as
@@ -87,7 +87,7 @@ Definition of the FRESHResume class.
     var ret = this.dupe();
 
     function MDIN(txt){
-      return MD(txt || '' ).replace(/^\s*\<p\>|\<\/p\>\s*$/gi, '');
+      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
     }
 
     // TODO: refactor recursion
@@ -120,6 +120,7 @@ Definition of the FRESHResume class.
             markdownifyStringsInObject( sub );
         });
       }
+
     }
 
     Object.keys( ret ).forEach(function(member){
@@ -188,7 +189,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.updateData = function( str ) {
     this.clear( false );
-    this.parse( str )
+    this.parse( str );
     return this;
   };
 
@@ -216,7 +217,7 @@ Definition of the FRESHResume class.
   FreshResume.default = function() {
     return new FreshResume().open(
       PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
-  }
+  };
 
   /**
   Add work experience to the sheet.
@@ -245,9 +246,9 @@ Definition of the FRESHResume class.
   FreshResume.prototype.getProfile = function( socialNetwork ) {
     socialNetwork = socialNetwork.trim().toLowerCase();
     return this.social && _.find( this.social, function(sn) {
-      return sn.network.trim().toLowerCase() === socialNetwork
+      return sn.network.trim().toLowerCase() === socialNetwork;
     });
-  }
+  };
 
   /**
   Return an array of profiles for the specified network, for when the user
@@ -256,9 +257,9 @@ Definition of the FRESHResume class.
   FreshResume.prototype.getProfiles = function( socialNetwork ) {
     socialNetwork = socialNetwork.trim().toLowerCase();
     return this.social && _.filter( this.social, function(sn){
-      return sn.network.trim().toLowerCase() === socialNetwork
+      return sn.network.trim().toLowerCase() === socialNetwork;
     });
-  }
+  };
 
   /**
   Determine if the sheet includes a specific skill.
@@ -277,7 +278,7 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.isValid = function( info ) {
     var schemaObj = require('FRESCA');
-    var validator = require('is-my-json-valid')
+    var validator = require('is-my-json-valid');
     var validate = validator( schemaObj, { // Note [1]
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
     });

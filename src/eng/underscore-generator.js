@@ -13,7 +13,7 @@ Underscore template generate for FluentCV.
     var delims = opts.themeObj.delimeters || opts.template;
     if( opts.themeObj.delimeters ) {
       delims = _.mapObject( delims, function(val,key) {
-        return new RegExp( val, "ig")
+        return new RegExp( val, "ig");
       });
     }
     _.templateSettings = delims;

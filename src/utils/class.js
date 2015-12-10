@@ -41,7 +41,7 @@
 
             return ret;
           };
-        })(name, prop[name]) :
+        })(name, prop[name]) : // jshint ignore:line
         prop[name];
     }
 

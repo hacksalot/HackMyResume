@@ -34,8 +34,8 @@ FluentDate/*.prototype*/.fmt = function( dt ) {
     else if( /^\D+\s+\d{4}$/.test(dt) ) { // "Mar 2015"
       var parts = dt.split(' ');
       var month = (months[parts[0]] || abbr[parts[0]]);
-      var dt = parts[1] + '-' + (month < 10 ? '0' + month : month.toString());
-      return moment( dt, 'YYYY-MM' );
+      var temp = parts[1] + '-' + (month < 10 ? '0' + month : month.toString());
+      return moment( temp, 'YYYY-MM' );
     }
     else if( /^\d{4}-\d{1,2}$/.test(dt) ) { // "2015-03", "1998-4"
       return moment( dt, 'YYYY-MM' );
