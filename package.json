@@ -53,6 +53,7 @@
   "devDependencies": {
     "chai": "*",
     "grunt": "*",
+    "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
     "is-my-json-valid": "^2.12.2",
