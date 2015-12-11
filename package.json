@@ -32,9 +32,9 @@
   },
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
-    "fresca": "^0.2.0",
+    "fresca": "~0.2.1",
     "colors": "^1.1.2",
-    "fluent-themes": "0.6.0-beta",
+    "fluent-themes": "~0.6.1-beta",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
