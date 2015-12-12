@@ -12,7 +12,8 @@ Definition of the FRESHResume class.
     , PATH = require('path')
     , moment = require('moment')
     , MD = require('marked')
-    , CONVERTER = require('./convert');
+    , CONVERTER = require('./convert')
+    , JRSResume = require('./jrs-resume');
 
   /**
   A FRESH-style resume in JSON or YAML.
@@ -46,13 +47,14 @@ Definition of the FRESHResume class.
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   */
   FreshResume.prototype.saveAs = function( filename, format ) {
-    this.imp.fileName = filename || this.imp.fileName;
+
     if( format !== 'JRS' ) {
+      this.imp.fileName = filename || this.imp.fileName;
       FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     }
     else {
       var newRep = CONVERTER.toJRS( this );
-      FS.writeFileSync( this.imp.fileName, FreshResume.stringify( newRep ), 'utf8' );
+      FS.writeFileSync( filename, JRSResume.stringify( newRep ), 'utf8' );
     }
     return this;
   };

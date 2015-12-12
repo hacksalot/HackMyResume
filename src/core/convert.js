@@ -55,10 +55,8 @@ FRESH to JSON Resume conversion routiens.
         writing: writing( src.publications, true),
         recognition: recognition( src.awards, true, foreign ),
         social: social( src.basics.profiles, true ),
-
-
         interests: src.interests,
-        references: src.references,
+        testimonials: references( src.references, true ),
         languages: src.languages,
         disposition: src.disposition // <--> round-trip
       };
@@ -101,7 +99,7 @@ FRESH to JSON Resume conversion routiens.
         awards: recognition( src.recognition, false, foreign ),
         publications: writing( src.writing, false ),
         interests: src.interests,
-        references: src.references,
+        references: references( src.testimonials, false ),
         samples: foreign ? src.samples : undefined,
         disposition: foreign ? src.disposition : undefined,
         languages: src.languages
@@ -275,6 +273,27 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
+  function references( obj, direction ) {
+    if( direction ) {
+      return obj && obj.length && obj.map(function(ref){
+        return {
+          name: ref.name,
+          flavor: 'professional',
+          quote: ref.reference,
+          private: false
+        };
+      });
+    }
+    else {
+      return obj && obj.length && obj.map(function(ref){
+        return {
+          name: ref.name,
+          reference: ref.quote
+        };
+      });
+    }
+  }
+
   function writing( obj, direction ) {
     if( direction ) {
       return obj.map(function( pub ) {
@@ -292,7 +311,7 @@ FRESH to JSON Resume conversion routiens.
       return obj && obj.length ? obj.map(function(pub){
         return {
           name: pub.title,
-          publisher: pub.publisher,
+          publisher: pub.publisher && pub.publisher.name ? pub.publisher.name : pub.publisher,
           releaseDate: pub.date,
           website: pub.url,
           summary: pub.summary
