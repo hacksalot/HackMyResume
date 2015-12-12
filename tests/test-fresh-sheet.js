@@ -65,9 +65,3 @@ describe('jane-doe.json (FRESH)', function () {
 
 
 });
-
-// describe('subtract', function () {
-// 	it('should return -1 when passed the params (1, 2)', function () {
-// 		expect(math.subtract(1, 2)).to.equal(-1);
-// 	});
-// });
