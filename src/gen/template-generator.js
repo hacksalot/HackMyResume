@@ -121,7 +121,8 @@ Template-based resume generator base for FluentCV.
         Object.keys( curFmt.symLinks ).forEach( function(loc) {
           var absLoc = PATH.join(outFolder, loc);
           var absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
-          var type = PATH.parse( absLoc ).ext ? 'file' : 'junction'; // 'file', 'dir', or 'junction' (Windows only)
+           // 'file', 'dir', or 'junction' (Windows only)
+          var type = PATH.parse( absLoc ).ext ? 'file' : 'junction';
           FS.symlinkSync( absTarg, absLoc, type);
         });
       }
@@ -140,7 +141,8 @@ Template-based resume generator base for FluentCV.
     */
     single: function( json, jst, format, cssInfo, opts ) {
       this.opts.freezeBreaks && ( jst = freeze(jst) );
-      var eng = require( '../eng/' + opts.themeObj.engine + '-generator' );
+      var eng = require( '../eng/' + ((opts.themeObj && opts.themeObj.engine) ||
+        opts.engine)  + '-generator' );
       var result = eng( json, jst, format, cssInfo, opts );
       this.opts.freezeBreaks && ( result = unfreeze(result) );
       return result;
