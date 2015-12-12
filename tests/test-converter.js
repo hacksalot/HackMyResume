@@ -18,7 +18,7 @@ describe('FRESH/JRS converter', function () {
 	  it('should round-trip from JRS to FRESH to JRS without modifying or losing data', function () {
 
       var fileA = path.join( __dirname, 'jrs-exemplar/richard-hendriks.json' );
-      var fileB =  path.join( __dirname, 'sandbox/richard-hendriks.json' );
+      var fileB = path.join( __dirname, 'sandbox/richard-hendriks.json' );
 
       _sheet = new FRESHResume().open( fileA );
       _sheet.saveAs( fileB, 'JRS' );
