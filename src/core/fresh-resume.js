@@ -302,14 +302,15 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.duration = function() {
     if( this.employment.history && this.employment.history.length ) {
-      var careerStart = this.employment.history[ this.employment.history.length - 1].safe.start;
+      var firstJob = _.last( this.employment.history );
+      var careerStart = firstJob.start ? firstJob.safe.start : '';
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
           !careerStart.trim())
         return 0;
       var careerLast = _.max( this.employment.history, function( w ) {
-        return w.safe.end.unix();
-      }).safe.end;
-      return careerLast.diff( careerStart, 'years' );
+        return( w.safe && w.safe.end ) ? w.safe.end.unix() : moment().unix();
+      });
+      return careerLast.safe.end.diff( careerStart, 'years' );
     }
     return 0;
   };
@@ -368,7 +369,7 @@ Definition of the FRESHResume class.
           replaceDatesInObject( obj[key] );
         });
         ['start','end','date'].forEach( function(val) {
-          if( obj[val] && (!obj.safe || !obj.safe[val] )) {
+          if( (obj[val] !== undefined) && (!obj.safe || !obj.safe[val] )) {
             obj.safe = obj.safe || { };
             obj.safe[ val ] = _fmt( obj[val] );
             if( obj[val] && (val === 'start') && !obj.end ) {
