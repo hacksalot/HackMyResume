@@ -214,6 +214,15 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Get a safe count of the number of things in a section.
+  */
+  FreshResume.prototype.count = function( obj ) {
+    if( !obj ) return 0;
+    if( obj.history ) return obj.history.length;
+    return obj.length || 0;
+  }
+
+  /**
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
@@ -226,9 +235,14 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.add = function( moniker ) {
     var defSheet = FreshResume.default();
-    var newObject = $.extend( true, {}, defSheet[ moniker ][0] );
+    var newObject = defSheet[moniker].history ?
+      $.extend( true, {}, defSheet[ moniker ].history[0] ) :
+      $.extend( true, {}, defSheet[ moniker ][0] );
     this[ moniker ] = this[ moniker ] || [];
-    this[ moniker ].push( newObject );
+    if( this[ moniker ].history )
+      this[ moniker ].history.push( newObject );
+    else
+      this[ moniker ].push( newObject );
     return newObject;
   };
 
