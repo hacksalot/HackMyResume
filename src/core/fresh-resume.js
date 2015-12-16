@@ -221,7 +221,7 @@ Definition of the FRESHResume class.
     if( obj.history ) return obj.history.length;
     if( obj.sets ) return obj.sets.length;
     return obj.length || 0;
-  }
+  };
 
   /**
   Get the default (empty) sheet.
