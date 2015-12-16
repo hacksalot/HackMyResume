@@ -8,6 +8,6 @@ var WordGenerator = module.exports = TemplateGenerator.extend({
 
   init: function(){
     this._super( 'doc', 'xml' );
-  },
+  }
 
 });
