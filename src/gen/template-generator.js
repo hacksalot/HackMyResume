@@ -199,6 +199,7 @@ Template-based resume generator base for FluentCV.
     try {
       MKDIRP.sync( PATH.dirname( tplInfo.major ? f : thisFilePath) );
       FS.writeFileSync( tplInfo.major ? f : thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+      this.onAfterSave && (mk = this.onAfterSave( { outputFile: (tplInfo.major ? f : thisFilePath), mk: mk } ));
     }
     catch(ex) {
       console.log(ex);
