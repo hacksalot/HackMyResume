@@ -219,6 +219,7 @@ Definition of the FRESHResume class.
   FreshResume.prototype.count = function( obj ) {
     if( !obj ) return 0;
     if( obj.history ) return obj.history.length;
+    if( obj.sets ) return obj.sets.length;
     return obj.length || 0;
   }
 
@@ -237,10 +238,14 @@ Definition of the FRESHResume class.
     var defSheet = FreshResume.default();
     var newObject = defSheet[moniker].history ?
       $.extend( true, {}, defSheet[ moniker ].history[0] ) :
-      $.extend( true, {}, defSheet[ moniker ][0] );
+      (moniker === 'skills' ?
+        $.extend( true, {}, defSheet.skills.sets[0] ) :
+        $.extend( true, {}, defSheet[ moniker ][0] ));
     this[ moniker ] = this[ moniker ] || [];
     if( this[ moniker ].history )
       this[ moniker ].history.push( newObject );
+    else if( moniker === 'skills' )
+      this.skills.sets.push( newObject );
     else
       this[ moniker ].push( newObject );
     return newObject;
