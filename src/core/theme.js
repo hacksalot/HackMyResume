@@ -99,9 +99,18 @@ Abstract theme representation.
       var outFmt = '', isMajor = false;
       var portion = pathInfo.dir.replace(tplFolder,'');
       if( portion && portion.trim() ) {
-        var reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig;
+        var reg = /^(?:\/|\\)(html|latex|doc|pdf|partials)(?:\/|\\)?/ig;
         var res = reg.exec( portion );
-        res && (outFmt = res[1]);
+        if( res ) {
+          if( res[1] !== 'partials' ) {
+            outFmt = res[1];
+          }
+          else {
+            that.partials = that.partials || [];
+            that.partials.push( { name: pathInfo.name, path: absPath } );
+            return null;
+          }
+        }
       }
 
       // Otherwise, the output format is inferred from the filename, as in
@@ -138,7 +147,7 @@ Abstract theme representation.
     });
 
     // Now, get all the CSS files...
-    (this.cssFiles = fmts.filter(function( fmt ){ return fmt.ext === 'css'; }))
+    (this.cssFiles = fmts.filter(function( fmt ){ return fmt && (fmt.ext === 'css'); }))
     .forEach(function( cssf ) {
       // For each CSS file, get its corresponding HTML file
       var idx = _.findIndex(fmts, function( fmt ) {
@@ -151,7 +160,7 @@ Abstract theme representation.
 
     // Remove CSS files from the formats array
     fmts = fmts.filter( function( fmt) {
-      return fmt.ext !== 'css';
+      return fmt && (fmt.ext !== 'css');
     });
 
     return formatsHash;
