@@ -9,6 +9,8 @@ Handlebars template generate for FluentCV.
   var HANDLEBARS = require('handlebars');
   var FS = require('fs');
   var moment = require('moment');
+  var MD = require('marked');
+  var H2W = require('../utils/html-to-wpml');
 
   module.exports = function( json, jst, format, cssInfo, opts, theme ) {
 
@@ -25,6 +27,13 @@ Handlebars template generate for FluentCV.
       else {
         return datetime;
       }
+    });
+
+    HANDLEBARS.registerHelper("wpml", function( txt, inline ) {
+      inline = (inline && !inline.hash) || false;
+      txt = inline ? MD(txt.trim()).replace(/^\s*<p>|<\/p>\s*$/gi, '') : MD(txt.trim());
+      txt = H2W( txt.trim() );
+      return txt;
     });
 
     // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/
