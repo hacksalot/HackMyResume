@@ -1,6 +1,7 @@
 /**
 Definition of the JsonGenerator class.
-@license Copyright (c) 2015 | James M. Devlin
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module json-generator.js
 */
 
 var BaseGenerator = require('./base-generator');

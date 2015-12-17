@@ -1,3 +1,8 @@
+/**
+Definition of John Resig's `Class` class.
+@module class.js
+*/
+
 /* Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
  * MIT Licensed.

@@ -1,6 +1,7 @@
 /**
 FRESH to JSON Resume conversion routiens.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module convert.js
 */
 
 (function(){

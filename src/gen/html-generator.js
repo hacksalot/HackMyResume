@@ -1,6 +1,7 @@
 /**
-HTML resume generator for FluentCV.
-@license Copyright (c) 2015 James M. Devlin / FluentDesk
+Definition of the HTMLGenerator class.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module html-generator.js
 */
 
 (function() {

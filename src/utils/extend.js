@@ -1,6 +1,7 @@
 /**
-Plain JavaScript replacement of jQuery .extend based on jQuery sources.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Definition of the `extend` method.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module extend.js
 */
 
 function _extend() {

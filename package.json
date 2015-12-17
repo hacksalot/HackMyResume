@@ -1,6 +1,6 @@
 {
   "name": "fluentcv",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "Generate polished résumés and CVs in HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML, YAML, smoke signal, and carrier pigeon.",
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
     "colors": "^1.1.2",
-    "fluent-themes": "~0.6.2-beta",
+    "fluent-themes": "~0.6.3-beta",
     "fresca": "~0.2.1",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",

@@ -1,7 +1,7 @@
 /**
-A YAML resume generator for FluentLib.
+Definition of the YAMLGenerator class.
 @module yaml-generator.js
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 */
 
 
@@ -13,7 +13,7 @@ A YAML resume generator for FluentLib.
   YamlGenerator generates a YAML-formatted resume via TemplateGenerator.
   */
 
-  var YamlGenerator = module.exports = TemplateGenerator.extend({
+  var YAMLGenerator = module.exports = TemplateGenerator.extend({
 
     init: function(){
       this._super( 'yml', 'yml' );

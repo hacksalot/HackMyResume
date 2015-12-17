@@ -1,6 +1,6 @@
 /**
 Internal resume generation logic for FluentCV.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 @module fluentcmd.js
 */
 

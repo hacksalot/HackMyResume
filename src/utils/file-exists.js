@@ -1,6 +1,7 @@
 /**
-File-exists checker for Node.js.
-@license Copyright (c) 2015 | James M. Devlin
+Definition of the `fileExists` method.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module file-exists.js
 */
 
 var FS = require('fs');

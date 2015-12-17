@@ -1,6 +1,7 @@
 /**
 The FluentCV date representation.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module fluent-date.js
 */
 
 var moment = require('moment');

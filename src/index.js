@@ -3,6 +3,7 @@
 /**
 Command-line interface (CLI) for FluentCV:CLI.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
+@module index.js
 */
 
 var ARGS = require( 'minimist' )
