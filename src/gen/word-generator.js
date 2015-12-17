@@ -1,6 +1,7 @@
 /**
-MS Word resume generator for FluentCV.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Definition of the WordGenerator class.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module word-generator.js
 */
 
 (function() {

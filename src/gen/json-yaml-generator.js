@@ -1,7 +1,7 @@
 /**
-A JSON-driven YAML resume generator for FluentLib.
+Definition of the JsonYamlGenerator class.
 @module json-yaml-generator.js
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 */
 
 (function() {

@@ -1,6 +1,7 @@
 /**
-String utility functions.
-@license Copyright (c) 2015 | James M. Devlin
+Definitions of string utility functions.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module string.js
 */
 
 /**

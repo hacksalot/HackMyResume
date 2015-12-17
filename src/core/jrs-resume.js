@@ -1,6 +1,7 @@
 /**
 Definition of the JRSResume class.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module jrs-resume.js
 */
 
 (function() {

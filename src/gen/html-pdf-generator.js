@@ -1,6 +1,7 @@
 /**
 Definition of the HtmlPdfGenerator class.
-@license Copyright (c) 2015 James M. Devlin / FluentDesk
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module html-pdf-generator.js
 */
 
 (function() {

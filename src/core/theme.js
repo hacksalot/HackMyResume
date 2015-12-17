@@ -1,6 +1,7 @@
 /**
-Abstract theme representation.
+Definition of the Theme class.
 @license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module theme.js
 */
 
 (function() {

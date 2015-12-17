@@ -1,3 +1,8 @@
+/**
+Definition of the Markdown to WordProcessingML conversion routine.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module html-to-wpml.js
+*/
 
 (function(){
 
@@ -7,7 +12,7 @@
   module.exports = function( html ) {
 
     var final = '';
-    var is_bold = false, is_italic = false;
+    var is_bold = false, is_italic = false, is_link = false;
     var depth = 0;
 
     var tokens = HTML5Tokenizer.tokenize( html );

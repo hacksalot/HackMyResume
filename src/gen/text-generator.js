@@ -1,6 +1,7 @@
 /**
-Plain text resume generator for FluentCV.
-@license Copyright (c) 2015 by James M. Devlin. All rights reserved.
+Definition of the TextGenerator class.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module text-generator.js
 */
 
 var TemplateGenerator = require('./template-generator');

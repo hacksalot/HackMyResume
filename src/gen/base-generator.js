@@ -1,6 +1,7 @@
 /**
-Base resume generator for FluentCV.
-@license Copyright (c) 2015 | James M. Devlin
+Definition of the BaseGenerator class.
+@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@module base-generator.js
 */
 
 (function() {
