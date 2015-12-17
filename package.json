@@ -34,7 +34,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "fluent-themes": "~0.6.3-beta",
-    "fresca": "~0.2.1",
+    "fresca": "~0.2.2",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
