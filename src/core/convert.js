@@ -14,6 +14,7 @@ FRESH to JSON Resume conversion routiens.
 
     /**
     Convert from JSON Resume format to FRESH.
+    @method toFresh
     */
     toFRESH: function( src, foreign ) {
 
@@ -47,87 +48,15 @@ FRESH to JSON Resume conversion routiens.
           address: src.basics.location.address
         },
 
-        employment: {
-          history: src.work.map( function( job ) {
-            return {
-              position: job.position,
-              employer: job.company,
-              summary: job.summary,
-              current: (!job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current') || undefined,
-              start: job.startDate,
-              end: job.endDate,
-              url: job.website,
-              keywords: "",
-              highlights: job.highlights
-            };
-          })
-        },
-
-        education: {
-          history: src.education.map(function(edu){
-            return {
-              institution: edu.institution,
-              start: edu.startDate,
-              end: edu.endDate,
-              grade: edu.gpa,
-              curriculum: edu.courses,
-              url: edu.website || edu.url || null,
-              summary: null,
-              area: edu.area,
-              studyType: edu.studyType
-            };
-          })
-        },
-
-        service: {
-          history: src.volunteer.map(function(vol) {
-            return {
-              type: 'volunteer',
-              position: vol.position,
-              organization: vol.organization,
-              start: vol.startDate,
-              end: vol.endDate,
-              url: vol.website,
-              summary: vol.summary,
-              highlights: vol.highlights
-            };
-          })
-        },
-
+        employment: employment( src.work, true ),
+        education: education( src.education, true),
+        service: service( src.volunteer, true),
         skills: skillsToFRESH( src.skills ),
-
-        writing: src.publications.map(function(pub){
-          return {
-            title: pub.name,
-            flavor: undefined,
-            publisher: pub.publisher,
-            url: pub.website,
-            date: pub.releaseDate,
-            summary: pub.summary
-          };
-        }),
-
-        recognition: src.awards.map(function(awd){
-          return {
-            title: awd.title,
-            date: awd.date,
-            summary: awd.summary,
-            from: awd.awarder,
-            url: null
-          };
-        }),
-
-        social: src.basics.profiles.map(function(pro){
-          return {
-            label: pro.network,
-            network: pro.network,
-            url: pro.url,
-            user: pro.username
-          };
-        }),
-
+        writing: writing( src.publications, true),
+        recognition: recognition( src.awards, true, foreign ),
+        social: social( src.basics.profiles, true ),
         interests: src.interests,
-        references: src.references,
+        testimonials: references( src.references, true ),
         languages: src.languages,
         disposition: src.disposition // <--> round-trip
       };
@@ -160,77 +89,17 @@ FRESH to JSON Resume conversion routiens.
             countryCode: src.location.country,
             region: src.location.region
           },
-          profiles: src.social.map(function(soc){
-            return {
-              network: soc.network,
-              username: soc.user,
-              url: soc.url
-            };
-          })
+          profiles: social( src.social, false )
         },
 
-        work: src.employment.history.map(function(emp){
-          return {
-            company: emp.employer,
-            website: emp.url,
-            position: emp.position,
-            startDate: emp.start,
-            endDate: emp.end,
-            summary: emp.summary,
-            highlights: emp.highlights
-          };
-        }),
-
-        education: src.education.history.map(function(edu){
-          return {
-            institution: edu.institution,
-            gpa: edu.grade,
-            courses: edu.curriculum,
-            startDate: edu.start,
-            endDate: edu.end,
-            area: edu.area,
-            studyType: edu.studyType
-          };
-        }),
-
-        skills: skillsToJRS( src.skills ),
-
-        volunteer: src.service.history.map(function(srv){
-          return {
-            flavor: foreign ? srv.flavor : undefined,
-            organization: srv.organization,
-            position: srv.position,
-            startDate: srv.start,
-            endDate: srv.end,
-            website: srv.url,
-            summary: srv.summary,
-            highlights: srv.highlights
-          };
-        }),
-
-        awards: src.recognition.map(function(awd){
-          return {
-            flavor: foreign ? awd.flavor : undefined,
-            url: foreign ? awd.url: undefined,
-            title: awd.title,
-            date: awd.date,
-            awarder: awd.from,
-            summary: awd.summary
-          };
-        }),
-
-        publications: src.writing.map(function(pub){
-          return {
-            name: pub.title,
-            publisher: pub.publisher,
-            releaseDate: pub.date,
-            website: pub.url,
-            summary: pub.summary
-          };
-        }),
-
+        work: employment( src.employment, false ),
+        education: education( src.education, false ),
+        skills: skillsToJRS( src.skills, false ),
+        volunteer: service( src.service, false ),
+        awards: recognition( src.recognition, false, foreign ),
+        publications: writing( src.writing, false ),
         interests: src.interests,
-        references: src.references,
+        references: references( src.testimonials, false ),
         samples: foreign ? src.samples : undefined,
         disposition: foreign ? src.disposition : undefined,
         languages: src.languages
@@ -248,6 +117,207 @@ FRESH to JSON Resume conversion routiens.
       obj.version = obj.version || "0.1.0";
     }
     return obj;
+  }
+
+  function employment( obj, direction ) {
+    if( !direction ) {
+      return obj && obj.history ?
+        obj.history.map(function(emp){
+          return {
+            company: emp.employer,
+            website: emp.url,
+            position: emp.position,
+            startDate: emp.start,
+            endDate: emp.end,
+            summary: emp.summary,
+            highlights: emp.highlights
+          };
+        }) : undefined;
+    }
+    else {
+      return {
+        history: obj && obj.length ?
+          obj.map( function( job ) {
+            return {
+              position: job.position,
+              employer: job.company,
+              summary: job.summary,
+              current: (!job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current') || undefined,
+              start: job.startDate,
+              end: job.endDate,
+              url: job.website,
+              keywords: "",
+              highlights: job.highlights
+            };
+          }) : undefined
+      };
+    }
+  }
+
+
+  function education( obj, direction ) {
+    if( direction ) {
+      return obj && obj.length ? {
+        history: obj.map(function(edu){
+          return {
+            institution: edu.institution,
+            start: edu.startDate,
+            end: edu.endDate,
+            grade: edu.gpa,
+            curriculum: edu.courses,
+            url: edu.website || edu.url || null,
+            summary: null,
+            area: edu.area,
+            studyType: edu.studyType
+          };
+        })
+      } : undefined;
+    }
+    else {
+      return obj && obj.history ?
+        obj.history.map(function(edu){
+          return {
+            institution: edu.institution,
+            gpa: edu.grade,
+            courses: edu.curriculum,
+            startDate: edu.start,
+            endDate: edu.end,
+            area: edu.area,
+            studyType: edu.studyType
+          };
+        }) : undefined;
+    }
+  }
+
+  function service( obj, direction, foreign ) {
+    if( direction ) {
+      return {
+        history: obj && obj.length ? obj.map(function(vol) {
+          return {
+            type: 'volunteer',
+            position: vol.position,
+            organization: vol.organization,
+            start: vol.startDate,
+            end: vol.endDate,
+            url: vol.website,
+            summary: vol.summary,
+            highlights: vol.highlights
+          };
+        }) : undefined
+      };
+    }
+    else {
+      return obj && obj.history ?
+        obj.history.map(function(srv){
+          return {
+            flavor: foreign ? srv.flavor : undefined,
+            organization: srv.organization,
+            position: srv.position,
+            startDate: srv.start,
+            endDate: srv.end,
+            website: srv.url,
+            summary: srv.summary,
+            highlights: srv.highlights
+          };
+        }) : undefined;
+    }
+  }
+
+  function social( obj, direction ) {
+    if( direction ) {
+      return obj.map(function(pro){
+        return {
+          label: pro.network,
+          network: pro.network,
+          url: pro.url,
+          user: pro.username
+        };
+      });
+    }
+    else {
+      return obj.map( function( soc ) {
+        return {
+          network: soc.network,
+          username: soc.user,
+          url: soc.url
+        };
+      });
+    }
+  }
+
+  function recognition( obj, direction, foreign ) {
+    if( direction ) {
+      return obj && obj.length ? obj.map(
+        function(awd){
+          return {
+            flavor: foreign ? awd.flavor : undefined,
+            url: foreign ? awd.url: undefined,
+            title: awd.title,
+            date: awd.date,
+            from: awd.awarder,
+            summary: awd.summary
+          };
+      }) : undefined;
+    }
+    else {
+      return obj && obj.length ? obj.map(function(awd){
+        return {
+          flavor: foreign ? awd.flavor : undefined,
+          url: foreign ? awd.url: undefined,
+          title: awd.title,
+          date: awd.date,
+          awarder: awd.from,
+          summary: awd.summary
+        };
+      }) : undefined;
+    }
+  }
+
+  function references( obj, direction ) {
+    if( direction ) {
+      return obj && obj.length && obj.map(function(ref){
+        return {
+          name: ref.name,
+          flavor: 'professional',
+          quote: ref.reference,
+          private: false
+        };
+      });
+    }
+    else {
+      return obj && obj.length && obj.map(function(ref){
+        return {
+          name: ref.name,
+          reference: ref.quote
+        };
+      });
+    }
+  }
+
+  function writing( obj, direction ) {
+    if( direction ) {
+      return obj.map(function( pub ) {
+        return {
+          title: pub.name,
+          flavor: undefined,
+          publisher: pub.publisher,
+          url: pub.website,
+          date: pub.releaseDate,
+          summary: pub.summary
+        };
+      });
+    }
+    else {
+      return obj && obj.length ? obj.map(function(pub){
+        return {
+          name: pub.title,
+          publisher: pub.publisher && pub.publisher.name ? pub.publisher.name : pub.publisher,
+          releaseDate: pub.date,
+          website: pub.url,
+          summary: pub.summary
+        };
+      }) : undefined;
+    }
   }
 
   function skillsToFRESH( skills ) {

@@ -30,17 +30,22 @@ Definition of the JRSResume class.
   consistent format. Then sort each section by startDate descending.
   */
   JRSResume.prototype.open = function( file, title ) {
-    this.imp = { fileName: file };
-    this.imp.raw = FS.readFileSync( file, 'utf8' );
-    return this.parse( this.imp.raw, title );
+    //this.imp = { fileName: file }; <-- schema violation, tuck it into .basics instead
+    this.basics = {
+      imp: {
+        fileName: file,
+        raw: FS.readFileSync( file, 'utf8' )
+      }
+    };
+    return this.parse( this.basics.imp.raw, title );
   };
 
   /**
   Save the sheet to disk (for environments that have disk access).
   */
   JRSResume.prototype.save = function( filename ) {
-    this.imp.fileName = filename || this.imp.fileName;
-    FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
+    this.basics.imp.fileName = filename || this.basics.imp.fileName;
+    FS.writeFileSync( this.basics.imp.fileName, this.stringify( this ), 'utf8' );
     return this;
   };
 
@@ -48,7 +53,7 @@ Definition of the JRSResume class.
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */
-  JRSResume.prototype.stringify = function() {
+  JRSResume.stringify = function( obj ) {
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
@@ -56,7 +61,11 @@ Definition of the JRSResume class.
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }
-    return JSON.stringify( this, replacer, 2 );
+    return JSON.stringify( obj, replacer, 2 );
+  };
+
+  JRSResume.prototype.stringify = function() {
+    return JRSResume.stringify( this );
   };
 
   /**
@@ -67,16 +76,17 @@ Definition of the JRSResume class.
   JRSResume.prototype.parse = function( stringData, opts ) {
     opts = opts || { };
     var rep = JSON.parse( stringData );
+
     extend( true, this, rep );
     // Set up metadata
     if( opts.imp === undefined || opts.imp ) {
-      this.imp = this.imp || { };
-      this.imp.title = (opts.title || this.imp.title) || this.basics.name;
+      this.basics.imp = this.basics.imp || { };
+      this.basics.imp.title = (opts.title || this.basics.imp.title) || this.basics.name;
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
     (opts.sort === undefined || opts.sort) && this.sort();
-    (opts.compute === undefined || opts.compute) && (this.computed = {
+    (opts.compute === undefined || opts.compute) && (this.basics.computed = {
       numYears: this.duration(),
       keywords: this.keywords()
     });
@@ -111,7 +121,7 @@ Definition of the JRSResume class.
   JRSResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
     clearMeta && (delete this.imp);
-    delete this.computed; // Don't use Object.keys() here
+    delete this.basics.computed; // Don't use Object.keys() here
     delete this.work;
     delete this.volunteer;
     delete this.education;
@@ -169,8 +179,15 @@ Definition of the JRSResume class.
     var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
     var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid');
-    var validate = validator( schemaObj );
-    return validate( this );
+    var validate = validator( schemaObj, { // Note [1]
+      formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+    });
+    var ret = validate( this );
+    if( !ret ) {
+      this.basics.imp = this.basics.imp || { };
+      this.basics.imp.validationErrors = validate.errors;
+    }
+    return ret;
   };
 
   /**

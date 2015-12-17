@@ -12,7 +12,8 @@ Definition of the FRESHResume class.
     , PATH = require('path')
     , moment = require('moment')
     , MD = require('marked')
-    , CONVERTER = require('./convert');
+    , CONVERTER = require('./convert')
+    , JRSResume = require('./jrs-resume');
 
   /**
   A FRESH-style resume in JSON or YAML.
@@ -46,13 +47,14 @@ Definition of the FRESHResume class.
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   */
   FreshResume.prototype.saveAs = function( filename, format ) {
-    this.imp.fileName = filename || this.imp.fileName;
+
     if( format !== 'JRS' ) {
+      this.imp.fileName = filename || this.imp.fileName;
       FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     }
     else {
       var newRep = CONVERTER.toJRS( this );
-      FS.writeFileSync( this.imp.fileName, FreshResume.stringify( newRep ), 'utf8' );
+      FS.writeFileSync( filename, JRSResume.stringify( newRep ), 'utf8' );
     }
     return this;
   };
@@ -212,6 +214,16 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Get a safe count of the number of things in a section.
+  */
+  FreshResume.prototype.count = function( obj ) {
+    if( !obj ) return 0;
+    if( obj.history ) return obj.history.length;
+    if( obj.sets ) return obj.sets.length;
+    return obj.length || 0;
+  };
+
+  /**
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
@@ -224,9 +236,18 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.add = function( moniker ) {
     var defSheet = FreshResume.default();
-    var newObject = $.extend( true, {}, defSheet[ moniker ][0] );
+    var newObject = defSheet[moniker].history ?
+      $.extend( true, {}, defSheet[ moniker ].history[0] ) :
+      (moniker === 'skills' ?
+        $.extend( true, {}, defSheet.skills.sets[0] ) :
+        $.extend( true, {}, defSheet[ moniker ][0] ));
     this[ moniker ] = this[ moniker ] || [];
-    this[ moniker ].push( newObject );
+    if( this[ moniker ].history )
+      this[ moniker ].history.push( newObject );
+    else if( moniker === 'skills' )
+      this.skills.sets.push( newObject );
+    else
+      this[ moniker ].push( newObject );
     return newObject;
   };
 
@@ -300,14 +321,15 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.duration = function() {
     if( this.employment.history && this.employment.history.length ) {
-      var careerStart = this.employment.history[ this.employment.history.length - 1].safe.start;
+      var firstJob = _.last( this.employment.history );
+      var careerStart = firstJob.start ? firstJob.safe.start : '';
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
           !careerStart.trim())
         return 0;
       var careerLast = _.max( this.employment.history, function( w ) {
-        return w.safe.end.unix();
-      }).safe.end;
-      return careerLast.diff( careerStart, 'years' );
+        return( w.safe && w.safe.end ) ? w.safe.end.unix() : moment().unix();
+      });
+      return careerLast.safe.end.diff( careerStart, 'years' );
     }
     return 0;
   };
@@ -366,7 +388,7 @@ Definition of the FRESHResume class.
           replaceDatesInObject( obj[key] );
         });
         ['start','end','date'].forEach( function(val) {
-          if( obj[val] && (!obj.safe || !obj.safe[val] )) {
+          if( (obj[val] !== undefined) && (!obj.safe || !obj.safe[val] )) {
             obj.safe = obj.safe || { };
             obj.safe[ val ] = _fmt( obj[val] );
             if( obj[val] && (val === 'start') && !obj.end ) {

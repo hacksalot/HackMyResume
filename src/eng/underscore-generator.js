@@ -7,7 +7,7 @@ Underscore template generate for FluentCV.
 
   var _ = require('underscore');
 
-  module.exports = function( json, jst, format, cssInfo, opts ) {
+  module.exports = function( json, jst, format, cssInfo, opts, theme ) {
 
     // Tweak underscore's default template delimeters
     var delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;

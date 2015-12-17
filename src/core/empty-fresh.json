@@ -47,6 +47,7 @@
         "position": "",
         "summary": "",
         "start": "",
+        "end": "",
         "keywords": [],
         "highlights": []
       }
@@ -91,6 +92,7 @@
     "sets": [
       {
         "name": "",
+        "level": "",
         "skills": []
       }
     ],

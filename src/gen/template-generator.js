@@ -139,11 +139,11 @@ Template-based resume generator base for FluentCV.
     @param cssInfo Needs to be refactored.
     @param opts Options and passthrough data.
     */
-    single: function( json, jst, format, cssInfo, opts ) {
+    single: function( json, jst, format, cssInfo, opts, theme ) {
       this.opts.freezeBreaks && ( jst = freeze(jst) );
       var eng = require( '../eng/' + ((opts.themeObj && opts.themeObj.engine) ||
         opts.engine)  + '-generator' );
-      var result = eng( json, jst, format, cssInfo, opts );
+      var result = eng( json, jst, format, cssInfo, opts, theme );
       this.opts.freezeBreaks && ( result = unfreeze(result) );
       return result;
     }
@@ -193,12 +193,13 @@ Template-based resume generator base for FluentCV.
   */
   function transform( rez, f, tplInfo, theme, outFolder ) {
     var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
-    var mk = this.single( rez, tplInfo.data, this.format, cssInfo, this.opts );
+    var mk = this.single( rez, tplInfo.data, this.format, cssInfo, this.opts, theme );
     this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
     var thisFilePath = PATH.join( outFolder, tplInfo.orgPath );
     try {
       MKDIRP.sync( PATH.dirname( tplInfo.major ? f : thisFilePath) );
       FS.writeFileSync( tplInfo.major ? f : thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
+      this.onAfterSave && (mk = this.onAfterSave( { outputFile: (tplInfo.major ? f : thisFilePath), mk: mk } ));
     }
     catch(ex) {
       console.log(ex);

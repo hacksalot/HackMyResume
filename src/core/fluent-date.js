@@ -66,7 +66,10 @@ FluentDate/*.prototype*/.fmt = function( dt ) {
     }
   }
   else {
-    if( dt.isValid && dt.isValid() )
+    if( !dt ) {
+      return moment();
+    }
+    else if( dt.isValid && dt.isValid() )
       return dt;
     throw 'Unknown date object encountered.';
   }
