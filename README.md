@@ -1,12 +1,13 @@
 fluentCV
 ========
-*Create polished technical résumés and CVs in multiple formats from your command
-line or shell. See [FluentCV Desktop][7] for the desktop version. OS X ~ Windows
-~ Linux.*
+*Create polished résumés and CVs in multiple formats from your command line or
+shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
+plain text, and other arbitrary formats.*
 
-![](assets/fluentcv_cli_ubuntu.png)
+![](assets/resume-bouqet.png)
 
-FluentCV is a dev-friendly Swiss Army knife for resumes and CVs. Use it to:
+FluentCV is a dev-friendly, local-only Swiss Army knife for resumes and CVs. Use
+it to:
 
 1. **Generate** HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML,
 YAML, print, smoke signal, carrier pigeon, and other arbitrary-format resumes
@@ -14,7 +15,10 @@ and CVs, from a single source of truth&mdash;without violating DRY.
 2. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
 3. **Validate** resumes against either format.
 
-FluentCV supports both the [FRESH][fresca] and [JSON Resume][6] source formats.
+FluentCV is built with Node.js and runs on recent versions of OS X, Linux, or
+Windows.
+
+![](assets/fluentcv_cli_ubuntu.png)
 
 ## Features
 
