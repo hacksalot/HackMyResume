@@ -49,6 +49,12 @@ Template helper definitions for Handlebars.
       return txt && txt.trim() ? _.initial( txt.split(' ') ).join(' ') : '';
     });
 
+    // Set up a URL-trimming helper to drop the protocol so we can do:
+    // {{trimURL url}}
+    HANDLEBARS.registerHelper("trimURL", function( url ) {
+      return url && url.trim() ? url.trim().replace(/^https?:\/\//i, '') : '';
+    });
+
     // Set up a Markdown-to-WordProcessingML helper so we can do:
     // {{either A B}}
     HANDLEBARS.registerHelper("either", function( lhs, rhs, options ) {
