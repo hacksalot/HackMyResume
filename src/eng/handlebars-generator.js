@@ -11,7 +11,6 @@ Definition of the HandlebarsGenerator class.
   var _ = require('underscore')
     , HANDLEBARS = require('handlebars')
     , FS = require('fs')
-    , _ = require('underscore')
     , registerHelpers = require('./handlebars-helpers');
 
 

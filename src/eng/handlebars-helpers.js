@@ -10,7 +10,8 @@ Template helper definitions for Handlebars.
   var HANDLEBARS = require('handlebars')
   , MD = require('marked')
   , H2W = require('../utils/html-to-wpml')
-  , moment = require('moment');
+  , moment = require('moment')
+  , _ = require('underscore');
 
   /**
   Register useful Handlebars helpers.
