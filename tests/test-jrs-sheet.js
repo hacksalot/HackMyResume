@@ -16,7 +16,7 @@ describe('jane-doe.json (JRS)', function () {
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
         _sheet = new JRSResume().open(
-          path.join( __dirname, 'resumes/jrs/jane-doe.json' ) );
+          path.join( __dirname, 'resumes/jrs/jane-q-fullstacker.json' ) );
       }
       tryOpen.should.not.Throw();
     });
@@ -39,13 +39,13 @@ describe('jane-doe.json (JRS)', function () {
 
     it('should save without throwing an exception', function(){
       function trySave() {
-        _sheet.save( 'tests/sandbox/jane-doe.json' );
+        _sheet.save( 'tests/sandbox/jane-q-fullstacker.json' );
       }
       trySave.should.not.Throw();
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new JRSResume().open( 'tests/sandbox/jane-doe.json' );
+      var savedSheet = new JRSResume().open( 'tests/sandbox/jane-q-fullstacker.json' );
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 
