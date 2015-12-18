@@ -17,31 +17,34 @@ Definition of the HandlebarsGenerator class.
 
   /**
   Perform template-based resume generation using Handlebars.js.
-  @method generate
+  @class HandlebarsGenerator
   */
-  module.exports = function( json, jst, format, cssInfo, opts, theme ) {
+  var HandlebarsGenerator = module.exports = {
 
-    // Pre-compile any partials present in the theme.
-    _.each( theme.partials, function( el ) {
-      var tplData = FS.readFileSync( el.path, 'utf8' );
-      var compiledTemplate = HANDLEBARS.compile( tplData );
-      HANDLEBARS.registerPartial( el.name, compiledTemplate );
-    });
+    generate: function( json, jst, format, cssInfo, opts, theme ) {
 
-    // Register necessary helpers.
-    registerHelpers();
+      // Pre-compile any partials present in the theme.
+      _.each( theme.partials, function( el ) {
+        var tplData = FS.readFileSync( el.path, 'utf8' );
+        var compiledTemplate = HANDLEBARS.compile( tplData );
+        HANDLEBARS.registerPartial( el.name, compiledTemplate );
+      });
 
-    // Compile and run the Handlebars template.
-    var template = HANDLEBARS.compile(jst);
-    return template({
-      r: json,
-      filt: opts.filters,
-      cssInfo: cssInfo,
-      headFragment: opts.headFragment || ''
-    });
+      // Register necessary helpers.
+      registerHelpers();
+
+      // Compile and run the Handlebars template.
+      var template = HANDLEBARS.compile(jst);
+      return template({
+        r: format === 'html' || format === 'pdf' ? json.markdownify() : json,
+        RAW: json,
+        filt: opts.filters,
+        cssInfo: cssInfo,
+        headFragment: opts.headFragment || ''
+      });
+
+    }
 
   };
-
-
 
 }());

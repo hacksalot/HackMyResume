@@ -143,7 +143,7 @@ Definition of the TemplateGenerator class.
     single: function( json, jst, format, cssInfo, opts, theme ) {
       this.opts.freezeBreaks && ( jst = freeze(jst) );
       var eng = require( '../eng/' + theme.engine  + '-generator' );
-      var result = eng( json, jst, format, cssInfo, opts, theme );
+      var result = eng.generate( json, jst, format, cssInfo, opts, theme );
       this.opts.freezeBreaks && ( result = unfreeze(result) );
       return result;
     }
