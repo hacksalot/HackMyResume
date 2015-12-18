@@ -152,7 +152,7 @@ Definition of the Theme class.
     .forEach(function( cssf ) {
       // For each CSS file, get its corresponding HTML file
       var idx = _.findIndex(fmts, function( fmt ) {
-        return fmt.pre === cssf.pre && fmt.ext === 'html';
+        return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       cssf.action = null;
       fmts[ idx ].css = cssf.data;
