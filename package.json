@@ -20,7 +20,7 @@
     "HTML",
     "CLI"
   ],
-  "author": "James M. Devlin",
+  "author": "hacksalot <hacksalot@fluentdesk.com> (https://github.com/hacksalot)",
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
