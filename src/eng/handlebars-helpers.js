@@ -49,6 +49,12 @@ Template helper definitions for Handlebars.
       return txt && txt.trim() ? _.initial( txt.split(' ') ).join(' ') : '';
     });
 
+    // Set up a Markdown-to-WordProcessingML helper so we can do:
+    // {{either A B}}
+    HANDLEBARS.registerHelper("either", function( lhs, rhs, options ) {
+      if (lhs || rhs) return options.fn(this);
+    });
+
     // Set up a generic conditional helper so we can do:
     // {{compare val otherVal operator="<"}}
     // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/
