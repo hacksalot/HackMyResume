@@ -58,7 +58,6 @@
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
-    "is-my-json-valid": "^2.12.2",
     "jane-q-fullstacker": "fluentdesk/jane-q-fullstacker",
     "mocha": "*",
     "resample": "fluentdesk/resample"
