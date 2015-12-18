@@ -54,6 +54,7 @@
   "devDependencies": {
     "chai": "*",
     "grunt": "*",
+    "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",

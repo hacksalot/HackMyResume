@@ -17,6 +17,8 @@ module.exports = function (grunt) {
       all: { src: ['tests/*.js'] }
     },
 
+    clean: ['tests/sandbox'],
+
     yuidoc: {
       compile: {
         name: '<%= pkg.name %>',
@@ -46,9 +48,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   grunt.registerTask('test', 'Test the FluentCV library.',
-    function( config ) { grunt.task.run( ['simplemocha:all'] ); });
+    function( config ) { grunt.task.run( ['clean','simplemocha:all'] ); });
   grunt.registerTask('document', 'Generate FluentCV library documentation.',
     function( config ) { grunt.task.run( ['yuidoc'] ); });
   grunt.registerTask('default', [ 'jshint', 'test', 'yuidoc' ]);
