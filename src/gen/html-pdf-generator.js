@@ -11,7 +11,7 @@ Definition of the HtmlPdfGenerator class.
     , HTML = require( 'html' );
 
   /**
-  An HTML-based PDF resume generator for FluentCV.
+  An HTML-based PDF resume generator for HackMyResume.
   */
   var HtmlPdfGenerator = module.exports = TemplateGenerator.extend({
 

@@ -1,7 +1,7 @@
 /**
-External API surface for FluentCV:CLI.
+External API surface for HackMyResume.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
-@module fluentlib.js
+@module hackmyapi.js
 */
 
 module.exports = {

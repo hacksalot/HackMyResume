@@ -16,7 +16,7 @@ Definition of the Theme class.
     , RECURSIVE_READ_DIR = require('recursive-readdir-sync');
 
   /**
-  The Theme class is a representation of a FluentCV theme asset.
+  The Theme class is a representation of a HackMyResume theme asset.
   @class Theme
   */
   function Theme() {
