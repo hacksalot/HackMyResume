@@ -39,8 +39,37 @@ Template helper definitions for Handlebars.
 
     // Set up a last-word helper so we can do:
     // {{lastWord val [true|false]}}
+    HANDLEBARS.registerHelper("link", function( text, url ) {
+      return url && url.trim() ?
+        ('<a href="' + url + '">' + text + '</a>') : text;
+    });
+
+    // Set up a last-word helper so we can do:
+    // {{lastWord val [true|false]}}
     HANDLEBARS.registerHelper("lastWord", function( txt ) {
       return txt && txt.trim() ? _.last( txt.split(' ') ) : '';
+    });
+
+    // Set up a skill colorizing helper:
+    // {{skillColor val}}
+    HANDLEBARS.registerHelper("skillColor", function( lvl ) {
+      switch(lvl) {
+        case 'beginner': return '#5CB85C';
+        case 'intermediate': return '#F1C40F';
+        case 'advanced': return '#428BCA';
+        case 'master': return '#C00000';
+      }
+    });
+
+    // Set up a skill colorizing helper:
+    // {{skillColor val}}
+    HANDLEBARS.registerHelper("skillHeight", function( lvl ) {
+      switch(lvl) {
+        case 'beginner': return '30';
+        case 'intermediate': return '16';
+        case 'advanced': return '8';
+        case 'master': return '0';
+      }
     });
 
     // Set up a Markdown-to-WordProcessingML helper so we can do:
@@ -53,6 +82,12 @@ Template helper definitions for Handlebars.
     // {{trimURL url}}
     HANDLEBARS.registerHelper("trimURL", function( url ) {
       return url && url.trim() ? url.trim().replace(/^https?:\/\//i, '') : '';
+    });
+
+    // Set up a URL-trimming helper to drop the protocol so we can do:
+    // {{trimURL url}}
+    HANDLEBARS.registerHelper("toLower", function( txt ) {
+      return txt && txt.trim() ? txt.toLowerCase() : '';
     });
 
     // Set up a Markdown-to-WordProcessingML helper so we can do:
