@@ -1,5 +1,5 @@
 /**
-External API surface for HackMyResume.
+External API surface for FluentCV.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 @module hackmyapi.js
 */
