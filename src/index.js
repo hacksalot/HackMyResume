@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 /**
-Command-line interface (CLI) for HackMyResume.
+Command-line interface (CLI) for FluentCV.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 @module index.js
 */
@@ -13,7 +13,7 @@ var ARGS = require( 'minimist' )
   , FS = require('fs')
   , PATH = require('path')
   , opts = { }
-  , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white
+  , title = ('\n*** FluentCV v' + PKG.version + ' ***').bold.white
   , _ = require('underscore');
 
 

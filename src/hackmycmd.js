@@ -1,5 +1,5 @@
 /**
-Internal resume generation logic for HackMyResume.
+Internal resume generation logic for FluentCV.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 @module hackmycmd.js
 */
@@ -312,7 +312,7 @@ Internal resume generation logic for HackMyResume.
     ];
 
     /**
-    Default HackMyResume options.
+    Default FluentCV options.
     */
     var _opts = {
       theme: 'modern',

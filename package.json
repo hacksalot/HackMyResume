@@ -1,10 +1,10 @@
 {
-  "name": "hackmyresume",
+  "name": "fluentcv",
   "version": "1.0.0",
   "description": "Generate polished résumés and CVs in HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML, YAML, smoke signal, and carrier pigeon.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hacksalot/HackMyResume.git"
+    "url": "https://github.com/fluentdesk/FluentCV.git"
   },
   "keywords": [
     "resume",
@@ -20,17 +20,21 @@
     "HTML",
     "CLI"
   ],
-  "author": "hacksalot <hacksalot@fluentdesk.com> (https://github.com/hacksalot)",
+  "author": "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)",
+  "contributors": [
+    "gruebait <gruebait@eatenbygrues.com> (https://github.com/gruebait)",
+    "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)"
+  ],
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/hacksalot/HackMyResume/issues"
+    "url": "https://github.com/fluentdesk/FluentCV/issues"
   },
   "main": "src/hackmycmd.js",
   "bin": {
-    "hackmyresume": "src/index.js"
+    "fluentcv": "src/index.js"
   },
-  "homepage": "https://github.com/hacksalot/HackMyResume",
+  "homepage": "https://github.com/fluentdesk/FluentCV",
   "dependencies": {
     "colors": "^1.1.2",
     "fluent-themes": "~0.7.0-beta",
