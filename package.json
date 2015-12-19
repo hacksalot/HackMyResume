@@ -1,6 +1,6 @@
 {
   "name": "fluentcv",
-  "version": "0.10.3",
+  "version": "0.11.0",
   "description": "Generate polished résumés and CVs in HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML, YAML, smoke signal, and carrier pigeon.",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "HTML",
     "CLI"
   ],
-  "author": "James M. Devlin",
+  "author": "hacksalot <hacksalot@fluentdesk.com> (https://github.com/hacksalot)",
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
@@ -33,8 +33,8 @@
   "homepage": "https://github.com/fluentdesk/fluentcv",
   "dependencies": {
     "colors": "^1.1.2",
-    "fluent-themes": "~0.6.3-beta",
-    "fresca": "~0.2.1",
+    "fluent-themes": "~0.7.0-beta",
+    "fresca": "~0.2.2",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
@@ -54,10 +54,11 @@
   "devDependencies": {
     "chai": "*",
     "grunt": "*",
+    "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
-    "is-my-json-valid": "^2.12.2",
+    "jane-q-fullstacker": "fluentdesk/jane-q-fullstacker",
     "mocha": "*",
     "resample": "fluentdesk/resample"
   }

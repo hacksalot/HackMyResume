@@ -1,14 +1,14 @@
 {
   "basics": {
-    "name": "Jane Doe",
-    "label": "Senior Developer / Code Ninja",
+    "name": "Jane Q. Fullstacker",
+    "label": "Senior Developer",
     "summary": "**Full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.",
-    "website": "http://jane-doe.me",
+    "website": "http://janef.me/blog",
     "phone": "1-650-999-7777",
     "email": "jdoe@onecoolstartup.io",
     "picture": "jane_doe.png",
     "location": {
-      "address": "Jane Doe\n123 Somewhere Rd.\nMountain View, CA 94035",
+      "address": "Jane Fullstacker\n123 Somewhere Rd.\nMountain View, CA 94035",
       "postalCode": "94035",
       "city": "Mountain View",
       "countryCode": "US",
@@ -17,13 +17,13 @@
     "profiles": [
       {
         "network": "GitHub",
-        "username": "jane-doe-was-here",
-        "url": "https://github.com/jane-doe-was-here"
+        "username": "janef-was-here",
+        "url": "https://github.com/janef-was-here"
       },
       {
         "network": "Twitter",
-        "username": "jane-doe-was-here",
-        "url": "https://twitter.com/jane-doe-was-here"
+        "username": "janef-was-here",
+        "url": "https://twitter.com/janef-was-here"
       }
     ]
   },
@@ -104,17 +104,55 @@
   ],
   "skills": [
     {
-      "name": "Programming",
+      "name": "Web Dev",
       "keywords": [
-        "C++",
-        "Ruby",
-        "Xcode"
+        "JavaScript",
+        "HTML 5",
+        "CSS",
+        "LAMP",
+        "MVC",
+        "REST"
       ]
     },
     {
-      "name": "Project Management",
+      "name": "JavaScript",
       "keywords": [
-        "Agile"
+        "Node.js",
+        "Angular.js",
+        "jQuery",
+        "Bootstrap",
+        "React.js",
+        "Backbone.js"
+      ]
+    },
+    {
+      "name": "Database",
+      "keywords": [
+        "MySQL",
+        "PostgreSQL",
+        "NoSQL",
+        "ORM",
+        "Hibernate"
+      ]
+    },
+    {
+      "name": "Cloud",
+      "keywords": [
+        "AWS",
+        "EC2",
+        "RDS",
+        "S3",
+        "Azure",
+        "Dropbox"
+      ]
+    },
+    {
+      "name": "Project",
+      "keywords": [
+        "Agile",
+        "TFS",
+        "Unified Process",
+        "MS Project"
       ]
     }
   ],
@@ -166,10 +204,10 @@
       "website": "http://codeproject.com/build-ui-electron-atom.aspx"
     },
     {
-      "name": "Jane Doe Unplugged",
+      "name": "Jane Fullstacker's Blog",
       "publisher": "self",
       "releaseDate": "2011",
-      "website": "http://jane-doe.me"
+      "website": "http://janef.me"
     },
     {
       "name": "Teach Yourself GORFF in 21 Days",
@@ -218,7 +256,8 @@
     },
     {
       "language": "Spanish",
-      "level": "Moderate"
+      "level": "Moderate",
+      "years": 10
     }
   ]
 }

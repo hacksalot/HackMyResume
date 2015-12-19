@@ -100,6 +100,7 @@ Definition of the Theme class.
       var outFmt = '', isMajor = false;
       var portion = pathInfo.dir.replace(tplFolder,'');
       if( portion && portion.trim() ) {
+        if( portion[1] === '_' ) return;
         var reg = /^(?:\/|\\)(html|latex|doc|pdf|partials)(?:\/|\\)?/ig;
         var res = reg.exec( portion );
         if( res ) {
@@ -152,7 +153,7 @@ Definition of the Theme class.
     .forEach(function( cssf ) {
       // For each CSS file, get its corresponding HTML file
       var idx = _.findIndex(fmts, function( fmt ) {
-        return fmt.pre === cssf.pre && fmt.ext === 'html';
+        return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       cssf.action = null;
       fmts[ idx ].css = cssf.data;

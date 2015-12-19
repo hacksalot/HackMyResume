@@ -16,7 +16,7 @@ describe('jane-doe.json (FRESH)', function () {
 	  it('should open without throwing an exception', function () {
       function tryOpen() {
         _sheet = new FRESHResume().open(
-          'node_modules/FRESCA/exemplar/jane-doe.json' );
+          'node_modules/jane-q-fullstacker/resume/jane-resume.json' );
       }
       tryOpen.should.not.Throw();
     });
@@ -43,13 +43,13 @@ describe('jane-doe.json (FRESH)', function () {
 
     it('should save without throwing an exception', function(){
       function trySave() {
-        _sheet.save( 'tests/sandbox/jane-doe.json' );
+        _sheet.save( 'tests/sandbox/jane-q-fullstacker.json' );
       }
       trySave.should.not.Throw();
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new FRESHResume().open('tests/sandbox/jane-doe.json');
+      var savedSheet = new FRESHResume().open('tests/sandbox/jane-q-fullstacker.json');
       _sheet.stringify().should.equal( savedSheet.stringify() )
     });
 
