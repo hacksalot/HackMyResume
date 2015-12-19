@@ -100,6 +100,7 @@ Definition of the Theme class.
       var outFmt = '', isMajor = false;
       var portion = pathInfo.dir.replace(tplFolder,'');
       if( portion && portion.trim() ) {
+        if( portion[1] === '_' ) return;
         var reg = /^(?:\/|\\)(html|latex|doc|pdf|partials)(?:\/|\\)?/ig;
         var res = reg.exec( portion );
         if( res ) {
