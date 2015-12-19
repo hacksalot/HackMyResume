@@ -50,9 +50,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('test', 'Test the FluentCV library.',
+  grunt.registerTask('test', 'Test the HackMyResume library.',
     function( config ) { grunt.task.run( ['clean','simplemocha:all'] ); });
-  grunt.registerTask('document', 'Generate FluentCV library documentation.',
+  grunt.registerTask('document', 'Generate HackMyResume library documentation.',
     function( config ) { grunt.task.run( ['yuidoc'] ); });
   grunt.registerTask('default', [ 'jshint', 'test', 'yuidoc' ]);
 

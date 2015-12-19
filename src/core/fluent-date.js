@@ -1,5 +1,5 @@
 /**
-The FluentCV date representation.
+The HackMyResume date representation.
 @license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 @module fluent-date.js
 */
@@ -13,7 +13,7 @@ formats to be aware of here.
 2. The default "YYYY-MM-DD" format used in JSON Resume ("2015-02-10")
 3. Year-and-month only ("2015-04")
 4. Year-only "YYYY" ("2015")
-5. The friendly FluentCV "mmm YYYY" format ("Mar 2015" or "Dec 2008")
+5. The friendly HackMyResume "mmm YYYY" format ("Mar 2015" or "Dec 2008")
 6. Empty dates ("", " ")
 7. Any other date format that Moment.js can parse from
 Note: Moment can transparently parse all or most of these, without requiring us

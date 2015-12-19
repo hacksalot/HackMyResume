@@ -1,6 +1,6 @@
 Usage:
 
-    fluentcv <COMMAND> <SOURCES> [TO <TARGETS>] [-t <THEME>] [-f <FORMAT>]
+    hackmyresume <COMMAND> <SOURCES> [TO <TARGETS>] [-t <THEME>] [-f <FORMAT>]
 
 <COMMAND> should be BUILD, NEW, CONVERT, VALIDATE, or HELP. <SOURCES> should
 be the path to one or more FRESH or JSON Resume format resumes. <TARGETS>
@@ -10,16 +10,16 @@ COMPACT, MINIMIST, MODERN, or HELLO-WORLD) or the relative path to a custom
 theme. <FORMAT> should be either FRESH (for a FRESH-format resume) or JRS
 (for a JSON Resume-format resume).
 
-    fluentcv BUILD resume.json TO out/resume.all
-    fluentcv NEW resume.json
-    fluentcv CONVERT resume.json TO resume-jrs.json
-    fluentcv VALIDATE resume.json
+    hackmyresume BUILD resume.json TO out/resume.all
+    hackmyresume NEW resume.json
+    hackmyresume CONVERT resume.json TO resume-jrs.json
+    hackmyresume VALIDATE resume.json
 
 Both SOURCES and TARGETS can accept multiple files:
 
-    fluentCV BUILD r1.json r2.json TO out/resume.all out2/resume.html
-    fluentCV NEW r1.json r2.json r3.json
-    fluentCV VALIDATE resume.json resume2.json resume3.json
+    hackmyresume BUILD r1.json r2.json TO out/resume.all out2/resume.html
+    hackmyresume NEW r1.json r2.json r3.json
+    hackmyresume VALIDATE resume.json resume2.json resume3.json
 
-See https://github.com/fluentdesk/fluentCV/blob/master/README.md for more
+See https://github.com/hacksalot/hackmyresume/blob/master/README.md for more
 information.

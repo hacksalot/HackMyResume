@@ -1,7 +1,7 @@
 /**
-Internal resume generation logic for FluentCV.
+Internal resume generation logic for HackMyResume.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
-@module fluentcmd.js
+@module hackmycmd.js
 */
 
 (function() {
@@ -12,7 +12,7 @@ Internal resume generation logic for FluentCV.
       , unused = require('./utils/string')
       , FS = require('fs')
       , _ = require('underscore')
-      , FLUENT = require('./fluentlib')
+      , FLUENT = require('./hackmyapi')
       , PATH = require('path')
       , MKDIRP = require('mkdirp')
       //, COLORS = require('colors')
@@ -106,7 +106,7 @@ Internal resume generation logic for FluentCV.
 
           _log( 'Generating '.useful +
             targInfo.fmt.outFormat.toUpperCase().useful.bold +
-            ' resume: '.useful + path.relative(process.cwd(), f ).useful.bold);
+            ' resume: '.useful + path.relative(process.cwd(), f ).replace(/\\/g,'/').useful.bold);
 
             theFormat = _fmts.filter(
               function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
@@ -133,7 +133,7 @@ Internal resume generation logic for FluentCV.
         else {
           _log( 'Generating '.useful +
             targInfo.fmt.outFormat.toUpperCase().useful.bold +
-            ' resume: '.useful + path.relative(process.cwd(), f ).useful.bold);
+            ' resume: '.useful + path.relative(process.cwd(), f ).replace(/\\/g,'/').useful.bold);
 
           theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
@@ -312,7 +312,7 @@ Internal resume generation logic for FluentCV.
     ];
 
     /**
-    Default FluentCV options.
+    Default HackMyResume options.
     */
     var _opts = {
       theme: 'modern',
@@ -335,7 +335,7 @@ Internal resume generation logic for FluentCV.
         new: create,
         help: help
       },
-      lib: require('./fluentlib'),
+      lib: require('./hackmyapi'),
       options: _opts,
       formats: _fmts
     };

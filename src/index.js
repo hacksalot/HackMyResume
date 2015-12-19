@@ -1,19 +1,19 @@
 #! /usr/bin/env node
 
 /**
-Command-line interface (CLI) for FluentCV:CLI.
+Command-line interface (CLI) for HackMyResume.
 @license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
 @module index.js
 */
 
 var ARGS = require( 'minimist' )
-  , FCMD  = require( './fluentcmd')
+  , FCMD  = require( './hackmycmd')
   , PKG = require('../package.json')
   , COLORS = require('colors')
   , FS = require('fs')
   , PATH = require('path')
   , opts = { }
-  , title = ('*** FluentCV v' + PKG.version + ' ***').bold.white
+  , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white
   , _ = require('underscore');
 
 

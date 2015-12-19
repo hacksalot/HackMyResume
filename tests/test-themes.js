@@ -5,7 +5,7 @@ var chai = require('chai')
   , path = require('path')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
-  , FCMD = require( '../src/fluentcmd')
+  , FCMD = require( '../src/hackmycmd')
   , validator = require('is-my-json-valid')
   , COLORS = require('colors');
 
