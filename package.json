@@ -18,7 +18,11 @@
     "PDF",
     "YAML",
     "HTML",
-    "CLI"
+    "LaTeX",
+    "CLI",
+    "Handlebars",
+    "Underscore",
+    "template"
   ],
   "author": "hacksalot <hacksalot@fluentdesk.com> (https://github.com/hacksalot)",
   "license": "MIT",
