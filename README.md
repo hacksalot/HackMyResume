@@ -2,7 +2,8 @@ HackMyResume
 ============
 *Create polished résumés and CVs in multiple formats from your command line or
 shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
-plain text, and other arbitrary formats.*
+plain text, and other arbitrary formats. Fight the power, save trees. Compatible
+with [FRESH][fresca] and [JRS][6] resumes.*
 
 ![](assets/resume-bouqet.png)
 
@@ -24,8 +25,6 @@ or Windows.
 - Store your resume data as a durable, versionable JSON or YAML document.
 - Generate polished resumes in multiple formats without violating [DRY][dry].
 - Output to HTML, Markdown, LaTeX, PDF, MS Word, JSON, YAML, plain text, or XML.
-- Compatible with [FRESH][fresh], [JSON Resume][6], [FRESCA][fresca], and
-[FCV Desktop][7].
 - Validate resumes against the FRESH or JSON Resume schema.
 - Support for multiple input and output resumes.
 - Use from your command line or [desktop][7].
@@ -49,8 +48,9 @@ To use HackMyResume you'll need to create a valid resume in either
 [FRESH][fresca] or [JSON Resume][6] format. Then you can start using the command
 line tool. There are four basic commands you should be aware of:
 
-- `build` generates resumes in HTML, Word, Markdown, PDF, and other formats. Use
-it when you need to submit, upload, print, or email resumes in specific formats.
+- `**build**` generates resumes in HTML, Word, Markdown, PDF, and other formats.
+Use it when you need to submit, upload, print, or email resumes in specific
+formats.
 
     ```bash
     # hackmyresume BUILD <INPUTS> TO <OUTPUTS> [-t THEME]
@@ -58,7 +58,7 @@ it when you need to submit, upload, print, or email resumes in specific formats.
     hackmyresume BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
     ```
 
-- `new` creates a new resume in FRESH or JSON Resume format.
+- `**new**` creates a new resume in FRESH or JSON Resume format.
 
     ```bash
     # hackmyresume NEW <OUTPUTS> [-f <FORMAT>]
@@ -67,8 +67,10 @@ it when you need to submit, upload, print, or email resumes in specific formats.
     hackmyresume NEW r1.json r2.json -f jrs
     ```
 
-- `convert` converts your source resume between FRESH and JSON Resume formats.
-Use it to convert between the two formats to take advantage of tools and services.
+- `**convert**` converts your source resume between FRESH and JSON Resume
+formats.
+Use it to convert between the two formats to take advantage of tools and
+services.
 
     ```bash
     # hackmyresume CONVERT <INPUTS> TO <OUTPUTS>
@@ -76,7 +78,7 @@ Use it to convert between the two formats to take advantage of tools and service
     hackmyresume CONVERT 1.json 2.json 3.json TO out/1.json out/2.json out/3.json
     ```
 
-- `validate` validates the specified resume against either the FRESH or JSON
+- `**validate**` validates the specified resume against either the FRESH or JSON
 Resume schema. Use it to make sure your resume data is sufficient and complete.
 
     ```bash
@@ -161,25 +163,34 @@ Generating YAML resume: out/resume.yml
 
 ### Applying a theme
 
-You can specify a predefined or custom theme via the optional `-t` parameter. For a predefined theme, include the theme name. For a custom theme, include the path to the custom theme's folder.
+You can specify a predefined or custom theme via the optional `-t` parameter.
+For a predefined theme, include the theme name. For a custom theme, include the
+path to the custom theme's folder.
 
 ```bash
 hackmyresume build resume.json -t modern
 hackmyresume build resume.json -t ~/foo/bar/my-custom-theme/
 ```
 
-As of v0.9.0, available predefined themes are `modern`, `minimist`, and `hello-world`, and `compact`.
+As of v1.0.0, available predefined themes are `positive`, `modern`, `compact`,
+`minimist`, and `hello-world`.
 
 ### Merging resumes
 
-You can **merge multiple resumes together** by specifying them in order from most generic to most specific:
+You can **merge multiple resumes together** by specifying them in order from
+most generic to most specific:
 
 ```bash
 # Merge specific.json onto base.json and generate all formats
 hackmyresume build base.json specific.json -o resume.all
 ```
 
-This can be useful for overriding a base (generic) resume with information from a specific (targeted) resume. For example, you might override your generic catch-all "software developer" resume with specific details from your targeted "game developer" resume, or combine two partial resumes into a "complete" resume. Merging follows conventional [extend()][9]-style behavior and there's no arbitrary limit to how many resumes you can merge:
+This can be useful for overriding a base (generic) resume with information from
+a specific (targeted) resume. For example, you might override your generic
+catch-all "software developer" resume with specific details from your targeted
+"game developer" resume, or combine two partial resumes into a "complete"
+resume. Merging follows conventional [extend()][9]-style behavior and there's
+no arbitrary limit to how many resumes you can merge:
 
 ```bash
 hackmyresume build in1.json in2.json in3.json in4.json TO out.html out.doc
@@ -210,14 +221,17 @@ hackmyresume build resume.json
 
 ### Using .all
 
-The special `.all` extension tells HackMyResume to generate all supported output formats for the given resume. For example, this...
+The special `.all` extension tells HackMyResume to generate all supported output
+formats for the given resume. For example, this...
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, etc.)
 hackmyresume build me.json -o out/resume.all
 ```
 
-..tells HackMyResume to read `me.json` and generate `out/resume.md`, `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and `out/resume.json`.
+..tells HackMyResume to read `me.json` and generate `out/resume.md`,
+`out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and
+`out/resume.json`.
 
 ### Validating
 
@@ -240,17 +254,17 @@ Validating JSON resume: resumeB.json (VALID)
 
 ### Converting
 
-HackMyResume can convert between the [FRESH][fresca] and [JSON Resume][6] formats.
-Just run:
+HackMyResume can convert between the [FRESH][fresca] and [JSON Resume][6]
+formats. Just run:
 
 ```bash
 hackmyresume CONVERT <INPUTS> <OUTPUTS>
 ```
 
 where <INPUTS> is one or more resumes in FRESH or JSON Resume format, and
-<OUTPUTS> is a corresponding list of output file names. HackMyResume will autodetect
-the format (FRESH or JRS) of each input resume and convert it to the other
-format (JRS or FRESH).
+<OUTPUTS> is a corresponding list of output file names. HackMyResume will
+autodetect the format (FRESH or JRS) of each input resume and convert it to the
+other format (JRS or FRESH).
 
 ### Prettifying
 
