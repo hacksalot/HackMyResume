@@ -31,7 +31,7 @@ Definition of the HandlebarsGenerator class.
       });
 
       // Register necessary helpers.
-      registerHelpers();
+      registerHelpers( theme );
 
       // Compile and run the Handlebars template.
       var template = HANDLEBARS.compile(jst);
