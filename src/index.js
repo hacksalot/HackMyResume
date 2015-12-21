@@ -47,7 +47,6 @@ function main() {
   opts = getOpts( a );
   logMsg( title );
 
-
   // Get the action to be performed
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
   var verb = params[0];
@@ -56,7 +55,7 @@ function main() {
     return;
   }
 
-  // Get source and dest params
+  // Find the TO keyword, if any
   var splitAt = _.indexOf( params, 'to' );
   if( splitAt === a._.length - 1 ) {
     // 'TO' cannot be the last argument
@@ -66,8 +65,10 @@ function main() {
     return;
   }
 
+  // Massage inputs and outputs
   var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
   var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
+  ( splitAt === -1 ) && dst.push( src.pop() ); // Allow omitting TO keyword
   var parms = [ src, dst, opts, logMsg ];
 
   // Invoke the action

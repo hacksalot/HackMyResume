@@ -17,3 +17,7 @@ String.isNullOrWhitespace = function( input ) {
 String.prototype.endsWith = function(suffix) {
   return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+
+String.is = function( val ) {
+  return typeof val === 'string' || val instanceof String;
+};
