@@ -13,19 +13,23 @@ Generic template helper definitions for FluentCV.
     , _ = require('underscore');
 
   /**
-  Register useful Handlebars helpers.
-  @method registerHelpers
+  Generic template helper function definitions.
+  @class GenericHelpers
   */
-  module.exports = {
+  var GenericHelpers = module.exports = {
 
-    // Set up a date formatting helper so we can do:
-    // {{formatDate val 'YYYY-MM'}}
+    /**
+    Convert the input date to a specified format through Moment.js.
+    @method formatDate
+    */
     formatDate: function(datetime, format) {
       return moment ? moment( datetime ).format( format ) : datetime;
     },
 
-    // Set up a Markdown-to-WordProcessingML helper so we can do:
-    // {{wmpl val [true|false]}}
+    /**
+    Convert inline Markdown to inline WordProcessingML.
+    @method wpml
+    */
     wpml: function( txt, inline ) {
       if(!txt) return '';
       inline = (inline && !inline.hash) || false;
@@ -36,24 +40,31 @@ Generic template helper definitions for FluentCV.
       return txt;
     },
 
-    // Set up a last-word helper so we can do:
-    // {{lastWord val [true|false]}}
+    /**
+    Emit a conditional link.
+    @method link
+    */
     link: function( text, url ) {
       return url && url.trim() ?
         ('<a href="' + url + '">' + text + '</a>') : text;
     },
 
-    // Set up a last-word helper so we can do:
-    // {{lastWord val [true|false]}}
+    /**
+    Return the last word of the specified text.
+    @method lastWord
+    */
     lastWord: function( txt ) {
       return txt && txt.trim() ? _.last( txt.split(' ') ) : '';
     },
 
-    // Set up a skill colorizing helper:
-    // {{skillColor val}}
-    // Skill level can be expressed as a string ("beginner", "intermediate",
-    // etc.), as an integer (1,5,etc), as a string integer ("1", "5", etc.),
-    // or as an RRGGBB color triplet ('#C00000', '#FFFFAA').
+    /**
+    Convert a skill level to an RGB color triplet.
+    @method skillColor
+    @param lvl Input skill level. Skill level can be expressed as a string
+    ("beginner", "intermediate", etc.), as an integer (1,5,etc), as a string
+    integer ("1", "5", etc.), or as an RRGGBB color triplet ('#C00000',
+    '#FFFFAA').
+    */
     skillColor: function( lvl ) {
       var idx = skillLevelToIndex( lvl );
       var skillColors = (this.theme && this.theme.palette &&
@@ -62,40 +73,52 @@ Generic template helper definitions for FluentCV.
       return skillColors[idx];
     },
 
-    // Set up a skill colorizing helper:
-    // {{skillColor val}}
+    /**
+    Return an appropriate height.
+    @method lastWord
+    */
     skillHeight: function( lvl ) {
       var idx = skillLevelToIndex( lvl );
       return ['38.25', '30', '16', '8', '0'][idx];
     },
 
-    // Set up a Markdown-to-WordProcessingML helper so we can do:
-    // {{initialWords val [true|false]}}
+    /**
+    Return all but the last word of the input text.
+    @method initialWords
+    */
     initialWords: function( txt ) {
       return txt && txt.trim() ? _.initial( txt.split(' ') ).join(' ') : '';
     },
 
-    // Set up a URL-trimming helper to drop the protocol so we can do:
-    // {{trimURL url}}
+    /**
+    Trim the protocol (http or https) from a URL/
+    @method trimURL
+    */
     trimURL: function( url ) {
       return url && url.trim() ? url.trim().replace(/^https?:\/\//i, '') : '';
     },
 
-    // Set up a URL-trimming helper to drop the protocol so we can do:
-    // {{trimURL url}}
+    /**
+    Convert text to lowercase.
+    @method toLower
+    */
     toLower: function( txt ) {
       return txt && txt.trim() ? txt.toLowerCase() : '';
     },
 
-    // Set up a Markdown-to-WordProcessingML helper so we can do:
-    // {{either A B}}
+    /**
+    Return true if either value is truthy.
+    @method either
+    */
     either: function( lhs, rhs, options ) {
       if (lhs || rhs) return options.fn(this);
     },
 
-    // Set up a generic conditional helper so we can do:
-    // {{compare val otherVal operator="<"}}
-    // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/
+    /**
+    Perform a generic comparison.
+    See: http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates
+    @method compare
+    */
     compare: function(lvalue, rvalue, options) {
       if (arguments.length < 3)
         throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
