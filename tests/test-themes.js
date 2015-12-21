@@ -35,9 +35,9 @@ describe('Testing themes', function () {
             theme: themeName,
             format: 'FRESH',
             prettify: true,
-            silent: false
+            silent: true
           };
-          FCMD.verbs.build( src, dst, opts );
+          FCMD.verbs.build( src, dst, opts, function() { } );
         }
         tryOpen.should.not.Throw();
       });
