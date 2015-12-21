@@ -134,7 +134,7 @@ Definition of the Theme class.
         action: 'transform',
         path: absPath,
         major: isMajor,
-        orgPath: PATH.relative(that.folder, absPath),
+        orgPath: PATH.relative(tplFolder, absPath),
         ext: pathInfo.ext.slice(1),
         title: friendlyName( outFmt ),
         pre: outFmt,

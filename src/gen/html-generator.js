@@ -22,16 +22,6 @@ Definition of the HTMLGenerator class.
     the HTML resume prior to saving.
     */
     onBeforeSave: function( info ) {
-      var cssSrc = PATH.join( info.theme.folder, 'src', '*.css' )
-        , outFolder = PATH.parse( info.outputFile ).dir, that = this;
-
-      info.theme.cssFiles.forEach( function( f ) {
-        var fi = PATH.parse( f.path );
-        FS.copySync( f.path, PATH.join( outFolder, fi.base ), { clobber: true }, function( e ) {
-          throw { fluenterror: that.codes.copyCss, data: [cssSrc,cssDst] };
-        });
-      });
-
       return this.opts.prettify ?
         HTML.prettyPrint( info.mk, this.opts.prettify ) : info.mk;
     }

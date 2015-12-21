@@ -161,7 +161,7 @@ Generic template helper definitions for FluentCV.
     }
     else {
       idx = Math.min( lvl / 2, 4 );
-      idx = Math.max( 0, intVal );
+      idx = Math.max( 0, idx );
     }
     return idx;
   }
