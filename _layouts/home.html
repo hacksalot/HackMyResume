@@ -1,0 +1,25 @@
+---
+layout: master-bare
+---
+<div class="wrapper">
+  <header>
+    <h1>{{ site.title }}</h1>
+    <p>A 21st-century resume authoring tool.</p>
+    <p class="view"><a href="{{ site.github_url }}">View the Project on GitHub <small>{{ site.github_short }}</small></a></p>
+    <ul>
+      <li><a href="{{ site.github_url }}/zipball/master">Install with <strong>NPM</strong></a></li>
+      <!-- <li><a href="{{ site.github_url }}/minimal/tarball/master">Download <strong>sources</strong></a></li> -->
+      <li><a href="{{ site.github_url }}">Fork On <strong>GitHub</strong></a></li>
+    </ul>
+  </header>
+
+  <section>
+  {{ content }}
+  </section>
+
+  <footer>
+    <p>This project is maintained by <a href="https://github.com/{{ site.github_username }}">{{ site.author_name }}</a></p>
+    <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+  </footer>
+</div>
+<script src="javascripts/scale.fix.js"></script>
