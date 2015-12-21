@@ -68,7 +68,7 @@ function main() {
   // Massage inputs and outputs
   var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
   var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
-  ( splitAt === -1 ) && dst.push( src.pop() ); // Allow omitting TO keyword
+  ( splitAt === -1 ) && src.length > 1 && dst.push( src.pop() ); // Allow omitting TO keyword
   var parms = [ src, dst, opts, logMsg ];
 
   // Invoke the action
@@ -108,9 +108,10 @@ function handleError( ex ) {
         }).join(', '.guide) + ").\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
         break;
       //case 4: msg = title + '\n' + ; break;
-      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created in the new format.'.guide; break;
+      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created.'.guide; break;
       case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
       case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
+      case 8: msg = 'Please '.guide + 'specify the filename of the resume'.guide.bold + ' to create.'.guide; break;
     }
     exitCode = ex.fluenterror;
 

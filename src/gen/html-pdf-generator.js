@@ -23,8 +23,8 @@ Definition of the HtmlPdfGenerator class.
     Generate the binary PDF.
     */
     onBeforeSave: function( info ) {
-      pdf(info.mk, info.outputFile);
-      return info.mk;
+      pdf( info.mk, info.outputFile );
+      return null; // halt further processing
     }
 
   });

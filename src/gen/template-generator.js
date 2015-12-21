@@ -38,7 +38,9 @@ Definition of the TemplateGenerator class.
       raw: function( txt ) { return txt; },
       xml: function( txt ) { return XML(txt); },
       md: function( txt ) { return MD( txt || '' ); },
-      mdin: function( txt ) { return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, ''); },
+      mdin: function( txt ) {
+        return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+      },
       lower: function( txt ) { return txt.toLowerCase(); },
       link: function( name, url ) { return url ?
         '<a href="' + url + '">' + name + '</a>' : name; }
@@ -69,24 +71,14 @@ Definition of the TemplateGenerator class.
     },
 
 
-
-    invoke: function( rez, themeMarkup, cssInfo, opts ) {
-      this.opts = EXTEND( true, {}, _defaultOpts, opts );
-      mk = this.single( rez, themeMarkup, this.format, cssInfo, { } );
-      this.onBeforeSave && (mk = this.onBeforeSave( mk, themeFile, f ));
-      return mk;
-    },
-
-
-
     /**
-    Default generation method for template-based generators.
-    @method generate
+    String-based template generation method.
+    @method invoke
     @param rez A FreshResume object.
-    @param f Full path to the output resume file to generate.
     @param opts Generator options.
+    @returns An array of strings representing generated output files.
     */
-    generate: function( rez, f, opts ) {
+    invoke: function( rez, opts ) {
 
       // Carry over options
       this.opts = EXTEND( true, { }, _defaultOpts, opts );
@@ -96,20 +88,81 @@ Definition of the TemplateGenerator class.
       var theme = themeInfo.theme;
       var tFolder = themeInfo.folder;
       var tplFolder = PATH.join( tFolder, 'src' );
+      var curFmt = theme.getFormat( this.format );
+      var that = this;
+
+      // "Generate": process individual files within the theme
+      return {
+        files: curFmt.files.map( function( tplInfo ) {
+          return {
+            info: tplInfo,
+            data: tplInfo.action === 'transform' ?
+              transform.call( that, rez, tplInfo, theme ) : undefined
+          };
+        }).filter(function(item){ return item !== null; }),
+        themeInfo: themeInfo
+      };
+
+    },
+
+
+
+    /**
+    File-based template generation method.
+    @method generate
+    @param rez A FreshResume object.
+    @param f Full path to the output resume file to generate.
+    @param opts Generator options.
+    */
+    generate: function( rez, f, opts ) {
+
+      // Call the generation method
+      var genInfo = this.invoke( rez, opts );
+
+      // Carry over options
+      this.opts = EXTEND( true, { }, _defaultOpts, opts );
+
+      // Load the theme
+      var themeInfo = genInfo.themeInfo;
+      var theme = themeInfo.theme;
+      var tFolder = themeInfo.folder;
+      var tplFolder = PATH.join( tFolder, 'src' );
       var outFolder = PATH.parse(f).dir;
       var curFmt = theme.getFormat( this.format );
       var that = this;
 
       // "Generate": process individual files within the theme
-      curFmt.files.forEach(function(tplInfo){
-        if( tplInfo.action === 'transform' ) {
-          transform.call( that, rez, f, tplInfo, theme, outFolder );
+      genInfo.files.forEach(function( file ){
+
+        var thisFilePath;
+
+        if( file.info.action === 'transform' ) {
+          thisFilePath = PATH.join( outFolder, file.info.orgPath );
+          try {
+            if( that.onBeforeSave ) {
+              file.data = that.onBeforeSave({
+                theme: theme,
+                outputFile: (file.info.major ? f : thisFilePath),
+                mk: file.data
+              });
+              if( !file.data ) return; // PDF etc
+            }
+            var fileName = file.info.major ? f : thisFilePath;
+            MKDIRP.sync( PATH.dirname( fileName ) );
+            FS.writeFileSync( fileName, file.data,
+              { encoding: 'utf8', flags: 'w' } );
+            that.onAfterSave && that.onAfterSave(
+              { outputFile: fileName, mk: file.data } );
+          }
+          catch(ex) {
+            console.log(ex);
+          }
         }
-        else if( tplInfo.action === null && theme.explicit ) {
-          var thisFilePath = PATH.join(outFolder, tplInfo.orgPath);
+        else if( file.info.action === null/* && theme.explicit*/ ) {
+          thisFilePath = PATH.join( outFolder, file.info.orgPath );
           try {
             MKDIRP.sync( PATH.dirname(thisFilePath) );
-            FS.copySync( tplInfo.path, thisFilePath );
+            FS.copySync( file.info.path, thisFilePath );
           }
           catch(ex) {
             console.log(ex);
@@ -142,8 +195,10 @@ Definition of the TemplateGenerator class.
     */
     single: function( json, jst, format, cssInfo, opts, theme ) {
       this.opts.freezeBreaks && ( jst = freeze(jst) );
+
       var eng = require( '../eng/' + theme.engine  + '-generator' );
       var result = eng.generate( json, jst, format, cssInfo, opts, theme );
+
       this.opts.freezeBreaks && ( result = unfreeze(result) );
       return result;
     }
@@ -188,18 +243,15 @@ Definition of the TemplateGenerator class.
 
 
 
-  /**
-  Transform a single subfile.
-  */
-  function transform( rez, f, tplInfo, theme, outFolder ) {
-    var cssInfo = { file: tplInfo.css ? tplInfo.cssPath : null, data: tplInfo.css || null };
-    var mk = this.single( rez, tplInfo.data, this.format, cssInfo, this.opts, theme );
-    this.onBeforeSave && (mk = this.onBeforeSave( { mk: mk, theme: theme, outputFile: f } ));
-    var thisFilePath = PATH.join( outFolder, tplInfo.orgPath );
+  function transform( rez, tplInfo, theme ) {
     try {
-      MKDIRP.sync( PATH.dirname( tplInfo.major ? f : thisFilePath) );
-      FS.writeFileSync( tplInfo.major ? f : thisFilePath, mk, { encoding: 'utf8', flags: 'w' } );
-      this.onAfterSave && (mk = this.onAfterSave( { outputFile: (tplInfo.major ? f : thisFilePath), mk: mk } ));
+      var cssInfo = {
+        file: tplInfo.css ? tplInfo.cssPath : null,
+        data: tplInfo.css || null
+      };
+
+      return this.single( rez, tplInfo.data, this.format, cssInfo, this.opts,
+        theme );
     }
     catch(ex) {
       console.log(ex);

@@ -48,7 +48,7 @@ To use HackMyResume you'll need to create a valid resume in either
 [FRESH][fresca] or [JSON Resume][6] format. Then you can start using the command
 line tool. There are four basic commands you should be aware of:
 
-- `**build**` generates resumes in HTML, Word, Markdown, PDF, and other formats.
+- **build** generates resumes in HTML, Word, Markdown, PDF, and other formats.
 Use it when you need to submit, upload, print, or email resumes in specific
 formats.
 
@@ -58,7 +58,7 @@ formats.
     hackmyresume BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
     ```
 
-- `**new**` creates a new resume in FRESH or JSON Resume format.
+- **new** creates a new resume in FRESH or JSON Resume format.
 
     ```bash
     # hackmyresume NEW <OUTPUTS> [-f <FORMAT>]
@@ -67,7 +67,7 @@ formats.
     hackmyresume NEW r1.json r2.json -f jrs
     ```
 
-- `**convert**` converts your source resume between FRESH and JSON Resume
+- **convert** converts your source resume between FRESH and JSON Resume
 formats.
 Use it to convert between the two formats to take advantage of tools and
 services.
@@ -78,7 +78,7 @@ services.
     hackmyresume CONVERT 1.json 2.json 3.json TO out/1.json out/2.json out/3.json
     ```
 
-- `**validate**` validates the specified resume against either the FRESH or JSON
+- **validate** validates the specified resume against either the FRESH or JSON
 Resume schema. Use it to make sure your resume data is sufficient and complete.
 
     ```bash
