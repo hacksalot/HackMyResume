@@ -34,7 +34,7 @@ describe('Testing CLI interface', function () {
       //theme: 'compact',
       format: 'FRESH',
       prettify: true,
-      silent: false
+      silent: true
     };
 
     var opts2 = {
