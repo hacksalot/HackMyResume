@@ -7,6 +7,7 @@
 
 # Site settings
 title: HackMyResume
+titleMarkup: "<span style='color: #B5B5B5;'>Hack</span><span style='color: #8A8A8A;'>My</span><span>Resume</span>"
 email: hacksalot@indevious.com
 description: > # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
