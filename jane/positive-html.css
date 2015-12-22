@@ -1,0 +1,125 @@
+html, body, main, section, header, ul, p, h1, h2, h3 {
+  font-family: Calibri, 'Open Sans', sans-serif;
+  font-size: 14px;
+  margin: 0; padding: 0;
+  display: block;
+}
+
+a {
+  color: #0064BD;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #7B0796;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-size:
+}
+
+h2 {
+  text-transform: uppercase;
+  color: #898989;
+  font-size: 2em;
+  position: relative;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+table {
+  width: 100%;
+  text-transform: uppercase;
+  font-size: 1.3em;
+}
+
+td:first-child {
+  text-align: right;
+  color: #A9A9A9;
+  letter-spacing: 5px;
+  font-weight: bold;
+}
+
+td:last-child {
+  text-align: justify; /* HTML justification sucks, but in this case... */
+}
+
+main {
+  padding: 15px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+section {
+  margin-top: 1em;
+}
+
+li {
+  margin-left: 2em;
+}
+
+h3 {
+  margin-top: 1em;
+}
+
+p, li {
+  text-align: justify;
+}
+
+.tenure {
+  float: right;
+}
+
+thead {
+  display: none;
+}
+
+main > header {
+  width: 100%;
+  float: left;
+  margin-bottom: 1em;
+}
+
+
+main > header > h1 {
+  float: left;
+}
+
+main > header > h1, .label {
+  font-size: 2.5em;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-family: 'Open Sans', 'Segoe UI', sans-serif;
+}
+
+#contact {
+ clear: both;
+ float: right;
+}
+
+h2 > span.fa {
+  text-align: center;
+  margin-right: 3px;
+  position: absolute;
+  width: 40px;
+  transform: translateX(-110%);
+  color: #DADADA;
+}
+
+.label {
+  float: right;
+  color: #DADADA;
+}
+
+#summary {
+  color: #717171;
+  font-size: 1.25em;  
+}
