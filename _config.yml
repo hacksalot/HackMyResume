@@ -19,6 +19,7 @@ github_short: hacksalot/HackMyResume
 author_name: hacksalot
 twitter_username: tweetsalot
 github_username:  hacksalot
+npm_package: hackmyresume
 
 # Build settings
 markdown: kramdown
