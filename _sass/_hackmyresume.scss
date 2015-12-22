@@ -2,7 +2,7 @@
 
 body {
   background-color: #fff;
-  padding:50px;
+  padding: 0; margin: 0;
   font: 14px/1.5 $base-font;
   color:#727272;
   font-weight:400;
@@ -24,6 +24,9 @@ h1, h2, h3 {
 h1 {
   font-size:28px;
   margin-bottom: 0;
+  position: relative;
+  padding-left: 17px;
+  font-family: $title-font;
 }
 
 h2 {
@@ -32,6 +35,13 @@ h2 {
 
 h3, h4, h5, h6 {
   color:#494949;
+}
+
+p > code {
+  background-color: #EAEAEA;
+  padding: 5px;
+  text-transform: none;
+  letter-spacing: 1px;
 }
 
 a {
@@ -55,8 +65,14 @@ a:hover small {
 }
 
 .wrapper {
-  width:860px;
+  width: 100%;
+  max-width: 1150px;
   margin:0 auto;
+  padding: 40px 20px;
+  // Expand with height of floated children
+  // http://stackoverflow.com/q/804926/4942583
+  overflow: hidden;
+  position: relative;
 }
 
 blockquote {
@@ -104,11 +120,15 @@ img {
   max-width:100%;
 }
 
+
+header, section, footer, img, .wrapper {
+  box-sizing: border-box;
+}
+
 header {
-  width:270px;
-  float:left;
-  position:fixed;
+  position: static;
   -webkit-font-smoothing:subpixel-antialiased;
+  min-width: 250px;
 }
 
 header ul {
@@ -126,6 +146,13 @@ header li {
   float:left;
   border-right:1px solid #e0e0e0;
   height:40px;
+}
+
+header > p {
+  text-transform: uppercase;
+  font-size: 80%;
+  margin: 0;
+  margin-bottom: 15px;
 }
 
 header li:first-child a {
@@ -171,9 +198,11 @@ header ul a strong {
 }
 
 section {
-  width:500px;
-  float:right;
+  width: 66%;
+  float: left;
+  max-width: 750px;
   padding-bottom:50px;
+  position: relative;
 }
 
 small {
@@ -188,84 +217,56 @@ hr {
 }
 
 footer {
-  width:270px;
-  float:left;
-  position:fixed;
-  bottom:50px;
+  width: 100%;
+  float: none;
+  position: static;
   -webkit-font-smoothing:subpixel-antialiased;
+  background-color: #232323;
+  padding: 0;
+  h1 {
+    color: #DADADA;
+    text-align: center;
+    font-weight: 300;
+    font-size: 44px;
+    margin-bottom: 1em;
+    padding-left: 0;
+  }
+  a {
+    color: #4EC4FF;
+    &:hover {
+      color: #A8E2FF;
+    }
+  }
 }
 
-@media print, screen and (max-width: 960px) {
+img.main {
+  border: solid 10px #000;
+  border-radius: 10px;
+  margin: 0;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
 
-  div.wrapper {
-    width:auto;
-    margin:0;
+img.logo {
+  position: absolute;
+  width: 24px;
+  top: 4px;
+  left: -5px;
+}
+
+img#fluentcv {
+  display: block;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 760px) {
+  img.main {
+    position: absolute;
+    right: 20px; top: 40px;
+    width: 60%;
   }
-
-  header, section, footer {
-    float:none;
-    position:static;
-    width:auto;
-  }
-
   header {
-    padding-right:320px;
-  }
-
-  section {
-    border:1px solid #e5e5e5;
-    border-width:1px 0;
-    padding:20px 0;
-    margin:0 0 20px;
-  }
-
-  header a small {
-    display:inline;
-  }
-
-  header ul {
-    position:absolute;
-    right:50px;
-    top:52px;
-  }
-}
-
-@media print, screen and (max-width: 720px) {
-  body {
-    word-wrap:break-word;
-  }
-
-  header {
-    padding:0;
-  }
-
-  header ul, header p.view {
-    position:static;
-  }
-
-  pre, code {
-    word-wrap:normal;
-  }
-}
-
-@media print, screen and (max-width: 480px) {
-  body {
-    padding:15px;
-  }
-
-  header ul {
-    width:99%;
-  }
-
-  header li, header ul li + li + li {
-    width:33%;
-  }
-}
-
-@media print {
-  body {
-    padding:0.4in;
-    font-size:12pt;
-    color:#444;
+    width: 33%;
+    max-width: 400px;
   }
 }
