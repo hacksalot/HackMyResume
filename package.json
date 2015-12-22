@@ -48,6 +48,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
+    "path-exists": "^2.1.0",
     "recursive-readdir-sync": "^1.0.6",
     "simple-html-tokenizer": "^0.2.0",
     "underscore": "^1.8.3",
