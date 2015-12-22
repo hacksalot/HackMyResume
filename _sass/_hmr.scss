@@ -31,10 +31,23 @@ header, section, img {
   box-sizing: border-box;
 }
 
-img {
+img.main {
   border: solid 10px #000;
   border-radius: 10px;
   margin: 0 20px;
+}
+
+img.logo {
+  position: absolute;
+  width: 24px;
+  top: 4px;
+  left: -5px;
+}
+
+h1 {
+  position: relative;
+  padding-left: 17px;
+  font-family: $title-font;
 }
 
 @media print, screen and (max-width: 960px) {

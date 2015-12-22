@@ -3,5 +3,8 @@
 ---
 @charset "utf-8";
 
+$base-font: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$title-font: 'Open Sans Condensed', $base-font;
+
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import "minimal", "syntax-highlighting", "hmr";
