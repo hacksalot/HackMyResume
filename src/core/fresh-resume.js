@@ -188,15 +188,6 @@ Definition of the FRESHResume class.
   },
 
   /**
-  Update the sheet's raw data. TODO: remove/refactor
-  */
-  FreshResume.prototype.updateData = function( str ) {
-    this.clear( false );
-    this.parse( str );
-    return this;
-  };
-
-  /**
   Reset the sheet to an empty state.
   */
   FreshResume.prototype.clear = function( clearMeta ) {
