@@ -11,6 +11,7 @@ Definition of the Theme class.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
+    , parsePath = require('parse-filepath')
     , EXTEND = require('../utils/extend')
     , moment = require('moment')
     , RECURSIVE_READ_DIR = require('recursive-readdir-sync');
@@ -30,8 +31,8 @@ Definition of the Theme class.
 
     // Open the [theme-name].json file; should have the same name as folder
     this.folder = themeFolder;
-    var pathInfo = PATH.parse( themeFolder );
-    var themeFile = PATH.join( themeFolder, pathInfo.base + '.json' );
+    var pathInfo = parsePath( themeFolder );
+    var themeFile = PATH.join( themeFolder, pathInfo.basename + '.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
     var that = this;
 
@@ -59,7 +60,7 @@ Definition of the Theme class.
     this.formats = formatsHash;
 
     // Set the official theme name
-    this.name = PATH.parse( this.folder ).name;
+    this.name = parsePath( this.folder ).name;
 
     return this;
   };
@@ -96,9 +97,9 @@ Definition of the Theme class.
       // If this file lives in a specific format folder within the theme,
       // such as "/latex" or "/html", then that format is the output format
       // for all files within the folder.
-      var pathInfo = PATH.parse(absPath);
+      var pathInfo = parsePath(absPath);
       var outFmt = '', isMajor = false;
-      var portion = pathInfo.dir.replace(tplFolder,'');
+      var portion = pathInfo.dirname.replace(tplFolder,'');
       if( portion && portion.trim() ) {
         if( portion[1] === '_' ) return;
         var reg = /^(?:\/|\\)(html|latex|doc|pdf|partials)(?:\/|\\)?/ig;
@@ -135,7 +136,7 @@ Definition of the Theme class.
         path: absPath,
         major: isMajor,
         orgPath: PATH.relative(tplFolder, absPath),
-        ext: pathInfo.ext.slice(1),
+        ext: pathInfo.extname.slice(1),
         title: friendlyName( outFmt ),
         pre: outFmt,
         // outFormat: outFmt || pathInfo.name,
@@ -186,7 +187,7 @@ Definition of the Theme class.
 
       act = null;
       // If this file is mentioned in the theme's JSON file under "transforms"
-      var pathInfo = PATH.parse(absPath);
+      var pathInfo = parsePath(absPath);
       var absPathSafe = absPath.trim().toLowerCase();
       var outFmt = _.find( Object.keys( that.formats ), function( fmtKey ) {
         var fmtVal = that.formats[ fmtKey ];
@@ -203,7 +204,7 @@ Definition of the Theme class.
       // such as "/latex" or "/html", then that format is the output format
       // for all files within the folder.
       if( !outFmt ) {
-        var portion = pathInfo.dir.replace(tplFolder,'');
+        var portion = pathInfo.dirname.replace(tplFolder,'');
         if( portion && portion.trim() ) {
           var reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig;
           var res = reg.exec( portion );
@@ -231,7 +232,7 @@ Definition of the Theme class.
         action: act,
         orgPath: PATH.relative(that.folder, absPath),
         path: absPath,
-        ext: pathInfo.ext.slice(1),
+        ext: pathInfo.extname.slice(1),
         title: friendlyName( outFmt ),
         pre: outFmt,
         // outFormat: outFmt || pathInfo.name,

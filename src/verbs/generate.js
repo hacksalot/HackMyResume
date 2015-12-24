@@ -1,6 +1,7 @@
 (function() {
 
   var PATH = require('path')
+    , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
     , _opts = require('../core/default-options')
     , FluentTheme = require('../core/theme')
@@ -70,8 +71,8 @@
     ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
 
       var to = PATH.resolve(t),
-          pa = PATH.parse(to),
-          fmat = pa.ext || '.all';
+          pa = parsePath(to),
+          fmat = pa.extname || '.all';
 
       targets.push.apply(targets, fmat === '.all' ?
         Object.keys( theTheme.formats ).map(function(k){

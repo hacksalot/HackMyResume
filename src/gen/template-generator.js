@@ -13,6 +13,7 @@ Definition of the TemplateGenerator class.
     , MD = require( 'marked' )
     , XML = require( 'xml-escape' )
     , PATH = require('path')
+    , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
@@ -127,7 +128,7 @@ Definition of the TemplateGenerator class.
       var theme = themeInfo.theme;
       var tFolder = themeInfo.folder;
       var tplFolder = PATH.join( tFolder, 'src' );
-      var outFolder = PATH.parse(f).dir;
+      var outFolder = parsePath(f).dirname;
       var curFmt = theme.getFormat( this.format );
       var that = this;
 
@@ -176,7 +177,7 @@ Definition of the TemplateGenerator class.
           var absLoc = PATH.join(outFolder, loc);
           var absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
            // 'file', 'dir', or 'junction' (Windows only)
-          var type = PATH.parse( absLoc ).ext ? 'file' : 'junction';
+          var type = parsePath( absLoc ).extname ? 'file' : 'junction';
           FS.symlinkSync( absTarg, absLoc, type);
         });
       }
@@ -221,7 +222,7 @@ Definition of the TemplateGenerator class.
   function themeFromMoniker() {
     // Verify the specified theme name/path
     var tFolder = PATH.join(
-      PATH.parse( require.resolve('fluent-themes') ).dir,
+      parsePath( require.resolve('fluent-themes') ).dirname,
       this.opts.theme
     );
     var exists = require('path-exists').sync;
