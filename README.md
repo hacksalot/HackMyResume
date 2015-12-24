@@ -305,4 +305,5 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [fresh]: https://github.com/fluentdesk/FRESH
 [fresca]: https://github.com/fluentdesk/FRESCA
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
+[travis-image]: https://img.shields.io/travis/palomajs/paloma.svg?style=flat-square
 [travis-url]: https://travis-ci.org/hacksalot/HackMyResume
