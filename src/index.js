@@ -91,6 +91,7 @@ function getOpts( args ) {
   };
 }
 
+// TODO: refactor
 function handleError( ex ) {
   var msg = '', exitCode;
 
@@ -123,8 +124,10 @@ function handleError( ex ) {
 
   var idx = msg.indexOf('Error: ');
   var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-  if( !ex.fluenterror || ex.fluenterror < 3 )
+  if( !ex.fluenterror || ex.fluenterror < 3 ) { // TODO: magic #s
     console.log( ('ERROR: ' + trimmed.toString()).red.bold );
+    console.log( ex.stack.gray);
+  }
   else
     console.log( trimmed.toString() );
 
