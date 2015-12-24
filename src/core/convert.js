@@ -16,6 +16,7 @@ FRESH to JSON Resume conversion routiens.
     /**
     Convert from JSON Resume format to FRESH.
     @method toFresh
+    @todo Refactor
     */
     toFRESH: function( src, foreign ) {
 
@@ -67,6 +68,7 @@ FRESH to JSON Resume conversion routiens.
     Convert from FRESH format to JSON Resume.
     @param foreign True if non-JSON-Resume properties should be included in
     the result, false if those properties should be excluded.
+    @todo Refactor
     */
     toJRS: function( src, foreign ) {
 
@@ -112,6 +114,7 @@ FRESH to JSON Resume conversion routiens.
   };
 
   function meta( direction, obj ) {
+    if( !obj ) return obj; // preserve null and undefined
     if( direction ) {
       obj = obj || { };
       obj.format = obj.format || "FRESH@0.1.0";
@@ -121,6 +124,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function employment( obj, direction ) {
+    if( !obj ) return obj;
     if( !direction ) {
       return obj && obj.history ?
         obj.history.map(function(emp){
@@ -157,6 +161,7 @@ FRESH to JSON Resume conversion routiens.
 
 
   function education( obj, direction ) {
+    if( !obj ) return obj;
     if( direction ) {
       return obj && obj.length ? {
         history: obj.map(function(edu){
@@ -191,6 +196,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function service( obj, direction, foreign ) {
+    if( !obj ) return obj;
     if( direction ) {
       return {
         history: obj && obj.length ? obj.map(function(vol) {
@@ -225,6 +231,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function social( obj, direction ) {
+    if( !obj ) return obj;
     if( direction ) {
       return obj.map(function(pro){
         return {
@@ -247,6 +254,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function recognition( obj, direction, foreign ) {
+    if( !obj ) return obj;
     if( direction ) {
       return obj && obj.length ? obj.map(
         function(awd){
@@ -275,6 +283,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function references( obj, direction ) {
+    if( !obj ) return obj;
     if( direction ) {
       return obj && obj.length && obj.map(function(ref){
         return {
@@ -296,6 +305,7 @@ FRESH to JSON Resume conversion routiens.
   }
 
   function writing( obj, direction ) {
+    if( !obj ) return obj;
     if( direction ) {
       return obj.map(function( pub ) {
         return {

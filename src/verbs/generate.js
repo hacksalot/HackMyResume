@@ -61,7 +61,7 @@
     }
 
     // Load the theme
-    var theTheme = new FluentTheme().open( tFolder );
+    var theTheme = (new FluentTheme()).open( tFolder );
     _opts.themeObj = theTheme;
     _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
       (' theme (' + Object.keys(theTheme.formats).length + ' formats)').info);
