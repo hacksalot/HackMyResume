@@ -10,6 +10,7 @@ Definition of the FRESHResume class.
     , extend = require('../utils/extend')
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
+    , __ = require('lodash')
     , PATH = require('path')
     , moment = require('moment')
     , MD = require('marked')
@@ -312,7 +313,8 @@ Definition of the FRESHResume class.
   sheets that have overlapping jobs.
   */
   FreshResume.prototype.duration = function() {
-    if( this.employment.history && this.employment.history.length ) {
+    var empHist = __.get(this, 'employment.history');
+    if( empHist && empHist.length ) {
       var firstJob = _.last( this.employment.history );
       var careerStart = firstJob.start ? firstJob.safe.start : '';
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
@@ -332,9 +334,9 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.sort = function( ) {
 
-    this.employment.history && this.employment.history.sort( byDateDesc );
-    this.education.history && this.education.history.sort( byDateDesc );
-    this.service.history && this.service.history.sort( byDateDesc );
+    __.get(this, 'employment.history') && this.employment.history.sort( byDateDesc );
+    __.get(this, 'education.history') && this.education.history.sort( byDateDesc );
+    __.get(this, 'service.history') && this.service.history.sort( byDateDesc );
 
     // this.awards && this.awards.sort( function(a, b) {
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
