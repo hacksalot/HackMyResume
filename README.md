@@ -1,5 +1,8 @@
 HackMyResume
 ============
+
+[![Build status][travis-image]][travis-url]
+
 *Create polished résumés and CVs in multiple formats from your command line or
 shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
 plain text, and other arbitrary formats. Fight the power, save trees. Compatible
@@ -302,3 +305,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [fresh]: https://github.com/fluentdesk/FRESH
 [fresca]: https://github.com/fluentdesk/FRESCA
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
+[travis-url]: https://travis-ci.org/hacksalot/HackMyResume
