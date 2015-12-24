@@ -45,7 +45,7 @@ function testResume( opts ) {
 
     it('should not be modified after saving', function() {
       var savedSheet = new JRSResume().open( 'tests/sandbox/' + opts.title + '.json' );
-      _sheet.stringify().should.equal( savedSheet.stringify() )
+      _sheet.stringify().should.equal( savedSheet.stringify() );
     });
 
     it('should ' + (opts.isValid ? '' : 'NOT ') + 'validate against the JSON Resume schema', function() {
