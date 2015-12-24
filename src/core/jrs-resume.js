@@ -108,15 +108,6 @@ Definition of the JRSResume class.
   };
 
   /**
-  Update the sheet's raw data. TODO: remove/refactor
-  */
-  JRSResume.prototype.updateData = function( str ) {
-    this.clear( false );
-    this.parse( str );
-    return this;
-  };
-
-  /**
   Reset the sheet to an empty state.
   */
   JRSResume.prototype.clear = function( clearMeta ) {

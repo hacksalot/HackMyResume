@@ -224,7 +224,7 @@ Definition of the TemplateGenerator class.
       PATH.parse( require.resolve('fluent-themes') ).dir,
       this.opts.theme
     );
-    var exists = require('../utils/file-exists');
+    var exists = require('path-exists').sync;
     if( !exists( tFolder ) ) {
       tFolder = PATH.resolve( this.opts.theme );
       if( !exists( tFolder ) ) {

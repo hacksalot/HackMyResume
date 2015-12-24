@@ -55,7 +55,7 @@ describe('jane-doe.json (FRESH)', function () {
 
     it('should validate against the FRESH resume schema', function() {
       var result = _sheet.isValid();
-      // var schemaJson = require('FRESCA');
+      // var schemaJson = require('fresca');
       // var validate = validator( schemaJson, { verbose: true } );
       // var result = validate( JSON.parse( _sheet.imp.raw ) );
       result || console.log("\n\nOops, resume didn't validate. " +

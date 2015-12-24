@@ -51,7 +51,7 @@
     // Verify the specified theme name/path
     var relativeThemeFolder = '../../node_modules/fluent-themes/themes';
     var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme);
-    var exists = require('../utils/file-exists');
+    var exists = require('path-exists').sync;
     if (!exists( tFolder )) {
       tFolder = PATH.resolve( _opts.theme );
       if (!exists( tFolder )) {

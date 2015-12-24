@@ -10,6 +10,7 @@ Definition of the FRESHResume class.
     , extend = require('../utils/extend')
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
+    , __ = require('lodash')
     , PATH = require('path')
     , moment = require('moment')
     , MD = require('marked')
@@ -188,15 +189,6 @@ Definition of the FRESHResume class.
   },
 
   /**
-  Update the sheet's raw data. TODO: remove/refactor
-  */
-  FreshResume.prototype.updateData = function( str ) {
-    this.clear( false );
-    this.parse( str );
-    return this;
-  };
-
-  /**
   Reset the sheet to an empty state.
   */
   FreshResume.prototype.clear = function( clearMeta ) {
@@ -299,7 +291,7 @@ Definition of the FRESHResume class.
   Validate the sheet against the FRESH Resume schema.
   */
   FreshResume.prototype.isValid = function( info ) {
-    var schemaObj = require('FRESCA');
+    var schemaObj = require('fresca');
     var validator = require('is-my-json-valid');
     var validate = validator( schemaObj, { // Note [1]
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
@@ -321,7 +313,8 @@ Definition of the FRESHResume class.
   sheets that have overlapping jobs.
   */
   FreshResume.prototype.duration = function() {
-    if( this.employment.history && this.employment.history.length ) {
+    var empHist = __.get(this, 'employment.history');
+    if( empHist && empHist.length ) {
       var firstJob = _.last( this.employment.history );
       var careerStart = firstJob.start ? firstJob.safe.start : '';
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
@@ -341,9 +334,9 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.sort = function( ) {
 
-    this.employment.history && this.employment.history.sort( byDateDesc );
-    this.education.history && this.education.history.sort( byDateDesc );
-    this.service.history && this.service.history.sort( byDateDesc );
+    __.get(this, 'employment.history') && this.employment.history.sort( byDateDesc );
+    __.get(this, 'education.history') && this.education.history.sort( byDateDesc );
+    __.get(this, 'service.history') && this.service.history.sort( byDateDesc );
 
     // this.awards && this.awards.sort( function(a, b) {
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
