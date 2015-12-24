@@ -15,7 +15,7 @@
 
     var validator = require('is-my-json-valid');
     var schemas = {
-      fresh: require('FRESCA'),
+      fresh: require('fresca'),
       jars: require('../core/resume.json')
     };
 

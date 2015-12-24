@@ -299,7 +299,7 @@ Definition of the FRESHResume class.
   Validate the sheet against the FRESH Resume schema.
   */
   FreshResume.prototype.isValid = function( info ) {
-    var schemaObj = require('FRESCA');
+    var schemaObj = require('fresca');
     var validator = require('is-my-json-valid');
     var validate = validator( schemaObj, { // Note [1]
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
