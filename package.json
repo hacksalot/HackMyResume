@@ -44,6 +44,7 @@
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
     "jst": "0.0.13",
+    "lodash": "^3.10.1",
     "marked": "^0.3.5",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
