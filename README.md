@@ -288,6 +288,12 @@ hackmyresume generate resume.json -o someFile.all -s
 hackmyresume generate resume.json -o someFile.all --silent
 ```
 
+## Contributing
+
+HackMyResume is a community-driven free and open source project under the MIT
+License. Contributions are encouraged and we respond to all PRs and issues,
+usually within 24 hours. See [CONTRIBUTING.md][contribute] for details.
+
 ## License
 
 MIT. Go crazy. See [LICENSE.md][1] for details.
@@ -307,3 +313,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [travis-image]: https://img.shields.io/travis/palomajs/paloma.svg?style=flat-square
 [travis-url]: https://travis-ci.org/hacksalot/HackMyResume
+[contribute]: CONTRIBUTING.md
