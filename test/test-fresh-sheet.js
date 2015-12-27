@@ -50,7 +50,7 @@ describe('jane-doe.json (FRESH)', function () {
 
     it('should not be modified after saving', function() {
       var savedSheet = new FRESHResume().open('tests/sandbox/jane-q-fullstacker.json');
-      _sheet.stringify().should.equal( savedSheet.stringify() )
+      _sheet.stringify().should.equal( savedSheet.stringify() );
     });
 
     it('should validate against the FRESH resume schema', function() {
