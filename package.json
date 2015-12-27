@@ -29,6 +29,11 @@
     "template"
   ],
   "author": "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)",
+  "contributors": [
+    "Edmund Jorgensen (https://github.com/tomheon)",
+    "Ya Zhuang (https://github.com/zhuangya)",
+    "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)"
+  ],
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
