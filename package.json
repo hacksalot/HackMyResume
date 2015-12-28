@@ -62,6 +62,7 @@
     "path-exists": "^2.1.0",
     "recursive-readdir-sync": "^1.0.6",
     "simple-html-tokenizer": "^0.2.0",
+    "string.prototype.startswith": "^0.2.0",
     "underscore": "^1.8.3",
     "wkhtmltopdf": "^0.1.5",
     "xml-escape": "^1.0.0",

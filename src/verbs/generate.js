@@ -1,11 +1,12 @@
 (function() {
 
   var PATH = require('path')
+    , FS = require('fs')
     , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
     , _opts = require('../core/default-options')
     , FluentTheme = require('../core/theme')
-    , loadSourceResumes = require('../core/load-source-resumes')
+    , ResumeFactory = require('../core/resume-factory')
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
     , _err, _log, rez;
@@ -36,9 +37,27 @@
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
 
+    // Verify the specified theme name/path
+    var relativeThemeFolder = '../../node_modules/fluent-themes/themes';
+    var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme);
+    var exists = require('path-exists').sync;
+    if( !exists( tFolder ) ) {
+      tFolder = PATH.resolve( _opts.theme );
+      if (!exists( tFolder )) {
+        throw { fluenterror: 1, data: _opts.theme };
+      }
+    }
+
+    // Load the theme
+    var theTheme = (new FluentTheme()).open( tFolder );
+    _opts.themeObj = theTheme;
+    var numFormats = theTheme.formats ? Object.keys(theTheme.formats).length : 2;
+    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
+      (' theme (' + numFormats + ' formats)').info);
+
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
-    var sheets = loadSourceResumes( src, _log );
+    var sheets = ResumeFactory.load( src, _log, null, theTheme.render ? 'JRS' : 'FRESH' );
 
     // Merge input resumes...
     var msg = '';
@@ -49,23 +68,6 @@
     });
     msg && _log(msg);
 
-    // Verify the specified theme name/path
-    var relativeThemeFolder = '../../node_modules/fluent-themes/themes';
-    var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme);
-    var exists = require('path-exists').sync;
-    if (!exists( tFolder )) {
-      tFolder = PATH.resolve( _opts.theme );
-      if (!exists( tFolder )) {
-        throw { fluenterror: 1, data: _opts.theme };
-      }
-    }
-
-    // Load the theme
-    var theTheme = (new FluentTheme()).open( tFolder );
-    _opts.themeObj = theTheme;
-    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
-      (' theme (' + Object.keys(theTheme.formats).length + ' formats)').info);
-
     // Expand output resumes... (can't use map() here)
     var targets = [], that = this;
     ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
@@ -74,11 +76,15 @@
           pa = parsePath(to),
           fmat = pa.extname || '.all';
 
-      targets.push.apply(targets, fmat === '.all' ?
+      targets.push.apply(
+        targets, fmat === '.all' ?
+
         Object.keys( theTheme.formats ).map(function(k){
           var z = theTheme.formats[k];
           return { file: to.replace(/all$/g,z.outFormat), fmt: z };
-        }) : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+        }) :
+
+        [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
     });
 
@@ -113,22 +119,6 @@
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
           MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
           theFormat.gen.generate( rez, f, _opts );
-
-        // targInfo.fmt.files.forEach( function( form ) {
-        //
-        //   if( form.action === 'transform' ) {
-        //     var theFormat = _fmts.filter( function( fmt ) {
-        //       return fmt.name === targInfo.fmt.outFormat;
-        //     })[0];
-        //     MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
-        //     theFormat.gen.generate( rez, f, _opts );
-        //   }
-        //   else if( form.action === null ) {
-        //     // Copy the file
-        //   }
-        //
-        // });
-
       }
       // Otherwise the theme has no files section
       else {
@@ -139,7 +129,14 @@
         theFormat = _fmts.filter(
           function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
         MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
-        theFormat.gen.generate( rez, f, _opts );
+
+        if( theme.render ) {
+          var rezHtml = theme.render( rez );
+          FS.writeFileSync( f, rezHtml );
+        }
+        else {
+          theFormat.gen.generate( rez, f, _opts );
+        }
       }
     }
     catch( ex ) {

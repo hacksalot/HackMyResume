@@ -1,6 +1,6 @@
 /**
 Definition of the Theme class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. Copyright (c) 2015 hacksalot / FluentDesk.
 @module theme.js
 */
 
@@ -12,6 +12,7 @@ Definition of the Theme class.
     , _ = require('underscore')
     , PATH = require('path')
     , parsePath = require('parse-filepath')
+    , pathExists = require('path-exists').sync
     , EXTEND = require('../utils/extend')
     , moment = require('moment')
     , RECURSIVE_READ_DIR = require('recursive-readdir-sync');
@@ -29,18 +30,32 @@ Definition of the Theme class.
   */
   Theme.prototype.open = function( themeFolder ) {
 
-    // Open the [theme-name].json file; should have the same name as folder
     this.folder = themeFolder;
+
+    // Open the [theme-name].json file; should have the same name as folder
     var pathInfo = parsePath( themeFolder );
+
+    // Set up a formats hash for the theme
+    var formatsHash = { };
+
+    // See if the theme has a package.json. If so, load it.
+    var packageJsonPath = PATH.join(themeFolder, 'package.json');
+    if( pathExists( packageJsonPath ) ) {
+      var themePack = require( themeFolder );
+      var themePkgJson = require( packageJsonPath );
+      this.name = themePkgJson.name;
+      this.render = (themePack && themePack.render) || undefined;
+      this.formats = { html: { title: 'html', outFormat: 'html', ext: 'html', path: null, data: null } };
+      return this;
+    }
+
+    // Otherwise, do a full theme load
     var themeFile = PATH.join( themeFolder, pathInfo.basename + '.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
     var that = this;
 
     // Move properties from the theme JSON file to the theme object
     EXTEND( true, this, themeInfo );
-
-    // Set up a formats has for the theme
-    var formatsHash = { };
 
     // Check for an explicit "formats" entry in the theme JSON. If it has one,
     // then this theme declares its files explicitly.

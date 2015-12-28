@@ -70,6 +70,7 @@ Definition of the JRSResume class.
   };
 
   /**
+  Initialize the JRS Resume from string data.
   Open and parse the specified JSON resume sheet. Merge the JSON object model
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
@@ -77,7 +78,14 @@ Definition of the JRSResume class.
   JRSResume.prototype.parse = function( stringData, opts ) {
     opts = opts || { };
     var rep = JSON.parse( stringData );
+    return this.parseJSON( rep, opts );
+  };
 
+  /**
+  Initialize the JRSRume from JSON data.
+  */
+  JRSResume.prototype.parseJSON = function( rep, opts ) {
+    opts = opts || { };
     extend( true, this, rep );
     // Set up metadata
     if( opts.imp === undefined || opts.imp ) {

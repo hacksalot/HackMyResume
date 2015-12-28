@@ -1,7 +1,7 @@
 (function() {
 
   var FS = require('fs');
-  var loadSourceResumes = require('../core/load-source-resumes');
+  var ResumeFactory = require('../core/resume-factory');
 
   module.exports =
 
@@ -20,7 +20,7 @@
     };
 
     // Load input resumes...
-    var sheets = loadSourceResumes(src, _log, function( res ) {
+    var sheets = ResumeFactory.load(src, _log, function( res ) {
       try {
         return {
           file: res,
