@@ -16,7 +16,6 @@ Definition of the HtmlPngGenerator class.
   var HtmlPngGenerator = module.exports = TemplateGenerator.extend({
 
     init: function() {
-console.log('png generator init');
       this._super( 'png', 'html' );
     },
 
@@ -24,7 +23,6 @@ console.log('png generator init');
     Generate the binary PDF.
     */
     onBeforeSave: function( info ) {
-console.log('png generator onBeforeSave');
       png( info.mk, info.outputFile );
       return null; // halt further processing
     }
@@ -35,10 +33,6 @@ console.log('png generator onBeforeSave');
   Generate a PDF from HTML.
   */
   function png( markup, fOut ) {
-
-    console.log('>> #png()');
-    console.log(markup);
-    console.log(fOut);
 
     require('webshot')( markup , { encoding: 'binary', siteType: 'html' } )
       .pipe( FS.createWriteStream( fOut ) );
