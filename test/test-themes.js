@@ -26,28 +26,47 @@ describe('Testing themes', function () {
       useful: 'green',
     });
 
-    function genTheme( themeName ) {
-      it( themeName.toUpperCase() + ' theme should generate without throwing an exception', function () {
+    function genTheme( fmt, src, themeName, themeLoc, testTitle ) {
+      themeLoc = themeLoc || themeName;
+      testTitle = themeName.toUpperCase() + ' theme should generate without throwing an exception';
+      it( testTitle, function () {
         function tryOpen() {
-          var src = ['node_modules/jane-q-fullstacker/resume/jane-resume.json'];
-          var dst = ['test/sandbox/' +  themeName + '/resume.all'];
+          //var src = ['node_modules/jane-q-fullstacker/resume/jane-resume.json'];
+          var dst = ['test/sandbox/' + fmt + '/' +  themeName + '/resume.all'];
           var opts = {
-            theme: themeName,
-            format: 'FRESH',
+            theme: themeLoc,
+            format: fmt,
             prettify: true,
             silent: true
           };
-          FCMD.verbs.build( src, dst, opts, function() { } );
+          FCMD.verbs.build( src, dst, opts, function() {} );
         }
         tryOpen.should.not.Throw();
       });
     }
 
-    genTheme('hello-world');
-    genTheme('compact');
-    genTheme('modern');
-    genTheme('minimist');
-    genTheme('awesome');
-    genTheme('positive');
+    var src = ['node_modules/jane-q-fullstacker/resume/jane-resume.json'];
+    genTheme('FRESH', src, 'hello-world');
+    genTheme('FRESH', src, 'compact');
+    genTheme('FRESH', src, 'modern');
+    genTheme('FRESH', src, 'minimist');
+    genTheme('FRESH', src, 'awesome');
+    genTheme('FRESH', src, 'positive');
+    genTheme('FRESH', src, 'jsonresume-theme-boilerplate', 'node_modules/jsonresume-theme-boilerplate' );
+    genTheme('FRESH', src, 'jsonresume-theme-sceptile', 'node_modules/jsonresume-theme-sceptile' );
+    genTheme('FRESH', src, 'jsonresume-theme-modern', 'node_modules/jsonresume-theme-modern' );
+    genTheme('FRESH', src, 'jsonresume-theme-classy', 'node_modules/jsonresume-theme-classy' );
+
+    src = ['test/resumes/jrs-0.0.0/richard-hendriks.json'];
+    genTheme('JRS', src, 'hello-world');
+    genTheme('JRS', src, 'compact');
+    genTheme('JRS', src, 'modern');
+    genTheme('JRS', src, 'minimist');
+    genTheme('JRS', src, 'awesome');
+    genTheme('JRS', src, 'positive');
+    genTheme('JRS', src, 'jsonresume-theme-boilerplate', 'node_modules/jsonresume-theme-boilerplate' );    
+    genTheme('JRS', src, 'jsonresume-theme-sceptile', 'node_modules/jsonresume-theme-sceptile' );
+    genTheme('JRS', src, 'jsonresume-theme-modern', 'node_modules/jsonresume-theme-modern' );
+    genTheme('JRS', src, 'jsonresume-theme-classy', 'node_modules/jsonresume-theme-classy' );
 
 });

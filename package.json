@@ -77,6 +77,10 @@
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-simple-mocha": "*",
     "jane-q-fullstacker": "fluentdesk/jane-q-fullstacker",
+    "jsonresume-theme-boilerplate": "^0.1.2",
+    "jsonresume-theme-classy": "^1.0.9",
+    "jsonresume-theme-modern": "0.0.18",
+    "jsonresume-theme-sceptile": "^1.0.5",
     "mocha": "*",
     "resample": "fluentdesk/resample"
   }
