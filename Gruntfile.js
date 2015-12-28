@@ -14,10 +14,10 @@ module.exports = function (grunt) {
         ui: 'bdd',
         reporter: 'spec'
       },
-      all: { src: ['tests/*.js'] }
+      all: { src: ['test/*.js'] }
     },
 
-    clean: ['tests/sandbox'],
+    clean: ['test/sandbox'],
 
     yuidoc: {
       compile: {

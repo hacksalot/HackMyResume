@@ -30,7 +30,7 @@ describe('Testing themes', function () {
       it( themeName.toUpperCase() + ' theme should generate without throwing an exception', function () {
         function tryOpen() {
           var src = ['node_modules/jane-q-fullstacker/resume/jane-resume.json'];
-          var dst = ['tests/sandbox/' + themeName + '/resume.all'];
+          var dst = ['test/sandbox/' +  themeName + '/resume.all'];
           var opts = {
             theme: themeName,
             format: 'FRESH',

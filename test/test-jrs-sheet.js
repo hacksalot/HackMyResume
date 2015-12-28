@@ -38,13 +38,13 @@ function testResume( opts ) {
     it('should save without throwing an exception', function() {
       var that = this;
       function trySave() {
-        _sheet.save( 'tests/sandbox/' + opts.title + '.json' );
+        _sheet.save( 'test/sandbox/' + opts.title + '.json' );
       }
       trySave.should.not.Throw();
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new JRSResume().open( 'tests/sandbox/' + opts.title + '.json' );
+      var savedSheet = new JRSResume().open( 'test/sandbox/' + opts.title + '.json' );
       _sheet.stringify().should.equal( savedSheet.stringify() );
     });
 
