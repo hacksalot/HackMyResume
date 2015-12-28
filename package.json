@@ -58,6 +58,7 @@
     "recursive-readdir-sync": "^1.0.6",
     "simple-html-tokenizer": "^0.2.0",
     "underscore": "^1.8.3",
+    "webshot": "^0.16.0",
     "wkhtmltopdf": "^0.1.5",
     "xml-escape": "^1.0.0",
     "yamljs": "^0.2.4"

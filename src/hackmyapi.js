@@ -18,5 +18,6 @@ module.exports = {
   JsonGenerator: require('./gen/json-generator'),
   YamlGenerator: require('./gen/yaml-generator'),
   JsonYamlGenerator: require('./gen/json-yaml-generator'),
-  LaTeXGenerator: require('./gen/latex-generator')
+  LaTeXGenerator: require('./gen/latex-generator'),
+  HtmlPngGenerator: require('./gen/html-png-generator')
 };
