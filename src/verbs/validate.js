@@ -89,6 +89,9 @@
           (err.field.replace('data.','resume.').toUpperCase() + ' ' +
           err.message).yellow );
       });
+      if(!isValid){
+        process.exit(1);
+      }
 
     });
   };
