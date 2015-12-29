@@ -35,7 +35,7 @@ Definition of the UnderscoreGenerator class.
       // Compile and run the template. TODO: avoid unnecessary recompiles.
       var compiled = _.template(jst);
       var ret = compiled({
-        r: format === 'html' || format === 'pdf' ? json.markdownify() : json,
+        r: format === 'html' || format === 'pdf' || format === 'png' ? json.markdownify() : json,
         filt: opts.filters,
         XML: require('xml-escape'),
         RAW: json,

@@ -102,7 +102,7 @@ Definition of the Theme class.
       var portion = pathInfo.dirname.replace(tplFolder,'');
       if( portion && portion.trim() ) {
         if( portion[1] === '_' ) return;
-        var reg = /^(?:\/|\\)(html|latex|doc|pdf|partials)(?:\/|\\)?/ig;
+        var reg = /^(?:\/|\\)(html|latex|doc|pdf|png|partials)(?:\/|\\)?/ig;
         var res = reg.exec( portion );
         if( res ) {
           if( res[1] !== 'partials' ) {
