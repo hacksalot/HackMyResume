@@ -7,7 +7,7 @@
     "url": "https://github.com/hacksalot/HackMyResume.git"
   },
   "scripts": {
-    "test": "grunt test",
+    "test": "grunt clean && mocha",
     "grunt": "grunt"
   },
   "keywords": [

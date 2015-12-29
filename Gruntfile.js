@@ -38,7 +38,7 @@ module.exports = function (grunt) {
         laxcomma: true,
         expr: true
       },
-      all: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js']
+      all: ['Gruntfile.js', 'src/**/*.js', 'test/*.js']
     }
 
   };
