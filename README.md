@@ -32,6 +32,7 @@ or Windows.
 - Support for multiple input and output resumes.
 - Use from your command line or [desktop][7].
 - Free and open-source through the MIT license.
+- Updated daily.
 
 ## Install
 
@@ -42,8 +43,36 @@ Install HackMyResume with NPM:
 ```
 
 Note: for PDF generation you'll need to install a copy of [wkhtmltopdf][3] for
-your platform. For LaTeX generation you'll need a valid LaTeX environment with
-access to `xelatex` and similar.
+your platform.
+
+## Installing Themes
+
+HackMyResume supports both [FRESH][fresh-themes] and [JSON Resume][jrst]-style
+résumé themes.
+
+- FRESH themes currently come preinstalled with HackMyResume.
+- JSON Resume themes can be installed from NPM, GitHub, or manually.
+
+To install a JSON Resume theme, just `cd` to the folder where you want to store
+your themes and run one of:
+
+```bash
+# Install with NPM
+npm install jsonresume-theme-[theme-name]
+
+# Install with GitHub
+git clone https://github.com/[user-or-org]/[repo-name]
+```
+
+Then when you're ready to generate your resume, just reference the location of
+the theme folder as you installed it:
+
+```bash
+hackmyresume BUILD resume.json TO out/resume.all -t node_modules/jsonresume-theme-classy
+```
+
+Note: You can use install themes anywhere on your file system. You don't need a
+package.json or other NPM/Node infrastructure.
 
 ## Getting Started
 
@@ -98,24 +127,15 @@ Output Format | Ext | Notes
 ------------- | --- | -----
 HTML | .html | A standard HTML 5 + CSS resume format that can be viewed in a browser, deployed to a website, etc.
 Markdown | .md | A structured Markdown document that can be used as-is or used to generate HTML.
-LaTeX | .tex | A structured LaTeX document (or collection of documents).
-MS Word | .doc | A Microsoft Word office document.
-Adobe Acrobat (PDF) | .pdf | A binary PDF document driven by an HTML theme.
+LaTeX | .tex | A structured LaTeX document (or collection of documents) that can be processed with pdflatex, xelatex, and similar tools.
+MS Word | .doc | A Microsoft Word office document (XML-driven; WordProcessingML).
+Adobe Acrobat (PDF) | .pdf | A binary PDF document driven by an HTML theme (through wkhtmltopdf).
 plain text | .txt | A formatted plain text document appropriate for emails or copy-paste.
 JSON | .json | A JSON representation of the resume.
 YAML | .yml | A YAML representation of the resume.
 RTF | .rtf | Forthcoming.
 Textile | .textile | Forthcoming.
 image | .png, .bmp | Forthcoming.
-
-## Install
-
-HackMyResume requires a recent version of [Node.js][4] and [NPM][5]. Then:
-
-1. Install the latest official [wkhtmltopdf][3] binary for your platform.
-2. Optionally install an updated LaTeX environment (LaTeX resumes only).
-2. Install **HackMyResume** with `[sudo] npm install hackmyresume -g`.
-3. You're ready to go.
 
 ## Use
 
@@ -132,19 +152,19 @@ theme (default to Modern). For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, YML, etc.)
-hackmyresume build resume.json -o out/resume.all -t modern
+hackmyresume BUILD resume.json TO out/resume.all -t modern
 
 # Generate a specific resume format
-hackmyresume build resume.json TO out/resume.html
-hackmyresume build resume.json TO out/resume.pdf
-hackmyresume build resume.json TO out/resume.md
-hackmyresume build resume.json TO out/resume.doc
-hackmyresume build resume.json TO out/resume.json
-hackmyresume build resume.json TO out/resume.txt
-hackmyresume build resume.json TO out/resume.yml
+hackmyresume BUILD resume.json TO out/resume.html
+hackmyresume BUILD resume.json TO out/resume.pdf
+hackmyresume BUILD resume.json TO out/resume.md
+hackmyresume BUILD resume.json TO out/resume.doc
+hackmyresume BUILD resume.json TO out/resume.json
+hackmyresume BUILD resume.json TO out/resume.txt
+hackmyresume BUILD resume.json TO out/resume.yml
 
 # Specify 2 inputs and 3 outputs
-hackmyresume build in1.json in2.json TO out.html out.doc out.pdf
+hackmyresume BUILD in1.json in2.json TO out.html out.doc out.pdf
 ```
 
 You should see something to the effect of:
@@ -171,8 +191,8 @@ For a predefined theme, include the theme name. For a custom theme, include the
 path to the custom theme's folder.
 
 ```bash
-hackmyresume build resume.json -t modern
-hackmyresume build resume.json -t ~/foo/bar/my-custom-theme/
+hackmyresume BUILD resume.json TO out/rez.all -t modern
+hackmyresume BUILD resume.json TO OUT.rez.all -t ~/foo/bar/my-custom-theme/
 ```
 
 As of v1.0.0, available predefined themes are `positive`, `modern`, `compact`,
@@ -185,7 +205,7 @@ most generic to most specific:
 
 ```bash
 # Merge specific.json onto base.json and generate all formats
-hackmyresume build base.json specific.json -o resume.all
+hackmyresume BUILD base.json specific.json TO resume.all
 ```
 
 This can be useful for overriding a base (generic) resume with information from
@@ -196,7 +216,7 @@ resume. Merging follows conventional [extend()][9]-style behavior and there's
 no arbitrary limit to how many resumes you can merge:
 
 ```bash
-hackmyresume build in1.json in2.json in3.json in4.json TO out.html out.doc
+hackmyresume BUILD in1.json in2.json in3.json in4.json TO out.html out.doc
 Reading JSON resume: in1.json
 Reading JSON resume: in2.json
 Reading JSON resume: in3.json
@@ -212,14 +232,7 @@ You can specify **multiple output targets** and HackMyResume will build them:
 
 ```bash
 # Generate out1.doc, out1.pdf, and foo.txt from me.json.
-hackmyresume build me.json -o out1.doc -o out1.pdf -o foo.txt
-```
-
-You can also omit the output file(s) and/or theme completely:
-
-```bash
-# Equivalent to "hackmyresume resume.json resume.all -t modern"
-hackmyresume build resume.json
+hackmyresume BUILD me.json TO out1.doc out1.pdf foo.txt
 ```
 
 ### Using .all
@@ -229,7 +242,7 @@ formats for the given resume. For example, this...
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, etc.)
-hackmyresume build me.json -o out/resume.all
+hackmyresume BUILD me.json TO out/resume.all
 ```
 
 ..tells HackMyResume to read `me.json` and generate `out/resume.md`,
@@ -244,7 +257,7 @@ resumes, use the `validate` command:
 
 ```bash
 # Validate myresume.json against either the FRESH or JSON Resume schema.
-hackmyresume validate resumeA.json resumeB.json
+hackmyresume VALIDATE resumeA.json resumeB.json
 ```
 
 HackMyResume will validate each specified resume in turn:
@@ -276,7 +289,7 @@ HTML-formatted resumes. To disable prettification, the `--nopretty` or `-n` flag
 can be used:
 
 ```bash
-hackmyresume generate resume.json out.all --nopretty
+hackmyresume BUILD resume.json out.all --nopretty
 ```
 
 ### Silent Mode
@@ -284,8 +297,8 @@ hackmyresume generate resume.json out.all --nopretty
 Use `-s` or `--silent` to run in silent mode:
 
 ```bash
-hackmyresume generate resume.json -o someFile.all -s
-hackmyresume generate resume.json -o someFile.all --silent
+hackmyresume BUILD resume.json -o someFile.all -s
+hackmyresume BUILD resume.json -o someFile.all --silent
 ```
 
 ## Contributing
@@ -314,3 +327,5 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [travis-image]: https://img.shields.io/travis/palomajs/paloma.svg?style=flat-square
 [travis-url]: https://travis-ci.org/hacksalot/HackMyResume
 [contribute]: CONTRIBUTING.md
+[fresh-themes]: https://github.com/fluentdesk/fluent-themes
+[jrst]: https://www.npmjs.com/search?q=jsonresume-theme
