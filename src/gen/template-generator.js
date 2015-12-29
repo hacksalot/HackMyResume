@@ -156,7 +156,7 @@ Definition of the TemplateGenerator class.
               { outputFile: fileName, mk: file.data } );
           }
           catch(ex) {
-            console.log(ex);
+            require('../core/error-handler').err(ex, false);
           }
         }
         else if( file.info.action === null/* && theme.explicit*/ ) {

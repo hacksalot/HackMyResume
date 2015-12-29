@@ -1,5 +1,6 @@
 
-var chai = require('chai')
+var SPAWNWATCHER = require('../src/core/spawn-watch')
+  , chai = require('chai')
   , expect = chai.expect
   , should = chai.should()
   , path = require('path')
@@ -64,7 +65,7 @@ describe('Testing themes', function () {
     genTheme('JRS', src, 'minimist');
     genTheme('JRS', src, 'awesome');
     genTheme('JRS', src, 'positive');
-    genTheme('JRS', src, 'jsonresume-theme-boilerplate', 'node_modules/jsonresume-theme-boilerplate' );    
+    genTheme('JRS', src, 'jsonresume-theme-boilerplate', 'node_modules/jsonresume-theme-boilerplate' );
     genTheme('JRS', src, 'jsonresume-theme-sceptile', 'node_modules/jsonresume-theme-sceptile' );
     genTheme('JRS', src, 'jsonresume-theme-modern', 'node_modules/jsonresume-theme-modern' );
     genTheme('JRS', src, 'jsonresume-theme-classy', 'node_modules/jsonresume-theme-classy' );
