@@ -12,6 +12,7 @@ var ARGS = require( 'minimist' )
   , COLORS = require('colors')
   , FS = require('fs')
   , PATH = require('path')
+  , HACKMYSTATUS = require('./core/status-codes')
   , opts = { }
   , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white
   , _ = require('underscore');
@@ -99,20 +100,49 @@ function handleError( ex ) {
 
   if( ex.fluenterror ){
     switch( ex.fluenterror ) { // TODO: Remove magic numbers
-      case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
-      case 2: msg = "Couldn't copy CSS file to destination folder"; break;
-      case 3: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in FRESH or JSON Resume format.'.guide; break;
-      case 4: msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
+
+      case HACKMYSTATUS.themeNotFound:
+        msg = "The specified theme couldn't be found: " + ex.data;
+        break;
+
+      case HACKMYSTATUS.copyCSS:
+        msg = "Couldn't copy CSS file to destination folder";
+        break;
+
+      case HACKMYSTATUS.resumeNotFound:
+        msg = 'Please '.guide + 'specify a valid input resume'.guide.bold +
+          ' in FRESH or JSON Resume format.'.guide;
+        break;
+
+      case HACKMYSTATUS.missingCommand:
+        msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
         Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
           return (idx === ar.length - 1 ? 'or '.guide : '') +
             v.toUpperCase().guide;
-        }).join(', '.guide) + ").\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
+        }).join(', '.guide) + ").\n\n".guide +
+          FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
         break;
-      //case 4: msg = title + '\n' + ; break;
-      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created.'.guide; break;
-      case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
-      case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
-      case 8: msg = 'Please '.guide + 'specify the filename of the resume'.guide.bold + ' to create.'.guide; break;
+
+      case HACKMYSTATUS.invalidCommand:
+        msg = 'Please '.guide + 'specify the output resume file'.guide.bold +
+          ' that should be created.'.guide;
+        break;
+
+      case HACKMYSTATUS.resumeNotFoundAlt:
+        msg = 'Please '.guide + 'specify a valid input resume'.guide.bold +
+          ' in either FRESH or JSON Resume format.'.guide;
+        break;
+
+      case HACKMYSTATUS.inputOutputParity:
+        msg = 'Please '.guide + 'specify an output file name'.guide.bold +
+          ' for every input file you wish to convert.'.guide;
+        break;
+
+      case HACKMYSTATUS.createNameMissing:
+        msg = 'Please '.guide + 'specify the filename of the resume'.guide.bold +
+          ' to create.'.guide;
+        break;
+
     }
     exitCode = ex.fluenterror;
 

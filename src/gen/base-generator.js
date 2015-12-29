@@ -26,14 +26,7 @@ Definition of the BaseGenerator class.
     /**
     Status codes.
     */
-    codes: {
-      success: 0,
-      themeNotFound: 1,
-      copyCss: 2,
-      resumeNotFound: 3,
-      missingCommand: 4,
-      invalidCommand: 5
-    },
+    codes: require('../core/status-codes'),
 
     /**
     Generator options.
