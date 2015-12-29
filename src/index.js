@@ -2,19 +2,24 @@
 
 /**
 Command-line interface (CLI) for HackMyResume.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
+@license MIT. Copyright (c) 2015 hacksalot (https://github.com/hacksalot)
 @module index.js
 */
 
-var ARGS = require( 'minimist' )
+
+
+var SPAWNW = require('./core/spawn-watch')
+  , ARGS = require( 'minimist' )
   , FCMD  = require( './hackmycmd')
   , PKG = require('../package.json')
   , COLORS = require('colors')
   , FS = require('fs')
   , PATH = require('path')
+  , HACKMYSTATUS = require('./core/status-codes')
   , opts = { }
   , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white
   , _ = require('underscore');
+
 
 
 
@@ -22,7 +27,7 @@ try {
   main();
 }
 catch( ex ) {
-  handleError( ex );
+  require('./core/error-handler').err( ex, true );
 }
 
 
@@ -89,48 +94,4 @@ function getOpts( args ) {
     prettify: !noPretty,
     silent: args.s || args.silent
   };
-}
-
-// TODO: refactor
-function handleError( ex ) {
-  var msg = '', exitCode;
-
-
-
-  if( ex.fluenterror ){
-    switch( ex.fluenterror ) { // TODO: Remove magic numbers
-      case 1: msg = "The specified theme couldn't be found: " + ex.data; break;
-      case 2: msg = "Couldn't copy CSS file to destination folder"; break;
-      case 3: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in FRESH or JSON Resume format.'.guide; break;
-      case 4: msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
-        Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
-          return (idx === ar.length - 1 ? 'or '.guide : '') +
-            v.toUpperCase().guide;
-        }).join(', '.guide) + ").\n\n".guide + FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
-        break;
-      //case 4: msg = title + '\n' + ; break;
-      case 5: msg = 'Please '.guide + 'specify the output resume file'.guide.bold + ' that should be created.'.guide; break;
-      case 6: msg = 'Please '.guide + 'specify a valid input resume'.guide.bold + ' in either FRESH or JSON Resume format.'.guide; break;
-      case 7: msg = 'Please '.guide + 'specify an output file name'.guide.bold + ' for every input file you wish to convert.'.guide; break;
-      case 8: msg = 'Please '.guide + 'specify the filename of the resume'.guide.bold + ' to create.'.guide; break;
-    }
-    exitCode = ex.fluenterror;
-
-  }
-  else {
-    msg = ex.toString();
-    exitCode = 4;
-  }
-
-  var idx = msg.indexOf('Error: ');
-  var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
-  if( !ex.fluenterror || ex.fluenterror < 3 ) { // TODO: magic #s
-    console.log( ('ERROR: ' + trimmed.toString()).red.bold );
-    console.log( ex.stack.gray);
-  }
-  else
-    console.log( trimmed.toString() );
-
-  process.exit( exitCode );
-
 }

@@ -1,6 +1,5 @@
 /**
 Definitions of string utility functions.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 @module string.js
 */
 
@@ -10,14 +9,18 @@ See: http://stackoverflow.com/a/32800728/4942583
 @method isNullOrWhitespace
 */
 
-String.isNullOrWhitespace = function( input ) {
-  return !input || !input.trim();
-};
+(function() {
 
-String.prototype.endsWith = function(suffix) {
-  return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
+  String.isNullOrWhitespace = function( input ) {
+    return !input || !input.trim();
+  };
 
-String.is = function( val ) {
-  return typeof val === 'string' || val instanceof String;
-};
+  String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+
+  String.is = function( val ) {
+    return typeof val === 'string' || val instanceof String;
+  };
+
+}());

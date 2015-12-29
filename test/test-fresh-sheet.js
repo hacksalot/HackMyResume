@@ -43,13 +43,13 @@ describe('jane-doe.json (FRESH)', function () {
 
     it('should save without throwing an exception', function(){
       function trySave() {
-        _sheet.save( 'tests/sandbox/jane-q-fullstacker.json' );
+        _sheet.save( 'test/sandbox/jane-q-fullstacker.json' );
       }
       trySave.should.not.Throw();
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new FRESHResume().open('tests/sandbox/jane-q-fullstacker.json');
+      var savedSheet = new FRESHResume().open('test/sandbox/jane-q-fullstacker.json');
       _sheet.stringify().should.equal( savedSheet.stringify() );
     });
 
