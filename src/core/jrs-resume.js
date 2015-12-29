@@ -11,6 +11,7 @@ Definition of the JRSResume class.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
+    , MD = require('marked')
     , moment = require('moment');
 
   /**
@@ -236,6 +237,70 @@ Definition of the JRSResume class.
         : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
     }
 
+  };
+
+  JRSResume.prototype.dupe = function() {
+    var rnew = new JRSResume();
+    rnew.parse( this.stringify(), { } );
+    return rnew;
+  };
+
+  /**
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
+  */
+  JRSResume.prototype.harden = function() {
+
+    var that = this;
+    var ret = this.dupe();
+
+    function HD(txt) {
+      return '@@@@~' + txt + '~@@@@';
+    }
+
+    function HDIN(txt){
+      //return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+      return HD(txt);
+    }
+
+    // TODO: refactor recursion
+    function hardenStringsInObject( obj, inline ) {
+
+      if( !obj ) return;
+      inline = inline === undefined || inline;
+
+
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem, idx, ar){
+          if( typeof elem === 'string' || elem instanceof String )
+            ar[idx] = inline ? HDIN(elem) : HD( elem );
+          else
+            hardenStringsInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        Object.keys( obj ).forEach(function(key) {
+          var sub = obj[key];
+          if( typeof sub === 'string' || sub instanceof String ) {
+            if( _.contains(['skills','url','website','startDate','endDate','releaseDate','date','phone','email','address','postalCode','city','country','region'], key) )
+              return;
+            if( key === 'summary' )
+              obj[key] = HD( obj[key] );
+            else
+              obj[key] = inline ? HDIN( obj[key] ) : HD( obj[key] );
+          }
+          else
+            hardenStringsInObject( sub );
+        });
+      }
+
+    }
+
+    Object.keys( ret ).forEach(function(member){
+      hardenStringsInObject( ret[ member ] );
+    });
+
+    return ret;
   };
 
   /**

@@ -3,6 +3,7 @@
   var PATH = require('path')
     , FS = require('fs')
     , parsePath = require('parse-filepath')
+    , MD = require('marked')
     , MKDIRP = require('mkdirp')
     , _opts = require('../core/default-options')
     , FluentTheme = require('../core/theme')
@@ -102,6 +103,11 @@
   "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
   */
   function single( targInfo, theme ) {
+
+    function MDIN(txt) {
+      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+    }
+
     try {
       var f = targInfo.file
         , fType = targInfo.fmt.outFormat
@@ -144,7 +150,24 @@
             //   return PATH.join(p2, p1);
             // }
           });
-          var rezHtml = theme.render( rez );
+
+          // Prevent JSON Resume theme .js from chattering
+          var consoleLog = console.log;
+          console.log = function() { };
+
+          // Call the theme's render method
+          var rezDupe = rez.harden();
+          var rezHtml = theme.render( rezDupe );
+
+          // Turn logging back on
+          console.log = consoleLog;
+
+          // Unharden
+          rezHtml = rezHtml.replace( /@@@@~.+?~@@@@/g, function(val){
+            return MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) );
+          });
+
+          // Save the file
           FS.writeFileSync( f, rezHtml );
         }
         else {
