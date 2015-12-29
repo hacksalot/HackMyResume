@@ -57,7 +57,8 @@
 
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
-    var sheets = ResumeFactory.load( src, _log, null, theTheme.render ? 'JRS' : 'FRESH' );
+    var sheets = ResumeFactory.load( src, _log, null,
+      theTheme.render ? 'JRS' : 'FRESH' );
 
     // Merge input resumes...
     var msg = '';
@@ -128,9 +129,21 @@
 
         theFormat = _fmts.filter(
           function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
-        MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
 
+        var outFolder = PATH.dirname( f );
+        MKDIRP.sync( outFolder ); // Ensure dest folder exists;
+
+        // TODO: refactor
         if( theme.render ) {
+          var COPY = require('copy');
+          var globs = [ /*'**',*/ '*.css', '*.js', '*.png', '*.jpg', '*.gif', '*.bmp' ];
+          COPY.sync( globs , outFolder, {
+            cwd: theme.folder, nodir: true,
+            ignore: ['node_modules/','node_modules/**']
+            // rewrite: function(p1, p2) {
+            //   return PATH.join(p2, p1);
+            // }
+          });
           var rezHtml = theme.render( rez );
           FS.writeFileSync( f, rezHtml );
         }
