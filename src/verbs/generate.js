@@ -199,7 +199,7 @@ Implementation of the 'generate' verb for HackMyResume.
   function verify_theme( themeNameOrPath ) {
     var tFolder = PATH.resolve(
       __dirname,
-      '../../node_modules/fluent-themes/themes',
+      '../../node_modules/fresh-themes/themes',
       themeNameOrPath
     );
     var exists = require('path-exists').sync;

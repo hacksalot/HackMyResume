@@ -233,7 +233,7 @@ Definition of the TemplateGenerator class.
 
     // Verify the specified theme name/path
     var tFolder = PATH.join(
-      parsePath( require.resolve('fluent-themes') ).dirname,
+      parsePath( require.resolve('fresh-themes') ).dirname,
       this.opts.theme
     );
 

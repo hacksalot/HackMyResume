@@ -327,5 +327,5 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [travis-image]: https://img.shields.io/travis/palomajs/paloma.svg?style=flat-square
 [travis-url]: https://travis-ci.org/hacksalot/HackMyResume
 [contribute]: CONTRIBUTING.md
-[fresh-themes]: https://github.com/fluentdesk/fluent-themes
+[fresh-themes]: https://github.com/fluentdesk/fresh-themes
 [jrst]: https://www.npmjs.com/search?q=jsonresume-theme
