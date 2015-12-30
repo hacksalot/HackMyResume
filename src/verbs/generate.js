@@ -24,8 +24,8 @@
   module.exports =
 
   /**
-  Given a source JSON resume, a destination resume path, and a theme file,
-  generate 0..N resumes in the desired formats.
+  Given a source resume in FRESH or JRS format, a destination resume path, and a
+  theme file, generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
   @param dst An array of paths to the target resume file(s).
   @param theme Friendly name of the resume theme. Defaults to "modern".
@@ -52,7 +52,6 @@
     }
 
     // Load the theme
-    var theTheme = (new FluentTheme()).open( tFolder );
     var theTheme = _opts.theme.startsWith('jsonresume-theme') ?
       new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
     _opts.themeObj = theTheme;
@@ -118,8 +117,8 @@
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
-      // If targInfo.fmt.files exists, this theme has an explicit "files"
-      // section in its theme.json file.
+      // If targInfo.fmt.files exists, this format is backed by a document.
+      // Fluent/FRESH themes are handled here.
       if( targInfo.fmt.files && targInfo.fmt.files.length ) {
 
         _log( 'Generating '.useful +
@@ -131,19 +130,22 @@
           MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
           theFormat.gen.generate( rez, f, _opts );
       }
-      // Otherwise the theme has no files section
+
+      // Otherwise this is either a) a JSON Resume theme or b) an ad-hoc format
+      // (JSON, YML, or PNG) that every theme gets "for free".
       else {
         _log( 'Generating '.useful +
           targInfo.fmt.outFormat.toUpperCase().useful.bold +
           ' resume: '.useful + PATH.relative(process.cwd(), f ).replace(/\\/g,'/').useful.bold);
 
-        theFormat = _fmts.filter(
-          function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
+        theFormat = _fmts.filter( function(fmt) {
+          return fmt.name === targInfo.fmt.outFormat;
+        })[0];
 
         var outFolder = PATH.dirname( f );
         MKDIRP.sync( outFolder ); // Ensure dest folder exists;
 
-        // TODO: refactor
+        // JSON Resume themes have a 'render' method that needs to be called
         if( theme.render ) {
           var COPY = require('copy');
           var globs = [ /*'**',*/ '*.css', '*.js', '*.png', '*.jpg', '*.gif', '*.bmp' ];
@@ -155,7 +157,7 @@
             // }
           });
 
-          // Prevent JSON Resume theme .js from chattering
+          // Prevent JSON Resume theme .js from chattering (TODO: redirect IO)
           var consoleLog = console.log;
           console.log = function() { };
 

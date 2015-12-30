@@ -1,7 +1,7 @@
 /**
 Definition of the BaseGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 @module base-generator.js
+@license MIT. See LICENSE.md for details.
 */
 
 (function() {
