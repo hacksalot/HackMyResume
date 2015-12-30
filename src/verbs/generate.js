@@ -6,10 +6,12 @@
     , MD = require('marked')
     , MKDIRP = require('mkdirp')
     , _opts = require('../core/default-options')
-    , FluentTheme = require('../core/theme')
+    , FluentTheme = require('../core/fresh-theme')
+    , JRSTheme = require('../core/jrs-theme')
     , ResumeFactory = require('../core/resume-factory')
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
+    , unused = require('string.prototype.startswith')
     , _err, _log, rez;
 
   /**
@@ -51,6 +53,8 @@
 
     // Load the theme
     var theTheme = (new FluentTheme()).open( tFolder );
+    var theTheme = _opts.theme.startsWith('jsonresume-theme') ?
+      new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
     _opts.themeObj = theTheme;
     var numFormats = theTheme.formats ? Object.keys(theTheme.formats).length : 2;
     _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
