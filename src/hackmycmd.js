@@ -22,15 +22,19 @@ Internal resume generation logic for HackMyResume.
     /**
     Internal module interface. Used by FCV Desktop and HMR.
     */
+    var v = {
+      build: require('./verbs/generate'),
+      validate: require('./verbs/validate'),
+      convert: require('./verbs/convert'),
+      new: require('./verbs/create'),
+      help: help
+    }
+
     return {
-      verbs: {
-        generate: require('./verbs/generate'),
-        build: require('./verbs/generate'),
-        validate: require('./verbs/validate'),
-        convert: require('./verbs/convert'),
-        create: require('./verbs/create'),
-        new: require('./verbs/create'),
-        help: help
+      verbs: v,
+      alias: {
+        generate: v.build,
+        create: v.build
       },
       lib: require('./hackmyapi'),
       options: require('./core/default-options'),

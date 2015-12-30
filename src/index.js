@@ -55,7 +55,7 @@ function main() {
   // Get the action to be performed
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
   var verb = params[0];
-  if( !FCMD.verbs[ verb ] ) {
+  if( !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
     logMsg('Invalid command: "'.warn + verb.warn.bold + '"'.warn);
     return;
   }
@@ -76,7 +76,7 @@ function main() {
   ( splitAt === -1 ) && src.length > 1 && dst.push( src.pop() ); // Allow omitting TO keyword
 
   // Invoke the action
-  FCMD.verbs[ verb ].apply( null, [ src, dst, opts, logMsg ] );
+  (FCMD.verbs[verb] || FCMD.alias[verb]).apply(null, [src, dst, opts, logMsg]);
 
 }
 
