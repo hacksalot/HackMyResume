@@ -16,32 +16,37 @@ Definition of the JRSTheme class.
 
 
   /**
-  The JRSTheme class is a representation of a JSON Resume theme asset.
+  The JRSTheme class is a representation of a JSON Resume
+  theme asset.
   @class JRSTheme
   */
   function JRSTheme() {
 
   }
 
+
+
   /**
   Open and parse the specified theme.
+  @method open
   */
-  JRSTheme.prototype.open = function( themeFolder ) {
+  JRSTheme.prototype.open = function( thFolder ) {
 
-    this.folder = themeFolder;
+    this.folder = thFolder;
 
-    // Open the [theme-name].json file; should have the same name as folder
-    var pathInfo = parsePath( themeFolder );
+    // Open the [theme-name].json file; should have the same
+    // name as folder
+    var pathInfo = parsePath( thFolder );
 
     // Open and parse the theme's package.json file.
-    var packageJsonPath = PATH.join(themeFolder, 'package.json');
-    if( pathExists( packageJsonPath ) ) {
-      var themePack = require( themeFolder );
-      var themePkgJson = require( packageJsonPath );
-      this.name = themePkgJson.name;
-      this.render = (themePack && themePack.render) || undefined;
+    var pkgJsonPath = PATH.join( thFolder, 'package.json' );
+    if( pathExists( pkgJsonPath )) {
+      var thApi = require( thFolder )
+        , thPkg = require( pkgJsonPath );
+      this.name = thPkg.name;
+      this.render = (thApi && thApi.render) || undefined;
       this.formats = {
-        html: { title: 'html', outFormat: 'html', ext: 'html' }
+        html: { title:'html', outFormat:'html', ext:'html' }
       };
     }
     else {
@@ -51,20 +56,30 @@ Definition of the JRSTheme class.
     return this;
   };
 
+
+
   /**
-  Determine if the theme supports the specified output format.
+  Determine if the theme supports the output format.
+  @method hasFormat
   */
   JRSTheme.prototype.hasFormat = function( fmt ) {
     return _.has( this.formats, fmt );
   };
 
+
+
   /**
-  Determine if the theme supports the specified output format.
+  Return the requested output format.
+  @method getFormat
   */
   JRSTheme.prototype.getFormat = function( fmt ) {
     return this.formats[ fmt ];
   };
 
+
+
   module.exports = JRSTheme;
+
+
 
 }());
