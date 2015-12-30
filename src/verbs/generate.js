@@ -50,8 +50,10 @@
     msg && _log(msg);
 
     // Verify the specified theme name/path
-    var relativeThemeFolder = '../../node_modules/fluent-themes/themes';
-    var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme);
+    var tFolder = PATH.join(
+      parsePath( require.resolve('fluent-themes') ).dirname,
+      _opts.theme
+    );
     var exists = require('path-exists').sync;
     if (!exists( tFolder )) {
       tFolder = PATH.resolve( _opts.theme );
