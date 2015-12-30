@@ -17,7 +17,7 @@ Definition of the JRSTheme class.
 
   /**
   The JRSTheme class is a representation of a JSON Resume
-  theme asset.
+  theme asset. See also: FRESHTheme.
   @class JRSTheme
   */
   function JRSTheme() {

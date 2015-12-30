@@ -6,6 +6,8 @@ Definition of the FRESHTheme class.
 
 (function() {
 
+
+
   var FS = require('fs')
     , extend = require('../utils/extend')
     , validator = require('is-my-json-valid')
@@ -15,15 +17,20 @@ Definition of the FRESHTheme class.
     , pathExists = require('path-exists').sync
     , EXTEND = require('../utils/extend')
     , moment = require('moment')
-    , RECURSIVE_READ_DIR = require('recursive-readdir-sync');
+    , READFILES = require('recursive-readdir-sync');
+
+
 
   /**
-  The FRESHTheme class is a representation of a HackMyResume theme asset.
+  The FRESHTheme class is a representation of a FRESH theme
+  asset. See also: JRSTheme.
   @class FRESHTheme
   */
   function FRESHTheme() {
 
   }
+
+
 
   /**
   Open and parse the specified theme.
@@ -38,18 +45,7 @@ Definition of the FRESHTheme class.
     // Set up a formats hash for the theme
     var formatsHash = { };
 
-    // See if the theme has a package.json. If so, load it.
-    var packageJsonPath = PATH.join(themeFolder, 'package.json');
-    if( pathExists( packageJsonPath ) ) {
-      var themePack = require( themeFolder );
-      var themePkgJson = require( packageJsonPath );
-      this.name = themePkgJson.name;
-      this.render = (themePack && themePack.render) || undefined;
-      this.formats = { html: { title: 'html', outFormat: 'html', ext: 'html', path: null, data: null } };
-      return this;
-    }
-
-    // Otherwise, do a full theme load
+    // Load the theme
     var themeFile = PATH.join( themeFolder, pathInfo.basename + '.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
     var that = this;
@@ -76,12 +72,16 @@ Definition of the FRESHTheme class.
     return this;
   };
 
+
+
   /**
   Determine if the theme supports the specified output format.
   */
   FRESHTheme.prototype.hasFormat = function( fmt ) {
     return _.has( this.formats, fmt );
   };
+
+
 
   /**
   Determine if the theme supports the specified output format.
@@ -90,6 +90,11 @@ Definition of the FRESHTheme class.
     return this.formats[ fmt ];
   };
 
+
+  /**
+  Load the theme implicitly, by scanning the theme folder for
+  files. TODO: Refactor duplicated code with loadExplicit.
+  */
   function loadImplicit() {
 
     // Set up a hash of formats supported by this theme.
@@ -103,7 +108,7 @@ Definition of the FRESHTheme class.
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file. While we're doing that, also build up
     // the formatsHash object.
-    var fmts = RECURSIVE_READ_DIR( tplFolder ).map( function( absPath ) {
+    var fmts = READFILES(tplFolder).map( function(absPath) {
 
       // If this file lives in a specific format folder within the theme,
       // such as "/latex" or "/html", then that format is the output format
@@ -131,7 +136,7 @@ Definition of the FRESHTheme class.
       // compact-[outputformat].[extension], for ex, compact-pdf.html.
       if( !outFmt ) {
         var idx = pathInfo.name.lastIndexOf('-');
-        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 );
+        outFmt = (idx === -1) ? pathInfo.name : pathInfo.name.substr(idx + 1);
         isMajor = true;
       }
 
@@ -161,9 +166,13 @@ Definition of the FRESHTheme class.
     });
 
     // Now, get all the CSS files...
-    (this.cssFiles = fmts.filter(function( fmt ){ return fmt && (fmt.ext === 'css'); }))
+    (this.cssFiles = fmts.filter(function( fmt ){
+      return fmt && (fmt.ext === 'css');
+    }))
+
+    // For each CSS file, get its corresponding HTML file
     .forEach(function( cssf ) {
-      // For each CSS file, get its corresponding HTML file
+
       var idx = _.findIndex(fmts, function( fmt ) {
         return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
@@ -180,16 +189,19 @@ Definition of the FRESHTheme class.
     return formatsHash;
   }
 
+
+
+  /**
+  Load the theme explicitly, by following the 'formats' hash
+  in the theme's JSON settings file.
+  */
   function loadExplicit() {
 
-    var that = this;
-    // Set up a hash of formats supported by this theme.
+    // Housekeeping
     var formatsHash = { };
-
-    // Establish the base theme folder
     var tplFolder = PATH.join( this.folder, 'src' );
-
     var act = null;
+    var that = this;
 
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file. While we're doing that, also build up
@@ -200,13 +212,16 @@ Definition of the FRESHTheme class.
       // If this file is mentioned in the theme's JSON file under "transforms"
       var pathInfo = parsePath(absPath);
       var absPathSafe = absPath.trim().toLowerCase();
-      var outFmt = _.find( Object.keys( that.formats ), function( fmtKey ) {
-        var fmtVal = that.formats[ fmtKey ];
-        return _.some( fmtVal.transform, function( fpath ) {
-          var absPathB = PATH.join( that.folder, fpath ).trim().toLowerCase();
-          return absPathB === absPathSafe;
+      var outFmt = _.find(
+        Object.keys( that.formats ),
+        function( fmtKey ) {
+          var fmtVal = that.formats[ fmtKey ];
+          return _.some( fmtVal.transform, function(fpath) {
+            var absPathB = PATH.join( that.folder, fpath )
+              .trim().toLowerCase();
+            return absPathB === absPathSafe;
+          });
         });
-      });
       if( outFmt ) {
         act = 'transform';
       }
@@ -227,7 +242,7 @@ Definition of the FRESHTheme class.
       // compact-[outputformat].[extension], for ex, compact-pdf.html.
       if( !outFmt ) {
         var idx = pathInfo.name.lastIndexOf('-');
-        outFmt = ( idx === -1 ) ? pathInfo.name : pathInfo.name.substr( idx + 1 );
+        outFmt = (idx === -1) ? pathInfo.name : pathInfo.name.substr(idx + 1);
       }
 
       // We should have a valid output format now.
@@ -257,7 +272,11 @@ Definition of the FRESHTheme class.
     });
 
     // Now, get all the CSS files...
-    (this.cssFiles = fmts.filter(function( fmt ){ return fmt.ext === 'css'; }))
+    (this.cssFiles = fmts.filter(function( fmt ){
+      return fmt.ext === 'css';
+    }))
+    
+    // For each CSS file, get its corresponding HTML file
     .forEach(function( cssf ) {
         // For each CSS file, get its corresponding HTML file
         var idx = _.findIndex(fmts, function( fmt ) {
@@ -275,12 +294,22 @@ Definition of the FRESHTheme class.
     return formatsHash;
   }
 
+
+
+  /**
+  Return a more friendly name for certain formats.
+  TODO: Refactor
+  */
   function friendlyName( val ) {
     val = val.trim().toLowerCase();
     var friendly = { yml: 'yaml', md: 'markdown', txt: 'text' };
     return friendly[val] || val;
   }
 
+
+
   module.exports = FRESHTheme;
+
+
 
 }());
