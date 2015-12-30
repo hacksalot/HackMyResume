@@ -1,7 +1,7 @@
 /**
-Definition of the Theme class.
-@license MIT. Copyright (c) 2015 hacksalot / FluentDesk.
-@module theme.js
+Definition of the FRESHTheme class.
+@module fresh-theme.js
+@license MIT. See LICENSE.md for details.
 */
 
 (function() {
@@ -18,17 +18,17 @@ Definition of the Theme class.
     , RECURSIVE_READ_DIR = require('recursive-readdir-sync');
 
   /**
-  The Theme class is a representation of a HackMyResume theme asset.
-  @class Theme
+  The FRESHTheme class is a representation of a HackMyResume theme asset.
+  @class FRESHTheme
   */
-  function Theme() {
+  function FRESHTheme() {
 
   }
 
   /**
   Open and parse the specified theme.
   */
-  Theme.prototype.open = function( themeFolder ) {
+  FRESHTheme.prototype.open = function( themeFolder ) {
 
     this.folder = themeFolder;
 
@@ -83,14 +83,14 @@ Definition of the Theme class.
   /**
   Determine if the theme supports the specified output format.
   */
-  Theme.prototype.hasFormat = function( fmt ) {
+  FRESHTheme.prototype.hasFormat = function( fmt ) {
     return _.has( this.formats, fmt );
   };
 
   /**
   Determine if the theme supports the specified output format.
   */
-  Theme.prototype.getFormat = function( fmt ) {
+  FRESHTheme.prototype.getFormat = function( fmt ) {
     return this.formats[ fmt ];
   };
 
@@ -285,6 +285,6 @@ Definition of the Theme class.
     return friendly[val] || val;
   }
 
-  module.exports = Theme;
+  module.exports = FRESHTheme;
 
 }());
