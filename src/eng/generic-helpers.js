@@ -1,6 +1,6 @@
 /**
-Generic template helper definitions for FluentCV.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+Generic template helper definitions for HackMyResume / FluentCV.
+@license MIT. See LICENSE.md for details.
 @module generic-helpers.js
 */
 
@@ -112,6 +112,14 @@ Generic template helper definitions for FluentCV.
     */
     either: function( lhs, rhs, options ) {
       if (lhs || rhs) return options.fn(this);
+    },
+
+    /**
+    Conditional stylesheet link. Either display the link or embed the stylesheet
+    via <style></style> tag.
+    */
+    styleSheet: function( file ) {
+      return '<link href="' + file + '" rel="stylesheet" type="text/css">';
     },
 
     /**
