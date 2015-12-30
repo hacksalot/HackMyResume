@@ -6,6 +6,9 @@
 
   var HACKMYSTATUS = require('./status-codes')
     , PKG = require('../../package.json')
+    , FS = require('fs')
+    , FCMD = require('../hackmycmd')
+    , PATH = require('path')
     , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white;
 
   var ErrorHandler = module.exports = {
@@ -36,7 +39,7 @@
               return (idx === ar.length - 1 ? 'or '.guide : '') +
                 v.toUpperCase().guide;
             }).join(', '.guide) + ").\n\n".guide +
-              FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
+              FS.readFileSync( PATH.resolve(__dirname, '../use.txt'), 'utf8' ).info.bold;
             break;
 
           case HACKMYSTATUS.invalidCommand:
