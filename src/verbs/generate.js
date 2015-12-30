@@ -1,18 +1,26 @@
+/**
+Implementation of the 'generate' verb for HackMyResume.
+@module generate.js
+@license MIT. See LICENSE.md for details.
+*/
+
 (function() {
 
   var PATH = require('path')
     , FS = require('fs')
-    , parsePath = require('parse-filepath')
     , MD = require('marked')
     , MKDIRP = require('mkdirp')
+    , EXTEND = require('../utils/extend')
+    , parsePath = require('parse-filepath')
     , _opts = require('../core/default-options')
     , FluentTheme = require('../core/fresh-theme')
     , JRSTheme = require('../core/jrs-theme')
     , ResumeFactory = require('../core/resume-factory')
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
-    , unused = require('string.prototype.startswith')
     , _err, _log, rez;
+
+
 
   /**
   Handle an exception.
@@ -21,7 +29,7 @@
     throw ex;
   }
 
-  module.exports =
+
 
   /**
   Given a source resume in FRESH or JRS format, a destination resume path, and a
@@ -31,33 +39,18 @@
   @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
-  function generate( src, dst, opts, logger, errHandler ) {
+  function build( src, dst, opts, logger, errHandler ) {
 
+    // Housekeeping...
     _log = logger || console.log;
     _err = errHandler || error;
-
     //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
 
-    // Verify the specified theme name/path
-    var relativeThemeFolder = '../../node_modules/fluent-themes/themes';
-    var tFolder = PATH.resolve( __dirname, relativeThemeFolder, _opts.theme);
-    var exists = require('path-exists').sync;
-    if( !exists( tFolder ) ) {
-      tFolder = PATH.resolve( _opts.theme );
-      if (!exists( tFolder )) {
-        throw { fluenterror: 1, data: _opts.theme };
-      }
-    }
-
-    // Load the theme
-    var theTheme = _opts.theme.startsWith('jsonresume-theme') ?
-      new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
-    _opts.themeObj = theTheme;
-    var numFormats = theTheme.formats ? Object.keys(theTheme.formats).length : 2;
-    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
-      (' theme (' + numFormats + ' formats)').info);
+    // Load the theme...
+    var tFolder = verify_theme( _opts.theme );
+    var theTheme = load_theme( tFolder );
 
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
@@ -73,41 +66,28 @@
     });
     msg && _log(msg);
 
-    // Expand output resumes... (can't use map() here)
-    var targets = [], that = this;
-    ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
-
-      var to = PATH.resolve(t),
-          pa = parsePath(to),
-          fmat = pa.extname || '.all';
-
-      targets.push.apply(
-        targets, fmat === '.all' ?
-
-        Object.keys( theTheme.formats ).map(function(k){
-          var z = theTheme.formats[k];
-          return { file: to.replace(/all$/g,z.outFormat), fmt: z };
-        }) :
-
-        [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
-
-    });
+    // Expand output resumes...
+    var targets = expand( dst, theTheme );
 
     // Run the transformation!
-    var finished = targets.map( function(t) { return single(t, theTheme); });
+    var finished = targets.map( function(t) {
+      return EXTEND(true, t, { markup: single(t, theTheme) });
+    });
 
     // Don't send the client back empty-handed
     return { sheet: rez, targets: targets, processed: finished };
-  };
+  }
+
+
 
   /**
-  Generate a single resume of a specific format.
-  @param f Full path to the destination resume to generate, for example,
-  "/foo/bar/resume.pdf" or "c:\foo\bar\resume.txt".
+  Generate a single resume of a specific format. TODO: Refactor.
+  @param targInfo Information for the target resume.
+  @param theme A FRESHTheme or JRSTheme object.
   */
   function single( targInfo, theme ) {
 
-    function MDIN(txt) {
+    function MDIN(txt) { // TODO: Move this
       return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
     }
 
@@ -117,14 +97,13 @@
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
+        _log( 'Generating '.useful +
+          targInfo.fmt.outFormat.toUpperCase().useful.bold +
+          ' resume: '.useful + PATH.relative(process.cwd(), f ).useful.bold );
+
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
       if( targInfo.fmt.files && targInfo.fmt.files.length ) {
-
-        _log( 'Generating '.useful +
-          targInfo.fmt.outFormat.toUpperCase().useful.bold +
-          ' resume: '.useful + PATH.relative(process.cwd(), f ).replace(/\\/g,'/').useful.bold);
-
           theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
           MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
@@ -134,9 +113,6 @@
       // Otherwise this is either a) a JSON Resume theme or b) an ad-hoc format
       // (JSON, YML, or PNG) that every theme gets "for free".
       else {
-        _log( 'Generating '.useful +
-          targInfo.fmt.outFormat.toUpperCase().useful.bold +
-          ' resume: '.useful + PATH.relative(process.cwd(), f ).replace(/\\/g,'/').useful.bold);
 
         theFormat = _fmts.filter( function(fmt) {
           return fmt.name === targInfo.fmt.outFormat;
@@ -175,9 +151,12 @@
 
           // Save the file
           FS.writeFileSync( f, rezHtml );
+
+          // Return markup to the client
+          return rezHtml;
         }
         else {
-          theFormat.gen.generate( rez, f, _opts );
+          return theFormat.gen.generate( rez, f, _opts );
         }
       }
     }
@@ -185,5 +164,73 @@
       _err( ex );
     }
   }
+
+
+  /**
+  Expand output files.
+  */
+  function expand( dst, theTheme ) {
+    var targets = [];
+    // (can't use map() here).
+    ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
+
+      var to = PATH.resolve(t),
+          pa = parsePath(to),
+          fmat = pa.extname || '.all';
+
+      targets.push.apply(
+        targets, fmat === '.all' ?
+
+        Object.keys( theTheme.formats ).map(function(k){
+          var z = theTheme.formats[k];
+          return { file: to.replace(/all$/g,z.outFormat), fmt: z };
+        }) :
+
+        [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+
+    });
+    return targets;
+  }
+
+
+  /**
+  Verify the specified theme name/path.
+  */
+  function verify_theme( themeNameOrPath ) {
+    var tFolder = PATH.resolve(
+      __dirname,
+      '../../node_modules/fluent-themes/themes',
+      themeNameOrPath
+    );
+    var exists = require('path-exists').sync;
+    if( !exists( tFolder ) ) {
+      tFolder = PATH.resolve( themeNameOrPath );
+      if( !exists( tFolder ) ) {
+        throw { fluenterror: 1, data: _opts.theme };
+      }
+    }
+    return tFolder;
+  }
+
+
+
+  /**
+  Load the specified theme.
+  */
+  function load_theme( tFolder ) {
+    var theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ?
+      new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
+    _opts.themeObj = theTheme;
+    var numFormats = Object.keys(theTheme.formats).length;
+    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
+      (' theme (' + numFormats + ' formats)').info);
+    return theTheme;
+  }
+
+
+
+  module.exports = build;
+
+
 
 }());

@@ -1,6 +1,6 @@
 /**
 Definition of the TemplateGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module template-generator.js
 */
 
@@ -78,7 +78,14 @@ Definition of the TemplateGenerator class.
     @method invoke
     @param rez A FreshResume object.
     @param opts Generator options.
-    @returns An array of strings representing generated output files.
+    @returns An array of objects representing the generated output files. Each
+    object has this format:
+
+        {
+          files: [ { info: { }, data: [ ] }, { ... } ],
+          themeInfo: { }
+        }
+
     */
     invoke: function( rez, opts ) {
 
@@ -182,6 +189,8 @@ Definition of the TemplateGenerator class.
           FS.symlinkSync( absTarg, absLoc, type);
         });
       }
+
+      return genInfo;
 
     },
 
