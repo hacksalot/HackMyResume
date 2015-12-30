@@ -6,6 +6,8 @@ Implementation of the 'generate' verb for HackMyResume.
 
 (function() {
 
+
+
   var PATH = require('path')
     , FS = require('fs')
     , MD = require('marked')
@@ -70,22 +72,23 @@ Implementation of the 'generate' verb for HackMyResume.
     var targets = expand( dst, theTheme );
 
     // Run the transformation!
-    var finished = targets.map( function(t) {
-      return EXTEND(true, t, { markup: single(t, theTheme) });
+    targets.forEach( function(t) {
+      t.final = single( t, theTheme, targets );
     });
 
     // Don't send the client back empty-handed
-    return { sheet: rez, targets: targets, processed: finished };
+    return { sheet: rez, targets: targets, processed: targets };
   }
 
 
 
   /**
-  Generate a single resume of a specific format. TODO: Refactor.
+  Generate a single target resume such as "out/rez.html" or "out/rez.doc".
   @param targInfo Information for the target resume.
   @param theme A FRESHTheme or JRSTheme object.
+  @returns
   */
-  function single( targInfo, theme ) {
+  function single( targInfo, theme, finished ) {
 
     function MDIN(txt) { // TODO: Move this
       return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
@@ -107,7 +110,8 @@ Implementation of the 'generate' verb for HackMyResume.
           theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
           MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
-          theFormat.gen.generate( rez, f, _opts );
+          _opts.targets = finished;
+          return theFormat.gen.generate( rez, f, _opts );
       }
 
       // Otherwise this is either a) a JSON Resume theme or b) an ad-hoc format
@@ -166,29 +170,67 @@ Implementation of the 'generate' verb for HackMyResume.
   }
 
 
+
   /**
-  Expand output files.
+  Expand output files. For example, "foo.all" should be expanded to
+  ["foo.html", "foo.doc", "foo.pdf", "etc"].
+  @param dst An array of output files as specified by the user.
+  @param theTheme A FRESHTheme or JRSTheme object.
   */
   function expand( dst, theTheme ) {
-    var targets = [];
-    // (can't use map() here).
-    ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
 
-      var to = PATH.resolve(t),
-          pa = parsePath(to),
-          fmat = pa.extname || '.all';
+    // Add freebie formats (JSON, YAML, PNG) every theme gets...
+    // Add HTML-driven PNG only if the theme has an HTML format.
+    theTheme.formats.json = theTheme.formats.json || {
+      freebie: true, title: 'json', outFormat: 'json', pre: 'json',
+      ext: 'json', path: null, data: null
+    };
+    theTheme.formats.yml = theTheme.formats.yml || {
+      freebie: true, title: 'yaml', outFormat: 'yml', pre: 'yml',
+      ext: 'yml', path: null, data: null
+    };
+    theTheme.formats.png = theTheme.formats.png ||
+    ( theTheme.formats.html && {
+      freebie: true, title: 'png', outFormat: 'png',
+      ext: 'yml', path: null, data: null
+    });
+
+    // Set up the destination collection. It's either the array of files passed
+    // by the user or 'out/resume.all' if no targets were specified.
+    var destColl = (dst && dst.length && dst) ||
+                   [PATH.normalize('out/resume.all')]
+
+    // Assemble an array of expanded target files... (can't use map() here)
+    var targets = [];
+    destColl.forEach( function(t) {
+
+      var to = PATH.resolve(t), pa = parsePath(to),fmat = pa.extname || '.all';
+
+      var explicitFormats = _.omit( theTheme.formats, function(val) {
+        return !val.freebie;
+      });
+      var implicitFormats = _.omit( theTheme.formats, function(val) {
+        return val.freebie;
+      });
 
       targets.push.apply(
         targets, fmat === '.all' ?
-
-        Object.keys( theTheme.formats ).map(function(k){
+        Object.keys( implicitFormats ).map( function( k ) {
           var z = theTheme.formats[k];
-          return { file: to.replace(/all$/g,z.outFormat), fmt: z };
+          return { file: to.replace( /all$/g, z.outFormat ), fmt: z };
         }) :
+        [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
+      targets.push.apply(
+        targets, fmat === '.all' ?
+        Object.keys( explicitFormats ).map( function( k ) {
+          var z = theTheme.formats[k];
+          return { file: to.replace( /all$/g, z.outFormat ), fmt: z };
+        }) :
         [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
     });
+
     return targets;
   }
 
@@ -222,16 +264,6 @@ Implementation of the 'generate' verb for HackMyResume.
     // Create a FRESH or JRS theme object
     var theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ?
       new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
-
-    // Add freebie formats every theme gets
-    theTheme.formats.json = theTheme.formats.json || {
-      title: 'json', outFormat: 'json', pre: 'json',
-      ext: 'json', path: null, data: null
-    };
-    theTheme.formats.yml = theTheme.formats.yml || {
-      title: 'yaml', outFormat: 'yml', pre: 'yml',
-      ext: 'yml', path: null, data: null
-    };
 
     // Cache the theme object
     _opts.themeObj = theTheme;
