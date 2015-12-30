@@ -218,9 +218,25 @@ Implementation of the 'generate' verb for HackMyResume.
   Load the specified theme.
   */
   function load_theme( tFolder ) {
+
+    // Create a FRESH or JRS theme object
     var theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ?
       new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
+
+    // Add freebie formats every theme gets
+    theTheme.formats.json = theTheme.formats.json || {
+      title: 'json', outFormat: 'json', pre: 'json',
+      ext: 'json', path: null, data: null
+    };
+    theTheme.formats.yml = theTheme.formats.yml || {
+      title: 'yaml', outFormat: 'yml', pre: 'yml',
+      ext: 'yml', path: null, data: null
+    };
+
+    // Cache the theme object
     _opts.themeObj = theTheme;
+
+    // Output a message TODO: core should not log
     var numFormats = Object.keys(theTheme.formats).length;
     _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
       (' theme (' + numFormats + ' formats)').info);

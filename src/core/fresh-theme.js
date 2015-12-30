@@ -67,10 +67,6 @@ Definition of the FRESHTheme class.
       formatsHash = loadImplicit.call( this );
     }
 
-    // Add freebie formats every theme gets
-    formatsHash.json = { title: 'json', outFormat: 'json', pre: 'json', ext: 'json', path: null, data: null };
-    formatsHash.yml = { title: 'yaml', outFormat: 'yml', pre: 'yml', ext: 'yml', path: null, data: null };
-
     // Cache
     this.formats = formatsHash;
 
