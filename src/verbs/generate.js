@@ -8,6 +8,7 @@
     , loadSourceResumes = require('../core/load-source-resumes')
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
+    , extend = require('../utils/extend')
     , _err, _log, rez;
 
   /**
