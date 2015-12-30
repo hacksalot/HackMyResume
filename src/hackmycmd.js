@@ -8,15 +8,16 @@ Internal resume generation logic for HackMyResume.
   module.exports = function () {
 
     var unused = require('./utils/string')
-      , PATH = require('path');
+      , PATH = require('path')
+      , FS = require('fs');
 
 
     /**
     Display help documentation.
     */
     function help() {
-      console.log( FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' )
-        .useful.bold );
+      var manPage = FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' );
+      console.log( manPage.useful.bold );
     }
 
     /**
@@ -28,7 +29,7 @@ Internal resume generation logic for HackMyResume.
       convert: require('./verbs/convert'),
       new: require('./verbs/create'),
       help: help
-    }
+    };
 
     return {
       verbs: v,
