@@ -6,6 +6,9 @@
 
   var HACKMYSTATUS = require('./status-codes')
     , PKG = require('../../package.json')
+    , FS = require('fs')
+    , FCMD = require('../hackmycmd')
+    , PATH = require('path')
     , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white;
 
   var ErrorHandler = module.exports = {
@@ -26,17 +29,21 @@
             break;
 
           case HACKMYSTATUS.resumeNotFound:
-            msg = 'Please '.guide + 'specify a valid input resume'.guide.bold +
+            msg = 'Please '.guide + 'feed me a resume'.guide.bold +
               ' in FRESH or JSON Resume format.'.guide;
             break;
 
           case HACKMYSTATUS.missingCommand:
-            msg = title + "\nPlease ".guide + "specify a command".guide.bold + " (".guide +
-            Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
+            msg = title + "\nPlease ".guide + "give me a command".guide.bold +
+              " (".guide;
+
+            msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
               return (idx === ar.length - 1 ? 'or '.guide : '') +
                 v.toUpperCase().guide;
-            }).join(', '.guide) + ").\n\n".guide +
-              FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' ).info.bold;
+            }).join(', '.guide) + ").\n\n".guide;
+
+            msg += FS.readFileSync(
+              PATH.resolve(__dirname, '../use.txt'), 'utf8' ).info.bold;
             break;
 
           case HACKMYSTATUS.invalidCommand:
@@ -45,7 +52,7 @@
             break;
 
           case HACKMYSTATUS.resumeNotFoundAlt:
-            msg = 'Please '.guide + 'specify a valid input resume'.guide.bold +
+            msg = 'Please '.guide + 'feed me a resume'.guide.bold +
               ' in either FRESH or JSON Resume format.'.guide;
             break;
 

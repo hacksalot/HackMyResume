@@ -55,7 +55,7 @@ function main() {
   // Get the action to be performed
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
   var verb = params[0];
-  if( !FCMD.verbs[ verb ] ) {
+  if( !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
     logMsg('Invalid command: "'.warn + verb.warn.bold + '"'.warn);
     return;
   }
@@ -74,10 +74,9 @@ function main() {
   var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
   var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
   ( splitAt === -1 ) && src.length > 1 && dst.push( src.pop() ); // Allow omitting TO keyword
-  var parms = [ src, dst, opts, logMsg ];
 
   // Invoke the action
-  FCMD.verbs[ verb ].apply( null, parms );
+  (FCMD.verbs[verb] || FCMD.alias[verb]).apply(null, [src, dst, opts, logMsg]);
 
 }
 
@@ -92,6 +91,7 @@ function getOpts( args ) {
     theme: args.t || 'modern',
     format: args.f || 'FRESH',
     prettify: !noPretty,
-    silent: args.s || args.silent
+    silent: args.s || args.silent,
+    css: args.css || 'embed'
   };
 }

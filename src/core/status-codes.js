@@ -1,6 +1,7 @@
 /**
 Status codes for HackMyResume.
 @module status-codes.js
+@license MIT. See LICENSE.MD for details.
 */
 
 (function(){
@@ -15,7 +16,8 @@ Status codes for HackMyResume.
     resumeNotFoundAlt: 6,
     inputOutputParity: 7,
     createNameMissing: 8,
-    wkhtmltopdf: 9
+    wkhtmltopdf: 9,
+    missingPackageJSON: 10
   };
 
 }());
