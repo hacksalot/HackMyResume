@@ -49,6 +49,7 @@ Implementation of the 'generate' verb for HackMyResume.
     //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
+    _opts.css = opts.css;
 
     // Load the theme...
     var tFolder = verify_theme( _opts.theme );

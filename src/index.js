@@ -91,6 +91,7 @@ function getOpts( args ) {
     theme: args.t || 'modern',
     format: args.f || 'FRESH',
     prettify: !noPretty,
-    silent: args.s || args.silent
+    silent: args.s || args.silent,
+    css: args.css || 'embed'
   };
 }

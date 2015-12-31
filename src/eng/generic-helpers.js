@@ -118,8 +118,10 @@ Generic template helper definitions for HackMyResume / FluentCV.
     Conditional stylesheet link. Either display the link or embed the stylesheet
     via <style></style> tag.
     */
-    styleSheet: function( file ) {
-      return '<link href="' + file + '" rel="stylesheet" type="text/css">';
+    styleSheet: function( file, options ) {
+      return ( this.opts.css === 'link') ?
+        '<link href="' + file + '" rel="stylesheet" type="text/css">' :
+        '<style>' + this.cssInfo.data + '</style>';
     },
 
     /**
