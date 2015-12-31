@@ -43,15 +43,15 @@ describe('Testing CLI interface', function () {
       silent: true
     };
 
-    run( 'new', ['tests/sandbox/new-fresh-resume.json'], [], opts, ' (FRESH format)' );
-    run( 'new', ['tests/sandbox/new-jrs-resume.json'], [], opts2, ' (JRS format)' );
-    run( 'new', ['tests/sandbox/new-1.json', 'tests/sandbox/new-2.json', 'tests/sandbox/new-3.json'], [], opts, ' (multiple FRESH resumes)' );
-    run( 'new', ['tests/sandbox/new-jrs-1.json', 'tests/sandbox/new-jrs-2.json', 'tests/sandbox/new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' );
-    run( 'new', ['tests/sandbox/new-jrs-resume.json'], [], opts2, ' (JRS format)' );
+    run( 'new', ['test/sandbox/new-fresh-resume.json'], [], opts, ' (FRESH format)' );
+    run( 'new', ['test/sandbox/new-jrs-resume.json'], [], opts2, ' (JRS format)' );
+    run( 'new', ['test/sandbox/new-1.json', 'test/sandbox/new-2.json', 'test/sandbox/new-3.json'], [], opts, ' (multiple FRESH resumes)' );
+    run( 'new', ['test/sandbox/new-jrs-1.json', 'test/sandbox/new-jrs-2.json', 'test/sandbox/new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' );
+    run( 'new', ['test/sandbox/new-jrs-resume.json'], [], opts2, ' (JRS format)' );
     fail( 'new', [], [], opts, " (when a filename isn't specified)" );
 
     run( 'validate', ['node_modules/jane-q-fullstacker/resume/jane-resume.json'], [], opts, ' (FRESH format)' );
-    run( 'validate', ['tests/sandbox/new-fresh-resume.json'], [], opts, ' (FRESH format)' );
+    run( 'validate', ['test/sandbox/new-fresh-resume.json'], [], opts, ' (FRESH format)' );
 
     function run( verb, src, dst, opts, msg ) {
       msg = msg || '.';

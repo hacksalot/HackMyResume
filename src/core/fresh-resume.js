@@ -143,15 +143,12 @@ Definition of the FRESHResume class.
   };
 
   /**
-  Open and parse the specified JSON resume sheet. Merge the JSON object model
-  onto this Sheet instance with extend() and convert sheet dates to a safe &
+  Initialize the FreshResume from JSON data.
+  Open and parse the specified FRESH resume. Merge the JSON object model onto
+  this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
   */
-  FreshResume.prototype.parse = function( stringData, opts ) {
-
-    // Parse the incoming JSON representation
-    var rep = JSON.parse( stringData );
-
+  FreshResume.prototype.parseJSON = function( rep, opts ) {
     // Convert JSON Resume to FRESH if necessary
     if( rep.basics ) {
       rep = CONVERTER.toFRESH( rep );
@@ -176,6 +173,13 @@ Definition of the FRESHResume class.
        keywords: this.keywords()
     });
     return this;
+  };
+
+  /**
+  Initialize the the FreshResume from string data.
+  */
+  FreshResume.prototype.parse = function( stringData, opts ) {
+    return this.parseJSON( JSON.parse( stringData ), opts );
   };
 
   /**

@@ -1,7 +1,7 @@
 /**
 Definition of the BaseGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 @module base-generator.js
+@license MIT. See LICENSE.md for details.
 */
 
 (function() {
@@ -26,14 +26,7 @@ Definition of the BaseGenerator class.
     /**
     Status codes.
     */
-    codes: {
-      success: 0,
-      themeNotFound: 1,
-      copyCss: 2,
-      resumeNotFound: 3,
-      missingCommand: 4,
-      invalidCommand: 5
-    },
+    codes: require('../core/status-codes'),
 
     /**
     Generator options.
