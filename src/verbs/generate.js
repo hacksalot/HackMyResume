@@ -20,6 +20,7 @@ Implementation of the 'generate' verb for HackMyResume.
     , ResumeFactory = require('../core/resume-factory')
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
+    , extend = require('../utils/extend')
     , _err, _log, rez;
 
 
