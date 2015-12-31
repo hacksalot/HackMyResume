@@ -1,6 +1,6 @@
 (function(){
 
-  var loadSourceResumes = require('../core/load-source-resumes');
+  var ResumeFactory = require('../core/resume-factory');
 
   /**
   Convert between FRESH and JRS formats.
@@ -16,7 +16,7 @@
     if( src && dst && src.length && dst.length && src.length !== dst.length ) {
       throw { fluenterror: 7 };
     }
-    var sheets = loadSourceResumes( src, _log );
+    var sheets = ResumeFactory.load( src, _log );
     sheets.forEach(function(sheet, idx){
       var sourceFormat = sheet.imp.orgFormat === 'JRS' ? 'JRS' : 'FRESH';
       var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';

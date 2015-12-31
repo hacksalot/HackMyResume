@@ -8,7 +8,8 @@ module.exports = {
   Sheet: require('./core/fresh-resume'),
   FRESHResume: require('./core/fresh-resume'),
   JRSResume: require('./core/jrs-resume'),
-  Theme: require('./core/theme'),
+  FRESHTheme: require('./core/fresh-theme'),
+  JRSTheme: require('./core/jrs-theme'),
   FluentDate: require('./core/fluent-date'),
   HtmlGenerator: require('./gen/html-generator'),
   TextGenerator: require('./gen/text-generator'),
@@ -18,5 +19,6 @@ module.exports = {
   JsonGenerator: require('./gen/json-generator'),
   YamlGenerator: require('./gen/yaml-generator'),
   JsonYamlGenerator: require('./gen/json-yaml-generator'),
-  LaTeXGenerator: require('./gen/latex-generator')
+  LaTeXGenerator: require('./gen/latex-generator'),
+  HtmlPngGenerator: require('./gen/html-png-generator')
 };

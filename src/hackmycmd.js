@@ -8,29 +8,34 @@ Internal resume generation logic for HackMyResume.
   module.exports = function () {
 
     var unused = require('./utils/string')
-      , PATH = require('path');
+      , PATH = require('path')
+      , FS = require('fs');
 
 
     /**
     Display help documentation.
     */
     function help() {
-      console.log( FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' )
-        .useful.bold );
+      var manPage = FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' );
+      console.log( manPage.useful.bold );
     }
 
     /**
     Internal module interface. Used by FCV Desktop and HMR.
     */
+    var v = {
+      build: require('./verbs/generate'),
+      validate: require('./verbs/validate'),
+      convert: require('./verbs/convert'),
+      new: require('./verbs/create'),
+      help: help
+    };
+
     return {
-      verbs: {
-        generate: require('./verbs/generate'),
-        build: require('./verbs/generate'),
-        validate: require('./verbs/validate'),
-        convert: require('./verbs/convert'),
-        create: require('./verbs/create'),
-        new: require('./verbs/create'),
-        help: help
+      verbs: v,
+      alias: {
+        generate: v.build,
+        create: v.build
       },
       lib: require('./hackmyapi'),
       options: require('./core/default-options'),
