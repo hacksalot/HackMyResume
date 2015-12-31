@@ -206,7 +206,7 @@ Definition of the FRESHTheme class.
     // Iterate over all files in the theme folder, producing an array, fmts,
     // containing info for each file. While we're doing that, also build up
     // the formatsHash object.
-    var fmts = RECURSIVE_READ_DIR( tplFolder ).map( function( absPath ) {
+    var fmts = READFILES( tplFolder ).map( function( absPath ) {
 
       act = null;
       // If this file is mentioned in the theme's JSON file under "transforms"
@@ -275,7 +275,7 @@ Definition of the FRESHTheme class.
     (this.cssFiles = fmts.filter(function( fmt ){
       return fmt.ext === 'css';
     }))
-    
+
     // For each CSS file, get its corresponding HTML file
     .forEach(function( cssf ) {
         // For each CSS file, get its corresponding HTML file
