@@ -190,11 +190,12 @@ Implementation of the 'generate' verb for HackMyResume.
       freebie: true, title: 'yaml', outFormat: 'yml', pre: 'yml',
       ext: 'yml', path: null, data: null
     };
-    theTheme.formats.png = theTheme.formats.png ||
-    ( theTheme.formats.html && {
-      freebie: true, title: 'png', outFormat: 'png',
-      ext: 'yml', path: null, data: null
-    });
+    if( theTheme.formats.html && !theTheme.formats.png ) {
+      theTheme.formats.png = {
+        freebie: true, title: 'png', outFormat: 'png',
+        ext: 'yml', path: null, data: null
+      };
+    }
 
     // Set up the destination collection. It's either the array of files passed
     // by the user or 'out/resume.all' if no targets were specified.
@@ -207,7 +208,7 @@ Implementation of the 'generate' verb for HackMyResume.
 
       var to = PATH.resolve(t), pa = parsePath(to),fmat = pa.extname || '.all';
 
-      var explicitFormats = _.omit( theTheme.formats, function(val) {
+      var explicitFormats = _.omit( theTheme.formats, function(val, key) {
         return !val.freebie;
       });
       var implicitFormats = _.omit( theTheme.formats, function(val) {
