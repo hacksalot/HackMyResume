@@ -199,7 +199,7 @@ Implementation of the 'generate' verb for HackMyResume.
     // Set up the destination collection. It's either the array of files passed
     // by the user or 'out/resume.all' if no targets were specified.
     var destColl = (dst && dst.length && dst) ||
-                   [PATH.normalize('out/resume.all')]
+                   [PATH.normalize('out/resume.all')];
 
     // Assemble an array of expanded target files... (can't use map() here)
     var targets = [];
