@@ -11,7 +11,6 @@ Definition of the UnderscoreGenerator class.
   var _ = require('underscore');
 
 
-
   /**
   Perform template-based resume generation using Underscore.js.
   @class UnderscoreGenerator
@@ -32,6 +31,10 @@ Definition of the UnderscoreGenerator class.
       // Strip {# comments #}
       jst = jst.replace( delims.comment, '');
 
+      var helpers = require('./generic-helpers');
+      helpers.opts = opts;
+      helpers.cssInfo = cssInfo;
+
       // Compile and run the template. TODO: avoid unnecessary recompiles.
       var compiled = _.template(jst);
       var ret = compiled({
@@ -40,13 +43,15 @@ Definition of the UnderscoreGenerator class.
         XML: require('xml-escape'),
         RAW: json,
         cssInfo: cssInfo,
-        headFragment: opts.headFragment || ''
+        headFragment: opts.headFragment || '',
+        opts: opts,
+        h: helpers
       });
       return ret;
     }
 
   };
 
-  
+
 
 }());
