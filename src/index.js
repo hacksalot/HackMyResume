@@ -73,7 +73,7 @@ function main() {
   // Massage inputs and outputs
   var src = a._.slice(1, splitAt === -1 ? undefined : splitAt );
   var dst = splitAt === -1 ? [] : a._.slice( splitAt + 1 );
-  ( splitAt === -1 ) && src.length > 1 && dst.push( src.pop() ); // Allow omitting TO keyword
+  ( splitAt === -1 ) && (src.length > 1) && (verb !== 'validate') && dst.push( src.pop() ); // Allow omitting TO keyword
 
   // Invoke the action
   (FCMD.verbs[verb] || FCMD.alias[verb]).apply(null, [src, dst, opts, logMsg]);
