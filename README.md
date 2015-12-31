@@ -1,6 +1,8 @@
 HackMyResume
 ============
 
+[![Join the chat at https://gitter.im/hacksalot/HackMyResume](https://badges.gitter.im/hacksalot/HackMyResume.svg)](https://gitter.im/hacksalot/HackMyResume?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build status][travis-image]][travis-url]
 
 *Create polished résumés and CVs in multiple formats from your command line or
