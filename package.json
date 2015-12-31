@@ -1,6 +1,6 @@
 {
   "name": "hackmyresume",
-  "version": "1.3.0-beta",
+  "version": "1.3.0",
   "description": "Generate polished résumés and CVs in HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML, YAML, smoke signal, and carrier pigeon.",
   "repository": {
     "type": "git",
@@ -47,12 +47,13 @@
   "dependencies": {
     "colors": "^1.1.2",
     "copy": "^0.1.3",
-    "fresh-themes": "~0.9.3-beta",
     "fresca": "~0.2.2",
+    "fresh-themes": "~0.9.3-beta",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.2",
+    "json-lint": "^0.1.0",
     "jst": "0.0.13",
     "lodash": "^3.10.1",
     "marked": "^0.3.5",

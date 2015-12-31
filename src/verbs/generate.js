@@ -54,28 +54,28 @@ Implementation of the 'generate' verb for HackMyResume.
 
     // Load the theme...
     var tFolder = verify_theme( _opts.theme );
-    var theTheme = load_theme( tFolder );
+    var theme = load_theme( tFolder );
 
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
-    var sheets = ResumeFactory.load( src, _log, null,
-      theTheme.render ? 'JRS' : 'FRESH' );
+    var sheets = ResumeFactory.load(src, _log, theme.render ? 'JRS' : 'FRESH', true);
 
     // Merge input resumes...
     var msg = '';
-    rez = _.reduceRight( sheets, function( a, b, idx ) {
+    var rezRep = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ?
-      'Merging '.gray+ a.imp.fileName : '') + ' onto '.gray + b.imp.fileName;
-      return extend( true, b, a );
+      'Merging '.gray + a.rez.imp.fileName : '') + ' onto '.gray + b.rez.fileName;
+      return extend( true, b.rez, a.rez );
     });
+    rez = rezRep.rez;
     msg && _log(msg);
 
     // Expand output resumes...
-    var targets = expand( dst, theTheme );
+    var targets = expand( dst, theme );
 
     // Run the transformation!
     targets.forEach( function(t) {
-      t.final = single( t, theTheme, targets );
+      t.final = single( t, theme, targets );
     });
 
     // Don't send the client back empty-handed

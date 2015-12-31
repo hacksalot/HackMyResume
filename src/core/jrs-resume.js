@@ -1,6 +1,6 @@
 /**
 Definition of the JRSResume class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module jrs-resume.js
 */
 
@@ -12,6 +12,7 @@ Definition of the JRSResume class.
     , _ = require('underscore')
     , PATH = require('path')
     , MD = require('marked')
+    , CONVERTER = require('./convert')
     , moment = require('moment');
 
   /**
@@ -49,6 +50,24 @@ Definition of the JRSResume class.
     this.basics.imp.fileName = filename || this.basics.imp.fileName;
     FS.writeFileSync( this.basics.imp.fileName, this.stringify( this ), 'utf8' );
     return this;
+  };
+
+  /**
+  Save the sheet to disk in a specific format, either FRESH or JRS.
+  */
+  JRSResume.prototype.saveAs = function( filename, format ) {
+
+    if( format === 'JRS' ) {
+      this.basics.imp.fileName = filename || this.imp.fileName;
+      FS.writeFileSync( this.basics.imp.fileName, this.stringify(), 'utf8' );
+    }
+    else {
+      var newRep = CONVERTER.toFRESH( this );
+      var stringRep = CONVERTER.toSTRING( newRep );
+      FS.writeFileSync( filename, stringRep, 'utf8' );
+    }
+    return this;
+
   };
 
   /**
@@ -92,6 +111,7 @@ Definition of the JRSResume class.
     if( opts.imp === undefined || opts.imp ) {
       this.basics.imp = this.basics.imp || { };
       this.basics.imp.title = (opts.title || this.basics.imp.title) || this.basics.name;
+      this.basics.imp.orgFormat = 'JRS';
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
