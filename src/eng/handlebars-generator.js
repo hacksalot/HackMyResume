@@ -35,8 +35,13 @@ Definition of the HandlebarsGenerator class.
 
       // Compile and run the Handlebars template.
       var template = HANDLEBARS.compile(jst);
+
+      var encData = json;
+      ( format === 'html' || format === 'pdf' ) && (encData = json.markdownify());
+      ( format === 'doc' ) && (encData = json.xmlify());
+
       return template({
-        r: format === 'html' || format === 'pdf' || format === 'png' ? json.markdownify() : json,
+        r: encData,
         RAW: json,
         filt: opts.filters,
         cssInfo: cssInfo,

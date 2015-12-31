@@ -13,6 +13,7 @@ Definition of the FRESHResume class.
     , __ = require('lodash')
     , PATH = require('path')
     , moment = require('moment')
+    , XML = require('xml-escape')
     , MD = require('marked')
     , CONVERTER = require('./convert')
     , JRSResume = require('./jrs-resume');
@@ -82,10 +83,88 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Create a copy of this resume in which all string fields have been run through
+  a transformation function (such as a Markdown filter or XML encoder).
+  */
+  FreshResume.prototype.transformStrings = function( filters, transformer ) {
+
+    var that = this;
+    var ret = this.dupe();
+
+    // TODO: refactor recursion
+    function transformStringsInObject( obj ) {
+
+      if( !obj ) return;
+      if( moment.isMoment( obj ) ) return;
+
+      if( _.isArray( obj ) ) {
+        obj.forEach( function(elem, idx, ar) {
+          if( typeof elem === 'string' || elem instanceof String )
+            ar[idx] = transformer( null, elem );
+          else if (_.isObject(elem))
+            transformStringsInObject( elem );
+        });
+      }
+      else if (_.isObject( obj )) {
+        Object.keys( obj ).forEach(function(k) {
+          var sub = obj[k];
+          if( typeof sub === 'string' || sub instanceof String ) {
+            if( filters.length && _.contains(filters, k) )
+              return;
+            obj[k] = transformer( k, sub );
+          }
+          else if (_.isObject( sub ))
+            transformStringsInObject( sub );
+        });
+      }
+
+    }
+
+    Object.keys( ret ).forEach(function(member){
+      transformStringsInObject( ret[ member ] );
+    });
+
+    return ret;
+  };
+
+  /**
   Create a copy of this resume in which all fields have been interpreted as
   Markdown.
   */
   FreshResume.prototype.markdownify = function() {
+
+    function MDIN( txt ){
+      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+    }
+
+    function trx(key, val) {
+      if( key === 'summary' ) {
+        return MD(val);
+      }
+      return MDIN(val);
+    }
+
+    return this.transformStrings( ['skills','url','start','end','date'], trx );
+  };
+
+  /**
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
+  */
+  FreshResume.prototype.xmlify = function() {
+
+    function trx(key, val) {
+      return XML(val);
+    }
+
+    return this.transformStrings( [], trx );
+  };
+
+  /**
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
+  */
+  FreshResume.prototype.markdownify2 = function() {
 
     var that = this;
     var ret = this.dupe();

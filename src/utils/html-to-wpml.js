@@ -47,6 +47,7 @@ Definition of the Markdown to WordProcessingML conversion routine.
           break;
 
         case 'Chars':
+          if( tok.chars.trim().length ) {
           var style = is_bold ? '<w:b/>' : '';
           style += is_italic ? '<w:i/>': '';
           style += is_link ? '<w:rStyle w:val="Hyperlink"/>' : '';
@@ -54,6 +55,7 @@ Definition of the Markdown to WordProcessingML conversion routine.
             (is_link ? ('<w:hlink w:dest="' + link_url + '">') : '') +
             '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + tok.chars +
             '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
+          }
           break;
       }
     });

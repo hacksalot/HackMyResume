@@ -9,6 +9,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
 
   var MD = require('marked')
     , H2W = require('../utils/html-to-wpml')
+    , XML = require('xml-escape')
     , moment = require('moment')
     , _ = require('underscore');
 
@@ -33,10 +34,12 @@ Generic template helper definitions for HackMyResume / FluentCV.
     wpml: function( txt, inline ) {
       if(!txt) return '';
       inline = (inline && !inline.hash) || false;
+      txt = XML(txt.trim());
       txt = inline ?
-        MD(txt.trim()).replace(/^\s*<p>|<\/p>\s*$/gi, '') :
-        MD(txt.trim());
-      txt = H2W( txt.trim() );
+        MD(txt).replace(/^\s*<p>|<\/p>\s*$/gi, '') :
+        MD(txt);
+      txt = H2W( txt );
+      console.log(txt);
       return txt;
     },
 
