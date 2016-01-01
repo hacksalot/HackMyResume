@@ -1,7 +1,9 @@
 HackMyResume
 ============
 
-[![Build status][travis-image]][travis-url]
+[![Latest release][img-release]][latest-release]
+[![Build status (MASTER)][img-master]][travis-url-master]
+[![Build status (DEV)][img-dev]][travis-url-dev]
 
 *Create polished résumés and CVs in multiple formats from your command line or
 shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
@@ -324,8 +326,12 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [fresh]: https://github.com/fluentdesk/FRESH
 [fresca]: https://github.com/fluentdesk/FRESCA
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
-[travis-image]: https://img.shields.io/travis/palomajs/paloma.svg?style=flat-square
-[travis-url]: https://travis-ci.org/hacksalot/HackMyResume
+[img-release]: https://img.shields.io/github/release/hacksalot/HackMyResume.svg?label=version
+[img-master]: https://img.shields.io/travis/hacksalot/HackMyResume/master.svg
+[img-dev]: https://img.shields.io/travis/hacksalot/HackMyResume/dev.svg?label=dev
+[travis-url-master]: https://travis-ci.org/hacksalot/HackMyResume/master
+[travis-url-dev]: https://travis-ci.org/hacksalot/HackMyResume/dev
+[latest-release]: https://github.com/hacksalot/HackMyResume/releases/latest
 [contribute]: CONTRIBUTING.md
 [fresh-themes]: https://github.com/fluentdesk/fresh-themes
 [jrst]: https://www.npmjs.com/search?q=jsonresume-theme
