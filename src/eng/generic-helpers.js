@@ -28,10 +28,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     formatDate: function(datetime, format, fallback) {
       if (moment) {
         var momentDate = moment( datetime );
-
-        if (momentDate.isValid()) {
-          return moment.format(format);
-        }
+        if (momentDate.isValid()) return momentDate.format(format);
       }
 
       return datetime || (typeof fallback == 'string' ? fallback : (fallback === true ? 'Present' : null));
