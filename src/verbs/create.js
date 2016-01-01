@@ -8,7 +8,8 @@ Implementation of the 'create' verb for HackMyResume.
 
   var FLUENT = require('../hackmyapi')
     , MKDIRP = require('mkdirp')
-    , PATH = require('path');
+    , PATH = require('path')
+    , chalk = require('chalk');
 
   /**
   Create a new empty resume in either FRESH or JRS format.

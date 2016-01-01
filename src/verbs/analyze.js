@@ -14,7 +14,8 @@ Implementation of the 'analyze' verb for HackMyResume.
     , MKDIRP = require('mkdirp')
     , PATH = require('path')
     , _ = require('underscore')
-    , ResumeFactory = require('../core/resume-factory');
+    , ResumeFactory = require('../core/resume-factory')
+    , chalk = require('chalk');
 
 
 

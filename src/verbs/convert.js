@@ -7,6 +7,7 @@ Implementation of the 'convert' verb for HackMyResume.
 (function(){
 
   var ResumeFactory = require('../core/resume-factory');
+  var chalk = require('chalk');
 
   /**
   Convert between FRESH and JRS formats.
