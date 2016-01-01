@@ -39,7 +39,6 @@ Generic template helper definitions for HackMyResume / FluentCV.
         MD(txt).replace(/^\s*<p>|<\/p>\s*$/gi, '') :
         MD(txt);
       txt = H2W( txt );
-      console.log(txt);
       return txt;
     },
 
