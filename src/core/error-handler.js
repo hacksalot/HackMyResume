@@ -84,7 +84,8 @@
       var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
       if( !ex.fluenterror || ex.fluenterror < 3 ) { // TODO: magic #s
         console.log( chalk.red.bold('ERROR: ' + trimmed.toString()) );
-        console.log( chalk.gray(ex.stack) );
+        if( ex.code !== 'ENOENT' ) // Don't emit stack for common stuff
+          console.log( chalk.gray(ex.stack) );
       }
       else {
         console.log( trimmed.toString() );
