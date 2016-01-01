@@ -25,6 +25,7 @@ Internal resume generation logic for HackMyResume.
     */
     var v = {
       build: require('./verbs/generate'),
+      analyze: require('./verbs/analyze'),      
       validate: require('./verbs/validate'),
       convert: require('./verbs/convert'),
       new: require('./verbs/create'),
