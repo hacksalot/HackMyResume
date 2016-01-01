@@ -23,10 +23,20 @@ Generic template helper definitions for HackMyResume / FluentCV.
 
     /**
     Convert the input date to a specified format through Moment.js.
+    If date is invalid, will return the time provided by the user, 
+    or default to the fallback param or 'Present' if that is set to true
     @method formatDate
     */
-    formatDate: function(datetime, format) {
-      return moment ? moment( datetime ).format( format ) : datetime;
+    formatDate: function(datetime, format, fallback) {
+      if (moment) {
+        var momentDate = moment( datetime );
+
+        if (momentDate.isValid()) {
+          return moment.format(format);
+        }
+      }
+
+      return datetime || (typeof fallback == 'string' ? fallback : (fallback === true ? 'Present' : null));
     },
 
     /**
