@@ -34,18 +34,6 @@ catch( ex ) {
 
 function main() {
 
-  // Colorize
-  // COLORS.setTheme({
-  //   title: ['white','bold'],
-  //   info: process.platform === 'win32' ? 'gray' : ['white','dim'],
-  //   infoBold: ['white','dim'],
-  //   warn: 'yellow',
-  //   error: 'red',
-  //   guide: 'yellow',
-  //   status: 'gray',//['white','dim'],
-  //   useful: 'green',
-  // });
-
   // Setup
   if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
   var a = ARGS( process.argv.slice(2) );
@@ -54,7 +42,7 @@ function main() {
 
   // Get the action to be performed
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
-  var verb = params[0];
+  var verb = opts.help ? 'help' : params[0];
   if( !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
     logMsg(chalk.yellow('Invalid command: "') + chalk.yellow.bold(verb) + chalk.yellow('"'));
     return;
@@ -62,11 +50,11 @@ function main() {
 
   // Find the TO keyword, if any
   var splitAt = _.indexOf( params, 'to' );
-  if( splitAt === a._.length - 1 ) {
+  if( splitAt === a._.length - 1 && splitAt !== -1 ) {
     // 'TO' cannot be the last argument
-    logMsg('Please '.warn + 'specify an output file'.warn.bold +
-      ' for this operation or '.warn + 'omit the TO keyword'.warn.bold +
-      '.'.warn );
+    logMsg(chalk.yellow('Please ') + chalk.yellow.bold('specify an output file') +
+      chalk.yellow(' for this operation or ') + chalk.yellow.bold('omit the TO keyword') +
+      chalk.yellow('.') );
     return;
   }
 
@@ -92,6 +80,7 @@ function getOpts( args ) {
     format: args.f || 'FRESH',
     prettify: !noPretty,
     silent: args.s || args.silent,
-    css: args.css || 'embed'
+    css: args.css || 'embed',
+    help: args.help || undefined
   };
 }
