@@ -6,8 +6,7 @@ var chai = require('chai')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
   , FCMD = require( '../src/hackmycmd')
-  , validator = require('is-my-json-valid')
-  , COLORS = require('colors');
+  , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;
 
@@ -18,17 +17,6 @@ describe('Testing CLI interface', function () {
     function logMsg() {
 
     }
-
-    COLORS.setTheme({
-      title: ['white','bold'],
-      info: process.platform === 'win32' ? 'gray' : ['white','dim'],
-      infoBold: ['white','dim'],
-      warn: 'yellow',
-      error: 'red',
-      guide: 'yellow',
-      status: 'gray',//['white','dim'],
-      useful: 'green',
-    });
 
     var opts = {
       //theme: 'compact',

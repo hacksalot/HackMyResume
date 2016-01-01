@@ -7,8 +7,7 @@ var SPAWNWATCHER = require('../src/core/spawn-watch')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
   , FCMD = require( '../src/hackmycmd')
-  , validator = require('is-my-json-valid')
-  , COLORS = require('colors');
+  , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;
 
@@ -17,17 +16,6 @@ function genThemes( title, src, fmt ) {
   describe('Testing themes against ' + title.toUpperCase() + ' resume ' + '(' + fmt + ')' , function () {
 
     var _sheet;
-
-    COLORS.setTheme({
-      title: ['white','bold'],
-      info: process.platform === 'win32' ? 'gray' : ['white','dim'],
-      infoBold: ['white','dim'],
-      warn: 'yellow',
-      error: 'red',
-      guide: 'yellow',
-      status: 'gray',//['white','dim'],
-      useful: 'green',
-    });
 
     function genTheme( fmt, src, themeName, themeLoc, testTitle ) {
       themeLoc = themeLoc || themeName;
