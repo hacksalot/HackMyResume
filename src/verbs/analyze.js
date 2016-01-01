@@ -24,7 +24,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   */
   module.exports = function analyze( src, dst, opts, logger ) {
     var _log = logger || console.log;
-    if( !src || !src.length ) throw { fluenterror: 8 };
+    if( !src || !src.length ) throw { fluenterror: 3 };
     var sourceResumes = ResumeFactory.load( src, _log, null, true );
     var nlzrs = _loadInspectors();
     sourceResumes.forEach( function(r) {
