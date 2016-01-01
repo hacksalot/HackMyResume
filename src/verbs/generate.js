@@ -21,6 +21,7 @@ Implementation of the 'generate' verb for HackMyResume.
     , _ = require('underscore')
     , _fmts = require('../core/default-formats')
     , extend = require('../utils/extend')
+    , chalk = require('chalk')
     , _err, _log, rez;
 
 
@@ -64,9 +65,10 @@ Implementation of the 'generate' verb for HackMyResume.
     var msg = '';
     var rezRep = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ?
-      'Merging '.gray + a.rez.imp.fileName : '') + ' onto '.gray + b.rez.fileName;
+      chalk.gray('Merging ') + a.rez.imp.fileName : '') + chalk.gray(' onto ') + b.rez.fileName;
       return extend( true, b.rez, a.rez );
     });
+
     rez = rezRep.rez;
     msg && _log(msg);
 
@@ -102,9 +104,9 @@ Implementation of the 'generate' verb for HackMyResume.
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
-        _log( 'Generating '.useful +
-          targInfo.fmt.outFormat.toUpperCase().useful.bold +
-          ' resume: '.useful + PATH.relative(process.cwd(), f ).useful.bold );
+        _log( chalk.green('Generating ') +
+          chalk.green.bold(targInfo.fmt.outFormat.toUpperCase()) +
+          chalk.green(' resume: ') + chalk.green.bold( PATH.relative(process.cwd(), f )) );
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
@@ -273,8 +275,8 @@ Implementation of the 'generate' verb for HackMyResume.
 
     // Output a message TODO: core should not log
     var numFormats = Object.keys(theTheme.formats).length;
-    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
-      (' theme (' + numFormats + ' formats)').info);
+    _log( chalk.gray('Applying ') + chalk.gray.bold(theTheme.name.toUpperCase()) +
+      chalk.gray(' theme (' + numFormats + ' formats)'));
     return theTheme;
   }
 

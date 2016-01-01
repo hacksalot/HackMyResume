@@ -9,7 +9,8 @@ Internal resume generation logic for HackMyResume.
 
     var unused = require('./utils/string')
       , PATH = require('path')
-      , FS = require('fs');
+      , FS = require('fs')
+      , chalk = require('chalk');
 
 
     /**
@@ -17,7 +18,7 @@ Internal resume generation logic for HackMyResume.
     */
     function help() {
       var manPage = FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' );
-      console.log( manPage.useful.bold );
+      console.log( chalk.green.bold(manPage) );
     }
 
     /**
@@ -25,7 +26,7 @@ Internal resume generation logic for HackMyResume.
     */
     var v = {
       build: require('./verbs/generate'),
-      analyze: require('./verbs/analyze'),      
+      analyze: require('./verbs/analyze'),
       validate: require('./verbs/validate'),
       convert: require('./verbs/convert'),
       new: require('./verbs/create'),

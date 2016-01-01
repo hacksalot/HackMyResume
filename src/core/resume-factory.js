@@ -13,6 +13,7 @@ Definition of the ResumeFactory class.
   require('string.prototype.startswith');
   var FS = require('fs');
   var ResumeConverter = require('./convert');
+  var chalk = require('chalk');
 
 
 
@@ -85,8 +86,7 @@ Definition of the ResumeFactory class.
     try {
 
       // TODO: Core should not log
-      log( 'Reading '.info + /*orgFormat.toUpperCase().infoBold +*/
-        'resume: '.info + fileName.cyan.bold );
+      log( chalk.gray('Reading resume: ') + chalk.cyan.bold(fileName) );
 
       rawData = FS.readFileSync( fileName, 'utf8' );
       return {

@@ -12,12 +12,12 @@ var SPAWNW = require('./core/spawn-watch')
   , ARGS = require( 'minimist' )
   , FCMD  = require( './hackmycmd')
   , PKG = require('../package.json')
-  , COLORS = require('colors')
   , FS = require('fs')
+  , chalk = require('chalk')
   , PATH = require('path')
   , HACKMYSTATUS = require('./core/status-codes')
   , opts = { }
-  , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white
+  , title = chalk.white('\n*** HackMyResume v' + PKG.version + ' ***')
   , _ = require('underscore');
 
 
@@ -35,16 +35,16 @@ catch( ex ) {
 function main() {
 
   // Colorize
-  COLORS.setTheme({
-    title: ['white','bold'],
-    info: process.platform === 'win32' ? 'gray' : ['white','dim'],
-    infoBold: ['white','dim'],
-    warn: 'yellow',
-    error: 'red',
-    guide: 'yellow',
-    status: 'gray',//['white','dim'],
-    useful: 'green',
-  });
+  // COLORS.setTheme({
+  //   title: ['white','bold'],
+  //   info: process.platform === 'win32' ? 'gray' : ['white','dim'],
+  //   infoBold: ['white','dim'],
+  //   warn: 'yellow',
+  //   error: 'red',
+  //   guide: 'yellow',
+  //   status: 'gray',//['white','dim'],
+  //   useful: 'green',
+  // });
 
   // Setup
   if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
@@ -56,7 +56,7 @@ function main() {
   var params = a._.map( function(p){ return p.toLowerCase().trim(); });
   var verb = params[0];
   if( !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
-    logMsg('Invalid command: "'.warn + verb.warn.bold + '"'.warn);
+    logMsg(chalk.yellow('Invalid command: "') + chalk.yellow.bold(verb) + chalk.yellow('"'));
     return;
   }
 

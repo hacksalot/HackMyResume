@@ -27,9 +27,9 @@ Implementation of the 'convert' verb for HackMyResume.
       var sheet = src.rez;
       var sourceFormat = ((sheet.basics && sheet.basics.imp) || sheet.imp).orgFormat === 'JRS' ? 'JRS' : 'FRESH';
       var targetFormat = sourceFormat === 'JRS' ? 'FRESH' : 'JRS';
-      _log( 'Converting '.useful + src.file.useful.bold + (' (' +
-        sourceFormat + ') to ').useful + dst[0].useful.bold +
-        (' (' + targetFormat + ').').useful );
+      _log( chalk.green('Converting ') + chalk.green.bold(src.file) + chalk.green(' (' +
+        sourceFormat + ') to ') + chalk.green.bold(dst[0]) +
+        chalk.green(' (' + targetFormat + ').') );
       sheet.saveAs( dst[idx], targetFormat );
     });
   };

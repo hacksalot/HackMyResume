@@ -39,8 +39,8 @@ Implementation of the 'analyze' verb for HackMyResume.
   function _analyze( resumeObject, nlzrs, opts, log ) {
     var rez = resumeObject.rez;
     var safeFormat = rez.meta.format.startsWith('FRESH') ? 'FRESH' : 'JRS';
-    log('Analyzing '.useful + safeFormat.useful.bold +
-      ' resume: '.useful + resumeObject.file.useful.bold);
+    log(chalk.cyan('Analyzing ') + chalk.cyan.bold(safeFormat) +
+      chalk.cyan(' resume: ') + chalk.cyan.bold(resumeObject.file));
     var info = _.mapObject( nlzrs, function(val, key) {
       return val.run( resumeObject.rez );
     });

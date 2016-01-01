@@ -9,7 +9,8 @@
     , FS = require('fs')
     , FCMD = require('../hackmycmd')
     , PATH = require('path')
-    , title = ('\n*** HackMyResume v' + PKG.version + ' ***').bold.white;
+    , chalk = require('chalk')
+    , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***');
 
   var ErrorHandler = module.exports = {
 
@@ -29,46 +30,45 @@
             break;
 
           case HACKMYSTATUS.resumeNotFound:
-            msg = 'Please '.guide + 'feed me a resume'.guide.bold +
-              ' in FRESH or JSON Resume format.'.guide;
+            msg = chalk.yellow('Please ') + chalk.yellow.bold('feed me a resume') +
+              chalk.yellow(' in FRESH or JSON Resume format.');
             break;
 
           case HACKMYSTATUS.missingCommand:
-            msg = title + "\nPlease ".guide + "give me a command".guide.bold +
-              " (".guide;
+            msg = title + chalk.yellow("\nPlease ") + chalk.yellow.bold("give me a command") +
+              chalk.yellow(" (");
 
             msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
-              return (idx === ar.length - 1 ? 'or '.guide : '') +
-                v.toUpperCase().guide;
-            }).join(', '.guide) + ").\n\n".guide;
+              return (idx === ar.length - 1 ? chalk.yellow('or ') : '') +
+                chalk.yellow.bold(v.toUpperCase());
+            }).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
 
-            msg += FS.readFileSync(
-              PATH.resolve(__dirname, '../use.txt'), 'utf8' ).info.bold;
+            msg += chalk.gray(FS.readFileSync( PATH.resolve(__dirname, '../use.txt'), 'utf8' ));
             break;
 
           case HACKMYSTATUS.invalidCommand:
-            msg = 'Please '.guide + 'specify the output resume file'.guide.bold +
-              ' that should be created.'.guide;
+            msg = chalk.yellow('Please ') + chalk.yellow.bold('specify the output resume file') +
+              chalk.yellow(' that should be created.');
             break;
 
           case HACKMYSTATUS.resumeNotFoundAlt:
-            msg = 'Please '.guide + 'feed me a resume'.guide.bold +
-              ' in either FRESH or JSON Resume format.'.guide;
+            msg = chalk.yellow('Please ') + chalk.yellow.bold('feed me a resume') +
+              chalk.yellow(' in either FRESH or JSON Resume format.');
             break;
 
           case HACKMYSTATUS.inputOutputParity:
-            msg = 'Please '.guide + 'specify an output file name'.guide.bold +
-              ' for every input file you wish to convert.'.guide;
+            msg = chalk.yellow('Please ') + chalk.yellow.bold('specify an output file name') +
+              chalk.yellow(' for every input file you wish to convert.');
             break;
 
           case HACKMYSTATUS.createNameMissing:
-            msg = 'Please '.guide + 'specify the filename of the resume'.guide.bold +
-              ' to create.'.guide;
+            msg = chalk.yellow('Please ') + chalk.yellow.bold('specify the filename of the resume') +
+              chalk.yellow(' to create.');
             break;
 
           case HACKMYSTATUS.wkhtmltopdf:
-            msg = 'ERROR: PDF generation failed. '.red.bold + ('Make sure wkhtmltopdf is ' +
-            'installed and accessible from your path.').red;
+            msg = chalk.red.bold('ERROR: PDF generation failed. ') + chalk.red('Make sure wkhtmltopdf is ' +
+            'installed and accessible from your path.');
             break;
 
         }
@@ -83,8 +83,8 @@
       var idx = msg.indexOf('Error: ');
       var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
       if( !ex.fluenterror || ex.fluenterror < 3 ) { // TODO: magic #s
-        console.log( ('ERROR: ' + trimmed.toString()).red.bold );
-        console.log( ex.stack.gray);
+        console.log( chalk.red.bold('ERROR: ' + trimmed.toString()) );
+        console.log( chalk.gray(ex.stack) );
       }
       else {
         console.log( trimmed.toString() );
