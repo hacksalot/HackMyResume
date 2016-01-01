@@ -1,8 +1,14 @@
 /**
+Error-handling routines for HackMyResume.
 @module error-handler.js
+@license MIT. See LICENSE.md for details.
 */
 
+
+
 (function() {
+
+
 
   var HACKMYSTATUS = require('./status-codes')
     , PKG = require('../../package.json')
@@ -12,7 +18,15 @@
     , chalk = require('chalk')
     , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***');
 
+
+
+  /**
+  An amorphous blob of error handling code for HackMyResume. Have an error?
+  Stick it here. We don't mind.
+  @class ErrorHandler
+  */
   var ErrorHandler = module.exports = {
+
 
 
     err: function( ex, shouldExit ) {
@@ -80,8 +94,12 @@
         exitCode = 4;
       }
 
+      // Deal with pesky 'Error:' prefix.
       var idx = msg.indexOf('Error: ');
       var trimmed = idx === -1 ? msg : msg.substring( idx + 7 );
+
+      // If this is an unhandled error, or a specific class of handled error,
+      // output the error message and stack.
       if( !ex.fluenterror || ex.fluenterror < 3 ) { // TODO: magic #s
         console.log( chalk.red.bold('ERROR: ' + trimmed.toString()) );
         if( ex.code !== 'ENOENT' ) // Don't emit stack for common stuff
@@ -91,6 +109,7 @@
         console.log( trimmed.toString() );
       }
 
+      // Let the error code be the process's return code.
       if( shouldExit )
         process.exit( exitCode );
 
