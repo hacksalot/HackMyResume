@@ -1,4 +1,4 @@
 node_modules/
-tests/sandbox/
+test/sandbox/
 docs/
 npm-debug.log
