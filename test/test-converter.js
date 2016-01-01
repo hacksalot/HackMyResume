@@ -3,6 +3,7 @@ var chai = require('chai')
   , expect = chai.expect
   , should = chai.should()
   , path = require('path')
+  , parsePath = require('parse-filepath')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
   , CONVERTER = require('../src/core/convert')
@@ -22,7 +23,7 @@ describe('FRESH/JRS converter', function () {
       var fileB = path.join( __dirname, 'sandbox/richard-hendriks.json' );
 
       _sheet = new FRESHResume().open( fileA );
-      MKDIRP.sync( path.parse(fileB).dir );
+      MKDIRP.sync( parsePath( fileB ).dirname );
       _sheet.saveAs( fileB, 'JRS' );
 
       var rawA = FS.readFileSync( fileA, 'utf8' );
