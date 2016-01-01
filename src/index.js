@@ -35,8 +35,8 @@ catch( ex ) {
 function main() {
 
   // Setup
-  if( process.argv.length <= 2 ) { throw { fluenterror: 4 }; }
   var a = ARGS( process.argv.slice(2) );
+  if( a._.length === 0 ) { throw { fluenterror: 4 }; }
   opts = getOpts( a );
   logMsg( title );
 

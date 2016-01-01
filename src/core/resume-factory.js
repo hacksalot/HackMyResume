@@ -88,17 +88,27 @@ Definition of the ResumeFactory class.
       // TODO: Core should not log
       log( chalk.gray('Reading resume: ') + chalk.cyan.bold(fileName) );
 
+      // Read the file
       rawData = FS.readFileSync( fileName, 'utf8' );
+
+      // Parse it to JSON
       return {
         json: JSON.parse( rawData )
       };
 
     }
-    catch(ex) {
+    catch( ex ) {
+
+      // If FS.readFileSync threw, pass the exception along.
+      if (!rawData)
+        throw ex;
+
+      // Otherwise if JSON.parse failed: probably a SyntaxError.
       return {
         error: ex,
         raw: rawData
       };
+
     }
   }
 
