@@ -70,8 +70,45 @@ Implementation of the 'generate' verb for HackMyResume.
     rez = rezRep.rez;
     msg && _log(msg);
 
+<<<<<<< HEAD
+    // Verify the specified theme name/path
+    var tFolder = PATH.join(
+      parsePath( require.resolve('fluent-themes') ).dirname,
+      _opts.theme
+    );
+    var exists = require('path-exists').sync;
+    if (!exists( tFolder )) {
+      tFolder = PATH.resolve( _opts.theme );
+      if (!exists( tFolder )) {
+        throw { fluenterror: 1, data: _opts.theme };
+      }
+    }
+
+    // Load the theme
+    var theTheme = (new FluentTheme()).open( tFolder );
+    _opts.themeObj = theTheme;
+    _log( 'Applying '.info + theTheme.name.toUpperCase().infoBold +
+      (' theme (' + Object.keys(theTheme.formats).length + ' formats)').info);
+
+    // Expand output resumes... (can't use map() here)
+    var targets = [], that = this;
+    ( (dst && dst.length && dst) || ['resume.all'] ).forEach( function(t) {
+
+      var to = PATH.resolve(t),
+          pa = parsePath(to),
+          fmat = pa.extname || '.all';
+
+      targets.push.apply(targets, fmat === '.all' ?
+        Object.keys( theTheme.formats ).map(function(k){
+          var z = theTheme.formats[k];
+          return { file: to.replace(/all$/g,z.outFormat), fmt: z };
+        }) : [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+
+    });
+=======
     // Expand output resumes...
     var targets = expand( dst, theme );
+>>>>>>> upstream/master
 
     // Run the transformation!
     targets.forEach( function(t) {
