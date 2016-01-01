@@ -32,6 +32,12 @@ Error-handling routines for HackMyResume.
     err: function( ex, shouldExit ) {
       var msg = '', exitCode;
 
+      if( ex.handled ) {
+        if( shouldExit )
+          process.exit( exitCode );
+        return;
+      }
+
       if( ex.fluenterror ){
         switch( ex.fluenterror ) { // TODO: Remove magic numbers
 

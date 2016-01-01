@@ -59,7 +59,9 @@ Implementation of the 'generate' verb for HackMyResume.
 
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
-    var sheets = ResumeFactory.load(src, _log, theme.render ? 'JRS' : 'FRESH', true);
+    var sheets = ResumeFactory.load(src, {
+      log: _log, format: theme.render ? 'JRS' : 'FRESH', objectify: true, throw: true
+    });
 
     // Merge input resumes...
     var msg = '';

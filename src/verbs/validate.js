@@ -30,17 +30,26 @@ Implementation of the 'validate' verb for HackMyResume.
     // Load input resumes...
     sources.forEach(function( src ) {
 
-      var result = ResumeFactory.loadOne( src, function(){}, null, false );
+      var result = ResumeFactory.loadOne( src, {
+        log: function(){},
+        format: null,
+        objectify: false,
+        throw: false
+      });
+
       if( result.error ) {
-        _log( chalk.white('Validating ') + chalk.gray.bold(src) + chalk.white(' against ') + chalk.gray.bold('AUTO') + chalk.white(' schema:') + chalk.red.bold(' BROKEN') );
+        // TODO: Core should not log
+        _log( chalk.white('Validating ') + chalk.gray.bold(src) +
+        chalk.white(' against ') + chalk.gray.bold('AUTO') +
+        chalk.white(' schema:') + chalk.red.bold(' BROKEN') );
 
         var ex = result.error; // alias
         if ( ex instanceof SyntaxError) {
           var info = new SyntaxErrorEx( ex, result.raw );
-          _log( chalk.red.bold('--> ') + chalk.red(src.toUpperCase() + ' contains invalid JSON on line ' +
-            info.line + ' column ' + info.col + '.') +
-            chalk.red(' Unable to validate.') );
-          _log( chalk.red('    INTERNAL: ' + ex) );
+          _log( chalk.red.bold('--> ' + src.toUpperCase() + ' contains invalid JSON on line ' +
+            info.line + ' column ' + info.col + '.' +
+            chalk.red(' Unable to validate.') ) );
+          _log( chalk.red.bold('    INTERNAL: ' + ex) );
         }
         else {
           _log(chalk.red.bold('ERROR: ' + ex.toString()));

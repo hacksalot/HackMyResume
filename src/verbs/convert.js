@@ -23,7 +23,7 @@ Implementation of the 'convert' verb for HackMyResume.
     if( sources && dst && sources.length && dst.length && sources.length !== dst.length ) {
       throw { fluenterror: 7 };
     }
-    var sourceResumes = ResumeFactory.load( sources, _log, null, true );
+    var sourceResumes = ResumeFactory.load( sources, { log: _log, format: null, objectify: true, throw: true } );
     sourceResumes.forEach(function( src, idx ) {
       var sheet = src.rez;
       var sourceFormat = ((sheet.basics && sheet.basics.imp) || sheet.imp).orgFormat === 'JRS' ? 'JRS' : 'FRESH';
