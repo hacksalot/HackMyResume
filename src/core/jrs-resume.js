@@ -1,6 +1,6 @@
 /**
 Definition of the JRSResume class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module jrs-resume.js
 */
 
@@ -11,6 +11,8 @@ Definition of the JRSResume class.
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
+    , MD = require('marked')
+    , CONVERTER = require('./convert')
     , moment = require('moment');
 
   /**
@@ -51,6 +53,24 @@ Definition of the JRSResume class.
   };
 
   /**
+  Save the sheet to disk in a specific format, either FRESH or JRS.
+  */
+  JRSResume.prototype.saveAs = function( filename, format ) {
+
+    if( format === 'JRS' ) {
+      this.basics.imp.fileName = filename || this.imp.fileName;
+      FS.writeFileSync( this.basics.imp.fileName, this.stringify(), 'utf8' );
+    }
+    else {
+      var newRep = CONVERTER.toFRESH( this );
+      var stringRep = CONVERTER.toSTRING( newRep );
+      FS.writeFileSync( filename, stringRep, 'utf8' );
+    }
+    return this;
+
+  };
+
+  /**
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */
@@ -70,6 +90,7 @@ Definition of the JRSResume class.
   };
 
   /**
+  Initialize the JRS Resume from string data.
   Open and parse the specified JSON resume sheet. Merge the JSON object model
   onto this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
@@ -77,12 +98,20 @@ Definition of the JRSResume class.
   JRSResume.prototype.parse = function( stringData, opts ) {
     opts = opts || { };
     var rep = JSON.parse( stringData );
+    return this.parseJSON( rep, opts );
+  };
 
+  /**
+  Initialize the JRSRume from JSON data.
+  */
+  JRSResume.prototype.parseJSON = function( rep, opts ) {
+    opts = opts || { };
     extend( true, this, rep );
     // Set up metadata
     if( opts.imp === undefined || opts.imp ) {
       this.basics.imp = this.basics.imp || { };
       this.basics.imp.title = (opts.title || this.basics.imp.title) || this.basics.name;
+      this.basics.imp.orgFormat = 'JRS';
     }
     // Parse dates, sort dates, and calculate computed values
     (opts.date === undefined || opts.date) && _parseDates.call( this );
@@ -228,6 +257,70 @@ Definition of the JRSResume class.
         : ( a.safeStartDate.isAfter(b.safeStartDate) && -1 ) || 0;
     }
 
+  };
+
+  JRSResume.prototype.dupe = function() {
+    var rnew = new JRSResume();
+    rnew.parse( this.stringify(), { } );
+    return rnew;
+  };
+
+  /**
+  Create a copy of this resume in which all fields have been interpreted as
+  Markdown.
+  */
+  JRSResume.prototype.harden = function() {
+
+    var that = this;
+    var ret = this.dupe();
+
+    function HD(txt) {
+      return '@@@@~' + txt + '~@@@@';
+    }
+
+    function HDIN(txt){
+      //return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
+      return HD(txt);
+    }
+
+    // TODO: refactor recursion
+    function hardenStringsInObject( obj, inline ) {
+
+      if( !obj ) return;
+      inline = inline === undefined || inline;
+
+
+      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
+        obj.forEach(function(elem, idx, ar){
+          if( typeof elem === 'string' || elem instanceof String )
+            ar[idx] = inline ? HDIN(elem) : HD( elem );
+          else
+            hardenStringsInObject( elem );
+        });
+      }
+      else if (typeof obj === 'object') {
+        Object.keys( obj ).forEach(function(key) {
+          var sub = obj[key];
+          if( typeof sub === 'string' || sub instanceof String ) {
+            if( _.contains(['skills','url','website','startDate','endDate','releaseDate','date','phone','email','address','postalCode','city','country','region'], key) )
+              return;
+            if( key === 'summary' )
+              obj[key] = HD( obj[key] );
+            else
+              obj[key] = inline ? HDIN( obj[key] ) : HD( obj[key] );
+          }
+          else
+            hardenStringsInObject( sub );
+        });
+      }
+
+    }
+
+    Object.keys( ret ).forEach(function(member){
+      hardenStringsInObject( ret[ member ] );
+    });
+
+    return ret;
   };
 
   /**

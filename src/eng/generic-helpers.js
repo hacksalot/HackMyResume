@@ -1,6 +1,6 @@
 /**
-Generic template helper definitions for FluentCV.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+Generic template helper definitions for HackMyResume / FluentCV.
+@license MIT. See LICENSE.md for details.
 @module generic-helpers.js
 */
 
@@ -9,6 +9,7 @@ Generic template helper definitions for FluentCV.
 
   var MD = require('marked')
     , H2W = require('../utils/html-to-wpml')
+    , XML = require('xml-escape')
     , moment = require('moment')
     , _ = require('underscore');
 
@@ -33,10 +34,11 @@ Generic template helper definitions for FluentCV.
     wpml: function( txt, inline ) {
       if(!txt) return '';
       inline = (inline && !inline.hash) || false;
+      txt = XML(txt.trim());
       txt = inline ?
-        MD(txt.trim()).replace(/^\s*<p>|<\/p>\s*$/gi, '') :
-        MD(txt.trim());
-      txt = H2W( txt.trim() );
+        MD(txt).replace(/^\s*<p>|<\/p>\s*$/gi, '') :
+        MD(txt);
+      txt = H2W( txt );
       return txt;
     },
 
@@ -112,6 +114,16 @@ Generic template helper definitions for FluentCV.
     */
     either: function( lhs, rhs, options ) {
       if (lhs || rhs) return options.fn(this);
+    },
+
+    /**
+    Conditional stylesheet link. Either display the link or embed the stylesheet
+    via <style></style> tag.
+    */
+    styleSheet: function( file, options ) {
+      return ( this.opts.css === 'link') ?
+        '<link href="' + file + '" rel="stylesheet" type="text/css">' :
+        '<style>' + this.cssInfo.data + '</style>';
     },
 
     /**

@@ -1,6 +1,6 @@
 /**
 Definition of the TemplateGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module template-generator.js
 */
 
@@ -17,7 +17,8 @@ Definition of the TemplateGenerator class.
     , MKDIRP = require('mkdirp')
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
-    , Theme = require('../core/theme');
+    , FRESHTheme = require('../core/fresh-theme')
+    , JRSTheme = require('../core/jrs-theme');
 
 
 
@@ -77,7 +78,14 @@ Definition of the TemplateGenerator class.
     @method invoke
     @param rez A FreshResume object.
     @param opts Generator options.
-    @returns An array of strings representing generated output files.
+    @returns An array of objects representing the generated output files. Each
+    object has this format:
+
+        {
+          files: [ { info: { }, data: [ ] }, { ... } ],
+          themeInfo: { }
+        }
+
     */
     invoke: function( rez, opts ) {
 
@@ -156,7 +164,7 @@ Definition of the TemplateGenerator class.
               { outputFile: fileName, mk: file.data } );
           }
           catch(ex) {
-            console.log(ex);
+            require('../core/error-handler').err(ex, false);
           }
         }
         else if( file.info.action === null/* && theme.explicit*/ ) {
@@ -181,6 +189,8 @@ Definition of the TemplateGenerator class.
           FS.symlinkSync( absTarg, absLoc, type);
         });
       }
+
+      return genInfo;
 
     },
 
@@ -220,20 +230,28 @@ Definition of the TemplateGenerator class.
   Given a theme title, load the corresponding theme.
   */
   function themeFromMoniker() {
+
     // Verify the specified theme name/path
     var tFolder = PATH.join(
-      parsePath( require.resolve('fluent-themes') ).dirname,
+      parsePath( require.resolve('fresh-themes') ).dirname,
       this.opts.theme
     );
-    var exists = require('path-exists').sync;
-    if( !exists( tFolder ) ) {
-      tFolder = PATH.resolve( this.opts.theme );
-      if( !exists( tFolder ) ) {
-        throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
-      }
-    }
 
-    var t = this.opts.themeObj || new Theme().open( tFolder );
+    var t;
+    if( this.opts.theme.startsWith('jsonresume-theme-') ) {
+      console.log('LOADING JSON RESUME');
+      t = new JRSTheme().open( tFolder );
+    }
+    else {
+      var exists = require('path-exists').sync;
+      if( !exists( tFolder ) ) {
+        tFolder = PATH.resolve( this.opts.theme );
+        if( !exists( tFolder ) ) {
+          throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
+        }
+      }
+      t = this.opts.themeObj || new FRESHTheme().open( tFolder );
+    }
 
     // Load the theme and format
     return {

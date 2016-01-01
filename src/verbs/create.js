@@ -1,3 +1,9 @@
+/**
+Implementation of the 'create' verb for HackMyResume.
+@module create.js
+@license MIT. See LICENSE.md for details.
+*/
+
 (function(){
 
   var FLUENT = require('../hackmyapi')

@@ -1,6 +1,6 @@
 /**
 Definition of the HtmlPngGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.MD for details.
 @module html-png-generator.js
 */
 
@@ -11,7 +11,7 @@ Definition of the HtmlPngGenerator class.
     , HTML = require( 'html' );
 
   /**
-  An HTML-based PDF resume generator for HackMyResume.
+  An HTML-based PNG resume generator for HackMyResume.
   */
   var HtmlPngGenerator = module.exports = TemplateGenerator.extend({
 
@@ -19,24 +19,29 @@ Definition of the HtmlPngGenerator class.
       this._super( 'png', 'html' );
     },
 
-    /**
-    Generate the binary PDF.
-    */
-    onBeforeSave: function( info ) {
-      png( info.mk, info.outputFile );
-      return null; // halt further processing
+    invoke: function( rez, themeMarkup, cssInfo, opts ) {
+      //return YAML.stringify( JSON.parse( rez.stringify() ), Infinity, 2 );
+    },
+
+    generate: function( rez, f, opts ) {
+      var htmlResults = opts.targets.filter(function(t){
+        return t.fmt.outFormat === 'html';
+      });
+      var htmlFile = htmlResults[0].final.files.filter(function(fl){
+        return fl.info.ext === 'html';
+      });
+      png(htmlFile[0].data, f);
     }
 
   });
 
   /**
-  Generate a PDF from HTML.
+  Generate a PNG from HTML.
   */
   function png( markup, fOut ) {
-
-    require('webshot')( markup , { encoding: 'binary', siteType: 'html' } )
-      .pipe( FS.createWriteStream( fOut ) );
-
+    // require('webshot')( markup , { encoding: 'binary', siteType: 'html' } )
+    //   .pipe( FS.createWriteStream( fOut ) );
+    require('webshot')( markup , fOut, { siteType: 'html' }, function(err) { } );
   }
 
 }());
