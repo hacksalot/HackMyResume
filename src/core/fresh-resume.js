@@ -161,59 +161,6 @@ Definition of the FRESHResume class.
   };
 
   /**
-  Create a copy of this resume in which all fields have been interpreted as
-  Markdown.
-  */
-  FreshResume.prototype.markdownify2 = function() {
-
-    var that = this;
-    var ret = this.dupe();
-
-    function MDIN(txt){
-      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
-    }
-
-    // TODO: refactor recursion
-    function markdownifyStringsInObject( obj, inline ) {
-
-      if( !obj ) return;
-
-      inline = inline === undefined || inline;
-
-      if( Object.prototype.toString.call( obj ) === '[object Array]' ) {
-        obj.forEach(function(elem, idx, ar){
-          if( typeof elem === 'string' || elem instanceof String )
-            ar[idx] = inline ? MDIN(elem) : MD( elem );
-          else
-            markdownifyStringsInObject( elem );
-        });
-      }
-      else if (typeof obj === 'object') {
-        Object.keys( obj ).forEach(function(key) {
-          var sub = obj[key];
-          if( typeof sub === 'string' || sub instanceof String ) {
-            if( _.contains(['skills','url','start','end','date'], key) )
-              return;
-            if( key === 'summary' )
-              obj[key] = MD( obj[key] );
-            else
-              obj[key] = inline ? MDIN( obj[key] ) : MD( obj[key] );
-          }
-          else
-            markdownifyStringsInObject( sub );
-        });
-      }
-
-    }
-
-    Object.keys( ret ).forEach(function(member){
-      markdownifyStringsInObject( ret[ member ] );
-    });
-
-    return ret;
-  };
-
-  /**
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */
