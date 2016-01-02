@@ -7,7 +7,10 @@ var SPAWNWATCHER = require('../src/core/spawn-watch')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
   , FCMD = require( '../src/hackmycmd')
-  , validator = require('is-my-json-valid');
+  , validator = require('is-my-json-valid')
+  , READFILES = require('recursive-readdir-sync')
+  , fileContains = require('../src/utils/file-contains')
+  , FS = require('fs');
 
 chai.config.includeStack = false;
 
@@ -51,6 +54,23 @@ function genThemes( title, src, fmt ) {
 
 }
 
+function folderContains( needle, haystack ) {
+  return _.some( READFILES( path.join(__dirname, haystack) ), function( absPath ) {
+    if( FS.lstatSync( absPath ).isFile() ) {
+      if( fileContains( absPath, needle ) ) {
+        console.log('Found invalid metadata in ' + absPath);
+        return true;
+      }
+    }
+  });
+}
+
 genThemes( 'jane-q-fullstacker', ['node_modules/jane-q-fullstacker/resume/jane-resume.json'], 'FRESH' );
 genThemes( 'johnny-trouble', ['node_modules/johnny-trouble-resume/src/johnny-trouble.fresh.json'], 'FRESH' );
 genThemes( 'richard-hendriks', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], 'JRS' );
+
+describe('Verifying generated theme files...', function() {
+  it('Generated files should not contain ICE.', function() {
+    expect( folderContains('@@@@', 'sandbox') ).to.be.false;
+  });
+});
