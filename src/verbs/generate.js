@@ -155,7 +155,7 @@ Implementation of the 'generate' verb for HackMyResume.
           console.log = consoleLog;
 
           // Unharden
-          rezHtml = rezHtml.replace( /@@@@~.+?~@@@@/g, function(val){
+          rezHtml = rezHtml.replace( /@@@@~.*?~@@@@/gm, function(val){
             return MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) );
           });
 
