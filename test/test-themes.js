@@ -12,7 +12,7 @@ var SPAWNWATCHER = require('../src/core/spawn-watch')
   , fileContains = require('../src/utils/file-contains')
   , FS = require('fs');
 
-chai.config.includeStack = false;
+chai.config.includeStack = true;
 
 function genThemes( title, src, fmt ) {
 
@@ -31,9 +31,9 @@ function genThemes( title, src, fmt ) {
             theme: themeLoc,
             format: fmt,
             prettify: true,
-            silent: true
+            silent: false
           };
-          FCMD.verbs.build( src, dst, opts, function() {} );
+          FCMD.verbs.build( src, dst, opts, function(msg) { console.log(msg); } );
         }
         tryOpen.should.not.Throw();
       });

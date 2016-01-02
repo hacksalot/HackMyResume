@@ -27,26 +27,27 @@ Implementation of the 'validate' verb for HackMyResume.
       jars: require('../core/resume.json')
     };
 
+    var resumes = ResumeFactory.load( sources, {
+      log: _log,
+      format: null,
+      objectify: false,
+      throw: false,
+      muffle: true
+    });
+
     // Load input resumes...
-    sources.forEach(function( src ) {
+    resumes.forEach(function( src ) {
 
-      var result = ResumeFactory.loadOne( src, {
-        log: function(){},
-        format: null,
-        objectify: false,
-        throw: false
-      });
-
-      if( result.error ) {
+      if( src.error ) {
         // TODO: Core should not log
-        _log( chalk.white('Validating ') + chalk.gray.bold(src) +
+        _log( chalk.white('Validating ') + chalk.gray.bold(src.file) +
         chalk.white(' against ') + chalk.gray.bold('AUTO') +
         chalk.white(' schema:') + chalk.red.bold(' BROKEN') );
 
-        var ex = result.error; // alias
+        var ex = src.error; // alias
         if ( ex instanceof SyntaxError) {
-          var info = new SyntaxErrorEx( ex, result.raw );
-          _log( chalk.red.bold('--> ' + src.toUpperCase() + ' contains invalid JSON on line ' +
+          var info = new SyntaxErrorEx( ex, src.raw );
+          _log( chalk.red.bold('--> ' + src.file.toUpperCase() + ' contains invalid JSON on line ' +
             info.line + ' column ' + info.col + '.' +
             chalk.red(' Unable to validate.') ) );
           _log( chalk.red.bold('    INTERNAL: ' + ex) );
@@ -57,7 +58,7 @@ Implementation of the 'validate' verb for HackMyResume.
         return;
       }
 
-      var json = result.json;
+      var json = src.json;
       var isValid = false;
       var style = 'green';
       var errors = [];
@@ -81,7 +82,7 @@ Implementation of the 'validate' verb for HackMyResume.
         return;
       }
 
-      _log( chalk.white('Validating ') + chalk.white.bold(result.file) + chalk.white(' against ') +
+      _log( chalk.white('Validating ') + chalk.white.bold(src.file) + chalk.white(' against ') +
         chalk.white.bold(fmt.replace('jars','JSON Resume').toUpperCase()) +
         chalk.white(' schema: ') + chalk[style].bold(isValid ? 'VALID!' : 'INVALID') );
 

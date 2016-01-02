@@ -92,7 +92,7 @@ Definition of the ResumeFactory class.
     try {
 
       // TODO: Core should not log
-      opts.log( chalk.gray('Reading resume: ') + chalk.cyan.bold(fileName) );
+      opts.log( chalk.cyan('Reading resume: ') + chalk.cyan.bold(fileName) );
 
       // Read the file
       rawData = FS.readFileSync( fileName, 'utf8' );
@@ -106,7 +106,7 @@ Definition of the ResumeFactory class.
     catch( ex ) {
 
       // JSON.parse failed due to invalid JSON
-      if ( ex instanceof SyntaxError) {
+      if ( !opts.muffle && ex instanceof SyntaxError) {
         var info = new SyntaxErrorEx( ex, rawData );
         opts.log( chalk.red.bold(fileName.toUpperCase() + ' contains invalid JSON on line ' +
           info.line + ' column ' + info.col + '.' +
@@ -118,7 +118,8 @@ Definition of the ResumeFactory class.
       if( opts.throw ) throw ex;
       else return {
         error: ex,
-        raw: rawData
+        raw: rawData,
+        file: fileName
       };
 
     }

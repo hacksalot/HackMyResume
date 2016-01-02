@@ -239,7 +239,6 @@ Definition of the TemplateGenerator class.
 
     var t;
     if( this.opts.theme.startsWith('jsonresume-theme-') ) {
-      console.log('LOADING JSON RESUME');
       t = new JRSTheme().open( tFolder );
     }
     else {
@@ -274,6 +273,7 @@ Definition of the TemplateGenerator class.
     }
     catch(ex) {
       console.log(ex);
+      throw ex;
     }
   }
 

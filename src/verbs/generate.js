@@ -45,13 +45,19 @@ Implementation of the 'generate' verb for HackMyResume.
   */
   function build( src, dst, opts, logger, errHandler ) {
 
-    // Housekeeping...
+    // Housekeeping
+    //_opts = extend( true, _opts, opts );
     _log = logger || console.log;
     _err = errHandler || error;
-    //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
     _opts.css = opts.css;
+
+    // If two or more files are passed to the GENERATE command and the TO
+    // keyword is omitted, the last file specifies the output file.
+    if( src.length > 1 && ( !dst || !dst.length ) ) {
+      dst.push( src.pop() );
+    }
 
     // Load the theme...
     var tFolder = verify_theme( _opts.theme );
@@ -60,18 +66,18 @@ Implementation of the 'generate' verb for HackMyResume.
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
     var sheets = ResumeFactory.load(src, {
-      log: _log, format: theme.render ? 'JRS' : 'FRESH', objectify: true, throw: true
-    });
+      log: _log, format: theme.render ? 'JRS' : 'FRESH',
+      objectify: true, throw: true
+    }).map(function(sh){ return sh.rez; });
 
     // Merge input resumes...
     var msg = '';
-    var rezRep = _.reduceRight( sheets, function( a, b, idx ) {
+    rez = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ?
-      chalk.gray('Merging ') + a.rez.imp.fileName : '') + chalk.gray(' onto ') + b.rez.fileName;
-      return extend( true, b.rez, a.rez );
+        chalk.cyan('Merging ') + chalk.cyan.bold(a.file) : '') +
+        chalk.cyan(' onto ') + chalk.cyan.bold(b.file);
+      return extend( true, b, a );
     });
-
-    rez = rezRep.rez;
     msg && _log(msg);
 
     // Expand output resumes...
@@ -277,8 +283,8 @@ Implementation of the 'generate' verb for HackMyResume.
 
     // Output a message TODO: core should not log
     var numFormats = Object.keys(theTheme.formats).length;
-    _log( chalk.gray('Applying ') + chalk.gray.bold(theTheme.name.toUpperCase()) +
-      chalk.gray(' theme (' + numFormats + ' formats)'));
+    _log( chalk.yellow('Applying ') + chalk.yellow.bold(theTheme.name.toUpperCase()) +
+      chalk.yellow(' theme (' + numFormats + ' formats)'));
     return theTheme;
   }
 
