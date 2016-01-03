@@ -224,11 +224,13 @@ Definition of the FRESHResume class.
     var flatSkills = [];
     if( this.skills ) {
       if( this.skills.sets ) {
-        flatSkills = flatSkills.concat( this.skills.sets.map(function(sk) { return sk.name;  }) );
+        flatSkills = this.skills.sets.map(function(sk) { return sk.skills;  })
+          .reduce(function(a,b) { return a.concat(b); });
       }
       else if( this.skills.list ) {
         flatSkills = flatSkills.concat( this.skills.list.map(function(sk) { return sk.name;  }) );
       }
+      flatSkills = _.uniq( flatSkills );
     }
     return flatSkills;
   },
