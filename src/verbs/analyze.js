@@ -55,32 +55,37 @@ Implementation of the 'analyze' verb for HackMyResume.
       return val.run( resumeObject.rez );
     });
 
-    log(chalk.cyan('\nSECTIONS (') + chalk.cyan.bold(_.keys(info.totals).length) + chalk.cyan('):\n'));
+    log(chalk.cyan.bold('\nSECTIONS') + chalk.cyan(' (') + chalk.white.bold(_.keys(info.totals).length) + chalk.cyan('):\n'));
     var pad = require('string-padding');
     _.each( info.totals, function(tot, key) {
       log(chalk.cyan(pad(key + ': ',20)) + chalk.cyan.bold(pad(tot.toString(),4)));
     });
 
     log();
-    log(chalk.cyan('GAPS (') + chalk.cyan.bold(info.gaps.length) + chalk.cyan('):\n'));
-    log(chalk.cyan(pad('Lengths:    ', padding + 3)) + info.gaps.map(function(g) {
+    log(chalk.cyan.bold('COVERAGE') + chalk.cyan(' (') + chalk.white.bold( info.coverage.pct ) + chalk.cyan('):\n'));
+    log(chalk.cyan(pad('Gaps:    ', padding + 3)) + chalk.cyan.bold(info.coverage.gaps.length) + chalk.cyan('  [') + info.coverage.gaps.map(function(g) {
         var clr = 'green';
         if( g.duration > 35 ) clr = 'yellow';
         if( g.duration > 90 ) clr = 'red';
         return chalk[clr].bold( g.duration) ;
-      }).join(', ') );
-
+      }).join(', ') + chalk.cyan(']') );
+      log(chalk.cyan(pad('Overlaps:    ', padding + 3)) + chalk.cyan.bold(info.coverage.overlaps.length) + chalk.cyan('  [') + info.coverage.overlaps.map(function(ol) {
+          var clr = 'green';
+          if( ol.duration > 35 ) clr = 'yellow';
+          if( ol.duration > 90 ) clr = 'red';
+          return chalk[clr].bold( ol.duration) ;
+        }).join(', ') + chalk.cyan(']') );
 
     var tot = 0;
     log();
-    log( chalk.cyan('KEYWORDS (') + chalk.cyan.bold( info.keywords.length ) +
+    log( chalk.cyan.bold('KEYWORDS') + chalk.cyan(' (') + chalk.white.bold( info.keywords.length ) +
       chalk.cyan('):\n\n') +
       info.keywords.map(function(g) {
         tot += g.count;
         return chalk.cyan( pad(g.name + ': ', padding) ) + chalk.cyan.bold( pad( g.count.toString(), 4 )) + chalk.cyan(' mentions');
       }).join('\n'));
 
-    console.log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 4 )) + chalk.cyan(' mentions'));
+    log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 4 )) + chalk.cyan(' mentions'));
   }
 
 
@@ -91,7 +96,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   function _loadInspectors() {
     return {
       totals: require('../inspectors/totals-inspector'),
-      gaps: require('../inspectors/gap-inspector'),
+      coverage: require('../inspectors/gap-inspector'),
       keywords: require('../inspectors/keyword-inspector')
     };
   }

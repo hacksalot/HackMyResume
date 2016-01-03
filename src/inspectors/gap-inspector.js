@@ -59,23 +59,55 @@ Employment gap analysis for HackMyResume.
       // increment a reference count. Each time an end date is found, decrement
       // the reference count. When the reference count reaches 0, we have a gap.
       // When the reference count is > 0, the candidate is employed.
-      var num_gaps = 0, ref_count = 0, gap_start,gaps = [];
+      var num_gaps = 0, ref_count = 0, gap_start, total_days = 0, total_work_days = 0,
+        coverage = { gaps: [], overlaps: [] };
       new_e.forEach( function(point) {
         var inc = point[0] === 'start' ? 1 : -1;
         ref_count += inc;
         if( ref_count === 0 ) {
-          gaps.push( { start: point[1], end: null });
+          coverage.gaps.push( { start: point[1], end: null });
         }
         else if( ref_count === 1 && inc === 1 ) {
-          var lastGap = _.last( gaps );
+          var lastGap = _.last( coverage.gaps );
           if( lastGap ) {
             lastGap.end = point[1];
             lastGap.duration = lastGap.end.diff( lastGap.start, 'days' );
+            total_days += lastGap.duration;
+          }
+        }
+        else if( ref_count === 2 && inc === 1 ) {
+          coverage.overlaps.push( { start: point[1], end: null });
+        }
+        else if( ref_count === 1 && inc === -1 ) {
+          var lastOverlap = _.last( coverage.overlaps );
+          if( lastOverlap ) {
+            lastOverlap.end = point[1];
+            lastOverlap.duration = lastOverlap.end.diff( lastOverlap.start, 'days' );
+            if( lastOverlap.duration === 0 ) {
+              coverage.overlaps.pop();
+            }
+            total_work_days += lastOverlap.duration;
           }
         }
       });
 
-      return gaps;
+      // var now = moment();
+      // _.each( coverage.overlaps, function(ol) {
+      //   return ol.end = ol.end || now;
+      // });
+      if( !_.last( coverage.overlaps ).end ) {
+        var l = _.last( coverage.overlaps );
+        l.end = moment();
+        l.duration = l.end.diff( l.start, 'days' );
+      }
+
+      coverage.duration = total_days;
+      coverage.pct = ( total_days > 0 ) ?
+        (100.0 - ( total_days / rez.duration('days') * 100)).toFixed(1) + '%' :
+        '???';
+
+
+      return coverage;
     }
 
 
