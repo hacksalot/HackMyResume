@@ -62,6 +62,7 @@
     "moment": "^2.10.6",
     "parse-filepath": "^0.6.3",
     "path-exists": "^2.1.0",
+    "phantom": "^0.8.4",
     "recursive-readdir-sync": "^1.0.6",
     "simple-html-tokenizer": "^0.2.0",
     "string.prototype.startswith": "^0.2.0",

@@ -93,8 +93,9 @@ function main() {
     //.arguments('<sources> TO [targets]')
     //.usage('...')
     .option('-t --theme <theme>', 'Theme name or path', 'modern')
-    .option('-p --prettify', 'Preffity HTML output', true)
+    .option('-n --no-prettify', 'Disable HTML prettification', true)
     .option('-c --css <option>', 'CSS linking / embedding', 'embed')
+    .option('-p --pdf <engine>', 'PDF generation engine')
     .description('Generate resume to multiple formats')
     .action(function( sources, targets, options ) {
       var x = splitSrcDest.call( this );

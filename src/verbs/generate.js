@@ -52,6 +52,7 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
     _opts.css = opts.css;
+    _opts.pdf = opts.pdf;
 
     // If two or more files are passed to the GENERATE command and the TO
     // keyword is omitted, the last file specifies the output file.
@@ -112,9 +113,14 @@ Implementation of the 'generate' verb for HackMyResume.
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
+        var suffix = '';
+        if( targInfo.fmt.outFormat === 'pdf' && _opts.pdf ) {
+          suffix = chalk.green(' (with ' + _opts.pdf + ')');
+        }
+
         _log( chalk.green('Generating ') +
           chalk.green.bold(targInfo.fmt.outFormat.toUpperCase()) +
-          chalk.green(' resume: ') + chalk.green.bold( PATH.relative(process.cwd(), f )) );
+          chalk.green(' resume') + suffix + chalk.green(': ') + chalk.green.bold( PATH.relative(process.cwd(), f )) );
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
