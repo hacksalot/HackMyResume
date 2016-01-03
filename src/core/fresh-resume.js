@@ -359,7 +359,8 @@ Definition of the FRESHResume class.
   *latest end date of all jobs in the work history*. This last condition is for
   sheets that have overlapping jobs.
   */
-  FreshResume.prototype.duration = function() {
+  FreshResume.prototype.duration = function(unit) {
+    unit = unit || 'years';
     var empHist = __.get(this, 'employment.history');
     if( empHist && empHist.length ) {
       var firstJob = _.last( this.employment.history );
@@ -370,7 +371,7 @@ Definition of the FRESHResume class.
       var careerLast = _.max( this.employment.history, function( w ) {
         return( w.safe && w.safe.end ) ? w.safe.end.unix() : moment().unix();
       });
-      return careerLast.safe.end.diff( careerStart, 'years' );
+      return careerLast.safe.end.diff( careerStart, unit );
     }
     return 0;
   };
