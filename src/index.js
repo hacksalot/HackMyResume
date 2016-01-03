@@ -38,12 +38,6 @@ function main() {
 
   var args = initialize();
 
-  function execCommand() {
-    var argsArray = Array.prototype.slice.call(arguments);
-    //console.log(argsArray);
-    return FCMD.verbs[ this.name() ].apply( null, argsArray );
-  }
-
   // Create the top-level (application) command...
   var program = new Command('hackmyresume')
     .version(PKG.version)
@@ -59,7 +53,7 @@ function main() {
     .alias('create')
     .description('Create resume(s) in FRESH or JSON RESUME format.')
     .action(function( sources ) {
-      execCommand.call( this, sources, [], this.opts(), logMsg );
+      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
     });
 
   // Create the VALIDATE command
@@ -68,7 +62,7 @@ function main() {
     .arguments('<sources...>')
     .description('Validate a resume in FRESH or JSON RESUME format.')
     .action(function(sources) {
-      execCommand.call(this, sources, [], this.opts(), logMsg);
+      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
     });
 
   // Create the CONVERT command
@@ -78,7 +72,7 @@ function main() {
     .description('Convert a resume to/from FRESH or JSON RESUME format.')
     .action(function() {
       var x = splitSrcDest.call( this );
-      execCommand.call( this, x.src, x.dst, this.opts(), logMsg );
+      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg);
     });
 
   // Create the ANALYZE command
@@ -86,8 +80,8 @@ function main() {
     .command('analyze')
     .arguments('<sources...>')
     .description('Analyze one or more resumes.')
-    .action(function() {
-      execCommand.call(this, sources, [], this.opts(), logMsg);
+    .action(function( sources ) {
+      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
     });
 
   // Create the BUILD command
@@ -101,7 +95,7 @@ function main() {
     .description('Generate resume to multiple formats')
     .action(function( sources, targets, options ) {
       var x = splitSrcDest.call( this );
-      execCommand.call( this, x.src, x.dst, opts, logMsg );
+      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg);
     });
 
   // program.on('--help', function(){
@@ -167,7 +161,7 @@ function initialize() {
   }
 
   // Handle invalid verbs here (a bit easier here than in commander.js)...
-  if( !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
+  if( verb && !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
     throw { fluenterror: HACKMYSTATUS.invalidCommand, shouldExit: true,
             attempted: oVerb };
   }
