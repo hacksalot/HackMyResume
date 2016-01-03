@@ -1,7 +1,7 @@
 /**
-Totals analysis for HackMyResume.
+Section analysis for HackMyResume.
 @license MIT. See LICENSE.md for details.
-@module gap-inspector.js
+@module totals-inspector.js
 */
 
 
@@ -16,32 +16,27 @@ Totals analysis for HackMyResume.
 
 
   /**
-  Identify gaps in the candidate's employment history.
-  @class gapInspector
+  Retrieve sectional overview and summary information.
+  @class totalsInspector
   */
-  var gapInspector = module.exports = {
+  var totalsInspector = module.exports = {
 
 
 
     moniker: 'totals-inspector',
 
+
+
     /**
-    Run the Totals Analyzer on a resume.
+    Run the Totals Inspector on a resume.
     @method run
-    @return An array of object representing gaps in the candidate's employment
-    history. Each object provides the start, end, and duration of the gap:
-        { <-- gap
-          start: // A Moment.js date
-          end: // A Moment.js date
-          duration: // Gap length
-        }
+    @return An array of objects containing summary information for each section
+    on the resume.
     */
     run: function( rez ) {
 
       var ret = { };
-
       _.each( rez, function(val, key){
-
         if( _.isArray( val ) && !_.isString(val) ) {
           ret[ key ] = val.length;
         }
@@ -51,11 +46,9 @@ Totals analysis for HackMyResume.
         else if( val.sets && _.isArray( val.sets ) ) {
           ret[ key ] = val.sets.length;
         }
-
       });
 
       return ret;
-
     }
 
 
