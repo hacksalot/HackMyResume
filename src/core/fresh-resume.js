@@ -209,6 +209,14 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Return internal metadata. Create if it doesn't exist.
+  */
+  FreshResume.prototype.imp = function() {
+    this.imp = (this.imp || { });
+    return this.imp;
+  };
+
+  /**
   Return a unique list of all keywords across all skills.
   */
   FreshResume.prototype.keywords = function() {

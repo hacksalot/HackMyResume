@@ -74,8 +74,8 @@ Implementation of the 'generate' verb for HackMyResume.
     var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ?
-        chalk.cyan('Merging ') + chalk.cyan.bold(a.file) : '') +
-        chalk.cyan(' onto ') + chalk.cyan.bold(b.file);
+        chalk.cyan('Merging ') + chalk.cyan.bold(a.imp().file) : '') +
+        chalk.cyan(' onto ') + chalk.cyan.bold(b.imp().file);
       return extend( true, b, a );
     });
     msg && _log(msg);

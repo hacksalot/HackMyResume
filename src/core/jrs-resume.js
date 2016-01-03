@@ -137,6 +137,16 @@ Definition of the JRSResume class.
   };
 
   /**
+  Return internal metadata. Create if it doesn't exist.
+  JSON Resume v0.0.0 doesn't allow additional properties at the root level,
+  so tuck this into the .basic sub-object.
+  */
+  JRSResume.prototype.imp = function() {
+    this.basics = this.basics || { imp: { } };
+    return this.basics;
+  };
+
+  /**
   Reset the sheet to an empty state.
   */
   JRSResume.prototype.clear = function( clearMeta ) {

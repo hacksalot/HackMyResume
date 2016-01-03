@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+
+
 /**
 Command-line interface (CLI) for HackMyResume.
 @license MIT. Copyright (c) 2015 hacksalot (https://github.com/hacksalot)
@@ -90,12 +92,13 @@ function main() {
     .alias('generate')
     //.arguments('<sources> TO [targets]')
     //.usage('...')
-    .option('-t --theme <theme>', 'Theme name or path')
-    .option('-p --prettify', 'Preffity HTML output.')
+    .option('-t --theme <theme>', 'Theme name or path', 'modern')
+    .option('-p --prettify', 'Preffity HTML output', true)
+    .option('-c --css <option>', 'CSS linking / embedding', 'embed')
     .description('Generate resume to multiple formats')
     .action(function( sources, targets, options ) {
       var x = splitSrcDest.call( this );
-      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg);
+      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg );
     });
 
   // program.on('--help', function(){
@@ -114,35 +117,6 @@ function main() {
 
 
 
-/**
-Split multiple command-line filenames by the 'TO' keyword
-*/
-function splitSrcDest() {
-
-  var params = this.parent.args.filter(function(j) { return String.is(j); });
-  if( params.length === 0 )
-    throw { fluenterror: HACKMYSTATUS.resumeNotFound };
-
-  // Find the TO keyword, if any
-  var splitAt = _.findIndex( params, function(p) {
-    return p.toLowerCase() === 'to';
-  });
-
-  // TO can't be the last keyword
-  if( splitAt === params.length - 1 && splitAt !== -1 ) {
-    logMsg(chalk.yellow('Please ') +
-      chalk.yellow.bold('specify an output file') +
-      chalk.yellow(' for this operation or ') +
-      chalk.yellow.bold('omit the TO keyword') +
-      chalk.yellow('.') );
-    return;
-  }
-
-  return {
-    src: params.slice(0, splitAt === -1 ? undefined : splitAt ),
-    dst: splitAt === -1 ? [] : params.slice( splitAt + 1 )
-  };
-}
 
 
 /**
@@ -183,26 +157,40 @@ function initialize() {
 
 
 /**
-Simple logging placeholder.
+Split multiple command-line filenames by the 'TO' keyword
 */
-function logMsg( msg ) {
-  opts.silent || console.log( msg );
+function splitSrcDest() {
+
+  var params = this.parent.args.filter(function(j) { return String.is(j); });
+  if( params.length === 0 )
+    throw { fluenterror: HACKMYSTATUS.resumeNotFound };
+
+  // Find the TO keyword, if any
+  var splitAt = _.findIndex( params, function(p) {
+    return p.toLowerCase() === 'to';
+  });
+
+  // TO can't be the last keyword
+  if( splitAt === params.length - 1 && splitAt !== -1 ) {
+    logMsg(chalk.yellow('Please ') +
+      chalk.yellow.bold('specify an output file') +
+      chalk.yellow(' for this operation or ') +
+      chalk.yellow.bold('omit the TO keyword') +
+      chalk.yellow('.') );
+    return;
+  }
+
+  return {
+    src: params.slice(0, splitAt === -1 ? undefined : splitAt ),
+    dst: splitAt === -1 ? [] : params.slice( splitAt + 1 )
+  };
 }
 
 
 
 /**
-Fetch options from command line arguments.
+Simple logging placeholder.
 */
-function getOpts( args ) {
-  var noPretty = args.nopretty || args.n;
-  noPretty = noPretty && (noPretty === true || noPretty === 'true');
-  return {
-    theme: args.t || 'modern',
-    format: args.f || 'FRESH',
-    prettify: !noPretty,
-    silent: args.s || args.silent,
-    css: args.css || 'embed',
-    help: args.help || undefined
-  };
+function logMsg( msg ) {
+  opts.silent || console.log( msg );
 }
