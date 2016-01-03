@@ -1,7 +1,7 @@
 /**
 Employment gap analysis for HackMyResume.
 @license MIT. See LICENSE.md for details.
-@module gap-analyzer.js
+@module gap-inspector.js
 */
 
 

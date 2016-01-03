@@ -15,7 +15,6 @@ Implementation of the 'create' verb for HackMyResume.
   Create a new empty resume in either FRESH or JRS format.
   */
   module.exports = function create( src, dst, opts, logger ) {
-    //console.log(src);
     var _log = logger || console.log;
     if( !src || !src.length ) throw { fluenterror: 8 };
     src.forEach( function( t ) {
