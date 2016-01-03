@@ -67,8 +67,7 @@ Error-handling routines for HackMyResume.
             break;
 
           case HACKMYSTATUS.invalidCommand:
-            msg = chalk.yellow('Please ') + chalk.yellow.bold('specify the output resume file') +
-              chalk.yellow(' that should be created.');
+            msg = chalk.yellow('Invalid command: "') + chalk.yellow.bold(ex.attempted) + chalk.yellow('"');
             break;
 
           case HACKMYSTATUS.resumeNotFoundAlt:
@@ -116,7 +115,7 @@ Error-handling routines for HackMyResume.
       }
 
       // Let the error code be the process's return code.
-      if( shouldExit )
+      if( shouldExit || ex.shouldExit )
         process.exit( exitCode );
 
     }

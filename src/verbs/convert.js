@@ -11,7 +11,8 @@ Implementation of the 'convert' verb for HackMyResume.
 
 
   var ResumeFactory = require('../core/resume-factory')
-    , chalk = require('chalk');
+    , chalk = require('chalk')
+    , HACKMYSTATUS = require('../core/status-codes');
 
 
 
@@ -24,12 +25,19 @@ Implementation of the 'convert' verb for HackMyResume.
     var _log = logger || console.log;
     if( !srcs || !srcs.length ) { throw { fluenterror: 6 }; }
     if( !dst || !dst.length ) {
-      if( srcs.length === 1 ) { throw { fluenterror: 5 }; }
-      else if( srcs.length === 2 ) { dst = dst || []; dst.push( srcs.pop() ); }
-      else { throw { fluenterror: 5 }; }
+      if( srcs.length === 1 ) {
+        throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+      }
+      else if( srcs.length === 2 ) {
+        dst = dst || []; dst.push( srcs.pop() );
+      }
+      else {
+        throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+      }
     }
-    if( srcs && dst && srcs.length && dst.length &&
-        srcs.length !== dst.length ) { throw { fluenterror: 7 }; }
+    if(srcs && dst && srcs.length && dst.length && srcs.length !== dst.length){
+      throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+    }
 
     // Load source resumes
     srcs.forEach( function( src, idx ) {
@@ -46,7 +54,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
       // TODO: Core should not log
       _log( chalk.green('Converting ') + chalk.green.bold(rinfo.file) +
-        chalk.green(' (' + srcFmt + ') to ') + chalk.green.bold(dst[0]) +
+        chalk.green(' (' + srcFmt + ') to ') + chalk.green.bold(dst[idx]) +
         chalk.green(' (' + targetFormat + ').'));
 
       // Save it to the destination format
