@@ -47,26 +47,40 @@ Implementation of the 'analyze' verb for HackMyResume.
     var safeFormat =
       (rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH')) ?
       'FRESH' : 'JRS';
+
+    var padding = 20;
     log(chalk.cyan('Analyzing ') + chalk.cyan.bold(safeFormat) +
       chalk.cyan(' resume: ') + chalk.cyan.bold(resumeObject.file));
     var info = _.mapObject( nlzrs, function(val, key) {
       return val.run( resumeObject.rez );
     });
 
-    log(chalk.cyan('\nTotals: '));
+    log(chalk.cyan('\nSECTIONS (') + chalk.cyan.bold(_.keys(info.totals).length) + chalk.cyan('):\n'));
     var pad = require('string-padding');
     _.each( info.totals, function(tot, key) {
-      log(chalk.cyan(pad(key + ': ',17)) + chalk.cyan.bold(pad(tot.toString(),4)));
+      log(chalk.cyan(pad(key + ': ',20)) + chalk.cyan.bold(pad(tot.toString(),4)));
     });
 
     log();
-    log(chalk.cyan('Gaps: ') + chalk.cyan.bold(info.gaps.length) +
-      chalk.cyan(' [') + info.gaps.map(function(g) {
+    log(chalk.cyan('GAPS (') + chalk.cyan.bold(info.gaps.length) + chalk.cyan('):\n'));
+    log(chalk.cyan(pad('Lengths:    ', padding + 3)) + info.gaps.map(function(g) {
         var clr = 'green';
         if( g.duration > 35 ) clr = 'yellow';
         if( g.duration > 90 ) clr = 'red';
-        return chalk[clr].bold(g.duration);
-      }).join(', ') + chalk.cyan(']') );
+        return chalk[clr].bold( g.duration) ;
+      }).join(', ') );
+
+
+    var tot = 0;
+    log();
+    log( chalk.cyan('KEYWORDS (') + chalk.cyan.bold( info.keywords.length ) +
+      chalk.cyan('):\n\n') +
+      info.keywords.map(function(g) {
+        tot += g.count;
+        return chalk.cyan( pad(g.name + ': ', padding) ) + chalk.cyan.bold( pad( g.count.toString(), 4 )) + chalk.cyan(' mentions');
+      }).join('\n'));
+
+    console.log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 4 )) + chalk.cyan(' mentions'));
   }
 
 
@@ -77,7 +91,8 @@ Implementation of the 'analyze' verb for HackMyResume.
   function _loadInspectors() {
     return {
       totals: require('../inspectors/totals-inspector'),
-      gaps: require('../inspectors/gap-inspector')
+      gaps: require('../inspectors/gap-inspector'),
+      keywords: require('../inspectors/keyword-inspector')
     };
   }
 

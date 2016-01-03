@@ -221,8 +221,14 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.keywords = function() {
     var flatSkills = [];
-    this.skills && this.skills.length &&
-      (flatSkills = this.skills.map(function(sk) { return sk.name;  }));
+    if( this.skills ) {
+      if( this.skills.sets ) {
+        flatSkills = flatSkills.concat( this.skills.sets.map(function(sk) { return sk.name;  }) );
+      }
+      else if( this.skills.list ) {
+        flatSkills = flatSkills.concat( this.skills.list.map(function(sk) { return sk.name;  }) );
+      }
+    }
     return flatSkills;
   },
 
