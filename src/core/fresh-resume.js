@@ -86,13 +86,13 @@ Definition of the FRESHResume class.
   Create a copy of this resume in which all string fields have been run through
   a transformation function (such as a Markdown filter or XML encoder).
   */
-  FreshResume.prototype.transformStrings = function( filters, transformer ) {
+  FreshResume.prototype.transformStrings = function( filt, transformer ) {
 
     var that = this;
     var ret = this.dupe();
 
     // TODO: refactor recursion
-    function transformStringsInObject( obj ) {
+    function transformStringsInObject( obj, filters ) {
 
       if( !obj ) return;
       if( moment.isMoment( obj ) ) return;
@@ -102,26 +102,27 @@ Definition of the FRESHResume class.
           if( typeof elem === 'string' || elem instanceof String )
             ar[idx] = transformer( null, elem );
           else if (_.isObject(elem))
-            transformStringsInObject( elem );
+            transformStringsInObject( elem, filters );
         });
       }
       else if (_.isObject( obj )) {
         Object.keys( obj ).forEach(function(k) {
+          if( filters.length && _.contains(filters, k) )
+            return;
           var sub = obj[k];
           if( typeof sub === 'string' || sub instanceof String ) {
-            if( filters.length && _.contains(filters, k) )
-              return;
             obj[k] = transformer( k, sub );
           }
           else if (_.isObject( sub ))
-            transformStringsInObject( sub );
+            transformStringsInObject( sub, filters );
         });
       }
 
     }
 
     Object.keys( ret ).forEach(function(member){
-      transformStringsInObject( ret[ member ] );
+      if( !filt || !filt.length || !_.contains(filt, member) )
+        transformStringsInObject( ret[ member ], filt || [] );
     });
 
     return ret;
