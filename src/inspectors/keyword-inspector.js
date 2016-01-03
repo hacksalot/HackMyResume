@@ -40,14 +40,15 @@ Keyword analysis for HackMyResume.
       // http://stackoverflow.com/a/2593661/4942583
       function regex_quote(str) {
         return (str + '').replace(/[.?*+^$[\]\\(){}|-]/ig, "\\$&");
-      };
+      }
 
       var searchable = '';
-      rez.transformStrings( [], function trxString( key, val ) {
-        searchable += val;
+      rez.transformStrings( ['imp', 'computed', 'safe'], function trxString( key, val ) {
+        searchable += ' ' + val;
       });
 
       return rez.keywords().map(function(kw) {
+        var regex = new RegExp( '\\b' + regex_quote( kw )/* + '\\b'*/, 'ig');
         var regex = new RegExp( regex_quote( kw ), 'ig');
         var myArray, count = 0;
         while ((myArray = regex.exec( searchable )) !== null) {
