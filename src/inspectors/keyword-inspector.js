@@ -48,7 +48,7 @@ Keyword analysis for HackMyResume.
       });
 
       return rez.keywords().map(function(kw) {
-        var regex = new RegExp( '\\b' + regex_quote( kw )/* + '\\b'*/, 'ig');
+        //var regex = new RegExp( '\\b' + regex_quote( kw )/* + '\\b'*/, 'ig');
         var regex = new RegExp( regex_quote( kw ), 'ig');
         var myArray, count = 0;
         while ((myArray = regex.exec( searchable )) !== null) {
