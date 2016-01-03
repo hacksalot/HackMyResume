@@ -9,7 +9,6 @@ Command-line interface (CLI) for HackMyResume.
 
 
 var SPAWNW = require('./core/spawn-watch')
-  , ARGS = require( 'minimist' )
   , FCMD  = require( './hackmycmd')
   , PKG = require('../package.json')
   , FS = require('fs')
