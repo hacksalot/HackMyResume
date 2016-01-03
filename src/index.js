@@ -193,5 +193,6 @@ function splitSrcDest() {
 Simple logging placeholder.
 */
 function logMsg( msg ) {
+  msg = msg || '';
   opts.silent || console.log( msg );
 }

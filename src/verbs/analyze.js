@@ -53,7 +53,20 @@ Implementation of the 'analyze' verb for HackMyResume.
       return val.run( resumeObject.rez );
     });
 
-    console.log('Gaps: ' + info.gaps.length );
+    log(chalk.cyan('\nTotals: '));
+    var pad = require('string-padding');
+    _.each( info.totals, function(tot, key) {
+      log(chalk.cyan(pad(key + ': ',17)) + chalk.cyan.bold(pad(tot.toString(),4)));
+    });
+
+    log();
+    log(chalk.cyan('Gaps: ') + chalk.cyan.bold(info.gaps.length) +
+      chalk.cyan(' [') + info.gaps.map(function(g) {
+        var clr = 'green';
+        if( g.duration > 35 ) clr = 'yellow';
+        if( g.duration > 90 ) clr = 'red';
+        return chalk[clr].bold(g.duration);
+      }).join(', ') + chalk.cyan(']') );
   }
 
 
@@ -63,6 +76,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   */
   function _loadInspectors() {
     return {
+      totals: require('../inspectors/totals-inspector'),
       gaps: require('../inspectors/gap-inspector')
     };
   }
