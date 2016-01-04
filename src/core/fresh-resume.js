@@ -363,12 +363,12 @@ Definition of the FRESHResume class.
     unit = unit || 'years';
     var empHist = __.get(this, 'employment.history');
     if( empHist && empHist.length ) {
-      var firstJob = _.last( this.employment.history );
+      var firstJob = _.last( empHist );
       var careerStart = firstJob.start ? firstJob.safe.start : '';
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
           !careerStart.trim())
         return 0;
-      var careerLast = _.max( this.employment.history, function( w ) {
+      var careerLast = _.max( empHist, function( w ) {
         return( w.safe && w.safe.end ) ? w.safe.end.unix() : moment().unix();
       });
       return careerLast.safe.end.diff( careerStart, unit );
@@ -382,9 +382,22 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.sort = function( ) {
 
-    __.get(this, 'employment.history') && this.employment.history.sort( byDateDesc );
-    __.get(this, 'education.history') && this.education.history.sort( byDateDesc );
-    __.get(this, 'service.history') && this.service.history.sort( byDateDesc );
+    function byDateDesc(a,b) {
+      return( a.safe.start.isBefore(b.safe.start) ) ? 1
+        : ( a.safe.start.isAfter(b.safe.start) && -1 ) || 0;
+    }
+
+    function sortSection( key ) {
+      var ar = __.get(this, key);
+      if( ar && ar.length ) {
+        var datedThings = obj.filter( function(o) { return o.start; } );
+        datedThings.sort( byDateDesc );
+      }
+    }
+
+    sortSection( 'employment.history' );
+    sortSection( 'education.history' );
+    sortSection( 'service.history' );
 
     // this.awards && this.awards.sort( function(a, b) {
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
@@ -395,10 +408,7 @@ Definition of the FRESHResume class.
         : ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0;
     });
 
-    function byDateDesc(a,b) {
-      return( a.safe.start.isBefore(b.safe.start) ) ? 1
-        : ( a.safe.start.isAfter(b.safe.start) && -1 ) || 0;
-    }
+
 
   };
 
