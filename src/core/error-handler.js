@@ -13,7 +13,7 @@ Error-handling routines for HackMyResume.
   var HACKMYSTATUS = require('./status-codes')
     , PKG = require('../../package.json')
     , FS = require('fs')
-    , FCMD = require('../hackmycmd')
+    , FCMD = require('../hackmyapi')
     , PATH = require('path')
     , chalk = require('chalk')
     , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***');

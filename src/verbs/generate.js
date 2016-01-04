@@ -52,7 +52,7 @@ Implementation of the 'generate' verb for HackMyResume.
     _err = errHandler || error;
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim())|| 'modern';
     _opts.prettify = opts.prettify === true ? _opts.prettify : false;
-    _opts.css = opts.css;
+    _opts.css = opts.css || 'embed';
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;
 
@@ -131,8 +131,20 @@ Implementation of the 'generate' verb for HackMyResume.
         , theFormat;
 
         var suffix = '';
-        if( targInfo.fmt.outFormat === 'pdf' && _opts.pdf ) {
-          suffix = chalk.green(' (with ' + _opts.pdf + ')');
+        if( targInfo.fmt.outFormat === 'pdf' ) {
+          if( _opts.pdf ) {
+            if( _opts.pdf !== 'none' ) {
+              suffix = chalk.green(' (with ' + _opts.pdf + ')');
+            }
+            else {
+              _log( chalk.gray('Skipping   ') +
+                chalk.white.bold(
+                  pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
+                chalk.gray(' resume') + suffix + chalk.green(': ') +
+                chalk.white( PATH.relative(process.cwd(), f )) );
+              return;
+            }
+          }
         }
 
         _log( chalk.green('Generating ') +
@@ -244,28 +256,22 @@ Implementation of the 'generate' verb for HackMyResume.
 
       var to = PATH.resolve(t), pa = parsePath(to),fmat = pa.extname || '.all';
 
-      var explicitFormats = _.omit( theTheme.formats, function(val, key) {
-        return !val.freebie;
-      });
-      var implicitFormats = _.omit( theTheme.formats, function(val) {
-        return val.freebie;
-      });
 
       targets.push.apply(
         targets, fmat === '.all' ?
-        Object.keys( implicitFormats ).map( function( k ) {
+        Object.keys( theTheme.formats ).map( function( k ) {
           var z = theTheme.formats[k];
           return { file: to.replace( /all$/g, z.outFormat ), fmt: z };
         }) :
         [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
-      targets.push.apply(
-        targets, fmat === '.all' ?
-        Object.keys( explicitFormats ).map( function( k ) {
-          var z = theTheme.formats[k];
-          return { file: to.replace( /all$/g, z.outFormat ), fmt: z };
-        }) :
-        [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
+      // targets.push.apply(
+      //   targets, fmat === '.all' ?
+      //   Object.keys( explicitFormats ).map( function( k ) {
+      //     var z = theTheme.formats[k];
+      //     return { file: to.replace( /all$/g, z.outFormat ), fmt: z };
+      //   }) :
+      //   [{ file: to, fmt: theTheme.getFormat( fmat.slice(1) ) }]);
 
     });
 

@@ -6,8 +6,7 @@ Implementation of the 'create' verb for HackMyResume.
 
 (function(){
 
-  var FLUENT = require('../hackmyapi')
-    , MKDIRP = require('mkdirp')
+  var MKDIRP = require('mkdirp')
     , PATH = require('path')
     , chalk = require('chalk');
 
@@ -22,7 +21,9 @@ Implementation of the 'create' verb for HackMyResume.
       _log(chalk.green('Creating new ') + chalk.green.bold(safeFormat) +
         chalk.green(' resume: ') + chalk.green.bold(t));
       MKDIRP.sync( PATH.dirname( t ) ); // Ensure dest folder exists;
-      FLUENT[ safeFormat + 'Resume' ].default().save( t );
+      var RezClass = require('../core/' + safeFormat.toLowerCase() + '-resume' );
+      RezClass.default().save(t);
+      //FLUENT[ safeFormat + 'Resume' ].default().save( t );
     });
   };
 

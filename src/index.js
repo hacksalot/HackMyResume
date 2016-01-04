@@ -11,7 +11,7 @@ Command-line interface (CLI) for HackMyResume.
 
 
 var SPAWNW = require('./core/spawn-watch')
-  , FCMD  = require( './hackmycmd')
+  , HMR  = require( './hackmyapi')
   , PKG = require('../package.json')
   , FS = require('fs')
   , EXTEND = require('./utils/extend')
@@ -139,7 +139,7 @@ function initialize() {
   }
 
   // Handle invalid verbs here (a bit easier here than in commander.js)...
-  if( verb && !FCMD.verbs[ verb ] && !FCMD.alias[ verb ] ) {
+  if( verb && !HMR.verbs[ verb ] && !HMR.alias[ verb ] ) {
     throw { fluenterror: HACKMYSTATUS.invalidCommand, shouldExit: true,
             attempted: oVerb };
   }
@@ -165,7 +165,7 @@ Invoke a HackMyResume verb.
 */
 function execVerb( src, dst, opts, log ) {
   loadOptions.call( this, opts );
-  FCMD.verbs[ this.name() ].call( null, src, dst, _opts, log );
+  HMR.verbs[ this.name() ].call( null, src, dst, _opts, log );
 }
 
 

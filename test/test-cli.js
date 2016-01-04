@@ -5,7 +5,7 @@ var chai = require('chai')
   , path = require('path')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
-  , FCMD = require( '../src/hackmycmd')
+  , FCMD = require( '../src/hackmyapi')
   , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;

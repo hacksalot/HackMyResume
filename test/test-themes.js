@@ -6,7 +6,7 @@ var SPAWNWATCHER = require('../src/core/spawn-watch')
   , path = require('path')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
-  , FCMD = require( '../src/hackmycmd')
+  , HMR = require( '../src/hackmyapi')
   , validator = require('is-my-json-valid')
   , READFILES = require('recursive-readdir-sync')
   , fileContains = require('../src/utils/file-contains')
@@ -31,9 +31,20 @@ function genThemes( title, src, fmt ) {
             theme: themeLoc,
             format: fmt,
             prettify: true,
-            silent: false
+            silent: false,
+            css: 'embed'
           };
-          FCMD.verbs.build( src, dst, opts, function(msg) { console.log(msg); } );
+          try {
+            HMR.verbs.build( src, dst, opts, function(msg) {
+              msg = msg || '';
+              console.log(msg);
+            });
+          }
+          catch(ex) {
+            console.log(ex);
+            console.log(ex.stack);
+            throw ex;
+          }
         }
         tryOpen.should.not.Throw();
       });

@@ -11,7 +11,8 @@ Generic template helper definitions for HackMyResume / FluentCV.
     , H2W = require('../utils/html-to-wpml')
     , XML = require('xml-escape')
     , moment = require('moment')
-    , _ = require('underscore');
+    , _ = require('underscore')
+    , unused = require('../utils/string');
 
   /**
   Generic template helper function definitions.
