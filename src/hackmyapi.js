@@ -18,7 +18,7 @@ External API surface for HackMyResume.
     verbs: v,
     alias: {
       generate: v.build,
-      create: v.build
+      create: v.new
     },
     options: require('./core/default-options'),
     formats: require('./core/default-formats'),
