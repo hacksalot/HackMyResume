@@ -187,7 +187,7 @@ function loadOptions( opts ) {
   }
 
   // Merge in command-line options
-  opts = EXTEND( true, opts, this.opts() )
+  opts = EXTEND( true, opts, this.opts() );
   opts.silent = this.parent.silent;
   _opts = opts;
 }
