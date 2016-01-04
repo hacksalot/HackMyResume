@@ -27,6 +27,8 @@ or Windows.
 ## Features
 
 - OS X, Linux, and Windows.
+- Choose from dozens of FRESH or JSON Resume themes.
+- Private, local-only resume authoring and analysis.
 - Store your resume data as a durable, versionable JSON or YAML document.
 - Generate polished resumes in multiple formats without violating [DRY][dry].
 - Output to HTML, Markdown, LaTeX, PDF, MS Word, JSON, YAML, plain text, or XML.
@@ -34,18 +36,23 @@ or Windows.
 - Support for multiple input and output resumes.
 - Use from your command line or [desktop][7].
 - Free and open-source through the MIT license.
-- Updated daily.
+- Updated daily / weekly. Contributions welcome.
 
 ## Install
 
-Install HackMyResume with NPM:
+Install the latest stable version of HackMyResume with NPM:
 
 ```bash
 [sudo] npm install hackmyresume -g
 ```
 
-Note: for PDF generation you'll need to install a copy of [wkhtmltopdf][3] for
-your platform.
+To install the latest bleeding-edge version (updated daily):
+
+```bash
+[sudo] npm install hacksalot/hackmyresume#dev -g
+```
+
+**For PDF generation**, you'll need to install a copy of [wkhtmltopdf][3] and/or PhantomJS for your platform.
 
 ## Installing Themes
 
