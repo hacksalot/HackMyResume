@@ -29,6 +29,40 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
+    Generic template helper function to display a user-overridable section
+    title for a FRESH resume theme. Use this in lieue of hard-coding section
+    titles.
+
+    Usage:
+
+        {{sectionTitle "sectionName"}}
+        {{sectionTitle "sectionName" "sectionTitle"}}
+
+    Example:
+
+        {{sectionTitle "Education"}}
+        {{sectionTitle "Employment" "Project History"}}
+
+    @param sect_name The name of the section being title. Must be one of the
+    top-level FRESH resume sections ("info", "education", "employment", etc.).
+    @param sect_title The theme-specified section title. May be replaced by the
+    user.
+    @method sectionTitle
+    */
+    sectionTitle: function( sname, stitle ) {
+
+      // If not provided by the user, stitle should default to sname. ps.
+      // Handlebars silently passes in the options object to the last param,
+      // where in Underscore stitle will be null/undefined, so we check both.
+      stitle = (stitle && String.is(stitle)) || sname;
+
+      // If there's a section title override, use it.
+      return ( this.opts.stitles &&
+               this.opts.stitles[ sname.toLowerCase().trim() ] ) ||
+               stitle;
+    },
+
+    /**
     Convert inline Markdown to inline WordProcessingML.
     @method wpml
     */
@@ -61,7 +95,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Convert a skill level to an RGB color triplet.
+    Convert a skill level to an RGB color triplet. TODO: refactor
     @method skillColor
     @param lvl Input skill level. Skill level can be expressed as a string
     ("beginner", "intermediate", etc.), as an integer (1,5,etc), as a string
@@ -77,7 +111,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Return an appropriate height.
+    Return an appropriate height. TODO: refactor
     @method lastWord
     */
     skillHeight: function( lvl ) {

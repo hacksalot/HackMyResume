@@ -55,6 +55,7 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.css = opts.css || 'embed';
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;
+    _opts.stitles = opts.sectionTitles;    
 
     // If two or more files are passed to the GENERATE command and the TO
     // keyword is omitted, the last file specifies the output file.
