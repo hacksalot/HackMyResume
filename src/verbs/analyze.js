@@ -58,18 +58,20 @@ Implementation of the 'analyze' verb for HackMyResume.
     log(chalk.cyan.bold('\nSECTIONS') + chalk.cyan(' (') + chalk.white.bold(_.keys(info.totals).length) + chalk.cyan('):\n'));
     var pad = require('string-padding');
     _.each( info.totals, function(tot, key) {
-      log(chalk.cyan(pad(key + ': ',20)) + chalk.cyan.bold(pad(tot.toString(),4)));
+      log(chalk.cyan(pad(key + ': ',20)) + chalk.cyan.bold(pad(tot.toString(),5)));
     });
 
     log();
     log(chalk.cyan.bold('COVERAGE') + chalk.cyan(' (') + chalk.white.bold( info.coverage.pct ) + chalk.cyan('):\n'));
-    log(chalk.cyan(pad('Gaps:    ', padding + 3)) + chalk.cyan.bold(info.coverage.gaps.length) + chalk.cyan('  [') + info.coverage.gaps.map(function(g) {
+    log(chalk.cyan(pad('Total Days: ', padding)) + chalk.cyan.bold( pad(info.coverage.duration.total.toString(),5) ));
+    log(chalk.cyan(pad('Employed: ', padding)) + chalk.cyan.bold( pad((info.coverage.duration.total - info.coverage.duration.gaps).toString(),5) ));
+    log(chalk.cyan(pad('Gaps:     ', padding + 4)) + chalk.cyan.bold(info.coverage.gaps.length) + chalk.cyan('  [') + info.coverage.gaps.map(function(g) {
         var clr = 'green';
         if( g.duration > 35 ) clr = 'yellow';
         if( g.duration > 90 ) clr = 'red';
         return chalk[clr].bold( g.duration) ;
       }).join(', ') + chalk.cyan(']') );
-      log(chalk.cyan(pad('Overlaps:    ', padding + 3)) + chalk.cyan.bold(info.coverage.overlaps.length) + chalk.cyan('  [') + info.coverage.overlaps.map(function(ol) {
+      log(chalk.cyan(pad('Overlaps:     ', padding + 4)) + chalk.cyan.bold(info.coverage.overlaps.length) + chalk.cyan('  [') + info.coverage.overlaps.map(function(ol) {
           var clr = 'green';
           if( ol.duration > 35 ) clr = 'yellow';
           if( ol.duration > 90 ) clr = 'red';
@@ -82,10 +84,10 @@ Implementation of the 'analyze' verb for HackMyResume.
       chalk.cyan('):\n\n') +
       info.keywords.map(function(g) {
         tot += g.count;
-        return chalk.cyan( pad(g.name + ': ', padding) ) + chalk.cyan.bold( pad( g.count.toString(), 4 )) + chalk.cyan(' mentions');
+        return chalk.cyan( pad(g.name + ': ', padding) ) + chalk.cyan.bold( pad( g.count.toString(), 5 )) + chalk.cyan(' mentions');
       }).join('\n'));
 
-    log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 4 )) + chalk.cyan(' mentions'));
+    log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 5 )) + chalk.cyan(' mentions'));
   }
 
 
