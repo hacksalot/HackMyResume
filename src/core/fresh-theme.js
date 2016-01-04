@@ -46,7 +46,7 @@ Definition of the FRESHTheme class.
     var formatsHash = { };
 
     // Load the theme
-    var themeFile = PATH.join( themeFolder, pathInfo.basename + '.json' );
+    var themeFile = PATH.join( themeFolder, 'theme.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
     var that = this;
 
