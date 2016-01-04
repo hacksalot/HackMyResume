@@ -22,7 +22,7 @@ describe('Testing CLI interface', function () {
       //theme: 'compact',
       format: 'FRESH',
       prettify: true,
-      silent: true
+      silent: false
     };
 
     var opts2 = {
@@ -44,11 +44,14 @@ describe('Testing CLI interface', function () {
     run( 'validate', ['test/resumes/jrs-0.0.0/jane-incomplete.json'], [], opts2, ' (jane-incomplete.json|JRS)' );
     run( 'validate', ['test/sandbox/new-1.json','test/sandbox/new-jrs-resume.json','test/sandbox/new-1.json', 'test/sandbox/new-2.json', 'test/sandbox/new-3.json'], [], opts, ' (5|BOTH)' );
 
+    run( 'analyze', ['node_modules/jane-q-fullstacker/resume/jane-resume.json'], [], opts, ' (jane-q-fullstacker|FRESH)' );
+    run( 'analyze', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' );
+
     function run( verb, src, dst, opts, msg ) {
       msg = msg || '.';
       it( 'The ' + verb.toUpperCase() + ' command should SUCCEED' + msg, function () {
         function runIt() {
-          FCMD.verbs[verb]( src, dst, opts, opts.silent ? logMsg : null );
+          FCMD.verbs[verb]( src, dst, opts, opts.silent ? logMsg : function(msg){ msg = msg || ''; console.log(msg); } );
         }
         runIt.should.not.Throw();
       });
