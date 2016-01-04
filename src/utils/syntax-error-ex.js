@@ -1,6 +1,7 @@
 /**
 Definition of the SyntaxErrorEx class.
 @module syntax-error-ex.js
+@license MIT. See LICENSE.md for details.
 */
 
 (function() {
@@ -26,7 +27,7 @@ Definition of the SyntaxErrorEx class.
       colNum = ex.columnNumber;
     }
     if( lineNum === null || colNum === null ) {
-      var JSONLint = require('json-lint');
+      var JSONLint = require('json-lint'); // TODO: json-lint or is-my-json-valid?
       var lint = JSONLint( rawData, { comments: false } );
       if( lineNum === null ) lineNum = (lint.error ? lint.line : '???');
       if( colNum === null ) colNum = (lint.error ? lint.character : '???');

@@ -14,9 +14,11 @@ var SPAWNW = require('./core/spawn-watch')
   , FCMD  = require( './hackmycmd')
   , PKG = require('../package.json')
   , FS = require('fs')
+  , EXTEND = require('./utils/extend')
   , chalk = require('chalk')
   , PATH = require('path')
   , HACKMYSTATUS = require('./core/status-codes')
+  , safeLoadJSON = require('./utils/safe-json-loader')
   , _opts = { }
   , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***')
   , StringUtils = require('./utils/string.js')
@@ -39,13 +41,6 @@ Kick off the HackMyResume application.
 function main() {
 
   var args = initialize();
-
-  function execVerb( src, dst, opts, log ) {
-    _opts = opts;
-    _opts.silent = this.parent.silent;
-    _opts.opts = this.parent.opts;
-    FCMD.verbs[ this.name() ].call( null, src, dst, opts, log );
-  }
 
   // Create the top-level (application) command...
   var program = new Command('hackmyresume')
@@ -100,7 +95,7 @@ function main() {
     .alias('generate')
     //.arguments('<sources> TO [targets]')
     //.usage('...')
-    .option('-t --theme <theme>', 'Theme name or path', 'modern')
+    .option('-t --theme <theme>', 'Theme name or path')
     .option('-n --no-prettify', 'Disable HTML prettification', true)
     .option('-c --css <option>', 'CSS linking / embedding', 'embed')
     .option('-p --pdf <engine>', 'PDF generation engine')
@@ -161,6 +156,40 @@ function initialize() {
   };
 
   return args;
+}
+
+
+
+/**
+Invoke a HackMyResume verb.
+*/
+function execVerb( src, dst, opts, log ) {
+  loadOptions.call( this, opts );
+  FCMD.verbs[ this.name() ].call( null, src, dst, _opts, log );
+}
+
+
+
+/**
+Initialize HackMyResume options.
+*/
+function loadOptions( opts ) {
+
+  opts.opts = this.parent.opts;
+
+  // Load the specified options file (if any) and apply options
+  if( opts.opts && String.is( opts.opts )) {
+    var json = safeLoadJSON( PATH.relative( process.cwd(), opts.opts ) );
+    json && ( opts = EXTEND( true, opts, json ) );
+    if( !json ) {
+      throw safeLoadJSON.error;
+    }
+  }
+
+  // Merge in command-line options
+  opts = EXTEND( true, opts, this.opts() )
+  opts.silent = this.parent.silent;
+  _opts = opts;
 }
 
 
