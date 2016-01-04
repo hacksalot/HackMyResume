@@ -88,7 +88,8 @@ Implementation of the 'generate' verb for HackMyResume.
     var numFormats = Object.keys(theme.formats).length;
     var themeName = theme.name.toUpperCase();
     _log( chalk.yellow('Applying ') + chalk.yellow.bold(themeName) +
-      chalk.yellow(' theme (' + numFormats + ' format' + ( numFormats === 1 ? ')' : 's)') ));
+      chalk.yellow(' theme (' + numFormats + ' format' +
+        ( numFormats === 1 ? ')' : 's)') ));
 
     // Expand output resumes...
     var targets = expand( dst, theme );
@@ -135,7 +136,8 @@ Implementation of the 'generate' verb for HackMyResume.
         }
 
         _log( chalk.green('Generating ') +
-          chalk.green.bold(pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
+          chalk.green.bold(
+            pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
           chalk.green(' resume') + suffix + chalk.green(': ') +
           chalk.green.bold( PATH.relative(process.cwd(), f )) );
 

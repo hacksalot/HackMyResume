@@ -17,7 +17,7 @@ var SPAWNW = require('./core/spawn-watch')
   , chalk = require('chalk')
   , PATH = require('path')
   , HACKMYSTATUS = require('./core/status-codes')
-  , opts = { }
+  , _opts = { }
   , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***')
   , StringUtils = require('./utils/string.js')
   , _ = require('underscore')
@@ -40,12 +40,20 @@ function main() {
 
   var args = initialize();
 
+  function execVerb( src, dst, opts, log ) {
+    _opts = opts;
+    _opts.silent = this.parent.silent;
+    _opts.opts = this.parent.opts;
+    FCMD.verbs[ this.name() ].call( null, src, dst, opts, log );
+  }
+
   // Create the top-level (application) command...
   var program = new Command('hackmyresume')
     .version(PKG.version)
     .description(chalk.yellow.bold('*** HackMyResume ***'))
-    .option('-s, --silent', 'Run in silent mode.')
-    .usage('COMMAND <sources> [TO <targets>]');
+    .option('-o --opts <optionsFile>', 'Path to a .hackmyrc options file')
+    .option('-s --silent', 'Run in silent mode');
+    //.usage('COMMAND <sources> [TO <targets>]');
 
   // Create the NEW command
   program
@@ -55,7 +63,7 @@ function main() {
     .alias('create')
     .description('Create resume(s) in FRESH or JSON RESUME format.')
     .action(function( sources ) {
-      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
+      execVerb.call( this, sources, [], this.opts(), logMsg);
     });
 
   // Create the VALIDATE command
@@ -64,7 +72,7 @@ function main() {
     .arguments('<sources...>')
     .description('Validate a resume in FRESH or JSON RESUME format.')
     .action(function(sources) {
-      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
+      execVerb.call( this, sources, [], this.opts(), logMsg);
     });
 
   // Create the CONVERT command
@@ -74,7 +82,7 @@ function main() {
     .description('Convert a resume to/from FRESH or JSON RESUME format.')
     .action(function() {
       var x = splitSrcDest.call( this );
-      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg);
+      execVerb.call( this, x.src, x.dst, this.opts(), logMsg);
     });
 
   // Create the ANALYZE command
@@ -83,7 +91,7 @@ function main() {
     .arguments('<sources...>')
     .description('Analyze one or more resumes.')
     .action(function( sources ) {
-      FCMD.verbs[ this.name() ].call( null, sources, [], this.opts(), logMsg);
+      execVerb.call( this, sources, [], this.opts(), logMsg);
     });
 
   // Create the BUILD command
@@ -99,7 +107,7 @@ function main() {
     .description('Generate resume to multiple formats')
     .action(function( sources, targets, options ) {
       var x = splitSrcDest.call( this );
-      FCMD.verbs[ this.name() ].call( null, x.src, x.dst, this.opts(), logMsg );
+      execVerb.call( this, x.src, x.dst, this.opts(), logMsg);
     });
 
   // program.on('--help', function(){
@@ -194,5 +202,5 @@ Simple logging placeholder.
 */
 function logMsg( msg ) {
   msg = msg || '';
-  opts.silent || console.log( msg );
+  _opts.silent || console.log( msg );
 }
