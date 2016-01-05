@@ -49,7 +49,7 @@
     "commander": "^2.9.0",
     "copy": "^0.1.3",
     "fresca": "~0.3.0",
-    "fresh-themes": "~0.10.0-beta",
+    "fresh-themes": "~0.11.0-beta",
     "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
