@@ -54,7 +54,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
       // If not provided by the user, stitle should default to sname. ps.
       // Handlebars silently passes in the options object to the last param,
       // where in Underscore stitle will be null/undefined, so we check both.
-      stitle = (stitle && String.is(stitle)) || sname;
+      stitle = (stitle && String.is(stitle) && stitle) || sname;
 
       // If there's a section title override, use it.
       return ( this.opts.stitles &&
