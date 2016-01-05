@@ -47,7 +47,9 @@ function main() {
     .version(PKG.version)
     .description(chalk.yellow.bold('*** HackMyResume ***'))
     .option('-o --opts <optionsFile>', 'Path to a .hackmyrc options file')
-    .option('-s --silent', 'Run in silent mode');
+    .option('-s --silent', 'Run in silent mode')
+    .option('--no-color', 'Disable colors')
+    .option('--color', 'Enable colors');
     //.usage('COMMAND <sources> [TO <targets>]');
 
   // Create the NEW command
