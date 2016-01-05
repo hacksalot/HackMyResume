@@ -398,6 +398,7 @@ Definition of the FRESHResume class.
     sortSection( 'employment.history' );
     sortSection( 'education.history' );
     sortSection( 'service.history' );
+    sortSection( 'projects.history' );
 
     // this.awards && this.awards.sort( function(a, b) {
     //   return( a.safeDate.isBefore(b.safeDate) ) ? 1
