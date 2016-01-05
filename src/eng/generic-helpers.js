@@ -11,6 +11,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     , H2W = require('../utils/html-to-wpml')
     , XML = require('xml-escape')
     , moment = require('moment')
+    , LO = require('lodash')
     , _ = require('underscore')
     , unused = require('../utils/string');
 
@@ -26,6 +27,35 @@ Generic template helper definitions for HackMyResume / FluentCV.
     */
     formatDate: function(datetime, format) {
       return moment ? moment( datetime ).format( format ) : datetime;
+    },
+
+    /**
+    Return true if the section is present on the resume and has at least one
+    element.
+    @method hasSection
+    */
+    hasSection: function( title, options ) {
+      title = title.trim().toLowerCase();
+      var obj = LO.get( this.r, title );
+      if( _.isArray( obj ) ) {
+        return obj.length ? options.fn(this) : undefined;
+      }
+      else if( _.isObject( obj )) {
+        return ( (obj.history && obj.history.length) ||
+            ( obj.sets && obj.sets.length ) ) ?
+            options.fn(this) : undefined;
+      }
+    },
+
+    /**
+    Return true if the context has the property or subpropery.
+    @method has
+    */
+    has: function( title, options ) {
+      title = title && title.trim().toLowerCase();
+      if( LO.get( this.r, title ) ) {
+        return options.fn(this);
+      }
     },
 
     /**
