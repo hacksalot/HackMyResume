@@ -15,8 +15,7 @@ Error-handling routines for HackMyResume.
     , FS = require('fs')
     , FCMD = require('../hackmyapi')
     , PATH = require('path')
-    , chalk = require('chalk')
-    , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***');
+    , chalk = require('chalk');
 
 
 
@@ -55,7 +54,7 @@ Error-handling routines for HackMyResume.
             break;
 
           case HACKMYSTATUS.missingCommand:
-            msg = title + chalk.yellow("\nPlease ") + chalk.yellow.bold("give me a command") +
+            msg = chalk.yellow("Please ") + chalk.yellow.bold("give me a command") +
               chalk.yellow(" (");
 
             msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {

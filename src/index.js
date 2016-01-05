@@ -128,6 +128,8 @@ Massage command-line args and setup Commander.js.
 */
 function initialize() {
 
+  logMsg( title );
+
   // Support case-insensitive sub-commands (build, generate, validate, etc.)..
   var oVerb, verb = '', args = process.argv.slice(), cleanArgs = args.slice(2);
   if( cleanArgs.length ) {
