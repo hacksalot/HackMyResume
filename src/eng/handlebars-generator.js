@@ -45,6 +45,7 @@ Definition of the HandlebarsGenerator class.
         RAW: json,
         filt: opts.filters,
         cssInfo: cssInfo,
+        format: format,
         opts: opts,
         headFragment: opts.headFragment || ''
       });

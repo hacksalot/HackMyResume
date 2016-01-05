@@ -181,15 +181,26 @@ Definition of the FRESHTheme class.
       return fmt && (fmt.ext === 'css');
     }))
 
-    // For each CSS file, get its corresponding HTML file
+    // For each CSS file, get its corresponding HTML file. It's possible that
+    // a theme can have a CSS file but *no* HTML file, as when a theme author
+    // creates a pure CSS override of an existing theme.
     .forEach(function( cssf ) {
 
       var idx = _.findIndex(fmts, function( fmt ) {
         return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       cssf.action = null;
-      fmts[ idx ].css = cssf.data;
-      fmts[ idx ].cssPath = cssf.path;
+      if( idx > -1) {
+        fmts[ idx ].css = cssf.data;
+        fmts[ idx ].cssPath = cssf.path;
+      }
+      else {
+        if( that.inherits ) {
+          // Found a CSS file without an HTML file in a theme that inherits
+          // from another theme. This is the override CSS file.
+          that.overrides = { file: cssf.path, data: cssf.data };
+        }
+      }
     });
 
     // Remove CSS files from the formats array

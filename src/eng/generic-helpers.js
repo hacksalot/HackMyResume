@@ -215,9 +215,17 @@ Generic template helper definitions for HackMyResume / FluentCV.
     via <style></style> tag.
     */
     styleSheet: function( file, options ) {
-      return ( this.opts.css === 'link') ?
+      var styles = ( this.opts.css === 'link') ?
         '<link href="' + file + '" rel="stylesheet" type="text/css">' :
         '<style>' + this.cssInfo.data + '</style>';
+      if( this.opts.themeObj.inherits &&
+          this.opts.themeObj.inherits.html &&
+          this.format === 'html' ) {
+        styles += (this.opts.css === 'link') ?
+          '<link href="' + this.opts.themeObj.overrides.path + '" rel="stylesheet" type="text/css">' :
+          '<style>' + this.opts.themeObj.overrides.data + '</style>';
+      }
+      return styles;
     },
 
     /**
