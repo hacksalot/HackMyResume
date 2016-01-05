@@ -3,6 +3,8 @@ Implementation of the 'generate' verb for HackMyResume.
 @module generate.js
 @license MIT. See LICENSE.md for details.
 */
+// TODO: EventEmitter
+
 
 (function() {
 
@@ -55,7 +57,9 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.css = opts.css || 'embed';
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;
-    _opts.stitles = opts.sectionTitles;    
+    _opts.stitles = opts.sectionTitles;
+    _opts.tips = opts.tips;
+    //_opts.noTips = opts.noTips;
 
     // If two or more files are passed to the GENERATE command and the TO
     // keyword is omitted, the last file specifies the output file.
@@ -100,11 +104,26 @@ Implementation of the 'generate' verb for HackMyResume.
       t.final = single( t, theme, targets );
     });
 
-    if( theme.message ) {
+    if( _opts.tips && (theme.message || theme.render) ) {
       var WRAP = require('word-wrap');
-      _log( WRAP( chalk.gray('The ' + themeName +
-        ' theme says: "') + chalk.white(theme.message) + chalk.gray('"'),
-        { width: _opts.wrap, indent: '' } ));
+      if( theme.message )
+        _log( WRAP( chalk.gray('The ' + themeName +
+          ' theme says: "') + chalk.white(theme.message) + chalk.gray('"'),
+          { width: _opts.wrap, indent: '' } ));
+      else
+        _log( WRAP( chalk.gray('The ' + themeName +
+          ' theme says: "') + chalk.white('For best results view JSON Resume ' +
+          'themes over a local or remote HTTP connection. For example:'),
+          { width: _opts.wrap, indent: '' }
+        ));
+        _log('');
+        _log(
+          '    npm install http-server -g\r' +
+          '    http-server <resume-folder>' );
+        _log('');
+        _log(chalk.white('For more information, see the README."'),
+          { width: _opts.wrap, indent: '' } );
+
     }
 
     // Don't send the client back empty-handed
