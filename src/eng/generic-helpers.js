@@ -30,6 +30,26 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
+    Format a from/to date range.
+    @method dateRange
+    */
+    dateRange: function( obj, fmt, sep, options ) {
+      fmt = (fmt && String.is(fmt) && fmt) || 'YYYY-MM';
+      sep = (sep && String.is(sep) && sep) || ' — ';
+      if( obj.safe ) {
+        var dateA = (obj.safe.start && obj.safe.start.format(fmt)) || '';
+        var dateB = (obj.safe.end && obj.safe.end.format(fmt)) || '';
+        if( obj.safe.start && obj.safe.end ) {
+          return dateA + sep + dateB ;
+        }
+        else if( obj.safe.start || obj.safe.end ) {
+          return dateA || dateB;
+        }
+      }
+      return '';
+    },
+
+    /**
     Return true if the section is present on the resume and has at least one
     element.
     @method section
@@ -45,6 +65,15 @@ Generic template helper definitions for HackMyResume / FluentCV.
             ( obj.sets && obj.sets.length ) ) ?
             options.fn(this) : undefined;
       }
+    },
+
+    /**
+    Capitalize the first letter of the word.
+    @method section
+    */
+    camelCase: function(val) {
+      val = (val && val.trim()) || '';
+      return val ? (val.charAt(0).toUpperCase() + val.slice(1)) : val;
     },
 
     /**
