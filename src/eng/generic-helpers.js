@@ -32,9 +32,9 @@ Generic template helper definitions for HackMyResume / FluentCV.
     /**
     Return true if the section is present on the resume and has at least one
     element.
-    @method hasSection
+    @method section
     */
-    hasSection: function( title, options ) {
+    section: function( title, options ) {
       title = title.trim().toLowerCase();
       var obj = LO.get( this.r, title );
       if( _.isArray( obj ) ) {
