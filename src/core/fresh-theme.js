@@ -53,14 +53,26 @@ Definition of the FRESHTheme class.
     // Move properties from the theme JSON file to the theme object
     EXTEND( true, this, themeInfo );
 
+    // Check for an "inherits" entry in the theme JSON.
+    if( this.inherits ) {
+      var cached = { };
+      _.each( this.inherits, function(th, key) {
+        var themesFolder = require.resolve('fresh-themes');
+        var d = parsePath( themeFolder ).dirname;
+        var themePath = PATH.join(d, th);
+        cached[ th ] = cached[th] || new FRESHTheme().open( themePath );
+        formatsHash[ key ] = cached[ th ].getFormat( key );
+      });
+    }
+
     // Check for an explicit "formats" entry in the theme JSON. If it has one,
     // then this theme declares its files explicitly.
     if( !!this.formats ) {
-      formatsHash = loadExplicit.call( this );
+      formatsHash = loadExplicit.call( this, formatsHash );
       this.explicit = true;
     }
     else {
-      formatsHash = loadImplicit.call( this );
+      formatsHash = loadImplicit.call( this, formatsHash );
     }
 
     // Cache
@@ -95,10 +107,9 @@ Definition of the FRESHTheme class.
   Load the theme implicitly, by scanning the theme folder for
   files. TODO: Refactor duplicated code with loadExplicit.
   */
-  function loadImplicit() {
+  function loadImplicit(formatsHash) {
 
     // Set up a hash of formats supported by this theme.
-    var formatsHash = { };
     var that = this;
     var major = false;
 
@@ -195,10 +206,9 @@ Definition of the FRESHTheme class.
   Load the theme explicitly, by following the 'formats' hash
   in the theme's JSON settings file.
   */
-  function loadExplicit() {
+  function loadExplicit(formatsHash) {
 
     // Housekeeping
-    var formatsHash = { };
     var tplFolder = PATH.join( this.folder, 'src' );
     var act = null;
     var that = this;
