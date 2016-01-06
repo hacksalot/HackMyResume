@@ -1,10 +1,14 @@
 /**
 Definition of the FRESHResume class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE .md for details.
 @module fresh-resume.js
 */
 
+
+
 (function() {
+
+
 
   var FS = require('fs')
     , extend = require('../utils/extend')
@@ -18,13 +22,18 @@ Definition of the FRESHResume class.
     , CONVERTER = require('./convert')
     , JRSResume = require('./jrs-resume');
 
+
+
   /**
-  A FRESH-style resume in JSON or YAML.
+  A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
+  object is an instantiation of that JSON decorated with utility methods.
   @class FreshResume
   */
   function FreshResume() {
 
   }
+
+
 
   /**
   Open and parse the specified FRESH resume sheet. Merge the JSON object model
@@ -37,6 +46,8 @@ Definition of the FRESHResume class.
     return this.parse( this.imp.raw, title );
   };
 
+
+
   /**
   Save the sheet to disk (for environments that have disk access).
   */
@@ -45,6 +56,8 @@ Definition of the FRESHResume class.
     FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
     return this;
   };
+
+
 
   /**
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
@@ -62,11 +75,18 @@ Definition of the FRESHResume class.
     return this;
   };
 
+
+
+  /**
+  Duplicate this FreshResume instance.
+  */
   FreshResume.prototype.dupe = function() {
     var rnew = new FreshResume();
     rnew.parse( this.stringify(), { } );
     return rnew;
   };
+
+
 
   /**
   Convert the supplied object to a JSON string, sanitizing meta-properties along
@@ -81,6 +101,8 @@ Definition of the FRESHResume class.
     }
     return JSON.stringify( obj, replacer, 2 );
   };
+
+
 
   /**
   Create a copy of this resume in which all string fields have been run through
@@ -128,6 +150,8 @@ Definition of the FRESHResume class.
     return ret;
   };
 
+
+
   /**
   Create a copy of this resume in which all fields have been interpreted as
   Markdown.
@@ -148,6 +172,8 @@ Definition of the FRESHResume class.
     return this.transformStrings( ['skills','url','start','end','date'], trx );
   };
 
+
+
   /**
   Create a copy of this resume in which all fields have been interpreted as
   Markdown.
@@ -161,6 +187,8 @@ Definition of the FRESHResume class.
     return this.transformStrings( [], trx );
   };
 
+
+
   /**
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
@@ -168,6 +196,8 @@ Definition of the FRESHResume class.
   FreshResume.prototype.stringify = function() {
     return FreshResume.stringify( this );
   };
+
+
 
   /**
   Initialize the FreshResume from JSON data.
@@ -202,12 +232,16 @@ Definition of the FRESHResume class.
     return this;
   };
 
+
+
   /**
   Return the resume format.
   */
   FreshResume.prototype.format = function() {
     return 'FRESH';
   };
+
+
 
   /**
   Initialize the the FreshResume from string data.
@@ -216,6 +250,8 @@ Definition of the FRESHResume class.
     return this.parseJSON( JSON.parse( stringData ), opts );
   };
 
+
+
   /**
   Return internal metadata. Create if it doesn't exist.
   */
@@ -223,6 +259,8 @@ Definition of the FRESHResume class.
     this.imp = (this.imp || { });
     return this.imp;
   };
+
+
 
   /**
   Return a unique list of all keywords across all skills.
@@ -235,12 +273,16 @@ Definition of the FRESHResume class.
           .reduce(function(a,b) { return a.concat(b); });
       }
       else if( this.skills.list ) {
-        flatSkills = flatSkills.concat( this.skills.list.map(function(sk) { return sk.name;  }) );
+        flatSkills = flatSkills.concat( this.skills.list.map(function(sk) {
+          return sk.name;
+        }));
       }
       flatSkills = _.uniq( flatSkills );
     }
     return flatSkills;
   },
+
+
 
   /**
   Reset the sheet to an empty state.
@@ -260,6 +302,8 @@ Definition of the FRESHResume class.
     delete this.social;
   };
 
+
+
   /**
   Get a safe count of the number of things in a section.
   */
@@ -270,12 +314,16 @@ Definition of the FRESHResume class.
     return obj.length || 0;
   };
 
+
+
   /**
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
     return new FreshResume().parseJSON( require('fresh-resume-empty')  );
   };
+
+
 
   /**
   Add work experience to the sheet.
@@ -297,6 +345,7 @@ Definition of the FRESHResume class.
     return newObject;
   };
 
+
   /**
   Determine if the sheet includes a specific social profile (eg, GitHub).
   */
@@ -307,6 +356,8 @@ Definition of the FRESHResume class.
     });
   };
 
+
+
   /**
   Return the specified network profile.
   */
@@ -316,6 +367,8 @@ Definition of the FRESHResume class.
       return sn.network.trim().toLowerCase() === socialNetwork;
     });
   };
+
+
 
   /**
   Return an array of profiles for the specified network, for when the user
@@ -328,6 +381,8 @@ Definition of the FRESHResume class.
     });
   };
 
+
+
   /**
   Determine if the sheet includes a specific skill.
   */
@@ -339,6 +394,8 @@ Definition of the FRESHResume class.
       });
     });
   };
+
+
 
   /**
   Validate the sheet against the FRESH Resume schema.
@@ -356,6 +413,8 @@ Definition of the FRESHResume class.
     }
     return ret;
   };
+
+
 
   /**
   Calculate the total duration of the sheet. Assumes this.work has been sorted
@@ -381,6 +440,8 @@ Definition of the FRESHResume class.
     }
     return 0;
   };
+
+
 
   /**
   Sort dated things on the sheet by start date descending. Assumes that dates
@@ -414,10 +475,9 @@ Definition of the FRESHResume class.
       return( a.safe.date.isBefore(b.safe.date) ) ? 1
         : ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0;
     });
-
-
-
   };
+
+
 
   /**
   Convert human-friendly dates into formal Moment.js dates for all collections.
@@ -464,10 +524,14 @@ Definition of the FRESHResume class.
 
   }
 
+
+
   /**
   Export the Sheet function/ctor.
   */
   module.exports = FreshResume;
+
+
 
 }());
 
