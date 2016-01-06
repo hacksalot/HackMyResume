@@ -36,14 +36,56 @@ Definition of the FRESHResume class.
 
 
   /**
-  Open and parse the specified FRESH resume sheet. Merge the JSON object model
-  onto this Sheet instance with extend() and convert sheet dates to a safe &
-  consistent format. Then sort each section by startDate descending.
+  Initialize the FreshResume from file.
   */
   FreshResume.prototype.open = function( file, title ) {
     this.imp = { fileName: file };
     this.imp.raw = FS.readFileSync( file, 'utf8' );
     return this.parse( this.imp.raw, title );
+  };
+
+
+
+  /**
+  Initialize the the FreshResume from string.
+  */
+  FreshResume.prototype.parse = function( stringData, opts ) {
+    return this.parseJSON( JSON.parse( stringData ), opts );
+  };
+
+
+
+  /**
+  Initialize the FreshResume from JSON.
+  Open and parse the specified FRESH resume. Merge the JSON object model onto
+  this Sheet instance with extend() and convert sheet dates to a safe &
+  consistent format. Then sort each section by startDate descending.
+  */
+  FreshResume.prototype.parseJSON = function( rep, opts ) {
+    // Convert JSON Resume to FRESH if necessary
+    if( rep.basics ) {
+      rep = CONVERTER.toFRESH( rep );
+      rep.imp = rep.imp || { };
+      rep.imp.orgFormat = 'JRS';
+    }
+
+    // Now apply the resume representation onto this object
+    extend( true, this, rep );
+
+    // Set up metadata
+    opts = opts || { };
+    if( opts.imp === undefined || opts.imp ) {
+      this.imp = this.imp || { };
+      this.imp.title = (opts.title || this.imp.title) || this.name;
+    }
+    // Parse dates, sort dates, and calculate computed values
+    (opts.date === undefined || opts.date) && _parseDates.call( this );
+    (opts.sort === undefined || opts.sort) && this.sort();
+    (opts.compute === undefined || opts.compute) && (this.computed = {
+       numYears: this.duration(),
+       keywords: this.keywords()
+    });
+    return this;
   };
 
 
@@ -89,8 +131,8 @@ Definition of the FRESHResume class.
 
 
   /**
-  Convert the supplied object to a JSON string, sanitizing meta-properties along
-  the way.
+  Convert the supplied FreshResume to a JSON string, sanitizing meta-properties
+  along the way.
   */
   FreshResume.stringify = function( obj ) {
     function replacer( key,value ) { // Exclude these keys from stringification
@@ -100,6 +142,16 @@ Definition of the FRESHResume class.
       ) ? undefined : value;
     }
     return JSON.stringify( obj, replacer, 2 );
+  };
+
+
+
+  /**
+  Convert this object to a JSON string, sanitizing meta-properties along the
+  way.
+  */
+  FreshResume.prototype.stringify = function() {
+    return FreshResume.stringify( this );
   };
 
 
@@ -179,57 +231,10 @@ Definition of the FRESHResume class.
   Markdown.
   */
   FreshResume.prototype.xmlify = function() {
-
     function trx(key, val) {
       return XML(val);
     }
-
     return this.transformStrings( [], trx );
-  };
-
-
-
-  /**
-  Convert this object to a JSON string, sanitizing meta-properties along the
-  way. Don't override .toString().
-  */
-  FreshResume.prototype.stringify = function() {
-    return FreshResume.stringify( this );
-  };
-
-
-
-  /**
-  Initialize the FreshResume from JSON data.
-  Open and parse the specified FRESH resume. Merge the JSON object model onto
-  this Sheet instance with extend() and convert sheet dates to a safe &
-  consistent format. Then sort each section by startDate descending.
-  */
-  FreshResume.prototype.parseJSON = function( rep, opts ) {
-    // Convert JSON Resume to FRESH if necessary
-    if( rep.basics ) {
-      rep = CONVERTER.toFRESH( rep );
-      rep.imp = rep.imp || { };
-      rep.imp.orgFormat = 'JRS';
-    }
-
-    // Now apply the resume representation onto this object
-    extend( true, this, rep );
-
-    // Set up metadata
-    opts = opts || { };
-    if( opts.imp === undefined || opts.imp ) {
-      this.imp = this.imp || { };
-      this.imp.title = (opts.title || this.imp.title) || this.name;
-    }
-    // Parse dates, sort dates, and calculate computed values
-    (opts.date === undefined || opts.date) && _parseDates.call( this );
-    (opts.sort === undefined || opts.sort) && this.sort();
-    (opts.compute === undefined || opts.compute) && (this.computed = {
-       numYears: this.duration(),
-       keywords: this.keywords()
-    });
-    return this;
   };
 
 
@@ -239,15 +244,6 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.format = function() {
     return 'FRESH';
-  };
-
-
-
-  /**
-  Initialize the the FreshResume from string data.
-  */
-  FreshResume.prototype.parse = function( stringData, opts ) {
-    return this.parseJSON( JSON.parse( stringData ), opts );
   };
 
 
@@ -285,7 +281,7 @@ Definition of the FRESHResume class.
 
 
   /**
-  Reset the sheet to an empty state.
+  Reset the sheet to an empty state. TODO: refactor/review
   */
   FreshResume.prototype.clear = function( clearMeta ) {
     clearMeta = ((clearMeta === undefined) && true) || clearMeta;
@@ -346,6 +342,7 @@ Definition of the FRESHResume class.
   };
 
 
+
   /**
   Determine if the sheet includes a specific social profile (eg, GitHub).
   */
@@ -403,7 +400,7 @@ Definition of the FRESHResume class.
   FreshResume.prototype.isValid = function( info ) {
     var schemaObj = require('fresca');
     var validator = require('is-my-json-valid');
-    var validate = validator( schemaObj, { // Note [1]
+    var validate = validator( schemaObj, { // See Note [1].
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
     });
     var ret = validate( this );

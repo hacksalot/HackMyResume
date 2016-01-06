@@ -4,7 +4,11 @@ Definition of the JRSResume class.
 @module jrs-resume.js
 */
 
+
+
 (function() {
+
+
 
   var FS = require('fs')
     , extend = require('../utils/extend')
@@ -15,25 +19,24 @@ Definition of the JRSResume class.
     , CONVERTER = require('./convert')
     , moment = require('moment');
 
+
+
   /**
-  The JRSResume class represent a specific JSON character sheet. When Sheet.open
-  is called, we merge the loaded JSON sheet properties onto the Sheet instance
-  via extend(), so a full-grown sheet object will have all of the methods here,
-  plus a complement of JSON properties from the backing JSON file. That allows
-  us to treat Sheet objects interchangeably with the loaded JSON model.
+  A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
+  is an instantiation of that JSON decorated with utility methods.
   @class JRSResume
   */
   function JRSResume() {
 
   }
 
+
+
   /**
-  Open and parse the specified JSON resume sheet. Merge the JSON object model
-  onto this Sheet instance with extend() and convert sheet dates to a safe &
-  consistent format. Then sort each section by startDate descending.
+  Initialize the JSResume from file.
   */
   JRSResume.prototype.open = function( file, title ) {
-    //this.imp = { fileName: file }; <-- schema violation, tuck it into .basics instead
+    //this.imp = { fileName: file }; <-- schema violation, tuck it into .basics
     this.basics = {
       imp: {
         fileName: file,
@@ -43,14 +46,57 @@ Definition of the JRSResume class.
     return this.parse( this.basics.imp.raw, title );
   };
 
+
+
+  /**
+  Initialize the the JSResume from string.
+  */
+  JRSResume.prototype.parse = function( stringData, opts ) {
+    opts = opts || { };
+    var rep = JSON.parse( stringData );
+    return this.parseJSON( rep, opts );
+  };
+
+
+
+  /**
+  Initialize the JRSResume from JSON.
+  Open and parse the specified JRS resume. Merge the JSON object model onto this
+  Sheet instance with extend() and convert sheet dates to a safe & consistent
+  format. Then sort each section by startDate descending.
+  */
+  JRSResume.prototype.parseJSON = function( rep, opts ) {
+    opts = opts || { };
+    extend( true, this, rep );
+    // Set up metadata
+    if( opts.imp === undefined || opts.imp ) {
+      this.basics.imp = this.basics.imp || { };
+      this.basics.imp.title =
+        (opts.title || this.basics.imp.title) || this.basics.name;
+      this.basics.imp.orgFormat = 'JRS';
+    }
+    // Parse dates, sort dates, and calculate computed values
+    (opts.date === undefined || opts.date) && _parseDates.call( this );
+    (opts.sort === undefined || opts.sort) && this.sort();
+    (opts.compute === undefined || opts.compute) && (this.basics.computed = {
+      numYears: this.duration(),
+      keywords: this.keywords()
+    });
+    return this;
+  };
+
+
+
   /**
   Save the sheet to disk (for environments that have disk access).
   */
   JRSResume.prototype.save = function( filename ) {
     this.basics.imp.fileName = filename || this.basics.imp.fileName;
-    FS.writeFileSync( this.basics.imp.fileName, this.stringify( this ), 'utf8' );
+    FS.writeFileSync(this.basics.imp.fileName, this.stringify( this ), 'utf8');
     return this;
   };
+
+
 
   /**
   Save the sheet to disk in a specific format, either FRESH or JRS.
@@ -70,12 +116,16 @@ Definition of the JRSResume class.
 
   };
 
+
+
   /**
   Return the resume format.
   */
   JRSResume.prototype.format = function() {
     return 'JRS';
   };
+
+
 
   /**
   Convert this object to a JSON string, sanitizing meta-properties along the
@@ -85,50 +135,20 @@ Definition of the JRSResume class.
     function replacer( key,value ) { // Exclude these keys from stringification
       return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
         'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-      'isModified', 'htmlPreview', 'display_progress_bar'],
+        'isModified', 'htmlPreview', 'display_progress_bar'],
         function( val ) { return key.trim() === val; }
       ) ? undefined : value;
     }
     return JSON.stringify( obj, replacer, 2 );
   };
 
+
+
   JRSResume.prototype.stringify = function() {
     return JRSResume.stringify( this );
   };
 
-  /**
-  Initialize the JRS Resume from string data.
-  Open and parse the specified JSON resume sheet. Merge the JSON object model
-  onto this Sheet instance with extend() and convert sheet dates to a safe &
-  consistent format. Then sort each section by startDate descending.
-  */
-  JRSResume.prototype.parse = function( stringData, opts ) {
-    opts = opts || { };
-    var rep = JSON.parse( stringData );
-    return this.parseJSON( rep, opts );
-  };
 
-  /**
-  Initialize the JRSRume from JSON data.
-  */
-  JRSResume.prototype.parseJSON = function( rep, opts ) {
-    opts = opts || { };
-    extend( true, this, rep );
-    // Set up metadata
-    if( opts.imp === undefined || opts.imp ) {
-      this.basics.imp = this.basics.imp || { };
-      this.basics.imp.title = (opts.title || this.basics.imp.title) || this.basics.name;
-      this.basics.imp.orgFormat = 'JRS';
-    }
-    // Parse dates, sort dates, and calculate computed values
-    (opts.date === undefined || opts.date) && _parseDates.call( this );
-    (opts.sort === undefined || opts.sort) && this.sort();
-    (opts.compute === undefined || opts.compute) && (this.basics.computed = {
-      numYears: this.duration(),
-      keywords: this.keywords()
-    });
-    return this;
-  };
 
   /**
   Return a unique list of all keywords across all skills.
@@ -143,6 +163,8 @@ Definition of the JRSResume class.
     return flatSkills;
   };
 
+
+
   /**
   Return internal metadata. Create if it doesn't exist.
   JSON Resume v0.0.0 doesn't allow additional properties at the root level,
@@ -152,6 +174,8 @@ Definition of the JRSResume class.
     this.basics = this.basics || { imp: { } };
     return this.basics;
   };
+
+
 
   /**
   Reset the sheet to an empty state.
@@ -170,12 +194,18 @@ Definition of the JRSResume class.
     delete this.basics.profiles;
   };
 
+
+
   /**
   Get the default (empty) sheet.
   */
   JRSResume.default = function() {
-    return new JRSResume().open( PATH.join( __dirname, 'empty-jrs.json'), 'Empty' );
+    return new JRSResume().open(
+      PATH.join( __dirname, 'empty-jrs.json'), 'Empty'
+    );
   };
+
+
 
   /**
   Add work experience to the sheet.
@@ -188,6 +218,8 @@ Definition of the JRSResume class.
     return newObject;
   };
 
+
+
   /**
   Determine if the sheet includes a specific social profile (eg, GitHub).
   */
@@ -197,6 +229,8 @@ Definition of the JRSResume class.
       return p.network.trim().toLowerCase() === socialNetwork;
     });
   };
+
+
 
   /**
   Determine if the sheet includes a specific skill.
@@ -210,11 +244,13 @@ Definition of the JRSResume class.
     });
   };
 
+
+
   /**
   Validate the sheet against the JSON Resume schema.
   */
   JRSResume.prototype.isValid = function( ) { // TODO: ↓ fix this path ↓
-    var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ), 'utf8' );
+    var schema = FS.readFileSync( PATH.join( __dirname, 'resume.json' ),'utf8');
     var schemaObj = JSON.parse( schema );
     var validator = require('is-my-json-valid');
     var validate = validator( schemaObj, { // Note [1]
@@ -227,6 +263,8 @@ Definition of the JRSResume class.
     }
     return ret;
   };
+
+
 
   /**
   Calculate the total duration of the sheet. Assumes this.work has been sorted
@@ -249,6 +287,8 @@ Definition of the JRSResume class.
     }
     return 0;
   };
+
+
 
   /**
   Sort dated things on the sheet by start date descending. Assumes that dates
@@ -276,11 +316,15 @@ Definition of the JRSResume class.
 
   };
 
+
+
   JRSResume.prototype.dupe = function() {
     var rnew = new JRSResume();
     rnew.parse( this.stringify(), { } );
     return rnew;
   };
+
+
 
   /**
   Create a copy of this resume in which all fields have been interpreted as
@@ -319,7 +363,9 @@ Definition of the JRSResume class.
         Object.keys( obj ).forEach(function(key) {
           var sub = obj[key];
           if( typeof sub === 'string' || sub instanceof String ) {
-            if( _.contains(['skills','url','website','startDate','endDate','releaseDate','date','phone','email','address','postalCode','city','country','region'], key) )
+            if( _.contains(['skills','url','website','startDate','endDate',
+              'releaseDate','date','phone','email','address','postalCode',
+              'city','country','region'], key) )
               return;
             if( key === 'summary' )
               obj[key] = HD( obj[key] );
@@ -339,6 +385,8 @@ Definition of the JRSResume class.
 
     return ret;
   };
+
+
 
   /**
   Convert human-friendly dates into formal Moment.js dates for all collections.
@@ -371,9 +419,13 @@ Definition of the JRSResume class.
     });
   }
 
+
+
   /**
   Export the JRSResume function/ctor.
   */
   module.exports = JRSResume;
+
+
 
 }());
