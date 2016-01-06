@@ -313,10 +313,10 @@ Definition of the FRESHResume class.
 
 
   /**
-  Get the default (empty) sheet.
+  Get the default (starter) sheet.
   */
   FreshResume.default = function() {
-    return new FreshResume().parseJSON( require('fresh-resume-empty')  );
+    return new FreshResume().parseJSON( require('fresh-resume-starter')  );
   };
 
 
