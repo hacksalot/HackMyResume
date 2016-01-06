@@ -28,67 +28,20 @@ Definition of the HandlebarsGenerator class.
   var HandlebarsGenerator = module.exports = {
 
 
-    initialized: false,
-
-    init: function( format, theme ) {
-      // TODO: Move .partialsInitialized to application state; shouldn't be on theme
-      if( !theme.partialsInitialized ) {
-
-        if( format !== 'html' && format != 'doc' )
-          return;
-
-        // Precompile global partials in the /partials folder
-        var partialsFolder = PATH.join(
-          parsePath( require.resolve('fresh-themes') ).dirname,
-          '/partials/',
-          format
-        );
-
-        _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
-
-          var pathInfo = parsePath( el );
-          var name = SLASH( PATH.relative( partialsFolder, el )
-            .replace(/\.html$|\.xml$/, '') );
-
-          // section-employment, section-education, etc
-          if( pathInfo.dirname.endsWith('section') ) {
-            name = SLASH(name.replace(/\.html$|\.xml$/, ''));
-          }
-          else {
-
-          }
-
-          var tplData = FS.readFileSync( el, 'utf8' );
-          var compiledTemplate = HANDLEBARS.compile( tplData );
-          HANDLEBARS.registerPartial( name, compiledTemplate );
-          theme.partialsInitialized = true;
-        });
-      }
-    },
-
 
 
     generate: function( json, jst, format, cssInfo, opts, theme ) {
 
-      this.init( format, theme );
-
-      // Pre-compile any partials present in the theme.
-      _.each( theme.partials, function( el ) {
-        var tplData = FS.readFileSync( el.path, 'utf8' );
-        var compiledTemplate = HANDLEBARS.compile( tplData );
-        HANDLEBARS.registerPartial( el.name, compiledTemplate );
-      });
-
-      // Register necessary helpers.
+      registerPartials( format, theme );
       registerHelpers( theme );
 
-      // Compile and run the Handlebars template.
-      var template = HANDLEBARS.compile(jst);
-
+      // Preprocess text
       var encData = json;
       ( format === 'html' || format === 'pdf' ) && (encData = json.markdownify());
       ( format === 'doc' ) && (encData = json.xmlify());
 
+      // Compile and run the Handlebars template.
+      var template = HANDLEBARS.compile(jst);
       return template({
         r: encData,
         RAW: json,
@@ -104,4 +57,43 @@ Definition of the HandlebarsGenerator class.
 
 
   };
+
+
+
+  function registerPartials(format, theme) {
+    if( format !== 'html' && format != 'doc' )
+      return;
+
+    // Locate the global partials folder
+    var partialsFolder = PATH.join(
+      parsePath( require.resolve('fresh-themes') ).dirname,
+      '/partials/',
+      format
+    );
+
+    // Register global partials in the /partials folder
+    // TODO: Only do this once per HMR invocation.
+    _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
+      var pathInfo = parsePath( el );
+      var name = SLASH( PATH.relative( partialsFolder, el )
+        .replace(/\.html$|\.xml$/, '') );
+      if( pathInfo.dirname.endsWith('section') ) {
+        name = SLASH(name.replace(/\.html$|\.xml$/, ''));
+      }
+      var tplData = FS.readFileSync( el, 'utf8' );
+      var compiledTemplate = HANDLEBARS.compile( tplData );
+      HANDLEBARS.registerPartial( name, compiledTemplate );
+      theme.partialsInitialized = true;
+    });
+
+    // Register theme-specific partials
+    _.each( theme.partials, function( el ) {
+      var tplData = FS.readFileSync( el.path, 'utf8' );
+      var compiledTemplate = HANDLEBARS.compile( tplData );
+      HANDLEBARS.registerPartial( el.name, compiledTemplate );
+    });
+  }
+
+
+
 }());
