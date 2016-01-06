@@ -19,10 +19,10 @@ describe('Testing CLI interface', function () {
     }
 
     var opts = {
-      //theme: 'compact',
       format: 'FRESH',
       prettify: true,
-      silent: false
+      silent: false,
+      assert: true  // Causes validation errors to throw exceptions
     };
 
     var opts2 = {
@@ -39,10 +39,10 @@ describe('Testing CLI interface', function () {
 
     run( 'validate', ['node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' );
     run( 'validate', ['node_modules/fresh-test-resumes/src/johnny-trouble.fresh.json'], [], opts, ' (johnny-trouble|FRESH)' );
-    run( 'validate', ['test/sandbox/new-fresh-resume.json'], [], opts, ' (new-fresh-resume|FRESH)' );
+    fail( 'validate', ['test/sandbox/new-fresh-resume.json'], [], opts, ' (new-fresh-resume|FRESH)' );
     run( 'validate', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks.json|JRS)' );
     run( 'validate', ['test/resumes/jrs-0.0.0/jane-incomplete.json'], [], opts2, ' (jane-incomplete.json|JRS)' );
-    run( 'validate', ['test/sandbox/new-1.json','test/sandbox/new-jrs-resume.json','test/sandbox/new-1.json', 'test/sandbox/new-2.json', 'test/sandbox/new-3.json'], [], opts, ' (5|BOTH)' );
+    fail( 'validate', ['test/sandbox/new-1.json','test/sandbox/new-jrs-resume.json','test/sandbox/new-1.json', 'test/sandbox/new-2.json', 'test/sandbox/new-3.json'], [], opts, ' (5|BOTH)' );
 
     run( 'analyze', ['node_modules/fresh-test-resumes/src/jane-fullstacker.json'], [], opts, ' (jane-q-fullstacker|FRESH)' );
     run( 'analyze', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' );
