@@ -62,7 +62,7 @@ Implementation of the 'validate' verb for HackMyResume.
       var isValid = false;
       var style = 'green';
       var errors = [];
-      var fmt = json.meta && (json.meta.format==='FRESH@0.1.0') ? 'fresh':'jars';
+      var fmt = json.basics ? 'jrs' : 'fresh';
 
       try {
         var validate = validator( schemas[ fmt ], { // Note [1]
