@@ -20,8 +20,7 @@ Error-handling routines for HackMyResume.
 
 
   /**
-  An amorphous blob of error handling code for HackMyResume. Have an error?
-  Stick it here. We don't mind.
+  An amorphous blob of error handling code for HackMyResume.
   @class ErrorHandler
   */
   var ErrorHandler = module.exports = {
@@ -37,8 +36,10 @@ Error-handling routines for HackMyResume.
         return;
       }
 
+
       if( ex.fluenterror ){
-        switch( ex.fluenterror ) { // TODO: Remove magic numbers
+
+        switch( ex.fluenterror ) {
 
           case HACKMYSTATUS.themeNotFound:
             msg = "The specified theme couldn't be found: " + ex.data;
@@ -89,6 +90,9 @@ Error-handling routines for HackMyResume.
             'installed and accessible from your path.');
             break;
 
+          case HACKMYSTATUS.invalid:
+            msg = chalk.red.bold('ERROR: Validation failed and the --assert option was specified.');
+            break;
         }
         exitCode = ex.fluenterror;
 

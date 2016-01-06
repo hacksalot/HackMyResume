@@ -17,7 +17,8 @@ Status codes for HackMyResume.
     inputOutputParity: 7,
     createNameMissing: 8,
     wkhtmltopdf: 9,
-    missingPackageJSON: 10
+    missingPackageJSON: 10,
+    invalid: 11
   };
 
 }());

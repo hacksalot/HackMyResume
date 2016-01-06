@@ -67,6 +67,7 @@ function main() {
   program
     .command('validate')
     .arguments('<sources...>')
+    .option('-a --assert', 'Treat validation warnings as errors', false)
     .description('Validate a resume in FRESH or JSON RESUME format.')
     .action(function(sources) {
       execVerb.call( this, sources, [], this.opts(), logMsg);
@@ -101,7 +102,7 @@ function main() {
     .option('-n --no-prettify', 'Disable HTML prettification', true)
     .option('-c --css <option>', 'CSS linking / embedding', 'embed')
     .option('-p --pdf <engine>', 'PDF generation engine')
-    .option('--no-tips', 'Disable theme tips and warnings.', false)    
+    .option('--no-tips', 'Disable theme tips and warnings.', false)
     .description('Generate resume to multiple formats')
     .action(function( sources, targets, options ) {
       var x = splitSrcDest.call( this );

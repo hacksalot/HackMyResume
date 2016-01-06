@@ -10,6 +10,7 @@ Implementation of the 'validate' verb for HackMyResume.
   var ResumeFactory = require('../core/resume-factory');
   var SyntaxErrorEx = require('../utils/syntax-error-ex');
   var chalk = require('chalk');
+  var HACKMYSTATUS = require('../core/status-codes');
 
   module.exports =
 
@@ -55,6 +56,7 @@ Implementation of the 'validate' verb for HackMyResume.
         else {
           _log(chalk.red.bold('ERROR: ' + ex.toString()));
         }
+        if( opts.assert ) throw { fluenterror: HACKMYSTATUS.invalid };
         return;
       }
 
@@ -91,6 +93,10 @@ Implementation of the 'validate' verb for HackMyResume.
           chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
           err.message) );
       });
+
+      if( opts.assert && !isValid ) {
+        throw { fluenterror: HACKMYSTATUS.invalid, shouldExit: true };
+      }
 
     });
   };
