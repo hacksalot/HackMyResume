@@ -152,7 +152,8 @@ function initialize() {
 
   // Override the .missingArgument behavior
   Command.prototype.missingArgument = function(name) {
-    throw { fluenterror: HACKMYSTATUS.resumeNotFound };
+    if( this.name() !== 'new' )
+      throw { fluenterror: HACKMYSTATUS.resumeNotFound };
   };
 
   // Override the .helpInformation behavior

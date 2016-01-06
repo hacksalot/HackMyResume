@@ -8,14 +8,15 @@ Implementation of the 'create' verb for HackMyResume.
 
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
-    , chalk = require('chalk');
+    , chalk = require('chalk')
+    , HACKMYSTATUS = require('../core/status-codes');
 
   /**
   Create a new empty resume in either FRESH or JRS format.
   */
   module.exports = function create( src, dst, opts, logger ) {
     var _log = logger || console.log;
-    if( !src || !src.length ) throw { fluenterror: 8 };
+    if( !src || !src.length ) throw { fluenterror: HACKMYSTATUS.createNameMissing };
     src.forEach( function( t ) {
       var safeFormat = opts.format.toUpperCase();
       _log(chalk.green('Creating new ') + chalk.green.bold(safeFormat) +
