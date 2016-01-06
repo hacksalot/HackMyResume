@@ -344,8 +344,8 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [img-release]: https://img.shields.io/github/release/hacksalot/HackMyResume.svg?label=version
 [img-master]: https://img.shields.io/travis/hacksalot/HackMyResume/master.svg
 [img-dev]: https://img.shields.io/travis/hacksalot/HackMyResume/dev.svg?label=dev
-[travis-url-master]: https://travis-ci.org/hacksalot/HackMyResume/master
-[travis-url-dev]: https://travis-ci.org/hacksalot/HackMyResume/dev
+[travis-url-master]: https://travis-ci.org/hacksalot/HackMyResume?branch=master
+[travis-url-dev]: https://travis-ci.org/hacksalot/HackMyResume?branch=dev
 [latest-release]: https://github.com/hacksalot/HackMyResume/releases/latest
 [contribute]: CONTRIBUTING.md
 [fresh-themes]: https://github.com/fluentdesk/fresh-themes
