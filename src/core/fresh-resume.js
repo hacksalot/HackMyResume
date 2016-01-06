@@ -274,8 +274,7 @@ Definition of the FRESHResume class.
   Get the default (empty) sheet.
   */
   FreshResume.default = function() {
-    return new FreshResume().open(
-      PATH.join( __dirname, 'empty-fresh.json'), 'Empty' );
+    return new FreshResume().parseJSON( require('fresh-resume-empty')  );
   };
 
   /**
