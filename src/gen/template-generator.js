@@ -235,6 +235,7 @@ Definition of the TemplateGenerator class.
     // Verify the specified theme name/path
     var tFolder = PATH.join(
       parsePath( require.resolve('fresh-themes') ).dirname,
+      '/themes/',
       this.opts.theme
     );
 
