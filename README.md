@@ -87,7 +87,7 @@ package.json or other NPM/Node infrastructure.
 
 To use HackMyResume you'll need to create a valid resume in either
 [FRESH][fresca] or [JSON Resume][6] format. Then you can start using the command
-line tool. There are four basic commands you should be aware of:
+line tool. There are five basic commands you should be aware of:
 
 - **build** generates resumes in HTML, Word, Markdown, PDF, and other formats.
 Use it when you need to submit, upload, print, or email resumes in specific
@@ -108,10 +108,11 @@ formats.
     hackmyresume NEW r1.json r2.json -f jrs
     ```
 
+- **analyze** inspects your resume for keywords, duration, and other metrics.
+
 - **convert** converts your source resume between FRESH and JSON Resume
-formats.
-Use it to convert between the two formats to take advantage of tools and
-services.
+formats. Use it to convert between the two formats to take advantage of tools
+and services.
 
     ```bash
     # hackmyresume CONVERT <INPUTS> TO <OUTPUTS>
@@ -179,7 +180,7 @@ hackmyresume BUILD in1.json in2.json TO out.html out.doc out.pdf
 You should see something to the effect of:
 
 ```
-*** HackMyResume v0.9.0 ***
+*** HackMyResume v1.4.0 ***
 Reading JSON resume: foo/resume.json
 Applying MODERN Theme (7 formats)
 Generating HTML resume: out/resume.html
@@ -195,16 +196,23 @@ Generating YAML resume: out/resume.yml
 
 ### Applying a theme
 
-You can specify a predefined or custom theme via the optional `-t` parameter.
-For a predefined theme, include the theme name. For a custom theme, include the
-path to the custom theme's folder.
+HackMyResume can work with any FRESH or JSON Resume theme. To specify a theme
+when generating your resume, use the `-t` or `--theme` parameter:
+
+```bash
+hackmyresume BUILD resume.json TO out/rez.all -t [theme]
+```
+
+The `[theme]` parameter can be the name of a predefined theme or the path to any
+FRESH or JSON Resume theme folder:
 
 ```bash
 hackmyresume BUILD resume.json TO out/rez.all -t modern
-hackmyresume BUILD resume.json TO OUT.rez.all -t ~/foo/bar/my-custom-theme/
+hackmyresume BUILD resume.json TO OUT.rez.all -t ../some-folder/my-custom-theme/
+hackmyresume BUILD resume.json TO OUT.rez.all -t npm_modules/jsonresume-theme-classy
 ```
 
-As of v1.0.0, available predefined themes are `positive`, `modern`, `compact`,
+As of v1.4.0, available predefined themes are `positive`, `modern`, `compact`,
 `minimist`, and `hello-world`.
 
 ### Merging resumes
