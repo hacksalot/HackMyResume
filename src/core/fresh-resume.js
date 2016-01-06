@@ -212,7 +212,7 @@ Definition of the FRESHResume class.
   /**
   Return internal metadata. Create if it doesn't exist.
   */
-  FreshResume.prototype.imp = function() {
+  FreshResume.prototype.i = function() {
     this.imp = (this.imp || { });
     return this.imp;
   };

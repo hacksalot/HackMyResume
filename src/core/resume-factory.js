@@ -75,7 +75,7 @@ Definition of the ResumeFactory class.
       if( objectify ) {
         var ResumeClass = require('../core/' + (toFormat || orgFormat) + '-resume');
         rez = new ResumeClass().parseJSON( json );
-        rez.imp().file = src;
+        rez.i().file = src;
       }
 
       return {

@@ -83,8 +83,8 @@ Implementation of the 'generate' verb for HackMyResume.
     var msg = '';
     rez = _.reduceRight( sheets, function( a, b, idx ) {
       msg += ((idx == sheets.length - 2) ?
-        chalk.cyan('Merging ') + chalk.cyan.bold(a.imp().file) : '') +
-        chalk.cyan(' onto ') + chalk.cyan.bold(b.imp().file);
+        chalk.cyan('Merging ') + chalk.cyan.bold(a.i().file) : '') +
+        chalk.cyan(' onto ') + chalk.cyan.bold(b.i().file);
       return extend( true, b, a );
     });
     msg && _log(msg);
@@ -106,11 +106,12 @@ Implementation of the 'generate' verb for HackMyResume.
 
     if( _opts.tips && (theme.message || theme.render) ) {
       var WRAP = require('word-wrap');
-      if( theme.message )
+      if( theme.message ) {
         _log( WRAP( chalk.gray('The ' + themeName +
           ' theme says: "') + chalk.white(theme.message) + chalk.gray('"'),
           { width: _opts.wrap, indent: '' } ));
-      else
+      }
+      else {
         _log( WRAP( chalk.gray('The ' + themeName +
           ' theme says: "') + chalk.white('For best results view JSON Resume ' +
           'themes over a local or remote HTTP connection. For example:'),
@@ -123,8 +124,9 @@ Implementation of the 'generate' verb for HackMyResume.
         _log('');
         _log(chalk.white('For more information, see the README."'),
           { width: _opts.wrap, indent: '' } );
-
+      }
     }
+
 
     // Don't send the client back empty-handed
     return { sheet: rez, targets: targets, processed: targets };
