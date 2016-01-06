@@ -71,6 +71,13 @@ Definition of the JRSResume class.
   };
 
   /**
+  Return the resume format.
+  */
+  JRSResume.prototype.format = function() {
+    return 'JRS';
+  };
+
+  /**
   Convert this object to a JSON string, sanitizing meta-properties along the
   way. Don't override .toString().
   */

@@ -203,6 +203,13 @@ Definition of the FRESHResume class.
   };
 
   /**
+  Return the resume format.
+  */
+  FreshResume.prototype.format = function() {
+    return 'FRESH';
+  };
+
+  /**
   Initialize the the FreshResume from string data.
   */
   FreshResume.prototype.parse = function( stringData, opts ) {
