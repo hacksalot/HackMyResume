@@ -148,7 +148,7 @@ Definition of the JRSResume class.
   JSON Resume v0.0.0 doesn't allow additional properties at the root level,
   so tuck this into the .basic sub-object.
   */
-  JRSResume.prototype.imp = function() {
+  JRSResume.prototype.i = function() {
     this.basics = this.basics || { imp: { } };
     return this.basics;
   };
