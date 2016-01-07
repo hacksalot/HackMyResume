@@ -1,24 +1,29 @@
 /**
 External API surface for HackMyResume.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module hackmyapi.js
 */
 
+
+
 (function() {
 
-  var v = {
-    build: require('./verbs/build'),
-    analyze: require('./verbs/analyze'),
-    validate: require('./verbs/validate'),
-    convert: require('./verbs/convert'),
-    new: require('./verbs/create')
-  };
 
+
+  /**
+  The formal HackMyResume API.
+  */
   var HackMyAPI = module.exports = {
-    verbs: v,
+    verbs: {
+      build: require('./verbs/build'),
+      analyze: require('./verbs/analyze'),
+      validate: require('./verbs/validate'),
+      convert: require('./verbs/convert'),
+      new: require('./verbs/create')
+    },
     alias: {
-      generate: v.build,
-      create: v.new
+      generate: require('./verbs/build'),
+      create: require('./verbs/create')
     },
     options: require('./core/default-options'),
     formats: require('./core/default-formats'),
@@ -39,5 +44,7 @@ External API surface for HackMyResume.
     LaTeXGenerator: require('./gen/latex-generator'),
     HtmlPngGenerator: require('./gen/html-png-generator')
   };
+
+
 
 }());
