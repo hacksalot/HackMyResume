@@ -120,7 +120,7 @@ Error-handling routines for HackMyResume.
           chalk.yellow(' to create.');
         break;
 
-      case HACKMYSTATUS.wkhtmltopdf:
+      case HACKMYSTATUS.pdfGeneration:
         msg = chalk.red.bold('ERROR: PDF generation failed. ') + chalk.red('Make sure wkhtmltopdf is ' +
         'installed and accessible from your path.');
         if( ex.inner ) msg += chalk.red('\n' + ex.inner);

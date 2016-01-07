@@ -16,7 +16,7 @@ Status codes for HackMyResume.
     resumeNotFoundAlt: 6,
     inputOutputParity: 7,
     createNameMissing: 8,
-    wkhtmltopdf: 9,
+    pdfgeneration: 9,
     missingPackageJSON: 10,
     invalid: 11,
     invalidTarget: 12
