@@ -51,6 +51,7 @@ Definition of the HtmlPdfGenerator class.
 
     /**
     Generate a PDF from HTML using Phantom.
+    See: https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js
     */
     phantom: function( markup, fOut ) {
       require('phantom').create( function( ph ) {
