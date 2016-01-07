@@ -18,7 +18,8 @@ Status codes for HackMyResume.
     createNameMissing: 8,
     wkhtmltopdf: 9,
     missingPackageJSON: 10,
-    invalid: 11
+    invalid: 11,
+    invalidTarget: 12
   };
 
 }());

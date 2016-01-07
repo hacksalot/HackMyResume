@@ -36,47 +36,42 @@ describe('Testing CLI interface', function () {
     var ft = 'node_modules/fresh-test-resumes/src/';
 
     [
-      [ 'new', [sb + 'new-fresh-resume.json'], [], opts, ' (FRESH format)' ],
-      [ 'new', [sb + 'new-jrs-resume.json'], [], opts2, ' (JRS format)'],
-      [ 'new', [sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (multiple FRESH resumes)' ],
-      [ 'new', [sb + 'new-jrs-1.json', sb + 'new-jrs-2.json', sb + 'new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' ],
+
+      [ 'new',      [sb + 'new-fresh-resume.json'], [], opts, ' (FRESH format)' ],
+      [ 'new',      [sb + 'new-jrs-resume.json'], [], opts2, ' (JRS format)'],
+      [ 'new',      [sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (multiple FRESH resumes)' ],
+      [ 'new',      [sb + 'new-jrs-1.json', sb + 'new-jrs-2.json', sb + 'new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' ],
       [ 'validate', [ft + 'jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
       [ 'validate', [ft + 'johnny-trouble.fresh.json'], [], opts, ' (johnny-trouble|FRESH)' ],
       [ 'validate', [sb + 'new-fresh-resume.json'], [], opts, ' (new-fresh-resume|FRESH)' ],
       [ 'validate', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks.json|JRS)' ],
       [ 'validate', ['test/resumes/jrs-0.0.0/jane-incomplete.json'], [], opts2, ' (jane-incomplete.json|JRS)' ],
       [ 'validate', [sb + 'new-1.json', sb + 'new-jrs-resume.json', sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (5|BOTH)' ],
-      [ 'analyze', [ft + 'jane-fullstacker.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
-      [ 'analyze', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' ],
-      [ 'build',
-        [ ft + 'jane-fullstacker.fresh.json',
-          ft + 'override/jane-fullstacker-override.fresh.json' ],
-        [ sb + 'merged/jane-fullstacker-gamedev.fresh.all'], opts, ' (jane-q-fullstacker w/ override|FRESH)' ],
-      [ 'build',
-        [ ft + 'jane-fullstacker.fresh.json'],
-        [ sb + 'shouldnt-exist.pdf' ],
-        EXTEND(true, opts, { theme: 'awesome' }),
-        ' (jane-q-fullstacker + Awesome + PDF|FRESH)' ]
+      [ 'analyze',  [ft + 'jane-fullstacker.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
+      [ 'analyze',  ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' ],
+      [ 'build',    [ ft + 'jane-fullstacker.fresh.json', ft + 'override/jane-fullstacker-override.fresh.json' ], [ sb + 'merged/jane-fullstacker-gamedev.fresh.all'], opts, ' (jane-q-fullstacker w/ override|FRESH)' ],
+      [ '!build',   [ ft + 'jane-fullstacker.fresh.json'], [ sb + 'shouldnt-exist.pdf' ], EXTEND(true, opts, { theme: 'awesome' }), ' (jane-q-fullstacker + Awesome + PDF|FRESH)' ],
+      [ '!new',     [], [], opts, " (when a filename isn't specified)" ]
+
     ].forEach( function(a) {
-      run.apply( null, a );
+
+      run.apply( /* The players of */ null, a );
+
     });
-
-    fail( 'new', [], [], opts, " (when a filename isn't specified)" );
-
-
-    function logMsg() {
-
-    }
-
 
 
     function run( verb, src, dst, opts, msg ) {
       msg = msg || '.';
-      it( 'The ' + verb.toUpperCase() + ' command should SUCCEED' + msg, function () {
+      var shouldSucceed = true;
+      if( verb[0] === '!' ) {
+        verb = verb.substr(1);
+        shouldSucceed = false;
+      }
+      it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' SUCCEED' : ' FAIL') + msg, function () {
         function runIt() {
           try {
             FCMD.verbs[verb]( src, dst, opts, opts.silent ?
-              logMsg : function(msg){ msg = msg || ''; console.log(msg); } );
+              function(){} : function(msg){ msg = msg || ''; console.log(msg); } );
           }
           catch(ex) {
             console.error(ex);
@@ -84,19 +79,10 @@ describe('Testing CLI interface', function () {
             throw ex;
           }
         }
-        runIt.should.not.Throw();
-      });
-    }
-
-
-
-    function fail( verb, src, dst, opts, msg ) {
-      msg = msg || '.';
-      it( 'The ' + verb.toUpperCase() + ' command should FAIL' + msg, function () {
-        function runIt() {
-          FCMD.verbs[verb]( src, dst, opts, logMsg );
-        }
-        runIt.should.Throw();
+        if( shouldSucceed )
+          runIt.should.not.Throw();
+        else
+          runIt.should.Throw();
       });
     }
 
