@@ -41,17 +41,20 @@ describe('Testing CLI interface', function () {
       [ 'new',      [sb + 'new-jrs-resume.json'], [], opts2, ' (JRS format)'],
       [ 'new',      [sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (multiple FRESH resumes)' ],
       [ 'new',      [sb + 'new-jrs-1.json', sb + 'new-jrs-2.json', sb + 'new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' ],
+      [ '!new',     [], [], opts, " (when a filename isn't specified)" ],
+
       [ 'validate', [ft + 'jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
       [ 'validate', [ft + 'johnny-trouble.fresh.json'], [], opts, ' (johnny-trouble|FRESH)' ],
       [ 'validate', [sb + 'new-fresh-resume.json'], [], opts, ' (new-fresh-resume|FRESH)' ],
       [ 'validate', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks.json|JRS)' ],
       [ 'validate', ['test/resumes/jrs-0.0.0/jane-incomplete.json'], [], opts2, ' (jane-incomplete.json|JRS)' ],
       [ 'validate', [sb + 'new-1.json', sb + 'new-jrs-resume.json', sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (5|BOTH)' ],
-      [ 'analyze',  [ft + 'jane-fullstacker.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
+
+      [ 'analyze',  [ft + 'jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
       [ 'analyze',  ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' ],
+
       [ 'build',    [ ft + 'jane-fullstacker.fresh.json', ft + 'override/jane-fullstacker-override.fresh.json' ], [ sb + 'merged/jane-fullstacker-gamedev.fresh.all'], opts, ' (jane-q-fullstacker w/ override|FRESH)' ],
-      [ '!build',   [ ft + 'jane-fullstacker.fresh.json'], [ sb + 'shouldnt-exist.pdf' ], EXTEND(true, opts, { theme: 'awesome' }), ' (jane-q-fullstacker + Awesome + PDF|FRESH)' ],
-      [ '!new',     [], [], opts, " (when a filename isn't specified)" ]
+      [ '!build',   [ ft + 'jane-fullstacker.fresh.json'], [ sb + 'shouldnt-exist.pdf' ], EXTEND(true, opts, { theme: 'awesome' }), ' (jane-q-fullstacker + Awesome + PDF|FRESH)' ]
 
     ].forEach( function(a) {
 
