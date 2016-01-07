@@ -45,7 +45,7 @@ Definition of the HtmlPdfGenerator class.
       catch(ex) {
         // { [Error: write EPIPE] code: 'EPIPE', errno: 'EPIPE', ... }
         // { [Error: ENOENT] }
-        throw { fluenterror: this.codes.wkhtmltopdf };
+        throw { fluenterror: this.codes.wkhtmltopdf, inner: ex };
       }
     },
 
