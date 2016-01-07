@@ -29,14 +29,16 @@ or Windows. View the [FAQ](FAQ.md).
 - OS X, Linux, and Windows.
 - Choose from dozens of FRESH or JSON Resume themes.
 - Private, local-only resume authoring and analysis.
+- Analyze your resume for keywords, gaps, and other metrics.
 - Store your resume data as a durable, versionable JSON or YAML document.
 - Generate polished resumes in multiple formats without violating [DRY][dry].
 - Output to HTML, Markdown, LaTeX, PDF, MS Word, JSON, YAML, plain text, or XML.
 - Validate resumes against the FRESH or JSON Resume schema.
 - Support for multiple input and output resumes.
+- Convert between FRESH and JSON Resume resumes.
 - Use from your command line or [desktop][7].
 - Free and open-source through the MIT license.
-- Updated daily / weekly. Contributions welcome.
+- Updated daily / weekly. Contributions are [welcome](CONTRIBUTING.md).
 
 ## Install
 
@@ -46,7 +48,7 @@ Install the latest stable version of HackMyResume with NPM:
 [sudo] npm install hackmyresume -g
 ```
 
-To install the latest bleeding-edge version (updated daily):
+Power users can install the latest bleeding-edge version (updated daily):
 
 ```bash
 [sudo] npm install hacksalot/hackmyresume#dev -g
@@ -266,6 +268,101 @@ hackmyresume BUILD me.json TO out/resume.all
 `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and
 `out/resume.json`.
 
+### Analyzing
+
+HackMyResume can analyze your resume for keywords, employment gaps, and other
+metrics. Run:
+
+```bash
+hackmyresume ANALYZE <my-resume>.json
+```
+
+Depending on the HackMyResume version, you should see output similar to:
+
+
+```
+*** HackMyResume v1.4.1 ***
+Reading resume: resume.json
+Analyzing FRESH resume: resume.json
+
+SECTIONS (10):
+
+        employment:    12
+         education:     2
+           service:     1
+            skills:     8
+           writing:     1
+       recognition:     0
+            social:     4
+         interests:     2
+        references:     1
+         languages:     2
+
+COVERAGE (61.1%):
+
+        Total Days:  6034
+          Employed:  3688
+              Gaps:     8  [31, 1065, 273, 153, 671, 61, 61, 31]
+          Overlaps:     1  [243]
+
+KEYWORDS (61):
+
+           Node.js:     6 mentions
+        JavaScript:     9 mentions
+        SQL Server:     3 mentions
+     Visual Studio:     6 mentions
+           Web API:     1 mentions
+   N-tier / 3-tier:     1 mentions
+            HTML 5:     1 mentions
+        JavaScript:     6 mentions
+               CSS:     2 mentions
+Sass / LESS / SCSS:     1 mentions
+              LAMP:     3 mentions
+              WISC:     1 mentions
+              HTTP:    21 mentions
+              JSON:     1 mentions
+               XML:     2 mentions
+              REST:     1 mentions
+        WebSockets:     2 mentions
+       Backbone.js:     3 mentions
+        Angular.js:     1 mentions
+           Node.js:     4 mentions
+               NPM:     1 mentions
+             Bower:     1 mentions
+             Grunt:     2 mentions
+              Gulp:     1 mentions
+            jQuery:     2 mentions
+         Bootstrap:     3 mentions
+     Underscore.js:     1 mentions
+         PhantomJS:     1 mentions
+      CoffeeScript:     1 mentions
+            Python:    11 mentions
+              Perl:     4 mentions
+               PHP:     7 mentions
+             MySQL:    12 mentions
+        PostgreSQL:     4 mentions
+             NoSQL:     2 mentions
+            Apache:     2 mentions
+               AWS:     2 mentions
+               EC2:     2 mentions
+               RDS:     3 mentions
+                S3:     1 mentions
+             Azure:     1 mentions
+         Rackspace:     1 mentions
+               C++:    23 mentions
+            C++ 11:     1 mentions
+             Boost:     1 mentions
+             Xcode:     2 mentions
+               gcc:     1 mentions
+             OO&AD:     1 mentions
+              .NET:    20 mentions
+           Unity 5:     2 mentions
+              Mono:     3 mentions
+       MonoDevelop:     1 mentions
+           Xamarin:     1 mentions
+             TOTAL:   180 mentions
+```
+
 ### Validating
 
 HackMyResume can also validate your resumes against either the [FRESH /
@@ -299,14 +396,30 @@ where <INPUTS> is one or more resumes in FRESH or JSON Resume format, and
 autodetect the format (FRESH or JRS) of each input resume and convert it to the
 other format (JRS or FRESH).
 
+### External options
+
+Starting in v1.4.x you can pass options into HackMyResume via an external
+options or ".hackmyrc" file.
+
+```javascript
+{
+  // Set the default theme to "compact"
+  "theme": "compact",
+  // Change the "employment" section title text to "Work"
+  "sectionTitles": {
+    "employment": "Work"
+  }
+}
+```
+
 ### Prettifying
 
 HackMyResume applies [js-beautify][10]-style HTML prettification by default to
-HTML-formatted resumes. To disable prettification, the `--nopretty` or `-n` flag
-can be used:
+HTML-formatted resumes. To disable prettification, the `--no-prettify` or `-n`
+flag can be used:
 
 ```bash
-hackmyresume BUILD resume.json out.all --nopretty
+hackmyresume BUILD resume.json out.all --no-prettify
 ```
 
 ### Silent Mode
