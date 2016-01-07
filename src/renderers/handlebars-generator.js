@@ -61,30 +61,31 @@ Definition of the HandlebarsGenerator class.
 
 
   function registerPartials(format, theme) {
-    if( format !== 'html' && format != 'doc' )
-      return;
+    if( format === 'html' || format === 'doc' ) {
 
-    // Locate the global partials folder
-    var partialsFolder = PATH.join(
-      parsePath( require.resolve('fresh-themes') ).dirname,
-      '/partials/',
-      format
-    );
+      // Locate the global partials folder
+      var partialsFolder = PATH.join(
+        parsePath( require.resolve('fresh-themes') ).dirname,
+        '/partials/',
+        format
+      );
 
-    // Register global partials in the /partials folder
-    // TODO: Only do this once per HMR invocation.
-    _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
-      var pathInfo = parsePath( el );
-      var name = SLASH( PATH.relative( partialsFolder, el )
-        .replace(/\.html$|\.xml$/, '') );
-      if( pathInfo.dirname.endsWith('section') ) {
-        name = SLASH(name.replace(/\.html$|\.xml$/, ''));
-      }
-      var tplData = FS.readFileSync( el, 'utf8' );
-      var compiledTemplate = HANDLEBARS.compile( tplData );
-      HANDLEBARS.registerPartial( name, compiledTemplate );
-      theme.partialsInitialized = true;
-    });
+      // Register global partials in the /partials folder
+      // TODO: Only do this once per HMR invocation.
+      _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
+        var pathInfo = parsePath( el );
+        var name = SLASH( PATH.relative( partialsFolder, el )
+          .replace(/\.html$|\.xml$/, '') );
+        if( pathInfo.dirname.endsWith('section') ) {
+          name = SLASH(name.replace(/\.html$|\.xml$/, ''));
+        }
+        var tplData = FS.readFileSync( el, 'utf8' );
+        var compiledTemplate = HANDLEBARS.compile( tplData );
+        HANDLEBARS.registerPartial( name, compiledTemplate );
+        theme.partialsInitialized = true;
+      });
+
+    }
 
     // Register theme-specific partials
     _.each( theme.partials, function( el ) {
