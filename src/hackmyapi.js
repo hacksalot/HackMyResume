@@ -35,7 +35,7 @@ External API surface for HackMyResume.
     FluentDate: require('./core/fluent-date'),
     HtmlGenerator: require('./gen/html-generator'),
     TextGenerator: require('./gen/text-generator'),
-    HtmlPdfGenerator: require('./gen/html-pdf-generator'),
+    HtmlPdfCliGenerator: require('./gen/html-pdf-cli-generator'),
     WordGenerator: require('./gen/word-generator'),
     MarkdownGenerator: require('./gen/markdown-generator'),
     JsonGenerator: require('./gen/json-generator'),
