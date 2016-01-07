@@ -7,7 +7,7 @@ External API surface for HackMyResume.
 (function() {
 
   var v = {
-    build: require('./verbs/generate'),
+    build: require('./verbs/build'),
     analyze: require('./verbs/analyze'),
     validate: require('./verbs/validate'),
     convert: require('./verbs/convert'),
