@@ -22,7 +22,7 @@ and CVs, from a single source of truth&mdash;without violating DRY.
 3. **Validate** resumes against either format.
 
 HackMyResume is built with Node.js and runs on recent versions of OS X, Linux,
-or Windows.
+or Windows. View the [FAQ](FAQ.md).
 
 ## Features
 
