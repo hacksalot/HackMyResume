@@ -132,7 +132,7 @@ Error-handling routines for HackMyResume.
         msg = chalk.red.bold('ERROR: Validation failed and the --assert option was specified.');
         break;
 
-      case HACKMYSTATUS.invalidTarget:
+      case HACKMYSTATUS.invalidFormat:
         ex.data.forEach(function(d){
           msg += chalk.red.bold('The ' + ex.theme.name + " theme doesn't support the " + d.format + " format.\n");
         });

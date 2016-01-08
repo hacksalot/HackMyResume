@@ -50,7 +50,7 @@ Implementation of the 'generate' verb for HackMyResume.
     // Check for invalid outputs
     var inv = verifyOutputs( dst, theme );
     if( inv && inv.length ) {
-      throw {fluenterror: HACKMYSTATUS.invalidTarget, data: inv, theme: theme};
+      throw {fluenterror: HACKMYSTATUS.invalidFormat, data: inv, theme: theme};
     }
 
     // Load input resumes...
