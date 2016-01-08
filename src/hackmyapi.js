@@ -33,16 +33,16 @@ External API surface for HackMyResume.
     FRESHTheme: require('./core/fresh-theme'),
     JRSTheme: require('./core/jrs-theme'),
     FluentDate: require('./core/fluent-date'),
-    HtmlGenerator: require('./gen/html-generator'),
-    TextGenerator: require('./gen/text-generator'),
-    HtmlPdfCliGenerator: require('./gen/html-pdf-cli-generator'),
-    WordGenerator: require('./gen/word-generator'),
-    MarkdownGenerator: require('./gen/markdown-generator'),
-    JsonGenerator: require('./gen/json-generator'),
-    YamlGenerator: require('./gen/yaml-generator'),
-    JsonYamlGenerator: require('./gen/json-yaml-generator'),
-    LaTeXGenerator: require('./gen/latex-generator'),
-    HtmlPngGenerator: require('./gen/html-png-generator')
+    HtmlGenerator: require('./generators/html-generator'),
+    TextGenerator: require('./generators/text-generator'),
+    HtmlPdfCliGenerator: require('./generators/html-pdf-cli-generator'),
+    WordGenerator: require('./generators/word-generator'),
+    MarkdownGenerator: require('./generators/markdown-generator'),
+    JsonGenerator: require('./generators/json-generator'),
+    YamlGenerator: require('./generators/yaml-generator'),
+    JsonYamlGenerator: require('./generators/json-yaml-generator'),
+    LaTeXGenerator: require('./generators/latex-generator'),
+    HtmlPngGenerator: require('./generators/html-png-generator')
   };
 
 
