@@ -29,7 +29,7 @@ Error-handling routines for HackMyResume.
 
     err: function( ex, shouldExit ) {
 
-      var msg = '', exitCode, log = console.log, showStack = false;
+      var msg = '', exitCode, log = console.log, showStack = ex.showStack;
 
       // If the exception has been handled elsewhere and shouldExit is true,
       // let's get out of here, otherwise silently return.

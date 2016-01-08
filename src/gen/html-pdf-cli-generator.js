@@ -20,7 +20,8 @@ Definition of the HtmlPdfCLIGenerator class.
 
   /**
   An HTML-driven PDF resume generator for HackMyResume. Talks to Phantom,
-  wkhtmltopdf, and other PDF libraries over a CLI.
+  wkhtmltopdf, and other PDF engines over a CLI (command-line interface).
+  If an engine isn't installed for a particular platform, error out gracefully.
   */
   var HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend({
 
@@ -36,6 +37,7 @@ Definition of the HtmlPdfCLIGenerator class.
     Generate the binary PDF.
     */
     onBeforeSave: function( info ) {
+      console.log('Called');
       try {
         var safe_eng = info.opts.pdf || 'wkhtmltopdf';
         engines[ safe_eng ].call( this, info.mk, info.outputFile );
@@ -50,16 +52,23 @@ Definition of the HtmlPdfCLIGenerator class.
       }
     }
 
+
+
   });
 
 
 
+  // TODO: Move each engine to a separate module
   var engines = {
 
 
 
     /**
-    Generate a PDF from HTML using wkhtmltopdf.
+    Generate a PDF from HTML using wkhtmltopdf's CLI interface.
+    Spawns a child process with `wkhtmltopdf <source> <target>`. wkhtmltopdf
+    must be installed and path-accessible.
+    TODO: If HTML generation has run, reuse that output
+    TODO: Local web server to ease wkhtmltopdf rendering
     */
     wkhtmltopdf: function(markup, fOut) {
 
@@ -89,8 +98,11 @@ Definition of the HtmlPdfCLIGenerator class.
 
 
     /**
-    Generate a PDF from HTML using Phantom.
-    See: https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js
+    Generate a PDF from HTML using Phantom's CLI interface.
+    Spawns a child process with `phantomjs <script> <source> <target>`. Phantom
+    must be installed and path-accessible.
+    TODO: If HTML generation has run, reuse that output
+    TODO: Local web server to ease Phantom rendering
     */
     phantom: function( markup, fOut ) {
 
@@ -104,7 +116,7 @@ Definition of the HtmlPdfCLIGenerator class.
       var destPath = SLASH( PATH.relative( process.cwd(), fOut) );
 
       var spawn = require('child_process').spawnSync;
-      var info = spawn('1phantomjs', [ scriptPath, sourcePath, destPath ]);
+      var info = spawn('phantomjs', [ scriptPath, sourcePath, destPath ]);
       if( info.error ) {
         throw {
           cmd: 'phantomjs',

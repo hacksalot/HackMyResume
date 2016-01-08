@@ -50,7 +50,7 @@ Implementation of the 'generate' verb for HackMyResume.
     // Check for invalid outputs
     var inv = verifyOutputs( dst, theme );
     if( inv && inv.length ) {
-      throw { fluenterror: HACKMYSTATUS.invalidTarget, data: inv, theme: theme };
+      throw {fluenterror: HACKMYSTATUS.invalidTarget, data: inv, theme: theme};
     }
 
     // Load input resumes...
@@ -184,6 +184,7 @@ Implementation of the 'generate' verb for HackMyResume.
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
+      // TODO: Make FRESH and JRS themes render on the same path
       if( targInfo.fmt.files && targInfo.fmt.files.length ) {
           theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
@@ -194,70 +195,27 @@ Implementation of the 'generate' verb for HackMyResume.
 
       // Otherwise this is either a) a JSON Resume theme or b) an ad-hoc format
       // (JSON, YML, or PNG) that every theme gets "for free".
-      else {
-
-        theFormat = _fmts.filter( function(fmt) {
-          return fmt.name === targInfo.fmt.outFormat;
-        })[0];
-
-        var outFolder = PATH.dirname( f );
-        MKDIRP.sync( outFolder ); // Ensure dest folder exists;
-
-        // JSON Resume themes have a 'render' method that needs to be called
-        if( theme.render ) {
-          return renderJRSTheme( f, outFolder, theme );
-        }
-        else {
-          return theFormat.gen.generate( rez, f, _opts );
-        }
-      }
+      // else {
+      //
+      //   theFormat = _fmts.filter( function(fmt) {
+      //     return fmt.name === targInfo.fmt.outFormat;
+      //   })[0];
+      //
+      //   var outFolder = PATH.dirname( f );
+      //   MKDIRP.sync( outFolder ); // Ensure dest folder exists;
+      //
+      //   // JSON Resume themes have a 'render' method that needs to be called
+      //   if( theme.render ) {
+      //     return renderJRSTheme( f, outFolder, theme );
+      //   }
+      //   else {
+      //     return theFormat.gen.generate( rez, f, _opts );
+      //   }
+      // }
     }
     catch( ex ) {
       _err( ex );
     }
-  }
-
-
-
-  /**
-  Render a JSON Resume theme. JSON Resume themes have an index.js that needs
-  to be called to perform the render. Additionally, we need to flow Markdown
-  styles to the JSON Resume (to the extent possible).
-  TODO: Refactor
-  */
-  function renderJRSTheme( f, outFolder, theme ) {
-
-    var COPY = require('copy');
-    var globs = [ '*.css', '*.js', '*.png', '*.jpg', '*.gif', '*.bmp' ];
-    COPY.sync( globs , outFolder, {
-      cwd: theme.folder, nodir: true,
-      ignore: ['node_modules/','node_modules/**']
-      // rewrite: function(p1, p2) {
-      //   return PATH.join(p2, p1);
-      // }
-    });
-
-    // Disable JRS theme chatter (console.log, console.error, etc.)
-    var off = ['log', 'error', 'dir'], org = off.map(function(c){
-      var ret = console[c]; console[c] = function(){}; return ret;
-    });
-
-    // Freeze and render
-    var rezHtml = theme.render( rez.harden() );
-
-    // Turn logging back on
-    off.forEach(function(c, idx){ console[c] = org[idx]; });
-
-    // Unfreeze and apply Markdown
-    rezHtml = rezHtml.replace( /@@@@~.*?~@@@@/gm, function(val){
-      return MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) );
-    });
-
-    // Save the file
-    FS.writeFileSync( f, rezHtml );
-
-    // Return markup to the client
-    return rezHtml;
   }
 
 

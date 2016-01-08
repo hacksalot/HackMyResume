@@ -16,8 +16,7 @@ Definition of the JRSTheme class.
 
 
   /**
-  The JRSTheme class is a representation of a JSON Resume
-  theme asset. See also: FRESHTheme.
+  The JRSTheme class is a representation of a JSON Resume theme asset.
   @class JRSTheme
   */
   function JRSTheme() {
@@ -41,12 +40,31 @@ Definition of the JRSTheme class.
     // Open and parse the theme's package.json file.
     var pkgJsonPath = PATH.join( thFolder, 'package.json' );
     if( pathExists( pkgJsonPath )) {
+
       var thApi = require( thFolder )
         , thPkg = require( pkgJsonPath );
+
       this.name = thPkg.name;
       this.render = (thApi && thApi.render) || undefined;
+      this.engine = 'jrs';
+
+      // Create theme formats (HTML and PDF)
       this.formats = {
-        html: { title:'html', outFormat:'html', ext:'html' }
+        html: { outFormat: 'html', files: [
+          {
+            action: 'transform',
+            render: this.render,
+            //path: absPath,
+            major: true,
+            //orgPath: PATH.relative(thFolder, absPath),
+            ext: pathInfo.extname.slice(1),
+            //title: friendlyName( outFmt ),
+            //pre: outFmt,
+            // outFormat: outFmt || pathInfo.name,
+            //data: FS.readFileSync( absPath, 'utf8' ),
+            css: null
+          }
+        ]}
       };
     }
     else {
