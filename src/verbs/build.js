@@ -124,7 +124,7 @@ Implementation of the 'generate' verb for HackMyResume.
     _log = logger || console.log;
     _err = errHandler || error;
 
-    //_opts = extend( true, _opts, opts );
+    // Cherry-pick options //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
     _opts.css = opts.css || 'embed';
@@ -159,28 +159,28 @@ Implementation of the 'generate' verb for HackMyResume.
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
-        var suffix = '';
-        if( targInfo.fmt.outFormat === 'pdf' ) {
-          if( _opts.pdf ) {
-            if( _opts.pdf !== 'none' ) {
-              suffix = chalk.green(' (with ' + _opts.pdf + ')');
-            }
-            else {
-              _log( chalk.gray('Skipping   ') +
-                chalk.white.bold(
-                  pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
-                chalk.gray(' resume') + suffix + chalk.green(': ') +
-                chalk.white( PATH.relative(process.cwd(), f )) );
-              return;
-            }
+      var suffix = '';
+      if( targInfo.fmt.outFormat === 'pdf' ) {
+        if( _opts.pdf ) {
+          if( _opts.pdf !== 'none' ) {
+            suffix = chalk.green(' (with ' + _opts.pdf + ')');
+          }
+          else {
+            _log( chalk.gray('Skipping   ') +
+              chalk.white.bold(
+                pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
+              chalk.gray(' resume') + suffix + chalk.green(': ') +
+              chalk.white( PATH.relative(process.cwd(), f )) );
+            return;
           }
         }
+      }
 
-        _log( chalk.green('Generating ') +
-          chalk.green.bold(
-            pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
-          chalk.green(' resume') + suffix + chalk.green(': ') +
-          chalk.green.bold( PATH.relative(process.cwd(), f )) );
+      _log( chalk.green('Generating ') +
+        chalk.green.bold(
+          pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
+        chalk.green(' resume') + suffix + chalk.green(': ') +
+        chalk.green.bold( PATH.relative(process.cwd(), f )) );
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
