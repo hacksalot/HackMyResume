@@ -31,15 +31,6 @@ Implementation of the 'generate' verb for HackMyResume.
 
 
   /**
-  Handle an exception.
-  */
-  function error( ex ) {
-    throw ex;
-  }
-
-
-
-  /**
   Given a source resume in FRESH or JRS format, a destination resume path, and a
   theme file, generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
@@ -153,15 +144,11 @@ Implementation of the 'generate' verb for HackMyResume.
 
   /**
   Generate a single target resume such as "out/rez.html" or "out/rez.doc".
+  TODO: Refactor.
   @param targInfo Information for the target resume.
   @param theme A FRESHTheme or JRSTheme object.
-  @returns
   */
   function single( targInfo, theme, finished ) {
-
-    function MDIN(txt) { // TODO: Move this
-      return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
-    }
 
     try {
       if( !targInfo.fmt ) {
@@ -218,37 +205,7 @@ Implementation of the 'generate' verb for HackMyResume.
 
         // JSON Resume themes have a 'render' method that needs to be called
         if( theme.render ) {
-          var COPY = require('copy');
-          var globs = [ '*.css', '*.js', '*.png', '*.jpg', '*.gif', '*.bmp' ];
-          COPY.sync( globs , outFolder, {
-            cwd: theme.folder, nodir: true,
-            ignore: ['node_modules/','node_modules/**']
-            // rewrite: function(p1, p2) {
-            //   return PATH.join(p2, p1);
-            // }
-          });
-
-          // Prevent JSON Resume theme .js from chattering (TODO: redirect IO)
-          var consoleLog = console.log;
-          console.log = function() { };
-
-          // Call the theme's render method
-          var rezDupe = rez.harden();
-          var rezHtml = theme.render( rezDupe );
-
-          // Turn logging back on
-          console.log = consoleLog;
-
-          // Unharden
-          rezHtml = rezHtml.replace( /@@@@~.*?~@@@@/gm, function(val){
-            return MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) );
-          });
-
-          // Save the file
-          FS.writeFileSync( f, rezHtml );
-
-          // Return markup to the client
-          return rezHtml;
+          return renderJRSTheme( f, outFolder, theme );
         }
         else {
           return theFormat.gen.generate( rez, f, _opts );
@@ -258,6 +215,48 @@ Implementation of the 'generate' verb for HackMyResume.
     catch( ex ) {
       _err( ex );
     }
+  }
+
+
+
+  /**
+  Render a JSON Resume theme. JSON Resume themes have an index.js that needs
+  to be called to perform the render. Additionally, we need to flow Markdown
+  styles to the JSON Resume (to the extent possible).
+  */
+  function renderJRSTheme( f, outFolder, theme ) {
+
+    var COPY = require('copy');
+    var globs = [ '*.css', '*.js', '*.png', '*.jpg', '*.gif', '*.bmp' ];
+    COPY.sync( globs , outFolder, {
+      cwd: theme.folder, nodir: true,
+      ignore: ['node_modules/','node_modules/**']
+      // rewrite: function(p1, p2) {
+      //   return PATH.join(p2, p1);
+      // }
+    });
+
+    // Disable JRS theme chatter (console.log, console.error, etc.)
+    var off = ['log', 'error', 'dir'], org = off.map(function(c){
+      var ret = console[c]; console[c] = function(){}; return ret;
+    });
+
+    // Freeze and render
+    var rezHtml = theme.render( rez.harden() );
+
+    // Turn logging back on
+    off.forEach(function(c, idx){ console[c] = org[idx]; });
+
+    // Unfreeze and apply Markdown
+    rezHtml = rezHtml.replace( /@@@@~.*?~@@@@/gm, function(val){
+      return MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) );
+    });
+
+    // Save the file
+    FS.writeFileSync( f, rezHtml );
+
+    // Return markup to the client
+    return rezHtml;
   }
 
 
@@ -275,7 +274,8 @@ Implementation of the 'generate' verb for HackMyResume.
         };
       }),
       function(t) {
-        return t.format === 'all' || theme.hasFormat( parsePath( t.format ).extname.substr(1));
+        return t.format === 'all' ||
+          theme.hasFormat( parsePath( t.format ).extname.substr(1));
       }
     );
 
@@ -342,6 +342,7 @@ Implementation of the 'generate' verb for HackMyResume.
   }
 
 
+
   /**
   Verify the specified theme name/path.
   */
@@ -364,7 +365,8 @@ Implementation of the 'generate' verb for HackMyResume.
 
 
   /**
-  Load the specified theme.
+  Load the specified theme, which could be either a FRESH theme or a JSON Resume
+  theme.
   */
   function load_theme( tFolder ) {
 
@@ -376,6 +378,21 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.themeObj = theTheme;
 
     return theTheme;
+  }
+
+
+
+  /**
+  Handle an exception. Placeholder.
+  */
+  function error( ex ) {
+    throw ex;
+  }
+
+
+
+  function MDIN(txt) { // TODO: Move this
+    return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
   }
 
 
