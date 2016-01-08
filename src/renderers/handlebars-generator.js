@@ -41,7 +41,7 @@ Definition of the HandlebarsGenerator class.
       ( format === 'doc' ) && (encData = json.xmlify());
 
       // Compile and run the Handlebars template.
-      var template = HANDLEBARS.compile(jst);
+      var template = HANDLEBARS.compile(jst, { strict: false, assumeObjects: false });
       return template({
         r: encData,
         RAW: json,
