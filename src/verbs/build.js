@@ -133,6 +133,7 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.stitles = opts.sectionTitles;
     _opts.tips = opts.tips;
     _opts.noTips = opts.noTips;
+    _opts.debug = opts.debug;
 
     // If two or more files are passed to the GENERATE command and the TO
     // keyword is omitted, the last file specifies the output file.
