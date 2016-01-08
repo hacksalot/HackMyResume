@@ -9,6 +9,8 @@ Implementation of the 'validate' verb for HackMyResume.
   var FS = require('fs');
   var ResumeFactory = require('../core/resume-factory');
   var SyntaxErrorEx = require('../utils/syntax-error-ex');
+  var chalk = require('chalk');
+  var HACKMYSTATUS = require('../core/status-codes');
 
   module.exports =
 
@@ -26,32 +28,43 @@ Implementation of the 'validate' verb for HackMyResume.
       jars: require('../core/resume.json')
     };
 
+    var resumes = ResumeFactory.load( sources, {
+      log: _log,
+      format: null,
+      objectify: false,
+      throw: false,
+      muffle: true
+    });
+
     // Load input resumes...
-    sources.forEach(function( src ) {
+    resumes.forEach(function( src ) {
 
-      var result = ResumeFactory.loadOne( src, function(){}, null, false );
-      if( result.error ) {
-        _log( 'Validating '.info + src.infoBold + ' against '.info + 'AUTO'.infoBold + ' schema:'.info + ' BROKEN'.red.bold );
+      if( src.error ) {
+        // TODO: Core should not log
+        _log( chalk.white('Validating ') + chalk.gray.bold(src.file) +
+        chalk.white(' against ') + chalk.gray.bold('AUTO') +
+        chalk.white(' schema:') + chalk.red.bold(' BROKEN') );
 
-        var ex = result.error; // alias
+        var ex = src.error; // alias
         if ( ex instanceof SyntaxError) {
-          var info = new SyntaxErrorEx( ex, result.raw );
-          _log( ('--> '.warn.bold + src.toUpperCase() + ' contains invalid JSON on line ' +
-            info.line + ' column ' + info.col + '.').warn +
-            ' Unable to validate.'.warn );
-          _log( ('    INTERNAL: ' + ex).warn );
+          var info = new SyntaxErrorEx( ex, src.raw );
+          _log( chalk.red.bold('--> ' + src.file.toUpperCase() + ' contains invalid JSON on line ' +
+            info.line + ' column ' + info.col + '.' +
+            chalk.red(' Unable to validate.') ) );
+          _log( chalk.red.bold('    INTERNAL: ' + ex) );
         }
         else {
-          _log(('ERROR: ' + ex.toString()).warn.bold);
+          _log(chalk.red.bold('ERROR: ' + ex.toString()));
         }
+        if( opts.assert ) throw { fluenterror: HACKMYSTATUS.invalid };
         return;
       }
 
-      var json = result.json;
+      var json = src.json;
       var isValid = false;
-      var style = 'useful';
+      var style = 'green';
       var errors = [];
-      var fmt = json.meta && (json.meta.format==='FRESH@0.1.0') ? 'fresh':'jars';
+      var fmt = json.basics ? 'jrs' : 'fresh';
 
       try {
         var validate = validator( schemas[ fmt ], { // Note [1]
@@ -62,7 +75,7 @@ Implementation of the 'validate' verb for HackMyResume.
 
         isValid = validate( json );
         if( !isValid ) {
-          style = 'warn';
+          style = 'yellow';
           errors = validate.errors;
         }
 
@@ -71,15 +84,19 @@ Implementation of the 'validate' verb for HackMyResume.
         return;
       }
 
-      _log( 'Validating '.info + result.file.infoBold + ' against '.info +
-        fmt.replace('jars','JSON Resume').toUpperCase().infoBold +
-        ' schema: '.info + (isValid ? 'VALID!' : 'INVALID')[style].bold );
+      _log( chalk.white('Validating ') + chalk.white.bold(src.file) + chalk.white(' against ') +
+        chalk.white.bold(fmt.replace('jars','JSON Resume').toUpperCase()) +
+        chalk.white(' schema: ') + chalk[style].bold(isValid ? 'VALID!' : 'INVALID') );
 
       errors.forEach(function(err,idx) {
-        _log( '--> '.bold.yellow +
-          (err.field.replace('data.','resume.').toUpperCase() + ' ' +
-          err.message).yellow );
+        _log( chalk.yellow.bold('--> ') +
+          chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
+          err.message) );
       });
+
+      if( opts.assert && !isValid ) {
+        throw { fluenterror: HACKMYSTATUS.invalid, shouldExit: true };
+      }
 
     });
   };

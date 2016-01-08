@@ -13,6 +13,8 @@ Definition of the ResumeFactory class.
   require('string.prototype.startswith');
   var FS = require('fs');
   var ResumeConverter = require('./convert');
+  var chalk = require('chalk');
+  var SyntaxErrorEx = require('../utils/syntax-error-ex');
 
 
 
@@ -27,12 +29,13 @@ Definition of the ResumeFactory class.
     /**
     Load one or more resumes from disk.
     */
-    load: function ( sources, log, toFormat, objectify ) {
+    load: function ( sources, opts ) {
+
       // Loop over all inputs, parsing each to JSON and then to a FRESHResume
       // or JRSResume object.
       var that = this;
       return sources.map( function( src ) {
-        return that.loadOne( src, log, toFormat, objectify );
+        return that.loadOne( src, opts );
       });
 
     },
@@ -42,17 +45,21 @@ Definition of the ResumeFactory class.
     /**
     Load a single resume from disk.
     */
-    loadOne: function( src, log, toFormat, objectify ) {
+    loadOne: function( src, opts ) {
+
+      var log = opts.log;
+      var toFormat = opts.format;
+      var objectify = opts.objectify;
 
       // Get the destination format. Can be 'fresh', 'jrs', or null/undefined.
       toFormat && (toFormat = toFormat.toLowerCase().trim());
 
       // Load and parse the resume JSON
-      var info = _parse( src, log, toFormat );
+      var info = _parse( src, opts );
       if( info.error ) return info;
-      var json = info.json;
 
       // Determine the resume format: FRESH or JRS
+      var json = info.json;
       var orgFormat = ( json.meta && json.meta.format &&
                         json.meta.format.startsWith('FRESH@') ) ?
                         'fresh' : 'jrs';
@@ -68,6 +75,7 @@ Definition of the ResumeFactory class.
       if( objectify ) {
         var ResumeClass = require('../core/' + (toFormat || orgFormat) + '-resume');
         rez = new ResumeClass().parseJSON( json );
+        rez.i().file = src;
       }
 
       return {
@@ -80,25 +88,41 @@ Definition of the ResumeFactory class.
 
 
 
-  function _parse( fileName, log, toFormat ) {
+  function _parse( fileName, opts ) {
     var rawData;
     try {
 
       // TODO: Core should not log
-      log( 'Reading '.info + /*orgFormat.toUpperCase().infoBold +*/
-        'resume: '.info + fileName.cyan.bold );
+      opts.log( chalk.cyan('Reading resume: ') + chalk.cyan.bold(fileName) );
 
+      // Read the file
       rawData = FS.readFileSync( fileName, 'utf8' );
+
+      // Parse it to JSON
       return {
         json: JSON.parse( rawData )
       };
 
     }
-    catch(ex) {
-      return {
+    catch( ex ) {
+
+      // JSON.parse failed due to invalid JSON
+      if ( !opts.muffle && ex instanceof SyntaxError) {
+        var info = new SyntaxErrorEx( ex, rawData );
+        opts.log( chalk.red.bold(fileName.toUpperCase() + ' contains invalid JSON on line ' +
+          info.line + ' column ' + info.col + '.' +
+          chalk.red(' Unable to validate.')));
+        opts.log( chalk.red.bold('INTERNAL: ' + ex) );
+        ex.handled = true;
+      }
+
+      if( opts.throw ) throw ex;
+      else return {
         error: ex,
-        raw: rawData
+        raw: rawData,
+        file: fileName
       };
+
     }
   }
 

@@ -11,7 +11,9 @@ Generic template helper definitions for HackMyResume / FluentCV.
     , H2W = require('../utils/html-to-wpml')
     , XML = require('xml-escape')
     , moment = require('moment')
-    , _ = require('underscore');
+    , LO = require('lodash')
+    , _ = require('underscore')
+    , unused = require('../utils/string');
 
   /**
   Generic template helper function definitions.
@@ -21,10 +23,109 @@ Generic template helper definitions for HackMyResume / FluentCV.
 
     /**
     Convert the input date to a specified format through Moment.js.
+    If date is invalid, will return the time provided by the user, 
+    or default to the fallback param or 'Present' if that is set to true
     @method formatDate
     */
-    formatDate: function(datetime, format) {
-      return moment ? moment( datetime ).format( format ) : datetime;
+    formatDate: function(datetime, format, fallback) {
+      if (moment) {
+        var momentDate = moment( datetime );
+        if (momentDate.isValid()) return momentDate.format(format);
+      }
+
+      return datetime || (typeof fallback == 'string' ? fallback : (fallback === true ? 'Present' : null));
+    },
+
+    /**
+    Format a from/to date range.
+    @method dateRange
+    */
+    dateRange: function( obj, fmt, sep, options ) {
+      fmt = (fmt && String.is(fmt) && fmt) || 'YYYY-MM';
+      sep = (sep && String.is(sep) && sep) || ' — ';
+      if( obj.safe ) {
+        var dateA = (obj.safe.start && obj.safe.start.format(fmt)) || '';
+        var dateB = (obj.safe.end && obj.safe.end.format(fmt)) || '';
+        if( obj.safe.start && obj.safe.end ) {
+          return dateA + sep + dateB ;
+        }
+        else if( obj.safe.start || obj.safe.end ) {
+          return dateA || dateB;
+        }
+      }
+      return '';
+    },
+
+    /**
+    Return true if the section is present on the resume and has at least one
+    element.
+    @method section
+    */
+    section: function( title, options ) {
+      title = title.trim().toLowerCase();
+      var obj = LO.get( this.r, title );
+      if( _.isArray( obj ) ) {
+        return obj.length ? options.fn(this) : undefined;
+      }
+      else if( _.isObject( obj )) {
+        return ( (obj.history && obj.history.length) ||
+            ( obj.sets && obj.sets.length ) ) ?
+            options.fn(this) : undefined;
+      }
+    },
+
+    /**
+    Capitalize the first letter of the word.
+    @method section
+    */
+    camelCase: function(val) {
+      val = (val && val.trim()) || '';
+      return val ? (val.charAt(0).toUpperCase() + val.slice(1)) : val;
+    },
+
+    /**
+    Return true if the context has the property or subpropery.
+    @method has
+    */
+    has: function( title, options ) {
+      title = title && title.trim().toLowerCase();
+      if( LO.get( this.r, title ) ) {
+        return options.fn(this);
+      }
+    },
+
+    /**
+    Generic template helper function to display a user-overridable section
+    title for a FRESH resume theme. Use this in lieue of hard-coding section
+    titles.
+
+    Usage:
+
+        {{sectionTitle "sectionName"}}
+        {{sectionTitle "sectionName" "sectionTitle"}}
+
+    Example:
+
+        {{sectionTitle "Education"}}
+        {{sectionTitle "Employment" "Project History"}}
+
+    @param sect_name The name of the section being title. Must be one of the
+    top-level FRESH resume sections ("info", "education", "employment", etc.).
+    @param sect_title The theme-specified section title. May be replaced by the
+    user.
+    @method sectionTitle
+    */
+    sectionTitle: function( sname, stitle ) {
+
+      // If not provided by the user, stitle should default to sname. ps.
+      // Handlebars silently passes in the options object to the last param,
+      // where in Underscore stitle will be null/undefined, so we check both.
+      stitle = (stitle && String.is(stitle) && stitle) || sname;
+
+      // If there's a section title override, use it.
+      return ( this.opts.stitles &&
+               this.opts.stitles[ sname.toLowerCase().trim() ] ) ||
+               stitle;
     },
 
     /**
@@ -60,7 +161,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Convert a skill level to an RGB color triplet.
+    Convert a skill level to an RGB color triplet. TODO: refactor
     @method skillColor
     @param lvl Input skill level. Skill level can be expressed as a string
     ("beginner", "intermediate", etc.), as an integer (1,5,etc), as a string
@@ -76,7 +177,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Return an appropriate height.
+    Return an appropriate height. TODO: refactor
     @method lastWord
     */
     skillHeight: function( lvl ) {
@@ -121,9 +222,17 @@ Generic template helper definitions for HackMyResume / FluentCV.
     via <style></style> tag.
     */
     styleSheet: function( file, options ) {
-      return ( this.opts.css === 'link') ?
+      var styles = ( this.opts.css === 'link') ?
         '<link href="' + file + '" rel="stylesheet" type="text/css">' :
         '<style>' + this.cssInfo.data + '</style>';
+      if( this.opts.themeObj.inherits &&
+          this.opts.themeObj.inherits.html &&
+          this.format === 'html' ) {
+        styles += (this.opts.css === 'link') ?
+          '<link href="' + this.opts.themeObj.overrides.path + '" rel="stylesheet" type="text/css">' :
+          '<style>' + this.opts.themeObj.overrides.data + '</style>';
+      }
+      return styles;
     },
 
     /**

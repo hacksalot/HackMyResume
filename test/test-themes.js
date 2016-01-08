@@ -6,28 +6,19 @@ var SPAWNWATCHER = require('../src/core/spawn-watch')
   , path = require('path')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
-  , FCMD = require( '../src/hackmycmd')
+  , HMR = require( '../src/hackmyapi')
   , validator = require('is-my-json-valid')
-  , COLORS = require('colors');
+  , READFILES = require('recursive-readdir-sync')
+  , fileContains = require('../src/utils/file-contains')
+  , FS = require('fs');
 
-chai.config.includeStack = false;
+chai.config.includeStack = true;
 
 function genThemes( title, src, fmt ) {
 
   describe('Testing themes against ' + title.toUpperCase() + ' resume ' + '(' + fmt + ')' , function () {
 
     var _sheet;
-
-    COLORS.setTheme({
-      title: ['white','bold'],
-      info: process.platform === 'win32' ? 'gray' : ['white','dim'],
-      infoBold: ['white','dim'],
-      warn: 'yellow',
-      error: 'red',
-      guide: 'yellow',
-      status: 'gray',//['white','dim'],
-      useful: 'green',
-    });
 
     function genTheme( fmt, src, themeName, themeLoc, testTitle ) {
       themeLoc = themeLoc || themeName;
@@ -40,9 +31,20 @@ function genThemes( title, src, fmt ) {
             theme: themeLoc,
             format: fmt,
             prettify: true,
-            silent: true
+            silent: false,
+            css: 'embed'
           };
-          FCMD.verbs.build( src, dst, opts, function() {} );
+          try {
+            HMR.verbs.build( src, dst, opts, function(msg) {
+              msg = msg || '';
+              console.log(msg);
+            });
+          }
+          catch(ex) {
+            console.log(ex);
+            console.log(ex.stack);
+            throw ex;
+          }
         }
         tryOpen.should.not.Throw();
       });
@@ -63,6 +65,23 @@ function genThemes( title, src, fmt ) {
 
 }
 
-genThemes( 'jane-q-fullstacker', ['node_modules/jane-q-fullstacker/resume/jane-resume.json'], 'FRESH' );
-genThemes( 'johnny-trouble', ['node_modules/johnny-trouble-resume/src/johnny-trouble.fresh.json'], 'FRESH' );
+function folderContains( needle, haystack ) {
+  return _.some( READFILES( path.join(__dirname, haystack) ), function( absPath ) {
+    if( FS.lstatSync( absPath ).isFile() ) {
+      if( fileContains( absPath, needle ) ) {
+        console.log('Found invalid metadata in ' + absPath);
+        return true;
+      }
+    }
+  });
+}
+
+genThemes( 'jane-q-fullstacker', ['node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json'], 'FRESH' );
+genThemes( 'johnny-trouble', ['node_modules/fresh-test-resumes/src/johnny-trouble.fresh.json'], 'FRESH' );
 genThemes( 'richard-hendriks', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], 'JRS' );
+
+describe('Verifying generated theme files...', function() {
+  it('Generated files should not contain ICE.', function() {
+    expect( folderContains('@@@@', 'sandbox') ).to.be.false;
+  });
+});

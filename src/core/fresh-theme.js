@@ -46,21 +46,33 @@ Definition of the FRESHTheme class.
     var formatsHash = { };
 
     // Load the theme
-    var themeFile = PATH.join( themeFolder, pathInfo.basename + '.json' );
+    var themeFile = PATH.join( themeFolder, 'theme.json' );
     var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
     var that = this;
 
     // Move properties from the theme JSON file to the theme object
     EXTEND( true, this, themeInfo );
 
+    // Check for an "inherits" entry in the theme JSON.
+    if( this.inherits ) {
+      var cached = { };
+      _.each( this.inherits, function(th, key) {
+        var themesFolder = require.resolve('fresh-themes');
+        var d = parsePath( themeFolder ).dirname;
+        var themePath = PATH.join(d, th);
+        cached[ th ] = cached[th] || new FRESHTheme().open( themePath );
+        formatsHash[ key ] = cached[ th ].getFormat( key );
+      });
+    }
+
     // Check for an explicit "formats" entry in the theme JSON. If it has one,
     // then this theme declares its files explicitly.
     if( !!this.formats ) {
-      formatsHash = loadExplicit.call( this );
+      formatsHash = loadExplicit.call( this, formatsHash );
       this.explicit = true;
     }
     else {
-      formatsHash = loadImplicit.call( this );
+      formatsHash = loadImplicit.call( this, formatsHash );
     }
 
     // Cache
@@ -95,10 +107,9 @@ Definition of the FRESHTheme class.
   Load the theme implicitly, by scanning the theme folder for
   files. TODO: Refactor duplicated code with loadExplicit.
   */
-  function loadImplicit() {
+  function loadImplicit(formatsHash) {
 
     // Set up a hash of formats supported by this theme.
-    var formatsHash = { };
     var that = this;
     var major = false;
 
@@ -170,15 +181,26 @@ Definition of the FRESHTheme class.
       return fmt && (fmt.ext === 'css');
     }))
 
-    // For each CSS file, get its corresponding HTML file
+    // For each CSS file, get its corresponding HTML file. It's possible that
+    // a theme can have a CSS file but *no* HTML file, as when a theme author
+    // creates a pure CSS override of an existing theme.
     .forEach(function( cssf ) {
 
       var idx = _.findIndex(fmts, function( fmt ) {
         return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
       cssf.action = null;
-      fmts[ idx ].css = cssf.data;
-      fmts[ idx ].cssPath = cssf.path;
+      if( idx > -1) {
+        fmts[ idx ].css = cssf.data;
+        fmts[ idx ].cssPath = cssf.path;
+      }
+      else {
+        if( that.inherits ) {
+          // Found a CSS file without an HTML file in a theme that inherits
+          // from another theme. This is the override CSS file.
+          that.overrides = { file: cssf.path, data: cssf.data };
+        }
+      }
     });
 
     // Remove CSS files from the formats array
@@ -195,10 +217,9 @@ Definition of the FRESHTheme class.
   Load the theme explicitly, by following the 'formats' hash
   in the theme's JSON settings file.
   */
-  function loadExplicit() {
+  function loadExplicit(formatsHash) {
 
     // Housekeeping
-    var formatsHash = { };
     var tplFolder = PATH.join( this.folder, 'src' );
     var act = null;
     var that = this;

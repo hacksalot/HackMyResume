@@ -4,15 +4,22 @@ FRESH to JSON Resume conversion routiens.
 @module convert.js
 */
 
-(function(){
+
+
+(function(){ // TODO: refactor everything
+
+
 
   var _ = require('underscore');
+
+
 
   /**
   Convert between FRESH and JRS resume/CV formats.
   @class FRESHConverter
   */
   var FRESHConverter = module.exports = {
+
 
 
     /**
@@ -25,27 +32,21 @@ FRESH to JSON Resume conversion routiens.
       foreign = (foreign === undefined || foreign === null) ? true : foreign;
 
       return {
-
         name: src.basics.name,
-
         imp: src.basics.imp,
-
         info: {
           label: src.basics.label,
           class: src.basics.class, // <--> round-trip
           image: src.basics.picture,
           brief: src.basics.summary
         },
-
         contact: {
           email: src.basics.email,
           phone: src.basics.phone,
           website: src.basics.website,
           other: src.basics.other // <--> round-trip
         },
-
         meta: meta( true, src.meta ),
-
         location: {
           city: src.basics.location.city,
           region: src.basics.location.region,
@@ -53,7 +54,6 @@ FRESH to JSON Resume conversion routiens.
           code: src.basics.location.postalCode,
           address: src.basics.location.address
         },
-
         employment: employment( src.work, true ),
         education: education( src.education, true),
         service: service( src.volunteer, true),
@@ -68,6 +68,8 @@ FRESH to JSON Resume conversion routiens.
       };
     },
 
+
+
     /**
     Convert from FRESH format to JSON Resume.
     @param foreign True if non-JSON-Resume properties should be included in
@@ -79,7 +81,6 @@ FRESH to JSON Resume conversion routiens.
       foreign = (foreign === undefined || foreign === null) ? false : foreign;
 
       return {
-
         basics: {
           name: src.name,
           label: src.info.label,
@@ -99,7 +100,6 @@ FRESH to JSON Resume conversion routiens.
           profiles: social( src.social, false ),
           imp: src.imp
         },
-
         work: employment( src.employment, false ),
         education: education( src.education, false ),
         skills: skillsToJRS( src.skills, false ),
@@ -111,20 +111,21 @@ FRESH to JSON Resume conversion routiens.
         samples: foreign ? src.samples : undefined,
         disposition: foreign ? src.disposition : undefined,
         languages: src.languages
-
       };
 
     },
 
+
+
     toSTRING: function( src ) {
-      function replacerJRS( key,value ) { // Exclude these keys from stringification
+      function replacerJRS( key,value ) { // Exclude these keys
         return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
-          'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-        'isModified', 'htmlPreview', 'display_progress_bar'],
+          'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate',
+          'result', 'isModified', 'htmlPreview', 'display_progress_bar'],
           function( val ) { return key.trim() === val; }
         ) ? undefined : value;
       }
-      function replacerFRESH( key,value ) { // Exclude these keys from stringification
+      function replacerFRESH( key,value ) { // Exclude these keys
         return _.some(['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
           'safe', 'result', 'isModified', 'htmlPreview', 'display_progress_bar'],
           function( val ) { return key.trim() === val; }
@@ -136,6 +137,8 @@ FRESH to JSON Resume conversion routiens.
 
   };
 
+
+
   function meta( direction, obj ) {
     //if( !obj ) return obj; // preserve null and undefined
     if( direction ) {
@@ -145,6 +148,8 @@ FRESH to JSON Resume conversion routiens.
     }
     return obj;
   }
+
+
 
   function employment( obj, direction ) {
     if( !obj ) return obj;
@@ -170,7 +175,8 @@ FRESH to JSON Resume conversion routiens.
               position: job.position,
               employer: job.company,
               summary: job.summary,
-              current: (!job.endDate || !job.endDate.trim() || job.endDate.trim().toLowerCase() === 'current') || undefined,
+              current: (!job.endDate || !job.endDate.trim() ||
+                job.endDate.trim().toLowerCase() === 'current') || undefined,
               start: job.startDate,
               end: job.endDate,
               url: job.website,
@@ -181,6 +187,7 @@ FRESH to JSON Resume conversion routiens.
       };
     }
   }
+
 
 
   function education( obj, direction ) {
@@ -219,6 +226,8 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
+
+
   function service( obj, direction, foreign ) {
     if( !obj ) return obj;
     if( direction ) {
@@ -254,6 +263,8 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
+
+
   function social( obj, direction ) {
     if( !obj ) return obj;
     if( direction ) {
@@ -276,6 +287,8 @@ FRESH to JSON Resume conversion routiens.
       });
     }
   }
+
+
 
   function recognition( obj, direction, foreign ) {
     if( !obj ) return obj;
@@ -306,6 +319,8 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
+
+
   function references( obj, direction ) {
     if( !obj ) return obj;
     if( direction ) {
@@ -328,6 +343,8 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
+
+
   function writing( obj, direction ) {
     if( !obj ) return obj;
     if( direction ) {
@@ -346,7 +363,8 @@ FRESH to JSON Resume conversion routiens.
       return obj && obj.length ? obj.map(function(pub){
         return {
           name: pub.title,
-          publisher: pub.publisher && pub.publisher.name ? pub.publisher.name : pub.publisher,
+          publisher: pub.publisher &&
+            pub.publisher.name ? pub.publisher.name : pub.publisher,
           releaseDate: pub.date,
           website: pub.url,
           summary: pub.summary
@@ -355,10 +373,12 @@ FRESH to JSON Resume conversion routiens.
     }
   }
 
-  function skillsToFRESH( skills ) {
 
+
+  function skillsToFRESH( skills ) {
+    if( !skills ) return skills;
     return {
-      sets: skills.map(function(set) {
+      sets: skills.map(function( set ) {
         return {
           name: set.name,
           level: set.level,
@@ -368,7 +388,10 @@ FRESH to JSON Resume conversion routiens.
     };
   }
 
+
+
   function skillsToJRS( skills ) {
+    if( !skills ) return skills;
     var ret = [];
     if( skills.sets && skills.sets.length ) {
       ret = skills.sets.map(function(set){

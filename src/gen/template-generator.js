@@ -152,7 +152,8 @@ Definition of the TemplateGenerator class.
               file.data = that.onBeforeSave({
                 theme: theme,
                 outputFile: (file.info.major ? f : thisFilePath),
-                mk: file.data
+                mk: file.data,
+                opts: that.opts
               });
               if( !file.data ) return; // PDF etc
             }
@@ -161,7 +162,7 @@ Definition of the TemplateGenerator class.
             FS.writeFileSync( fileName, file.data,
               { encoding: 'utf8', flags: 'w' } );
             that.onAfterSave && that.onAfterSave(
-              { outputFile: fileName, mk: file.data } );
+              { outputFile: fileName, mk: file.data, opts: that.opts } );
           }
           catch(ex) {
             require('../core/error-handler').err(ex, false);
@@ -234,12 +235,12 @@ Definition of the TemplateGenerator class.
     // Verify the specified theme name/path
     var tFolder = PATH.join(
       parsePath( require.resolve('fresh-themes') ).dirname,
+      '/themes/',
       this.opts.theme
     );
 
     var t;
     if( this.opts.theme.startsWith('jsonresume-theme-') ) {
-      console.log('LOADING JSON RESUME');
       t = new JRSTheme().open( tFolder );
     }
     else {
@@ -274,6 +275,7 @@ Definition of the TemplateGenerator class.
     }
     catch(ex) {
       console.log(ex);
+      throw ex;
     }
   }
 
