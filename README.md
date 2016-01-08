@@ -18,8 +18,10 @@ Use it to:
 1. **Generate** HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML,
 YAML, print, smoke signal, carrier pigeon, and other arbitrary-format resumes
 and CVs, from a single source of truth&mdash;without violating DRY.
-2. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
-3. **Validate** resumes against either format.
+2. **Analyze** your resume for keyword density, gaps/overlaps, and other
+metrics.
+3. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
+4. **Validate** resumes against either format.
 
 HackMyResume is built with Node.js and runs on recent versions of OS X, Linux,
 or Windows. View the [FAQ](FAQ.md).
