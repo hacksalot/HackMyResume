@@ -3,7 +3,7 @@ Error-handling routines for HackMyResume.
 @module error-handler.js
 @license MIT. See LICENSE.md for details.
 */
-
+// TODO: Logging library
 
 
 (function() {
@@ -26,7 +26,9 @@ Error-handling routines for HackMyResume.
   */
   var ErrorHandler = module.exports = {
 
-
+    init: function( debug ) {
+      this.debug = debug;
+    },
 
     err: function( ex, shouldExit ) {
 
@@ -62,8 +64,10 @@ Error-handling routines for HackMyResume.
         log( msg.toString() ) :
         log( chalk.red.bold('ERROR: ' + msg.toString()) );
 
-      // Usually emit the stack
-      ( showStack && ex.code !== 'ENOENT' ) && log( chalk.gray(ex.stack) );
+      // Selectively show the stack trace
+      if( (ex.stack || (ex.inner && ex.inner.stack)) &&
+         ((showStack && ex.code !== 'ENOENT' ) || (this.debug) ))
+        log( chalk.red( ex.stack || ex.stack.inner ) );
 
       // Let the error code be the process's return code.
       ( shouldExit || ex.shouldExit ) && process.exit( exitCode );

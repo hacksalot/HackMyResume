@@ -47,8 +47,8 @@ Definition of the HtmlPdfCLIGenerator class.
         // { [Error: write EPIPE] code: 'EPIPE', errno: 'EPIPE', ... }
         // { [Error: ENOENT] }
         throw ( ex.inner && ex.inner.code === 'ENOENT' ) ?
-          { fluenterror: this.codes.notOnPath, engine: ex.cmd } :
-          { fluenterror: this.codes.pdfGeneration, inner: ex.inner };
+          { fluenterror: this.codes.notOnPath, engine: ex.cmd, stack: ex.inner.stack } :
+          { fluenterror: this.codes.pdfGeneration, inner: ex.inner, stack: ex.inner.stack };
       }
     }
 
