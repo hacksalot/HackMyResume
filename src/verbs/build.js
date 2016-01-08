@@ -184,7 +184,6 @@ Implementation of the 'generate' verb for HackMyResume.
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
-      // TODO: Make FRESH and JRS themes render on the same path
       if( targInfo.fmt.files && targInfo.fmt.files.length ) {
           theFormat = _fmts.filter(
             function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
@@ -193,25 +192,19 @@ Implementation of the 'generate' verb for HackMyResume.
           return theFormat.gen.generate( rez, f, _opts );
       }
 
-      // Otherwise this is either a) a JSON Resume theme or b) an ad-hoc format
-      // (JSON, YML, or PNG) that every theme gets "for free".
-      // else {
-      //
-      //   theFormat = _fmts.filter( function(fmt) {
-      //     return fmt.name === targInfo.fmt.outFormat;
-      //   })[0];
-      //
-      //   var outFolder = PATH.dirname( f );
-      //   MKDIRP.sync( outFolder ); // Ensure dest folder exists;
-      //
-      //   // JSON Resume themes have a 'render' method that needs to be called
-      //   if( theme.render ) {
-      //     return renderJRSTheme( f, outFolder, theme );
-      //   }
-      //   else {
-      //     return theFormat.gen.generate( rez, f, _opts );
-      //   }
-      // }
+      //Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
+      // gets "for free".
+      else {
+
+        theFormat = _fmts.filter( function(fmt) {
+          return fmt.name === targInfo.fmt.outFormat;
+        })[0];
+
+        var outFolder = PATH.dirname( f );
+        MKDIRP.sync( outFolder ); // Ensure dest folder exists;
+
+        return theFormat.gen.generate( rez, f, _opts );
+      }
     }
     catch( ex ) {
       _err( ex );

@@ -37,7 +37,7 @@ Definition of the HtmlPdfCLIGenerator class.
     Generate the binary PDF.
     */
     onBeforeSave: function( info ) {
-      console.log('Called');
+
       try {
         var safe_eng = info.opts.pdf || 'wkhtmltopdf';
         engines[ safe_eng ].call( this, info.mk, info.outputFile );

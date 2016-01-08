@@ -48,27 +48,32 @@ Definition of the JRSTheme class.
       this.render = (thApi && thApi.render) || undefined;
       this.engine = 'jrs';
 
-      // Create theme formats (HTML and PDF)
+      // Create theme formats (HTML and PDF). Just add the bare minimum mix of
+      // properties necessary to allow JSON Resume themes to share a rendering
+      // path with FRESH themes.
       this.formats = {
         html: { outFormat: 'html', files: [
           {
             action: 'transform',
             render: this.render,
-            //path: absPath,
             major: true,
-            //orgPath: PATH.relative(thFolder, absPath),
             ext: pathInfo.extname.slice(1),
-            //title: friendlyName( outFmt ),
-            //pre: outFmt,
-            // outFormat: outFmt || pathInfo.name,
-            //data: FS.readFileSync( absPath, 'utf8' ),
+            css: null
+          }
+        ]},
+        pdf: { outFormat: 'pdf', files: [
+          {
+            action: 'transform',
+            render: this.render,
+            major: true,
+            ext: pathInfo.extname.slice(1),
             css: null
           }
         ]}
       };
     }
     else {
-      throw { fluenterror: 10 };
+      throw { fluenterror: HACKMYSTATUS.missingPackageJSON };
     }
 
     return this;
