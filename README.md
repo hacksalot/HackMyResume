@@ -442,6 +442,16 @@ hackmyresume BUILD resume.json -o someFile.all -s
 hackmyresume BUILD resume.json -o someFile.all --silent
 ```
 
+### Debug Mode
+
+Use `-d` or `--debug` to force HMR to emit a call stack when errors occur. In
+the future, this option will emit detailed error logging.
+
+```bash
+hackmyresume BUILD resume.json -d
+hackmyresume ANALYZE resume.json --debug
+```
+
 ## Contributing
 
 HackMyResume is a community-driven free and open source project under the MIT
