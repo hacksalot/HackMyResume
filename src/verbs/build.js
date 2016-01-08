@@ -44,11 +44,11 @@ Implementation of the 'generate' verb for HackMyResume.
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
-    var tFolder = verify_theme( _opts.theme );
-    var theme = load_theme( tFolder );
+    var tFolder = verifyTheme( _opts.theme );
+    var theme = loadTheme( tFolder );
 
     // Check for invalid outputs
-    var inv = verify_outputs( dst, theme );
+    var inv = verifyOutputs( dst, theme );
     if( inv && inv.length ) {
       throw { fluenterror: HACKMYSTATUS.invalidTarget, data: inv, theme: theme };
     }
@@ -223,6 +223,7 @@ Implementation of the 'generate' verb for HackMyResume.
   Render a JSON Resume theme. JSON Resume themes have an index.js that needs
   to be called to perform the render. Additionally, we need to flow Markdown
   styles to the JSON Resume (to the extent possible).
+  TODO: Refactor
   */
   function renderJRSTheme( f, outFolder, theme ) {
 
@@ -264,7 +265,7 @@ Implementation of the 'generate' verb for HackMyResume.
   /**
   Ensure that user-specified outputs/targets are valid.
   */
-  function verify_outputs( targets, theme ) {
+  function verifyOutputs( targets, theme ) {
 
     return _.reject(
       targets.map( function( t ) {
@@ -346,7 +347,7 @@ Implementation of the 'generate' verb for HackMyResume.
   /**
   Verify the specified theme name/path.
   */
-  function verify_theme( themeNameOrPath ) {
+  function verifyTheme( themeNameOrPath ) {
     var tFolder = PATH.join(
       parsePath ( require.resolve('fresh-themes') ).dirname,
       '/themes/',
@@ -368,7 +369,7 @@ Implementation of the 'generate' verb for HackMyResume.
   Load the specified theme, which could be either a FRESH theme or a JSON Resume
   theme.
   */
-  function load_theme( tFolder ) {
+  function loadTheme( tFolder ) {
 
     // Create a FRESH or JRS theme object
     var theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ?
