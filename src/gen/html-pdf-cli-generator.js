@@ -37,14 +37,16 @@ Definition of the HtmlPdfCLIGenerator class.
     */
     onBeforeSave: function( info ) {
       try {
-        engines[ info.opts.pdf || 'wkhtmltopdf' ]
-        .call( this, info.mk, info.outputFile );
+        var safe_eng = info.opts.pdf || 'wkhtmltopdf';
+        engines[ safe_eng ].call( this, info.mk, info.outputFile );
         return null; // halt further processing
       }
       catch(ex) {
         // { [Error: write EPIPE] code: 'EPIPE', errno: 'EPIPE', ... }
         // { [Error: ENOENT] }
-        throw { fluenterror: this.codes.pdfGeneration, inner: ex };
+        throw ( ex.inner && ex.inner.code === 'ENOENT' ) ?
+          { fluenterror: this.codes.notOnPath, engine: ex.cmd } :
+          { fluenterror: this.codes.pdfGeneration, inner: ex.inner };
       }
     }
 
@@ -65,10 +67,16 @@ Definition of the HtmlPdfCLIGenerator class.
       var tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync( tempFile, markup, 'utf8' );
 
-      var spawn = require('child_process').spawn;
-      var child = spawn('wkhtmltopdf', [
+      var spawn = require('child_process').spawnSync;
+      var info = spawn('wkhtmltopdf', [
         tempFile, fOut
       ]);
+      if( info.error ) {
+        throw {
+          cmd: 'wkhtmltopdf',
+          inner: info.error
+        };
+      }
 
       // child.stdout.on('data', function(chunk) {
       //   // output will be here in chunks
@@ -95,8 +103,14 @@ Definition of the HtmlPdfCLIGenerator class.
       var sourcePath = SLASH( PATH.relative( process.cwd(), tempFile) );
       var destPath = SLASH( PATH.relative( process.cwd(), fOut) );
 
-      var spawn = require('child_process').spawn;
-      var child = spawn('phantomjs', [ scriptPath, sourcePath, destPath ]);
+      var spawn = require('child_process').spawnSync;
+      var info = spawn('1phantomjs', [ scriptPath, sourcePath, destPath ]);
+      if( info.error ) {
+        throw {
+          cmd: 'phantomjs',
+          inner: info.error
+        };
+      }
 
       // child.stdout.on('data', function(chunk) {
       //   // output will be here in chunks

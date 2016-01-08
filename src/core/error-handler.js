@@ -73,7 +73,8 @@ Error-handling routines for HackMyResume.
 
 
   function get_error_msg( ex ) {
-    var msg = '', withStack = false;
+
+    var msg = '', withStack = false, isError = false;
     switch( ex.fluenterror ) {
 
       case HACKMYSTATUS.themeNotFound:
@@ -137,6 +138,10 @@ Error-handling routines for HackMyResume.
         });
         break;
 
+      case HACKMYSTATUS.notOnPath:
+        msg = formatError( ex.engine + " wasn't found on your system path or is inaccessible. PDF not generated." );
+        break;
+
     }
     return {
       msg: msg,
@@ -144,6 +149,9 @@ Error-handling routines for HackMyResume.
     };
   }
 
+  function formatError( msg ) {
+    return chalk.red.bold( 'ERROR: ' + msg );
+  }
 
 
 }());

@@ -19,7 +19,8 @@ Status codes for HackMyResume.
     pdfgeneration: 9,
     missingPackageJSON: 10,
     invalid: 11,
-    invalidTarget: 12
+    invalidTarget: 12,
+    notOnPath: 13
   };
 
 }());
