@@ -86,15 +86,19 @@ Employment gap analysis for HackMyResume.
       // When the reference count is > 0, the candidate is employed. When the
       // reference count reaches 2, the candidate is overlapped.
 
-      var num_gaps = 0, ref_count = 0, total_gap_days = 0, total_work_days = 0
-        , gap_start;
+      var num_gaps = 0, ref_count = 0, total_gap_days = 0, gap_start;
 
       new_e.forEach( function(point) {
+
         var inc = point[0] === 'start' ? 1 : -1;
         ref_count += inc;
+
+        // If the ref count just reached 0, start a new GAP
         if( ref_count === 0 ) {
           coverage.gaps.push( { start: point[1], end: null });
         }
+
+        // If the ref count reached 1 by rising, end the last GAP
         else if( ref_count === 1 && inc === 1 ) {
           var lastGap = _.last( coverage.gaps );
           if( lastGap ) {
@@ -103,9 +107,13 @@ Employment gap analysis for HackMyResume.
             total_gap_days += lastGap.duration;
           }
         }
+
+        // If the ref count reaches 2 by rising, start a new OVERLAP
         else if( ref_count === 2 && inc === 1 ) {
           coverage.overlaps.push( { start: point[1], end: null });
         }
+
+        // If the ref count reaches 1 by falling, end the last OVERLAP
         else if( ref_count === 1 && inc === -1 ) {
           var lastOver = _.last( coverage.overlaps );
           if( lastOver ) {
@@ -114,32 +122,39 @@ Employment gap analysis for HackMyResume.
             if( lastOver.duration === 0 ) {
               coverage.overlaps.pop();
             }
-            total_work_days += lastOver.duration;
           }
         }
       });
 
-      // It's possible that the last overlap didn't have an explicit .end date.
-      // If so, set the end date to the present date and compute the overlap
+      // It's possible that the last gap/overlap didn't have an explicit .end
+      // date.If so, set the end date to the present date and compute the
       // duration normally.
       if( coverage.overlaps.length ) {
-        if( !_.last( coverage.overlaps ).end ) {
-          var l = _.last( coverage.overlaps );
+        var l = _.last( coverage.overlaps );
+        if( l && !l.end ) {
+          l.end = moment();
+          l.duration = l.end.diff( l.start, 'days' );
+        }
+      }
+      if( coverage.gaps.length ) {
+        var l = _.last( coverage.gaps );
+        if( l && !l.end ) {
           l.end = moment();
           l.duration = l.end.diff( l.start, 'days' );
         }
       }
 
+      // Package data for return to the client
+      var tdur = rez.duration('days');
       var dur = {
-        total: rez.duration('days'),
-        work: total_work_days,
+        total: tdur,
+        work: tdur - total_gap_days,
         gaps: total_gap_days
       };
       coverage.pct = ( dur.total > 0 && dur.work > 0 ) ?
         ((((dur.total - dur.gaps) / dur.total) * 100)).toFixed(1) + '%' :
         '???';
       coverage.duration = dur;
-
       return coverage;
     }
 
