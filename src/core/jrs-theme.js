@@ -57,7 +57,7 @@ Definition of the JRSTheme class.
             action: 'transform',
             render: this.render,
             major: true,
-            ext: pathInfo.extname.slice(1),
+            ext: 'html',
             css: null
           }
         ]},
@@ -66,7 +66,7 @@ Definition of the JRSTheme class.
             action: 'transform',
             render: this.render,
             major: true,
-            ext: pathInfo.extname.slice(1),
+            ext: 'pdf',
             css: null
           }
         ]}
