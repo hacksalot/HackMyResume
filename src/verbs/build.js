@@ -226,8 +226,7 @@ Implementation of the 'generate' verb for HackMyResume.
         };
       }),
       function(t) {
-        return t.format === 'all' ||
-          theme.hasFormat( parsePath( t.format ).extname.substr(1));
+        return t.format === 'all' || theme.hasFormat( t.format );
       }
     );
 
