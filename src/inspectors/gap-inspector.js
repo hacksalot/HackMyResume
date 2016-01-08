@@ -130,17 +130,17 @@ Employment gap analysis for HackMyResume.
       // date.If so, set the end date to the present date and compute the
       // duration normally.
       if( coverage.overlaps.length ) {
-        var l = _.last( coverage.overlaps );
-        if( l && !l.end ) {
-          l.end = moment();
-          l.duration = l.end.diff( l.start, 'days' );
+        var o = _.last( coverage.overlaps );
+        if( o && !o.end ) {
+          o.end = moment();
+          o.duration = o.end.diff( o.start, 'days' );
         }
       }
       if( coverage.gaps.length ) {
-        var l = _.last( coverage.gaps );
-        if( l && !l.end ) {
-          l.end = moment();
-          l.duration = l.end.diff( l.start, 'days' );
+        var g = _.last( coverage.gaps );
+        if( g && !g.end ) {
+          g.end = moment();
+          g.duration = g.end.diff( g.start, 'days' );
         }
       }
 
