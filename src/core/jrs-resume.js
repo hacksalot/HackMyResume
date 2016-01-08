@@ -274,7 +274,8 @@ Definition of the JRSResume class.
   *latest end date of all jobs in the work history*. This last condition is for
   sheets that have overlapping jobs.
   */
-  JRSResume.prototype.duration = function() {
+  JRSResume.prototype.duration = function( unit ) {
+    unit = unit || 'years';
     if( this.work && this.work.length ) {
       var careerStart = this.work[ this.work.length - 1].safeStartDate;
       if ((typeof careerStart === 'string' || careerStart instanceof String) &&
@@ -283,7 +284,7 @@ Definition of the JRSResume class.
       var careerLast = _.max( this.work, function( w ) {
         return w.safeEndDate.unix();
       }).safeEndDate;
-      return careerLast.diff( careerStart, 'years' );
+      return careerLast.diff( careerStart, unit );
     }
     return 0;
   };
