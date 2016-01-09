@@ -14,14 +14,25 @@ Implementation of the 'analyze' verb for HackMyResume.
     , PATH = require('path')
     , _ = require('underscore')
     , ResumeFactory = require('../core/resume-factory')
+    , Verb = require('../core/verb')    
     , chalk = require('chalk');
+
+
+
+  var AnalyzeVerb = module.exports = Verb.extend({
+
+    invoke: function() {
+      analyze.apply( this, arguments );
+    }
+
+  });
 
 
 
   /**
   Run the 'analyze' command.
   */
-  module.exports = function analyze( sources, dst, opts, logger ) {
+  function analyze( sources, dst, opts, logger ) {
     var _log = logger || console.log;
     if( !sources || !sources.length ) throw { fluenterror: 3 };
 
@@ -33,8 +44,7 @@ Implementation of the 'analyze' verb for HackMyResume.
       });
       result.error || _analyze( result, nlzrs, opts, _log );
     });
-
-  };
+  }
 
 
 

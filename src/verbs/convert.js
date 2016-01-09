@@ -12,14 +12,24 @@ Implementation of the 'convert' verb for HackMyResume.
 
   var ResumeFactory = require('../core/resume-factory')
     , chalk = require('chalk')
+    , Verb = require('../core/verb')    
     , HACKMYSTATUS = require('../core/status-codes');
+
+
+  var ConvertVerb = module.exports = Verb.extend({
+
+    invoke: function() {
+      convert.apply( this, arguments );
+    }
+
+  });
 
 
 
   /**
   Convert between FRESH and JRS formats.
   */
-  module.exports = function convert( srcs, dst, opts, logger ) {
+  function convert( srcs, dst, opts, logger ) {
 
     // Housekeeping
     var _log = logger || console.log;
@@ -62,7 +72,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
     });
 
-  };
+  }
 
 
 

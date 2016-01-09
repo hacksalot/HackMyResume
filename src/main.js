@@ -165,7 +165,9 @@
   function execVerb( src, dst, opts, log ) {
     loadOptions.call( this, opts );
     require('./core/error-handler').init( _opts.debug );
-    HMR.verbs[ this.name() ].call( null, src, dst, _opts, log );
+
+    var v = new HMR.verbs[ this.name() ]();
+    v.invoke.call( null, src, dst, _opts, log );
   }
 
 

@@ -10,9 +10,20 @@ Implementation of the 'validate' verb for HackMyResume.
   var ResumeFactory = require('../core/resume-factory');
   var SyntaxErrorEx = require('../utils/syntax-error-ex');
   var chalk = require('chalk');
+  var Verb = require('../core/verb');
   var HACKMYSTATUS = require('../core/status-codes');
 
-  module.exports =
+
+
+  var ValidateVerb = module.exports = Verb.extend({
+
+    invoke: function() {
+      validate.apply( this, arguments );
+    }
+
+  });
+
+
 
   /**
   Validate 1 to N resumes in either FRESH or JSON Resume format.
@@ -99,6 +110,6 @@ Implementation of the 'validate' verb for HackMyResume.
       }
 
     });
-  };
+  }
 
 }());

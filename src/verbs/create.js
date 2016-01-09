@@ -9,12 +9,23 @@ Implementation of the 'create' verb for HackMyResume.
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
     , chalk = require('chalk')
+    , Verb = require('../core/verb')
     , HACKMYSTATUS = require('../core/status-codes');
+
+
+  var CreateVerb = module.exports = Verb.extend({
+
+    invoke: function() {
+      create.apply( this, arguments );
+    }
+
+  });
+
 
   /**
   Create a new empty resume in either FRESH or JRS format.
   */
-  module.exports = function create( src, dst, opts, logger ) {
+  function create( src, dst, opts, logger ) {
     var _log = logger || console.log;
     if( !src || !src.length ) throw { fluenterror: HACKMYSTATUS.createNameMissing };
     src.forEach( function( t ) {
@@ -26,6 +37,6 @@ Implementation of the 'create' verb for HackMyResume.
       RezClass.default().save(t);
       //FLUENT[ safeFormat + 'Resume' ].default().save( t );
     });
-  };
+  }
 
 }());

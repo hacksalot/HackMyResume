@@ -26,9 +26,17 @@ Implementation of the 'generate' verb for HackMyResume.
     , extend = require('../utils/extend')
     , chalk = require('chalk')
     , pad = require('string-padding')
+    , Verb = require('../core/verb')
     , _err, _log, rez;
 
 
+  var BuildVerb = module.exports = Verb.extend({
+
+    invoke: function() {
+      build.apply( this, arguments );
+    }
+
+  });
 
   /**
   Given a source resume in FRESH or JRS format, a destination resume path, and a
@@ -346,10 +354,6 @@ Implementation of the 'generate' verb for HackMyResume.
   function MDIN(txt) { // TODO: Move this
     return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
   }
-
-
-
-  module.exports = build;
 
 
 
