@@ -1,5 +1,5 @@
 /**
-Definition of the TemplateGenerator class.
+Definition of the TemplateGenerator class. TODO: Refactor
 @license MIT. See LICENSE.md for details.
 @module template-generator.js
 */
@@ -145,6 +145,10 @@ Definition of the TemplateGenerator class.
 
         var thisFilePath;
 
+        if( theme.engine === 'jrs' ) {
+          file.info.orgPath = '';
+        }
+
         if( file.info.action === 'transform' ) {
           thisFilePath = PATH.join( outFolder, file.info.orgPath );
           try {
@@ -175,7 +179,8 @@ Definition of the TemplateGenerator class.
             FS.copySync( file.info.path, thisFilePath );
           }
           catch(ex) {
-            console.log(ex);
+            ex.showStack = true;
+            require('../core/error-handler').err( ex );
           }
         }
       });
@@ -208,7 +213,7 @@ Definition of the TemplateGenerator class.
     single: function( json, jst, format, cssInfo, opts, theme ) {
       this.opts.freezeBreaks && ( jst = freeze(jst) );
 
-      var eng = require( '../eng/' + theme.engine  + '-generator' );
+      var eng = require( '../renderers/' + theme.engine  + '-generator' );
       var result = eng.generate( json, jst, format, cssInfo, opts, theme );
 
       this.opts.freezeBreaks && ( result = unfreeze(result) );
@@ -274,8 +279,8 @@ Definition of the TemplateGenerator class.
         theme );
     }
     catch(ex) {
-      console.log(ex);
-      throw ex;
+      ex.showStack = true;
+      require('../core/error-handler').err( ex );
     }
   }
 

@@ -18,8 +18,10 @@ Use it to:
 1. **Generate** HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML,
 YAML, print, smoke signal, carrier pigeon, and other arbitrary-format resumes
 and CVs, from a single source of truth&mdash;without violating DRY.
-2. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
-3. **Validate** resumes against either format.
+2. **Analyze** your resume for keyword density, gaps/overlaps, and other
+metrics.
+3. **Convert** resumes between [FRESH][fresca] and [JSON Resume][6] formats.
+4. **Validate** resumes against either format.
 
 HackMyResume is built with Node.js and runs on recent versions of OS X, Linux,
 or Windows. View the [FAQ](FAQ.md).
@@ -48,13 +50,22 @@ Install the latest stable version of HackMyResume with NPM:
 [sudo] npm install hackmyresume -g
 ```
 
-Power users can install the latest bleeding-edge version (updated daily):
+Alternately, install the latest bleeding-edge version (updated daily):
 
 ```bash
 [sudo] npm install hacksalot/hackmyresume#dev -g
 ```
 
-**For PDF generation**, you'll need to install a copy of [wkhtmltopdf][3] and/or PhantomJS for your platform.
+## Installing PDF Support (optional)
+
+HackMyResume tries not to impose a specific PDF engine requirement on
+the user, but will instead work with whatever PDF engines you have installed.
+
+Currently, HackMyResume's PDF generation requires either [Phantom.js][2] or
+[wkhtmltopdf][3] to be installed on your system and the `phantomjs` and/or
+`wkhtmltopdf` binaries to be accessible on your PATH. This is an optional
+requirement for users who care about PDF formats. If you don't care about PDF
+formats, skip this step.
 
 ## Installing Themes
 
@@ -429,6 +440,16 @@ Use `-s` or `--silent` to run in silent mode:
 ```bash
 hackmyresume BUILD resume.json -o someFile.all -s
 hackmyresume BUILD resume.json -o someFile.all --silent
+```
+
+### Debug Mode
+
+Use `-d` or `--debug` to force HMR to emit a call stack when errors occur. In
+the future, this option will emit detailed error logging.
+
+```bash
+hackmyresume BUILD resume.json -d
+hackmyresume ANALYZE resume.json --debug
 ```
 
 ## Contributing

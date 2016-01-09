@@ -49,7 +49,8 @@ function main() {
     .option('-o --opts <optionsFile>', 'Path to a .hackmyrc options file')
     .option('-s --silent', 'Run in silent mode')
     .option('--no-color', 'Disable colors')
-    .option('--color', 'Enable colors');
+    .option('--color', 'Enable colors')
+    .option('-d --debug', 'Enable diagnostics', false);
     //.usage('COMMAND <sources> [TO <targets>]');
 
   // Create the NEW command
@@ -172,6 +173,7 @@ Invoke a HackMyResume verb.
 */
 function execVerb( src, dst, opts, log ) {
   loadOptions.call( this, opts );
+  require('./core/error-handler').init( _opts.debug );
   HMR.verbs[ this.name() ].call( null, src, dst, _opts, log );
 }
 
@@ -180,23 +182,24 @@ function execVerb( src, dst, opts, log ) {
 /**
 Initialize HackMyResume options.
 */
-function loadOptions( opts ) {
+function loadOptions( o ) {
 
-  opts.opts = this.parent.opts;
+  o.opts = this.parent.opts;
 
   // Load the specified options file (if any) and apply options
-  if( opts.opts && String.is( opts.opts )) {
-    var json = safeLoadJSON( PATH.relative( process.cwd(), opts.opts ) );
-    json && ( opts = EXTEND( true, opts, json ) );
+  if( o.opts && String.is( o.opts )) {
+    var json = safeLoadJSON( PATH.relative( process.cwd(), o.opts ) );
+    json && ( o = EXTEND( true, o, json ) );
     if( !json ) {
       throw safeLoadJSON.error;
     }
   }
 
   // Merge in command-line options
-  opts = EXTEND( true, opts, this.opts() );
-  opts.silent = this.parent.silent;
-  _opts = opts;
+  o = EXTEND( true, o, this.opts() );
+  o.silent = this.parent.silent;
+  o.debug = this.parent.debug;
+  _opts = o;
 }
 
 

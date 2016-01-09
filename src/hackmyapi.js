@@ -1,24 +1,29 @@
 /**
 External API surface for HackMyResume.
-@license MIT. Copyright (c) 2015 James M. Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module hackmyapi.js
 */
 
+
+
 (function() {
 
-  var v = {
-    build: require('./verbs/generate'),
-    analyze: require('./verbs/analyze'),
-    validate: require('./verbs/validate'),
-    convert: require('./verbs/convert'),
-    new: require('./verbs/create')
-  };
 
+
+  /**
+  The formal HackMyResume API.
+  */
   var HackMyAPI = module.exports = {
-    verbs: v,
+    verbs: {
+      build: require('./verbs/build'),
+      analyze: require('./verbs/analyze'),
+      validate: require('./verbs/validate'),
+      convert: require('./verbs/convert'),
+      new: require('./verbs/create')
+    },
     alias: {
-      generate: v.build,
-      create: v.new
+      generate: require('./verbs/build'),
+      create: require('./verbs/create')
     },
     options: require('./core/default-options'),
     formats: require('./core/default-formats'),
@@ -28,16 +33,18 @@ External API surface for HackMyResume.
     FRESHTheme: require('./core/fresh-theme'),
     JRSTheme: require('./core/jrs-theme'),
     FluentDate: require('./core/fluent-date'),
-    HtmlGenerator: require('./gen/html-generator'),
-    TextGenerator: require('./gen/text-generator'),
-    HtmlPdfGenerator: require('./gen/html-pdf-generator'),
-    WordGenerator: require('./gen/word-generator'),
-    MarkdownGenerator: require('./gen/markdown-generator'),
-    JsonGenerator: require('./gen/json-generator'),
-    YamlGenerator: require('./gen/yaml-generator'),
-    JsonYamlGenerator: require('./gen/json-yaml-generator'),
-    LaTeXGenerator: require('./gen/latex-generator'),
-    HtmlPngGenerator: require('./gen/html-png-generator')
+    HtmlGenerator: require('./generators/html-generator'),
+    TextGenerator: require('./generators/text-generator'),
+    HtmlPdfCliGenerator: require('./generators/html-pdf-cli-generator'),
+    WordGenerator: require('./generators/word-generator'),
+    MarkdownGenerator: require('./generators/markdown-generator'),
+    JsonGenerator: require('./generators/json-generator'),
+    YamlGenerator: require('./generators/yaml-generator'),
+    JsonYamlGenerator: require('./generators/json-yaml-generator'),
+    LaTeXGenerator: require('./generators/latex-generator'),
+    HtmlPngGenerator: require('./generators/html-png-generator')
   };
+
+
 
 }());

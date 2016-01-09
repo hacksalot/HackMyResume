@@ -40,7 +40,7 @@ FRESH themes currently come preinstalled with HackMyResume.
 1. Specify the theme name in the `--theme` or `-t` parameter to the **build** command:
 
     ```bash
-    hackmyresume BUILD my-resume.json --theme <theme-name>`
+    hackmyresume BUILD my-resume.json --theme <theme-name>
     ```
 
     `<theme-name>` can be one of `positive`, `compact`, `modern`, `minimist`, `hello-world`, or `awesome`.
@@ -90,8 +90,53 @@ hackmyresume BUILD resume.json -o myoptions.json
 
 This ability is currently only supported for FRESH resume themes.
 
-## The HackMyResume terminal color scheme is giving me a headache! Can I disable it?
+## The HackMyResume terminal color scheme is giving me a headache. Can I disable it?
 
 Yes. Use the `--no-color` option to disable terminal colors:
 
 `hackmyresume <somecommand> <someoptions> --no-color`
+
+## What's the difference between a FRESH theme and a JSON Resume theme?
+
+FRESH themes are multiformat (HTML, Word, PDF, etc.) and required to support
+Markdown formatting, configurable section titles, and various other features.
+
+JSON Resume themes are typically HTML-driven, but capable of expansion to other
+formats through tools. JSON Resume themes don't support Markdown natively, but
+HMR does its best to apply your Markdown, when present, to any JSON Resume
+themes it encounters.
+
+## Do I have to have a FRESH resume to use a FRESH theme or a JSON Resume to use a JSON Resume theme?
+
+No. You can mix and match FRESH and JRS-format themes freely. HackMyResume will
+perform the necessary conversions on the fly.
+
+## Can I build my own custom FRESH theme?
+
+Yes. The easiest way is to copy an existing FRESH theme, like `modern` or
+`compact`, and make your changes there. You can test your theme with:
+
+```bash
+hackmyresume build resume.json --theme path/to/my/theme/folder
+```
+
+## Can I build my own custom JSON Resume theme?
+
+Yes. The easiest way is to copy an existing JSON Rsume theme and make your
+changes there. You can test your theme with:
+
+```bash
+hackmyresume build resume.json --theme path/to/my/theme/folder
+```
+
+## Can I build my own tools / services / apps / websites around FRESH / FRESCA?
+
+Yes! FRESH/FRESCA formats are 100% open source, permissively licensed under MIT,
+and 100% free from company-specific, tool-specific, or commercially oriented
+lock-in or cruft. These are clean formats designed for users and builders.
+
+## Can I build my own tools / services / apps / websites around JSON Resume?
+
+Yes! HackMyResume is not affiliated with JSON Resume, but like FRESH/FRESCA,
+JSON Resume is open-source, permissively licensed, and free of proprietary
+lock-in. See the JSON Resume website for details.

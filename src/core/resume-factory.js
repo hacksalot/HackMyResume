@@ -116,8 +116,10 @@ Definition of the ResumeFactory class.
         ex.handled = true;
       }
 
-      if( opts.throw ) throw ex;
-      else return {
+      // FS.readFileSync failed
+      if( !rawData || opts.throw ) throw ex;
+
+      return {
         error: ex,
         raw: rawData,
         file: fileName
