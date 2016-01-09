@@ -56,7 +56,7 @@ Definition of the `main` function.
       .alias('create')
       .description('Create resume(s) in FRESH or JSON RESUME format.')
       .action(function( sources ) {
-        execVerb.call( this, sources, [], this.opts(), logMsg);
+        execute.call( this, sources, [], this.opts(), logMsg);
       });
 
     // Create the VALIDATE command
@@ -66,7 +66,7 @@ Definition of the `main` function.
       .option('-a --assert', 'Treat validation warnings as errors', false)
       .description('Validate a resume in FRESH or JSON RESUME format.')
       .action(function(sources) {
-        execVerb.call( this, sources, [], this.opts(), logMsg);
+        execute.call( this, sources, [], this.opts(), logMsg);
       });
 
     // Create the CONVERT command
@@ -76,7 +76,7 @@ Definition of the `main` function.
       .description('Convert a resume to/from FRESH or JSON RESUME format.')
       .action(function() {
         var x = splitSrcDest.call( this );
-        execVerb.call( this, x.src, x.dst, this.opts(), logMsg);
+        execute.call( this, x.src, x.dst, this.opts(), logMsg);
       });
 
     // Create the ANALYZE command
@@ -85,7 +85,7 @@ Definition of the `main` function.
       .arguments('<sources...>')
       .description('Analyze one or more resumes.')
       .action(function( sources ) {
-        execVerb.call( this, sources, [], this.opts(), logMsg);
+        execute.call( this, sources, [], this.opts(), logMsg);
       });
 
     // Create the BUILD command
@@ -102,16 +102,8 @@ Definition of the `main` function.
       .description('Generate resume to multiple formats')
       .action(function( sources, targets, options ) {
         var x = splitSrcDest.call( this );
-        execVerb.call( this, x.src, x.dst, this.opts(), logMsg);
+        execute.call( this, x.src, x.dst, this.opts(), logMsg);
       });
-
-    // program.on('--help', function(){
-    //   console.log('  Examples:');
-    //   console.log('');
-    //   console.log('    $ custom-help --help');
-    //   console.log('    $ custom-help -h');
-    //   console.log('');
-    // });
 
     program.parse( args );
 
@@ -165,7 +157,7 @@ Definition of the `main` function.
   /**
   Invoke a HackMyResume verb.
   */
-  function execVerb( src, dst, opts, log ) {
+  function execute( src, dst, opts, log ) {
 
     loadOptions.call( this, opts );
     require( '../core/error-handler' ).init( _opts.debug );

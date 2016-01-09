@@ -83,11 +83,6 @@ Implementation of the 'generate' verb for HackMyResume.
     });
     (sheets.length > 1) && this.stat( HME.afterMerge, { r: rez } );
 
-    // Output theme messages
-    var numFormats = Object.keys(theme.formats).length;
-    var themeName = theme.name.toUpperCase();
-
-
     // Expand output resumes...
     var targets = expand( dst, theme );
 
