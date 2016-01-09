@@ -73,7 +73,8 @@ describe('Testing CLI interface', function () {
       it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' SUCCEED' : ' FAIL') + msg, function () {
         function runIt() {
           try {
-            FCMD.verbs[verb]( src, dst, opts, opts.silent ?
+            var v = new FCMD.verbs[verb]();
+            v.invoke( src, dst, opts, opts.silent ?
               function(){} : function(msg){ msg = msg || ''; console.log(msg); } );
           }
           catch(ex) {

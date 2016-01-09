@@ -9,7 +9,8 @@ var chai = require('chai')
   , validator = require('is-my-json-valid')
   , READFILES = require('recursive-readdir-sync')
   , fileContains = require('../src/utils/file-contains')
-  , FS = require('fs');
+  , FS = require('fs')
+  , CHALK = require('chalk');
 
 chai.config.includeStack = true;
 
@@ -34,7 +35,8 @@ function genThemes( title, src, fmt ) {
             css: 'embed'
           };
           try {
-            HMR.verbs.build( src, dst, opts, function(msg) {
+            var v = new HMR.verbs.build();
+            v.invoke( src, dst, opts, function(msg) {
               msg = msg || '';
               console.log(msg);
             });
