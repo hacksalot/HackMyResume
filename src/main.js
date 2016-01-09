@@ -1,12 +1,12 @@
+/**
+Definition of the `main` function.
+@module main.js
+@license MIT. See LICENSE.md for details.
+*/
+
+
+
 (function(){
-
-
-
-  /**
-  Main function for HackMyResume
-  @license MIT. See LICENSE.md for details.
-  @module main.js
-  */
 
 
 
@@ -17,17 +17,21 @@
     , chalk = require('chalk')
     , PATH = require('path')
     , HACKMYSTATUS = require('./core/status-codes')
+    , HME = require('./core/event-codes')
     , safeLoadJSON = require('./utils/safe-json-loader')
     , _opts = { }
     , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***')
     , StringUtils = require('./utils/string.js')
     , _ = require('underscore')
+    , OUTPUT = require('./out')
     , Command = require('commander').Command;
 
 
 
   /**
-  Kick off the HackMyResume application.
+  Main function for HackMyResume
+  @license MIT. See LICENSE.md for details.
+  @module main.js
   */
   var main = module.exports = function( args ) {
 
@@ -117,8 +121,6 @@
 
 
 
-
-
   /**
   Massage command-line args and setup Commander.js.
   */
@@ -163,11 +165,14 @@
   Invoke a HackMyResume verb.
   */
   function execVerb( src, dst, opts, log ) {
-    loadOptions.call( this, opts );
-    require('./core/error-handler').init( _opts.debug );
 
+    loadOptions.call( this, opts );
+    require( './core/error-handler' ).init( _opts.debug );
+    var out = new OUTPUT( _opts );
     var v = new HMR.verbs[ this.name() ]();
-    v.invoke.call( null, src, dst, _opts, log );
+    v.on( 'hmr:status', function() { out.do.apply( out, arguments ); });
+    v.invoke.call( v, src, dst, _opts, log );
+
   }
 
 
@@ -176,9 +181,7 @@
   Initialize HackMyResume options.
   */
   function loadOptions( o ) {
-
     o.opts = this.parent.opts;
-
     // Load the specified options file (if any) and apply options
     if( o.opts && String.is( o.opts )) {
       var json = safeLoadJSON( PATH.relative( process.cwd(), o.opts ) );
@@ -187,7 +190,6 @@
         throw safeLoadJSON.error;
       }
     }
-
     // Merge in command-line options
     o = EXTEND( true, o, this.opts() );
     o.silent = this.parent.silent;
@@ -236,5 +238,7 @@
     msg = msg || '';
     _opts.silent || console.log( msg );
   }
+
+
 
 }());

@@ -16,6 +16,7 @@ Implementation of the 'generate' verb for HackMyResume.
     , MKDIRP = require('mkdirp')
     , EXTEND = require('../utils/extend')
     , HACKMYSTATUS = require('../core/status-codes')
+    , HME = require('../core/event-codes')
     , parsePath = require('parse-filepath')
     , _opts = require('../core/default-options')
     , FluentTheme = require('../core/fresh-theme')
@@ -33,7 +34,7 @@ Implementation of the 'generate' verb for HackMyResume.
   var BuildVerb = module.exports = Verb.extend({
 
     init: function() {
-      this._super();
+      this._super('build');
     },
 
     invoke: function() {
@@ -52,12 +53,15 @@ Implementation of the 'generate' verb for HackMyResume.
   */
   function build( src, dst, opts, logger, errHandler ) {
 
+    this.stat( HME.begin );
+
     prep( src, dst, opts, logger, errHandler );
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
     var tFolder = verifyTheme( _opts.theme );
     var theme = loadTheme( tFolder );
+    this.stat( HME.afterTheme, { theme: theme });
 
     // Check for invalid outputs
     var inv = verifyOutputs( dst, theme );
@@ -73,53 +77,26 @@ Implementation of the 'generate' verb for HackMyResume.
     }).map(function(sh){ return sh.rez; });
 
     // Merge input resumes...
-    var msg = '';
+    (sheets.length > 1) && this.stat( HME.beforeMerge, { f: _.clone(sheets) });
     rez = _.reduceRight( sheets, function( a, b, idx ) {
-      msg += ((idx == sheets.length - 2) ?
-        chalk.cyan('Merging ') + chalk.cyan.bold(a.i().file) : '') +
-        chalk.cyan(' onto ') + chalk.cyan.bold(b.i().file);
       return extend( true, b, a );
     });
-    msg && _log(msg);
+    (sheets.length > 1) && this.stat( HME.afterMerge, { r: rez } );
 
     // Output theme messages
     var numFormats = Object.keys(theme.formats).length;
     var themeName = theme.name.toUpperCase();
-    _log( chalk.yellow('Applying ') + chalk.yellow.bold(themeName) +
-      chalk.yellow(' theme (' + numFormats + ' format' +
-        ( numFormats === 1 ? ')' : 's)') ));
+
 
     // Expand output resumes...
     var targets = expand( dst, theme );
 
     // Run the transformation!
-    targets.forEach( function(t) {
-      t.final = single( t, theme, targets );
-    });
+    _.each(targets, function(t) {
+      t.final = single.call( this, t, theme, targets );
+    }, this);
 
-    if( _opts.tips && (theme.message || theme.render) ) {
-      var WRAP = require('word-wrap');
-      if( theme.message ) {
-        _log( WRAP( chalk.gray('The ' + themeName +
-          ' theme says: "') + chalk.white(theme.message) + chalk.gray('"'),
-          { width: _opts.wrap, indent: '' } ));
-      }
-      else {
-        _log( WRAP( chalk.gray('The ' + themeName +
-          ' theme says: "') + chalk.white('For best results view JSON Resume ' +
-          'themes over a local or remote HTTP connection. For example:'),
-          { width: _opts.wrap, indent: '' }
-        ));
-        _log('');
-        _log(
-          '    npm install http-server -g\r' +
-          '    http-server <resume-folder>' );
-        _log('');
-        _log(chalk.white('For more information, see the README."'),
-          { width: _opts.wrap, indent: '' } );
-      }
-    }
-
+    this.stat( HME.end );
 
     // Don't send the client back empty-handed
     return { sheet: rez, targets: targets, processed: targets };
@@ -172,28 +149,10 @@ Implementation of the 'generate' verb for HackMyResume.
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
-      var suffix = '';
-      if( targInfo.fmt.outFormat === 'pdf' ) {
-        if( _opts.pdf ) {
-          if( _opts.pdf !== 'none' ) {
-            suffix = chalk.green(' (with ' + _opts.pdf + ')');
-          }
-          else {
-            _log( chalk.gray('Skipping   ') +
-              chalk.white.bold(
-                pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
-              chalk.gray(' resume') + suffix + chalk.green(': ') +
-              chalk.white( PATH.relative(process.cwd(), f )) );
-            return;
-          }
-        }
-      }
-
-      _log( chalk.green('Generating ') +
-        chalk.green.bold(
-          pad(targInfo.fmt.outFormat.toUpperCase(),4,null,pad.RIGHT)) +
-        chalk.green(' resume') + suffix + chalk.green(': ') +
-        chalk.green.bold( PATH.relative(process.cwd(), f )) );
+      this.stat( HME.beforeGenerate, {
+        fmt: targInfo.fmt.outFormat,
+        file: PATH.relative(process.cwd(), f)
+      });
 
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.

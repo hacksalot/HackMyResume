@@ -4,16 +4,27 @@ Implementation of the 'create' verb for HackMyResume.
 @license MIT. See LICENSE.md for details.
 */
 
+
+
 (function(){
+
+
 
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
     , chalk = require('chalk')
     , Verb = require('../core/verb')
-    , HACKMYSTATUS = require('../core/status-codes');
+    , _ = require('underscore')
+    , HACKMYSTATUS = require('../core/status-codes')
+    , HME = require('../core/event-codes');
+
 
 
   var CreateVerb = module.exports = Verb.extend({
+
+    init: function() {
+      this._super('new');
+    },
 
     invoke: function() {
       create.apply( this, arguments );
@@ -22,21 +33,27 @@ Implementation of the 'create' verb for HackMyResume.
   });
 
 
+
   /**
   Create a new empty resume in either FRESH or JRS format.
   */
-  function create( src, dst, opts, logger ) {
-    var _log = logger || console.log;
-    if( !src || !src.length ) throw { fluenterror: HACKMYSTATUS.createNameMissing };
-    src.forEach( function( t ) {
-      var safeFormat = opts.format.toUpperCase();
-      _log(chalk.green('Creating new ') + chalk.green.bold(safeFormat) +
-        chalk.green(' resume: ') + chalk.green.bold(t));
+  function create( src, dst, opts/*, logger*/ ) {
+
+    if(!src || !src.length) throw {fluenterror: HACKMYSTATUS.createNameMissing};
+    this.stat( HME.begin );
+
+    _.each( src, function( t ) {
+      var safeFmt = opts.format.toUpperCase();
+      this.fireStat( HME.bc, { fmt: safeFmt, file: t } );
       MKDIRP.sync( PATH.dirname( t ) ); // Ensure dest folder exists;
-      var RezClass = require('../core/' + safeFormat.toLowerCase() + '-resume' );
+      var RezClass = require('../core/' + safeFmt.toLowerCase() + '-resume' );
       RezClass.default().save(t);
-      //FLUENT[ safeFormat + 'Resume' ].default().save( t );
-    });
+      this.fireStat( HME.ac, { fmt: safeFmt, file: t } );
+    }, this);
+
+    this.stat( HME.end );
   }
+
+
 
 }());

@@ -169,6 +169,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
               { outputFile: fileName, mk: file.data, opts: that.opts } );
           }
           catch(ex) {
+            console.log(ex);
             require('../core/error-handler').err(ex, false);
           }
         }
@@ -179,6 +180,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
             FS.copySync( file.info.path, thisFilePath );
           }
           catch(ex) {
+            console.log('B');
             ex.showStack = true;
             require('../core/error-handler').err( ex );
           }

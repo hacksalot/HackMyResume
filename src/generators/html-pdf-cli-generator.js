@@ -40,19 +40,17 @@ Definition of the HtmlPdfCLIGenerator class.
 
       try {
         var safe_eng = info.opts.pdf || 'wkhtmltopdf';
-        engines[ safe_eng ].call( this, info.mk, info.outputFile );
+        if( safe_eng !== 'none' )
+          engines[ safe_eng ].call( this, info.mk, info.outputFile );
         return null; // halt further processing
       }
       catch(ex) {
         // { [Error: write EPIPE] code: 'EPIPE', errno: 'EPIPE', ... }
         // { [Error: ENOENT] }
         throw ( ex.inner && ex.inner.code === 'ENOENT' ) ?
-
           { fluenterror: this.codes.notOnPath, inner: ex.inner, engine: ex.cmd,
             stack: ex.inner && ex.inner.stack } :
-
-          { fluenterror: this.codes.pdfGeneration, inner: ex.inner,
-            stack: ex.inner && ex.inner.stack };
+          { fluenterror: this.codes.pdfGeneration, inner: ex, stack: ex.stack };
       }
     }
 
