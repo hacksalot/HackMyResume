@@ -32,6 +32,10 @@ Implementation of the 'generate' verb for HackMyResume.
 
   var BuildVerb = module.exports = Verb.extend({
 
+    init: function() {
+      this._super();
+    },
+
     invoke: function() {
       build.apply( this, arguments );
     }

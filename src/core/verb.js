@@ -11,7 +11,9 @@ Definition of the Verb class.
 
 
   // Use J. Resig's nifty class implementation
-  var Class = require( '../utils/class' );
+  var Class = require( '../utils/class' )
+    , EVENTS = require('events');
+
 
 
 
@@ -21,8 +23,14 @@ Definition of the Verb class.
   */
   var Verb = module.exports = Class.extend({
 
+    init: function() {
+      this.emitter = new EVENTS.EventEmitter();
+    },
+
+    on: function() {
+      this.emitter.on.apply( this.emitter, arguments );
+    }
+
   });
-
-
 
 }());
