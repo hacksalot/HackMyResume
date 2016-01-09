@@ -45,7 +45,7 @@ Output routines for HackMyResume.
 
         case HME.beforeCreate:
           this.log( chalk.green('Creating new ') +
-            chalk.green.bold(evt.cmd) +
+            chalk.green.bold(evt.fmt) +
             chalk.green(' resume: ') + chalk.green.bold(evt.file));
           break;
 
@@ -56,8 +56,8 @@ Output routines for HackMyResume.
         case HME.beforeMerge:
           var msg = '';
           evt.f.reverse().forEach( function( a, idx ) {
-            msg += ((idx === 0) ? chalk.cyan('Merging ') : chalk.cyan(' onto '))
-                 + chalk.cyan.bold(a.i().file);
+            msg += ((idx === 0) ? chalk.cyan('Merging ') :
+             chalk.cyan(' onto ')) + chalk.cyan.bold(a.i().file);
           });
           this.log( msg );
           break;
@@ -128,6 +128,7 @@ Output routines for HackMyResume.
           break;
 
         case HME.afterAnalyze:
+          // TODO: templatize all of this
           var info = evt.info;
           var padding = 20;
           this.log(chalk.cyan.bold('\nSECTIONS') + chalk.cyan(' (') +

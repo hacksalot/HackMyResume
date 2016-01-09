@@ -44,11 +44,11 @@ Implementation of the 'create' verb for HackMyResume.
 
     _.each( src, function( t ) {
       var safeFmt = opts.format.toUpperCase();
-      this.fireStat( HME.bc, { fmt: safeFmt, file: t } );
+      this.stat( HME.beforeCreate, { fmt: safeFmt, file: t } );
       MKDIRP.sync( PATH.dirname( t ) ); // Ensure dest folder exists;
       var RezClass = require('../core/' + safeFmt.toLowerCase() + '-resume' );
       RezClass.default().save(t);
-      this.fireStat( HME.ac, { fmt: safeFmt, file: t } );
+      this.stat( HME.afterCreate, { fmt: safeFmt, file: t } );
     }, this);
 
     this.stat( HME.end );
