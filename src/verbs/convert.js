@@ -12,11 +12,17 @@ Implementation of the 'convert' verb for HackMyResume.
 
   var ResumeFactory = require('../core/resume-factory')
     , chalk = require('chalk')
-    , Verb = require('../core/verb')    
-    , HACKMYSTATUS = require('../core/status-codes');
+    , Verb = require('../core/verb')
+    , HACKMYSTATUS = require('../core/status-codes')
+    , _ = require('underscore')
+    , HME = require('../core/event-codes');
 
 
   var ConvertVerb = module.exports = Verb.extend({
+
+    init: function() {
+      this._super('convert');
+    },
 
     invoke: function() {
       convert.apply( this, arguments );
@@ -50,7 +56,7 @@ Implementation of the 'convert' verb for HackMyResume.
     }
 
     // Load source resumes
-    srcs.forEach( function( src, idx ) {
+    _.each(srcs, function( src, idx ) {
 
       // Load the resume
       var rinfo = ResumeFactory.loadOne( src, {
@@ -62,15 +68,12 @@ Implementation of the 'convert' verb for HackMyResume.
           'JRS' : 'FRESH'
         , targetFormat = srcFmt === 'JRS' ? 'FRESH' : 'JRS';
 
-      // TODO: Core should not log
-      _log( chalk.green('Converting ') + chalk.green.bold(rinfo.file) +
-        chalk.green(' (' + srcFmt + ') to ') + chalk.green.bold(dst[idx]) +
-        chalk.green(' (' + targetFormat + ').'));
+      this.stat(HME.beforeConvert, { srcFile: rinfo.file, srcFmt: srcFmt, dstFile: dst[idx], dstFmt: targetFormat });
 
       // Save it to the destination format
       s.saveAs( dst[idx], targetFormat );
 
-    });
+    }, this);
 
   }
 

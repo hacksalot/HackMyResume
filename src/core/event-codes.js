@@ -34,7 +34,13 @@ Event code definitions.
     afterMerge:     10,
 
     beforeGenerate: 11,
-    afterGenerate:  12
+    afterGenerate:  12,
+
+    beforeAnalyze: 13,
+    afterAnalyze: 14,
+
+    beforeConvert: 15,
+    afterConvert: 16
 
   };
 

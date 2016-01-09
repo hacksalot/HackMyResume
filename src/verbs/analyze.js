@@ -12,14 +12,19 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
+    , HME = require('../core/event-codes')
     , _ = require('underscore')
     , ResumeFactory = require('../core/resume-factory')
-    , Verb = require('../core/verb')    
+    , Verb = require('../core/verb')
     , chalk = require('chalk');
 
 
 
   var AnalyzeVerb = module.exports = Verb.extend({
+
+    init: function() {
+      this._super('analyze');
+    },
 
     invoke: function() {
       analyze.apply( this, arguments );
@@ -33,17 +38,17 @@ Implementation of the 'analyze' verb for HackMyResume.
   Run the 'analyze' command.
   */
   function analyze( sources, dst, opts, logger ) {
+    this.stat('begin');
     var _log = logger || console.log;
     if( !sources || !sources.length ) throw { fluenterror: 3 };
-
     var nlzrs = _loadInspectors();
-
-    sources.forEach( function(src) {
+    _.each(sources, function(src) {
       var result = ResumeFactory.loadOne( src, {
         log: _log, format: 'FRESH', objectify: true, throw: false
       });
-      result.error || _analyze( result, nlzrs, opts, _log );
-    });
+      result.error || _analyze.call(this, result, nlzrs, opts, _log );
+    }, this);
+    this.stat('end');
   }
 
 
@@ -58,45 +63,11 @@ Implementation of the 'analyze' verb for HackMyResume.
       'FRESH' : 'JRS';
 
     var padding = 20;
-    log(chalk.cyan('Analyzing ') + chalk.cyan.bold(safeFormat) +
-      chalk.cyan(' resume: ') + chalk.cyan.bold(resumeObject.file));
+    this.stat( HME.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file });
     var info = _.mapObject( nlzrs, function(val, key) {
       return val.run( resumeObject.rez );
     });
-
-    log(chalk.cyan.bold('\nSECTIONS') + chalk.cyan(' (') + chalk.white.bold(_.keys(info.totals).length) + chalk.cyan('):\n'));
-    var pad = require('string-padding');
-    _.each( info.totals, function(tot, key) {
-      log(chalk.cyan(pad(key + ': ',20)) + chalk.cyan.bold(pad(tot.toString(),5)));
-    });
-
-    log();
-    log(chalk.cyan.bold('COVERAGE') + chalk.cyan(' (') + chalk.white.bold( info.coverage.pct ) + chalk.cyan('):\n'));
-    log(chalk.cyan(pad('Total Days: ', padding)) + chalk.cyan.bold( pad(info.coverage.duration.total.toString(),5) ));
-    log(chalk.cyan(pad('Employed: ', padding)) + chalk.cyan.bold( pad((info.coverage.duration.total - info.coverage.duration.gaps).toString(),5) ));
-    log(chalk.cyan(pad('Gaps:     ', padding + 4)) + chalk.cyan.bold(info.coverage.gaps.length) + chalk.cyan('  [') + info.coverage.gaps.map(function(g) {
-        var clr = 'green';
-        if( g.duration > 35 ) clr = 'yellow';
-        if( g.duration > 90 ) clr = 'red';
-        return chalk[clr].bold( g.duration) ;
-      }).join(', ') + chalk.cyan(']') );
-      log(chalk.cyan(pad('Overlaps:     ', padding + 4)) + chalk.cyan.bold(info.coverage.overlaps.length) + chalk.cyan('  [') + info.coverage.overlaps.map(function(ol) {
-          var clr = 'green';
-          if( ol.duration > 35 ) clr = 'yellow';
-          if( ol.duration > 90 ) clr = 'red';
-          return chalk[clr].bold( ol.duration) ;
-        }).join(', ') + chalk.cyan(']') );
-
-    var tot = 0;
-    log();
-    log( chalk.cyan.bold('KEYWORDS') + chalk.cyan(' (') + chalk.white.bold( info.keywords.length ) +
-      chalk.cyan('):\n\n') +
-      info.keywords.map(function(g) {
-        tot += g.count;
-        return chalk.cyan( pad(g.name + ': ', padding) ) + chalk.cyan.bold( pad( g.count.toString(), 5 )) + chalk.cyan(' mentions');
-      }).join('\n'));
-
-    log(chalk.cyan( pad('TOTAL: ', padding) ) + chalk.white.bold( pad( tot.toString(), 5 )) + chalk.cyan(' mentions'));
+    this.stat( HME.afterAnalyze, { info: info } );
   }
 
 

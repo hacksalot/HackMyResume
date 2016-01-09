@@ -17,6 +17,10 @@ Implementation of the 'validate' verb for HackMyResume.
 
   var ValidateVerb = module.exports = Verb.extend({
 
+    init: function() {
+      this._super('validate');
+    },
+
     invoke: function() {
       validate.apply( this, arguments );
     }
