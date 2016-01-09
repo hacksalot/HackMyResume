@@ -31,7 +31,7 @@
   */
   var main = module.exports = function( args ) {
 
-    var args = initialize( args );
+    args = initialize( args );
 
     // Create the top-level (application) command...
     var program = new Command('hackmyresume')
@@ -122,12 +122,12 @@
   /**
   Massage command-line args and setup Commander.js.
   */
-  function initialize( args ) {
+  function initialize( ar ) {
 
     logMsg( title );
 
     // Support case-insensitive sub-commands (build, generate, validate, etc.)..
-    var oVerb, verb = '', args = args.slice(), cleanArgs = args.slice(2);
+    var oVerb, verb = '', args = ar.slice(), cleanArgs = args.slice(2);
     if( cleanArgs.length ) {
       var verbIdx = _.findIndex( cleanArgs, function(v){ return v[0] !== '-'; });
       if( verbIdx !== -1 ) {
