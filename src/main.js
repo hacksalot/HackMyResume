@@ -10,8 +10,7 @@
 
 
 
-  var SPAWNW = require('./core/spawn-watch')
-    , HMR  = require( './hackmyapi')
+  var HMR  = require( './hackmyapi')
     , PKG = require('../package.json')
     , FS = require('fs')
     , EXTEND = require('./utils/extend')

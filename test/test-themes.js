@@ -1,6 +1,5 @@
 
-var SPAWNWATCHER = require('../src/core/spawn-watch')
-  , chai = require('chai')
+var chai = require('chai')
   , expect = chai.expect
   , should = chai.should()
   , path = require('path')
