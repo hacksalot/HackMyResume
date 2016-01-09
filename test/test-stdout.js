@@ -1,6 +1,6 @@
 var chai = require('chai')
   , expect = chai.expect
-  , HMRMAIN = require('../src/main')
+  , HMRMAIN = require('../src/cli/main')
   , CHALK = require('chalk')
   , FS = require('fs')
   , PATH = require('path')
@@ -32,7 +32,7 @@ describe('Testing Ouput interface', function () {
     try {
       args.unshift( process.argv[1] );
       args.unshift( process.argv[0] );
-      var HMRMAIN = require('../src/main');
+      var HMRMAIN = require('../src/cli/main');
       HMRMAIN( args );
     }
     catch( ex ) {
@@ -61,7 +61,7 @@ describe('Testing Ouput interface', function () {
 
   var title = '*** HackMyResume v1.5.2 ***';
   var feedMe = 'Please feed me a resume in FRESH or JSON Resume format.';
-  var manPage = FS.readFileSync( PATH.resolve( __dirname, '../src/use.txt' ), 'utf8');
+  var manPage = FS.readFileSync( PATH.resolve( __dirname, '../src/cli/use.txt' ), 'utf8');
 
   run('HMR should output a help string when no command is specified',
       [], [ title, 'Please give me a command (BUILD, ANALYZE, VALIDATE, CONVERT, or NEW).' ]);

@@ -10,18 +10,18 @@ Definition of the `main` function.
 
 
 
-  var HMR  = require( './hackmyapi')
-    , PKG = require('../package.json')
+  var HMR  = require( '../hackmyapi')
+    , PKG = require('../../package.json')
     , FS = require('fs')
-    , EXTEND = require('./utils/extend')
+    , EXTEND = require('../utils/extend')
     , chalk = require('chalk')
     , PATH = require('path')
-    , HACKMYSTATUS = require('./core/status-codes')
-    , HME = require('./core/event-codes')
-    , safeLoadJSON = require('./utils/safe-json-loader')
+    , HACKMYSTATUS = require('../core/status-codes')
+    , HME = require('../core/event-codes')
+    , safeLoadJSON = require('../utils/safe-json-loader')
     , _opts = { }
     , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***')
-    , StringUtils = require('./utils/string.js')
+    , StringUtils = require('../utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
     , Command = require('commander').Command;
@@ -152,7 +152,8 @@ Definition of the `main` function.
 
     // Override the .helpInformation behavior
     Command.prototype.helpInformation = function() {
-      var manPage = FS.readFileSync( PATH.join(__dirname, 'use.txt'), 'utf8' );
+      var manPage = FS.readFileSync(
+        PATH.join(__dirname, 'use.txt'), 'utf8' );
       return chalk.green.bold(manPage);
     };
 
@@ -167,7 +168,7 @@ Definition of the `main` function.
   function execVerb( src, dst, opts, log ) {
 
     loadOptions.call( this, opts );
-    require( './core/error-handler' ).init( _opts.debug );
+    require( '../core/error-handler' ).init( _opts.debug );
     var out = new OUTPUT( _opts );
     var v = new HMR.verbs[ this.name() ]();
     v.on( 'hmr:status', function() { out.do.apply( out, arguments ); });

@@ -107,7 +107,7 @@ Error-handling routines for HackMyResume.
         }).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
 
         msg += chalk.gray(FS.readFileSync(
-          PATH.resolve(__dirname, '../use.txt'), 'utf8' ));
+          PATH.resolve(__dirname, '../cli/use.txt'), 'utf8' ));
         break;
 
       case HACKMYSTATUS.invalidCommand:

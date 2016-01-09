@@ -11,16 +11,16 @@ Output routines for HackMyResume.
 
 
   var chalk = require('chalk')
-    , HME = require('./core/event-codes')
+    , HME = require('../core/event-codes')
     , _ = require('underscore')
-    , Class = require('./utils/class.js')
+    , Class = require('../utils/class.js')
     , PATH = require('path')
     , pad = require('string-padding');
 
 
 
   /**
-  A stateful output handler.
+  A stateful output handler. All HMR console output handled here.
   */
   var OutputHandler = module.exports = Class.extend({
 
