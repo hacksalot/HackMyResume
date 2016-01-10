@@ -31,6 +31,7 @@ Implementation of the 'generate' verb for HackMyResume.
     , _err, _log, rez;
 
 
+
   var BuildVerb = module.exports = Verb.extend({
 
     init: function() {
@@ -64,7 +65,7 @@ Implementation of the 'generate' verb for HackMyResume.
     this.stat( HME.afterTheme, { theme: theme });
 
     // Check for invalid outputs
-    var inv = verifyOutputs( dst, theme );
+    var inv = verifyOutputs.call( this, dst, theme );
     if( inv && inv.length ) {
       throw {fluenterror: HACKMYSTATUS.invalidFormat, data: inv, theme: theme};
     }
@@ -180,6 +181,8 @@ Implementation of the 'generate' verb for HackMyResume.
   Ensure that user-specified outputs/targets are valid.
   */
   function verifyOutputs( targets, theme ) {
+
+    this.stat(HME.verifyOutputs, { targets: targets, theme: theme });
 
     return _.reject(
       targets.map( function( t ) {

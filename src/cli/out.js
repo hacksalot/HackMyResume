@@ -52,6 +52,10 @@ Output routines for HackMyResume.
             chalk.green(' resume: ') + chalk.green.bold(evt.file));
           break;
 
+        case HME.beforeRead:
+          this.log( chalk.cyan('Reading resume: ' + chalk.bold( evt.file )));
+          break;
+
         case HME.afterTheme:
           this.theme = evt.theme;
           break;
@@ -148,6 +152,23 @@ Output routines for HackMyResume.
             chalk.green(' (' + evt.srcFmt + ') to ') + chalk.green.bold(evt.dstFile) +
             chalk.green(' (' + evt.dstFmt + ').'));
           break;
+
+        case HME.afterValidate:
+          var style = evt.isValid ? 'green' : 'yellow';
+          this.log( chalk.white('Validating ') + chalk.white.bold(evt.file) + chalk.white(' against ') +
+            chalk.white.bold( evt.fmt ).toUpperCase() +
+            chalk.white(' schema: ') + chalk[style].bold(evt.isValid ? 'VALID!' : 'INVALID'));
+
+          if( evt.errors ) {
+            _.each(evt.errors, function(err,idx) {
+              this.log( chalk.yellow.bold('--> ') +
+                chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
+                err.message) );
+            }, this);
+          }
+
+          break;
+
       }
     }
 

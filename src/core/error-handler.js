@@ -156,6 +156,21 @@ Error-handling routines for HackMyResume.
           " is inaccessible. PDF not generated." );
         break;
 
+      case HACKMYSTATUS.readError:
+        msg = formatError( ex.inner.toString() );
+        break;
+
+      case HACKMYSTATUS.parseError:
+        if( SyntaxErrorEx.is( ex.inner )) {
+          var se = new SyntaxErrorEx( ex, ex.raw );
+          msg = formatError( 'Invalid or corrupt JSON on line ' + se.line +
+            ' column ' + se.col );
+        }
+        else {
+          msg = formatError( ex.inner.toString() );
+        }
+        break;
+
     }
     return {
       msg: msg,

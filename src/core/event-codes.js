@@ -40,7 +40,12 @@ Event code definitions.
     afterAnalyze: 14,
 
     beforeConvert: 15,
-    afterConvert: 16
+    afterConvert: 16,
+
+    verifyOutputs: 17,
+
+    beforeParse: 18,
+    afterParse: 19
 
   };
 

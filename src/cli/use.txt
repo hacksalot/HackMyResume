@@ -2,26 +2,63 @@ Usage:
 
     hackmyresume <COMMAND> <SOURCES> [TO <TARGETS>] [-t <THEME>] [-f <FORMAT>]
 
-<COMMAND> should be BUILD, NEW, CONVERT, VALIDATE, ANALYZE or HELP. <SOURCES>
-should be the path to one or more FRESH or JSON Resume format resumes. <TARGETS>
-should be the name of the destination resume to be created, if any. The <THEME>
+<COMMAND> should be BUILD, ANALYZE, NEW, CONVERT, or VALIDATE. <SOURCES> should
+be the path to one or more FRESH or JSON Resume format resumes. <TARGETS> should
+be the name of the destination resume to be created, if any. The <THEME>
 parameter should be the name of a predefined theme (for example: COMPACT,
 MINIMIST, MODERN, or HELLO-WORLD) or the relative path to a custom theme.
 <FORMAT> should be either FRESH (for a FRESH-format resume) or JRS (for a JSON
 Resume-format resume).
 
-    hackmyresume BUILD resume.json TO out/resume.all
-    hackmyresume NEW resume.json
-    hackmyresume CONVERT resume.json TO resume-jrs.json
-    hackmyresume ANALYZE resume.json
-    hackmyresume VALIDATE resume.json
+   hackmyresume BUILD resume.json TO out/resume.all
+   hackmyresume ANALYZE resume.json
+   hackmyresume NEW resume.json
+   hackmyresume CONVERT resume.json TO resume-jrs.json
+   hackmyresume VALIDATE resume.json
 
 Both SOURCES and TARGETS can accept multiple files:
 
-    hackmyresume BUILD r1.json r2.json TO out/resume.all out2/resume.html
-    hackmyresume NEW r1.json r2.json r3.json
-    hackmyresume ANALYZE r1.json r2.json r3.json
-    hackmyresume VALIDATE resume.json resume2.json resume3.json
+   hackmyresume BUILD r1.json r2.json TO out/resume.all out2/resume.html
+   hackmyresume ANALYZE r1.json r2.json r3.json
+   hackmyresume NEW r1.json r2.json r3.json
+   hackmyresume CONVERT r1.json r2.json TO o1.json o2.json
+   hackmyresume VALIDATE r1.json r2.json r3.json
+
+Available options:
+
+   --theme <theme>    Specify a theme for the BUILD command. Can be the path
+   -t <theme>         to any FRESH or JSON Resume theme, or the name of one
+                      of HackMyResume's predefined themes.
+
+
+   --pdf <engine>     Specify a PDF rendering engine. Can be "wkhtmltopdf",
+   -p <engine>        "phantom", or "none". Requires that the corresponding
+                      engine be installed and path-accessible.
+
+
+   --opts <path>      Load HackMyResume options via an external file.
+   -o <path>
+
+
+   --color            Enable/disable terminal colors.
+   --no-color
+
+
+   --tips             Enable/disable theme tips and messages.
+   --no-tips
+
+
+   --debug            Emit debug info.
+   -d
+
+
+   --help             Display help documentation.
+   -h
+
+
+   --version          Display the current HackMyResume version.
+   -v
+
 
 See https://github.com/hacksalot/hackmyresume/blob/master/README.md for more
 information.

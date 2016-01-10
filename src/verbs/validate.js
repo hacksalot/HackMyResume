@@ -12,6 +12,8 @@ Implementation of the 'validate' verb for HackMyResume.
   var chalk = require('chalk');
   var Verb = require('../core/verb');
   var HACKMYSTATUS = require('../core/status-codes');
+  var HME = require('../core/event-codes');
+  var _ = require('underscore');
 
 
 
@@ -45,74 +47,51 @@ Implementation of the 'validate' verb for HackMyResume.
 
     var resumes = ResumeFactory.load( sources, {
       format: null,
-      objectify: false,
-      throw: false,
-      muffle: true
-    });
+      objectify: false
+    }, this );
 
-    // Load input resumes...
-    resumes.forEach(function( src ) {
+    // Validate input resumes. Return a { file: <f>, isValid: <v>} object for
+    // each resume (valid, invalid, or broken).
+    return resumes.map( function( src ) {
 
+      var ret =  { file: src, isValid: false };
+
+      // If there was an error reading the resume
       if( src.error ) {
-        // TODO: Core should not log
-        _log( chalk.white('Validating ') + chalk.gray.bold(src.file) +
-        chalk.white(' against ') + chalk.gray.bold('AUTO') +
-        chalk.white(' schema:') + chalk.red.bold(' BROKEN') );
-
-        var ex = src.error; // alias
-        if ( ex instanceof SyntaxError) {
-          var info = new SyntaxErrorEx( ex, src.raw );
-          _log( chalk.red.bold('--> ' + src.file.toUpperCase() + ' contains invalid JSON on line ' +
-            info.line + ' column ' + info.col + '.' +
-            chalk.red(' Unable to validate.') ) );
-          _log( chalk.red.bold('    INTERNAL: ' + ex) );
-        }
-        else {
-          _log(chalk.red.bold('ERROR: ' + ex.toString()));
-        }
         if( opts.assert ) throw { fluenterror: HACKMYSTATUS.invalid };
-        return;
+        return ret;
       }
 
-      var json = src.json;
-      var isValid = false;
-      var style = 'green';
-      var errors = [];
-      var fmt = json.basics ? 'jrs' : 'fresh';
-
+      // Successfully read the resume. Now parse it as JSON.
+      var json = src.json, fmt = json.basics ? 'jrs' : 'fresh', errors = [];
       try {
         var validate = validator( schemas[ fmt ], { // Note [1]
           formats: {
-            date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
+             date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
           }
         });
 
-        isValid = validate( json );
-        if( !isValid ) {
-          style = 'yellow';
+        ret.isValid = validate( json );
+        if( !ret.isValid ) {
           errors = validate.errors;
         }
 
       }
       catch(exc) {
-        return;
+        return ret;
       }
 
-      _log( chalk.white('Validating ') + chalk.white.bold(src.file) + chalk.white(' against ') +
-        chalk.white.bold(fmt.replace('jars','JSON Resume').toUpperCase()) +
-        chalk.white(' schema: ') + chalk[style].bold(isValid ? 'VALID!' : 'INVALID') );
-
-      errors.forEach(function(err,idx) {
-        _log( chalk.yellow.bold('--> ') +
-          chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
-          err.message) );
-      });
+      this.stat(HME.afterValidate, { file: src.file, isValid: isValid,
+        fmt: fmt.replace('jars', 'JSON Resume'), errors: errors });
 
       if( opts.assert && !isValid ) {
         throw { fluenterror: HACKMYSTATUS.invalid, shouldExit: true };
       }
 
-    });
+      return ret;
+
+    }, this);
+
   }
 
 }());

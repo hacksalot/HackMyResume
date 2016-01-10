@@ -20,7 +20,9 @@ Status codes for HackMyResume.
     missingPackageJSON: 10,
     invalid: 11,
     invalidFormat: 12,
-    notOnPath: 13
+    notOnPath: 13,
+    readError: 14,
+    parseError: 15
   };
 
 }());

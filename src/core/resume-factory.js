@@ -10,11 +10,14 @@ Definition of the ResumeFactory class.
 
 
 
-  require('string.prototype.startswith');
-  var FS = require('fs');
-  var ResumeConverter = require('./convert');
-  var chalk = require('chalk');
-  var SyntaxErrorEx = require('../utils/syntax-error-ex');
+  var FS          = require('fs'),
+  HACKMYSTATUS    = require('./status-codes'),
+  HME             = require('./event-codes'),
+  ResumeConverter = require('./convert'),
+  chalk           = require('chalk'),
+  SyntaxErrorEx   = require('../utils/syntax-error-ex'),
+  _               = require('underscore');
+                    require('string.prototype.startswith');
 
 
 
@@ -29,14 +32,11 @@ Definition of the ResumeFactory class.
     /**
     Load one or more resumes from disk.
     */
-    load: function ( sources, opts ) {
+    load: function ( sources, opts, emitter ) {
 
-      // Loop over all inputs, parsing each to JSON and then to a FRESHResume
-      // or JRSResume object.
-      var that = this;
       return sources.map( function( src ) {
-        return that.loadOne( src, opts );
-      });
+        return this.loadOne( src, opts, emitter );
+      }, this);
 
     },
 
@@ -45,9 +45,8 @@ Definition of the ResumeFactory class.
     /**
     Load a single resume from disk.
     */
-    loadOne: function( src, opts ) {
+    loadOne: function( src, opts, emitter ) {
 
-      var log = opts.log;
       var toFormat = opts.format;
       var objectify = opts.objectify;
 
@@ -55,7 +54,7 @@ Definition of the ResumeFactory class.
       toFormat && (toFormat = toFormat.toLowerCase().trim());
 
       // Load and parse the resume JSON
-      var info = _parse( src, opts );
+      var info = _parse( src, opts, emitter );
       if( info.error ) return info;
 
       // Determine the resume format: FRESH or JRS
@@ -88,44 +87,28 @@ Definition of the ResumeFactory class.
 
 
 
-  function _parse( fileName, opts ) {
+  function _parse( fileName, opts, eve ) {
+
     var rawData;
     try {
 
-      // TODO: Core should not log
-      opts.log( chalk.cyan('Reading resume: ') + chalk.cyan.bold(fileName) );
-
-      // Read the file
+      eve && eve.stat( HME.beforeRead, { file: fileName });
       rawData = FS.readFileSync( fileName, 'utf8' );
-
-      // Parse it to JSON
-      return {
+      eve && eve.stat( HME.afterRead, { data: rawData });
+      eve && eve.stat( HME.beforeParse, { data: rawData });
+      var ret = {
         json: JSON.parse( rawData )
       };
-
+      eve && eve.stat( HME.afterParse, { data: ret.json } );
+      return ret;
     }
     catch( ex ) {
-
-      // JSON.parse failed due to invalid JSON
-      if ( !opts.muffle && ex instanceof SyntaxError) {
-        var info = new SyntaxErrorEx( ex, rawData );
-        opts.log( chalk.red.bold(fileName.toUpperCase() + ' contains invalid JSON on line ' +
-          info.line + ' column ' + info.col + '.' +
-          chalk.red(' Unable to validate.')));
-        opts.log( chalk.red.bold('INTERNAL: ' + ex) );
-        ex.handled = true;
-      }
-
-      // FS.readFileSync failed
-      if( !rawData || opts.throw ) throw ex;
-
-      return {
-        error: ex,
-        raw: rawData,
-        file: fileName
+      throw {
+        fluenterror: rawData ? HACKMYSTATUS.parseError : HACKMYSTATUS.readError,
+        inner: ex, raw: rawData, file: fileName, shouldExit: false
       };
-
     }
+
   }
 
 
