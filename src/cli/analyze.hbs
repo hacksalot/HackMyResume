@@ -19,8 +19,8 @@
 
         Total Days:  {{v coverage.duration.total "-" 5 "bold" }}
           Employed:  {{v coverage.duration.work "-" 5 "bold" }}
-              Gaps:  {{v coverage.gaps.length "-" 5 "bold" }}  [{{#if coverage.gaps.length }}{{#each coverage.gaps }}{{#unless @first}} {{/unless}}{{heat duration }}{{/each}}{{/if}}]
-          Overlaps:  {{v coverage.overlaps.length "-" 5 "bold" }}  [{{#if coverage.overlaps.length }}{{#each coverage.overlaps }}{{#unless @first}} {{/unless}}{{heat duration }}{{/each}}{{/if}}]
+              Gaps:  {{v coverage.gaps.length "-" 5 "bold" }}  [{{#if coverage.gaps.length }}{{#each coverage.gaps }}{{#unless @first}} {{/unless}}{{gapLength duration }}{{/each}}{{/if}}]
+          Overlaps:  {{v coverage.overlaps.length "-" 5 "bold" }}  [{{#if coverage.overlaps.length }}{{#each coverage.overlaps }}{{#unless @first}} {{/unless}}{{gapLength duration }}{{/each}}{{/if}}]
 
 {{style "KEYWORDS (" "bold"}}{{style keywords.length "white" }}{{style ")" "bold"}}
 
