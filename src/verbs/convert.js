@@ -35,10 +35,9 @@ Implementation of the 'convert' verb for HackMyResume.
   /**
   Convert between FRESH and JRS formats.
   */
-  function convert( srcs, dst, opts, logger ) {
+  function convert( srcs, dst, opts ) {
 
     // Housekeeping
-    var _log = logger || console.log;
     if( !srcs || !srcs.length ) { throw { fluenterror: 6 }; }
     if( !dst || !dst.length ) {
       if( srcs.length === 1 ) {
@@ -60,7 +59,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
       // Load the resume
       var rinfo = ResumeFactory.loadOne( src, {
-        log: _log, format: null, objectify: true, throw: true
+        format: null, objectify: true, throw: true
       });
 
       var s = rinfo.rez

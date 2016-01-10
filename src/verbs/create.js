@@ -37,7 +37,7 @@ Implementation of the 'create' verb for HackMyResume.
   /**
   Create a new empty resume in either FRESH or JRS format.
   */
-  function create( src, dst, opts/*, logger*/ ) {
+  function create( src, dst, opts ) {
 
     if(!src || !src.length) throw {fluenterror: HACKMYSTATUS.createNameMissing};
     this.stat( HME.begin );

@@ -51,11 +51,11 @@ Implementation of the 'generate' verb for HackMyResume.
   @param theme Friendly name of the resume theme. Defaults to "modern".
   @param logger Optional logging override.
   */
-  function build( src, dst, opts, logger, errHandler ) {
+  function build( src, dst, opts ) {
 
     this.stat( HME.begin );
 
-    prep( src, dst, opts, logger, errHandler );
+    prep( src, dst, opts );
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
@@ -102,11 +102,7 @@ Implementation of the 'generate' verb for HackMyResume.
   /**
   Prepare for a BUILD run.
   */
-  function prep( src, dst, opts, logger, errHandler ) {
-
-    // Housekeeping
-    _log = logger || console.log;
-    _err = errHandler || error;
+  function prep( src, dst, opts ) {
 
     // Cherry-pick options //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
@@ -296,21 +292,6 @@ Implementation of the 'generate' verb for HackMyResume.
     _opts.themeObj = theTheme;
 
     return theTheme;
-  }
-
-
-
-  /**
-  Handle an exception. Placeholder.
-  */
-  function error( ex ) {
-    throw ex;
-  }
-
-
-
-  function MDIN(txt) { // TODO: Move this
-    return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
   }
 
 

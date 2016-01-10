@@ -32,8 +32,8 @@ Implementation of the 'validate' verb for HackMyResume.
   /**
   Validate 1 to N resumes in either FRESH or JSON Resume format.
   */
-  function validate( sources, unused, opts, logger ) {
-    var _log = logger || console.log;
+  function validate( sources, unused, opts ) {
+
     if( !sources || !sources.length ) { throw { fluenterror: 6 }; }
     var isValid = true;
 
@@ -44,7 +44,6 @@ Implementation of the 'validate' verb for HackMyResume.
     };
 
     var resumes = ResumeFactory.load( sources, {
-      log: _log,
       format: null,
       objectify: false,
       throw: false,

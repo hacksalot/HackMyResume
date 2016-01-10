@@ -37,16 +37,15 @@ Implementation of the 'analyze' verb for HackMyResume.
   /**
   Run the 'analyze' command.
   */
-  function analyze( sources, dst, opts, logger ) {
+  function analyze( sources, dst, opts ) {
     this.stat('begin');
-    var _log = logger || console.log;
     if( !sources || !sources.length ) throw { fluenterror: 3 };
     var nlzrs = _loadInspectors();
     _.each(sources, function(src) {
       var result = ResumeFactory.loadOne( src, {
-        log: _log, format: 'FRESH', objectify: true, throw: false
+        format: 'FRESH', objectify: true, throw: false
       });
-      result.error || _analyze.call(this, result, nlzrs, opts, _log );
+      result.error || _analyze.call(this, result, nlzrs, opts );
     }, this);
     this.stat('end');
   }
@@ -56,7 +55,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   /**
   Analyze a single resume.
   */
-  function _analyze( resumeObject, nlzrs, opts, log ) {
+  function _analyze( resumeObject, nlzrs, opts ) {
     var rez = resumeObject.rez;
     var safeFormat =
       (rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH')) ?
