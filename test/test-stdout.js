@@ -4,6 +4,7 @@ var chai = require('chai')
   , CHALK = require('chalk')
   , FS = require('fs')
   , PATH = require('path')
+  , PKG = require('../package.json')
   , _ = require('underscore');
 
 var gather = '';
@@ -59,7 +60,7 @@ describe('Testing Ouput interface', function () {
     });
   }
 
-  var title = '*** HackMyResume v1.5.2 ***';
+  var title = '*** HackMyResume v' + PKG.version + ' ***';
   var feedMe = 'Please feed me a resume in FRESH or JSON Resume format.';
   var manPage = FS.readFileSync( PATH.resolve( __dirname, '../src/cli/use.txt' ), 'utf8');
 
