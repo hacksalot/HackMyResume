@@ -1,64 +1,50 @@
 Usage:
 
-    hackmyresume <COMMAND> <SOURCES> [TO <TARGETS>] [-t <THEME>] [-f <FORMAT>]
+   hackmyresume <command> <sources> [TO <targets>] [<options>]
 
-<COMMAND> should be BUILD, ANALYZE, NEW, CONVERT, or VALIDATE. <SOURCES> should
-be the path to one or more FRESH or JSON Resume format resumes. <TARGETS> should
-be the name of the destination resume to be created, if any. The <THEME>
-parameter should be the name of a predefined theme (for example: COMPACT,
-MINIMIST, MODERN, or HELLO-WORLD) or the relative path to a custom theme.
-<FORMAT> should be either FRESH (for a FRESH-format resume) or JRS (for a JSON
-Resume-format resume).
+Available commands:
 
-   hackmyresume BUILD resume.json TO out/resume.all
-   hackmyresume ANALYZE resume.json
-   hackmyresume NEW resume.json
-   hackmyresume CONVERT resume.json TO resume-jrs.json
-   hackmyresume VALIDATE resume.json
-
-Both SOURCES and TARGETS can accept multiple files:
-
-   hackmyresume BUILD r1.json r2.json TO out/resume.all out2/resume.html
-   hackmyresume ANALYZE r1.json r2.json r3.json
-   hackmyresume NEW r1.json r2.json r3.json
-   hackmyresume CONVERT r1.json r2.json TO o1.json o2.json
-   hackmyresume VALIDATE r1.json r2.json r3.json
+   BUILD        Build your resume to the destination format(s).
+   ANALYZE      Analyze your resume for keywords, gaps, and metrics.
+   VALIDATE     Validate your resume for errors and typos.
+   CONVERT      Convert your resume between FRESH and JSON Resume.
+   NEW          Create a new resume in FRESH or JSON Resume format.
 
 Available options:
 
-   --theme <theme>    Specify a theme for the BUILD command. Can be the path
-   -t <theme>         to any FRESH or JSON Resume theme, or the name of one
-                      of HackMyResume's predefined themes.
+   --theme      Path to a FRESH or JSON Resume theme.
+   --pdf        Specify the PDF engine to use (if any).
+   --opts       Load options from an external JSON file.
+   --format     The format (FRESH or JSON Resume) to use.
+   --debug      Emit extended debugging info.
+   --assert     Treat resume validation warnings as errors.
+   --no-colors  Disable terminal colors.
+   --no-tips    Disable theme messages and tips.
+   --help       Display help documentation.
+   --version    Display the current version.
 
+Not all options are supported for all commands. For example, the
+--theme option is only supported for the BUILD command.
 
-   --pdf <engine>     Specify a PDF rendering engine. Can be "wkhtmltopdf",
-   -p <engine>        "phantom", or "none". Requires that the corresponding
-                      engine be installed and path-accessible.
+Examples:
 
+   hackmyresume BUILD resume.json TO out/resume.all --theme modern
+   hackmyresume ANALYZE resume.json
+   hackmyresume NEW my-new-resume.json --format JRS
+   hackmyresume CONVERT resume-fresh.json TO resume-jrs.json
+   hackmyresume VALIDATE resume.json
 
-   --opts <path>      Load HackMyResume options via an external file.
-   -o <path>
+Tips:
 
-
-   --color            Enable/disable terminal colors.
-   --no-color
-
-
-   --tips             Enable/disable theme tips and messages.
-   --no-tips
-
-
-   --debug            Emit debug info.
-   -d
-
-
-   --help             Display help documentation.
-   -h
-
-
-   --version          Display the current HackMyResume version.
-   -v
-
-
-See https://github.com/hacksalot/hackmyresume/blob/master/README.md for more
-information.
+   - You can specify multiple sources and/or targets for all commands.
+   - You can use any FRESH or JSON Resume theme with HackMyResume.
+   - Specify a file extension of .all to generate your resume to all
+     available formats supported by the theme. (BUILD command.)
+   - The --theme parameter can specify either the name of a preinstalled
+     theme, or the path to a local FRESH or JSON Resume theme.
+   - Visit https://www.npmjs.com/search?q=jsonresume-theme for a full
+     listing of all available JSON Resume themes.
+   - Visit https://github.com/fluentdesk/fresh-themes for a complete
+     listing of all available FRESH themes.
+   - Report bugs to https://githut.com/hacksalot/HackMyResume/issues
+     for a quick fix, often within 24 hours.
