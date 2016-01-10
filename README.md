@@ -163,7 +163,7 @@ image | .png, .bmp | Forthcoming.
 ## Use
 
 Assuming you've got a JSON-formatted resume handy, generating resumes in
-different formats and combinations easy. Just run:
+different formats and combinations is easy. Just run:
 
 ```bash
 hackmyresume BUILD <INPUTS> <OUTPUTS> [-t theme].
