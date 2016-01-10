@@ -133,7 +133,7 @@ Output routines for HackMyResume.
         case HME.afterAnalyze:
           var info = evt.info;
           var rawTpl = FS.readFileSync( PATH.join( __dirname, 'analyze.hbs' ), 'utf8');
-          HANDLEBARS.registerHelper( consoleFormatHelpers );
+          HANDLEBARS.registerHelper( require('../helpers/console-helpers') );
           var template = HANDLEBARS.compile(rawTpl, { strict: false, assumeObjects: false });
           var tot = 0;
           info.keywords.forEach(function(g) {
@@ -157,52 +157,6 @@ Output routines for HackMyResume.
 
 
   });
-
-
-  var consoleFormatHelpers = {
-    v: function( val, defaultVal, padding, style ) {
-      retVal = ( val === null || val === undefined ) ? defaultVal : val;
-      var spaces = 0;
-      if( String.is(padding) ) {
-        spaces = parseInt( padding, 10 );
-        if( isNaN(spaces) ) spaces = 0;
-      }
-      else if( _.isNumber(padding) ) {
-        spaces = padding;
-      }
-
-      if( spaces !== 0 )
-        retVal = pad( retVal, Math.abs(spaces), null, spaces > 0 ? pad.LEFT : pad.RIGHT );
-
-      if( style && String.is( style )) {
-        retVal = LO.get( chalk, style )( retVal );
-      }
-
-      return retVal;
-    },
-
-    heat: function(val) {
-      if( val < 35 )
-        return chalk.green.bold(val);
-      else if( val < 95 )
-        return chalk.yellow.bold(val);
-      else
-        return chalk.red.bold(val);
-    },
-
-    style: function( val, style ) {
-      return LO.get( chalk, style )( val );
-    },
-
-    isPlural: function( val, options ) {
-      if( val > 1 )
-        return options.fn(this);
-    },
-
-    pad: function( val, spaces ) {
-      return pad(val, Math.abs(spaces), null, spaces > 0 ? pad.LEFT : pad.RIGHT );
-    }
-  };
 
 
 }());
