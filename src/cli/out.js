@@ -136,13 +136,10 @@ Output routines for HackMyResume.
           HANDLEBARS.registerHelper( require('../helpers/console-helpers') );
           var template = HANDLEBARS.compile(rawTpl, { strict: false, assumeObjects: false });
           var tot = 0;
-          info.keywords.forEach(function(g) {
-            tot += g.count;
-          });
+          info.keywords.forEach(function(g) { tot += g.count; });
           info.keywords.totalKeywords = tot;
           var output = template( info );
-
-          this.log(chalk.cyan(output));
+          this.log( chalk.cyan(output) );
           break;
 
         case HME.beforeConvert:
