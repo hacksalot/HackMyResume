@@ -16,7 +16,8 @@ Error-handling routines for HackMyResume.
     , FCMD = require('../hackmyapi')
     , PATH = require('path')
     , WRAP = require('word-wrap')
-    , chalk = require('chalk');
+    , chalk = require('chalk')
+    , SyntaxErrorEx = require('../utils/syntax-error-ex');
 
 
 
@@ -67,7 +68,7 @@ Error-handling routines for HackMyResume.
       // Selectively show the stack trace
       if( (ex.stack || (ex.inner && ex.inner.stack)) &&
          ((showStack && ex.code !== 'ENOENT' ) || (this.debug) ))
-        log( chalk.red( ex.stack || ex.stack.inner ) );
+        log( chalk.red( ex.stack || ex.inner.stack ) );
 
       // Let the error code be the process's return code.
       ( shouldExit || ex.shouldExit ) && process.exit( exitCode );
