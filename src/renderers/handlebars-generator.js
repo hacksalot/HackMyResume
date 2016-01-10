@@ -13,7 +13,7 @@ Definition of the HandlebarsGenerator class.
   var _ = require('underscore')
     , HANDLEBARS = require('handlebars')
     , FS = require('fs')
-    , registerHelpers = require('./handlebars-helpers')
+    , registerHelpers = require('../helpers/handlebars-helpers')
     , PATH = require('path')
     , parsePath = require('parse-filepath')
     , READFILES = require('recursive-readdir-sync')

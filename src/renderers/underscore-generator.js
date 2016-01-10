@@ -31,7 +31,7 @@ Definition of the UnderscoreGenerator class.
       // Strip {# comments #}
       jst = jst.replace( delims.comment, '');
 
-      var helpers = require('./generic-helpers');
+      var helpers = require('../helpers/generic-helpers');
       helpers.opts = opts;
       helpers.cssInfo = cssInfo;
 
