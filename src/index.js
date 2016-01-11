@@ -13,8 +13,7 @@ Command-line interface (CLI) for HackMyResume.
 
 try {
 
-  var main = require('./cli/main');
-  main( process.argv );
+  require('./cli/main')( process.argv );
 
 }
 catch( ex ) {
