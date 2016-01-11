@@ -27,7 +27,7 @@ Implementation of the 'generate' verb for HackMyResume.
     , extend = require('../utils/extend')
     , chalk = require('chalk')
     , pad = require('string-padding')
-    , Verb = require('../core/verb')
+    , Verb = require('../verbs/verb')
     , _err, _log, rez;
 
 

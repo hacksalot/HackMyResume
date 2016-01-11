@@ -12,7 +12,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
   var ResumeFactory = require('../core/resume-factory')
     , chalk = require('chalk')
-    , Verb = require('../core/verb')
+    , Verb = require('../verbs/verb')
     , HACKMYSTATUS = require('../core/status-codes')
     , _ = require('underscore')
     , HME = require('../core/event-codes');

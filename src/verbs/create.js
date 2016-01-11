@@ -13,7 +13,7 @@ Implementation of the 'create' verb for HackMyResume.
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
     , chalk = require('chalk')
-    , Verb = require('../core/verb')
+    , Verb = require('../verbs/verb')
     , _ = require('underscore')
     , HACKMYSTATUS = require('../core/status-codes')
     , HME = require('../core/event-codes');

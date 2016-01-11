@@ -15,7 +15,7 @@ Implementation of the 'analyze' verb for HackMyResume.
     , HME = require('../core/event-codes')
     , _ = require('underscore')
     , ResumeFactory = require('../core/resume-factory')
-    , Verb = require('../core/verb')
+    , Verb = require('../verbs/verb')
     , chalk = require('chalk');
 
 

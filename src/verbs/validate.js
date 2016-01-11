@@ -10,7 +10,7 @@ Implementation of the 'validate' verb for HackMyResume.
   var ResumeFactory = require('../core/resume-factory');
   var SyntaxErrorEx = require('../utils/syntax-error-ex');
   var chalk = require('chalk');
-  var Verb = require('../core/verb');
+  var Verb = require('../verbs/verb');
   var HACKMYSTATUS = require('../core/status-codes');
   var HME = require('../core/event-codes');
   var _ = require('underscore');
