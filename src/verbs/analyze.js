@@ -61,7 +61,6 @@ Implementation of the 'analyze' verb for HackMyResume.
       (rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH')) ?
       'FRESH' : 'JRS';
 
-    var padding = 20;
     this.stat( HME.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file });
     var info = _.mapObject( nlzrs, function(val, key) {
       return val.run( resumeObject.rez );
