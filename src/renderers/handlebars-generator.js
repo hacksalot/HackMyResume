@@ -29,7 +29,6 @@ Definition of the HandlebarsGenerator class.
 
 
 
-
     generate: function( json, jst, format, cssInfo, opts, theme ) {
 
       registerPartials( format, theme );
@@ -70,15 +69,12 @@ Definition of the HandlebarsGenerator class.
         format
       );
 
-      // Register global partials in the /partials folder
+      // Register global partials in the /partials/[format] folder
       // TODO: Only do this once per HMR invocation.
       _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
         var pathInfo = parsePath( el );
         var name = SLASH( PATH.relative( partialsFolder, el )
           .replace(/\.html$|\.xml$/, '') );
-        if( pathInfo.dirname.endsWith('section') ) {
-          name = SLASH(name.replace(/\.html$|\.xml$/, ''));
-        }
         var tplData = FS.readFileSync( el, 'utf8' );
         var compiledTemplate = HANDLEBARS.compile( tplData );
         HANDLEBARS.registerPartial( name, compiledTemplate );
