@@ -1,37 +1,41 @@
 /**
-Implementation of the 'generate' verb for HackMyResume.
+Implementation of the 'build' verb for HackMyResume.
 @module generate.js
 @license MIT. See LICENSE.md for details.
 */
-// TODO: EventEmitter
+
 
 
 (function() {
 
 
 
-  var PATH = require('path')
-    , FS = require('fs')
-    , MD = require('marked')
-    , MKDIRP = require('mkdirp')
-    , EXTEND = require('../utils/extend')
-    , HACKMYSTATUS = require('../core/status-codes')
-    , HME = require('../core/event-codes')
-    , parsePath = require('parse-filepath')
-    , _opts = require('../core/default-options')
-    , FluentTheme = require('../core/fresh-theme')
-    , JRSTheme = require('../core/jrs-theme')
-    , ResumeFactory = require('../core/resume-factory')
-    , _ = require('underscore')
-    , _fmts = require('../core/default-formats')
-    , extend = require('../utils/extend')
-    , chalk = require('chalk')
-    , pad = require('string-padding')
-    , Verb = require('../verbs/verb')
-    , _err, _log, rez;
+  var PATH           = require('path')
+    , FS             = require('fs')
+    , MD             = require('marked')
+    , MKDIRP         = require('mkdirp')
+    , EXTEND         = require('../utils/extend')
+    , HACKMYSTATUS   = require('../core/status-codes')
+    , HME            = require('../core/event-codes')
+    , parsePath      = require('parse-filepath')
+    , _opts          = require('../core/default-options')
+    , FluentTheme    = require('../core/fresh-theme')
+    , JRSTheme       = require('../core/jrs-theme')
+    , ResumeFactory  = require('../core/resume-factory')
+    , _              = require('underscore')
+    , _fmts          = require('../core/default-formats')
+    , extend         = require('../utils/extend')
+    , chalk          = require('chalk')
+    , pad            = require('string-padding')
+    , Verb           = require('../verbs/verb');
+
+  var _err, _log, rez;
 
 
 
+  /**
+  An invokable resume generation command.
+  */
   var BuildVerb = module.exports = Verb.extend({
 
     init: function() {
@@ -43,6 +47,8 @@ Implementation of the 'generate' verb for HackMyResume.
     }
 
   });
+
+
 
   /**
   Given a source resume in FRESH or JRS format, a destination resume path, and a
