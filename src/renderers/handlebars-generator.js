@@ -60,7 +60,7 @@ Definition of the HandlebarsGenerator class.
 
 
   function registerPartials(format, theme) {
-    if( format === 'html' || format === 'doc' ) {
+    if( format === 'html' || format === 'doc' || format == 'md' ) {
 
       // Locate the global partials folder
       var partialsFolder = PATH.join(
@@ -74,7 +74,7 @@ Definition of the HandlebarsGenerator class.
       _.each( READFILES( partialsFolder, function(error){ }), function( el ) {
         var pathInfo = parsePath( el );
         var name = SLASH( PATH.relative( partialsFolder, el )
-          .replace(/\.html$|\.xml$/, '') );
+          .replace(/\.(?:html|xml|hbs|md|txt)$/i, '') );
         var tplData = FS.readFileSync( el, 'utf8' );
         var compiledTemplate = HANDLEBARS.compile( tplData );
         HANDLEBARS.registerPartial( name, compiledTemplate );
