@@ -45,7 +45,8 @@ Definition of the `main` function.
       .option('-s --silent', 'Run in silent mode')
       .option('--no-color', 'Disable colors')
       .option('--color', 'Enable colors')
-      .option('-d --debug', 'Enable diagnostics', false);
+      .option('-d --debug', 'Enable diagnostics', false)
+      .option('-v --version', 'Show the version');
       //.usage('COMMAND <sources> [TO <targets>]');
 
     // Create the NEW command
