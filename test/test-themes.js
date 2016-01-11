@@ -54,7 +54,7 @@ function genThemes( title, src, fmt ) {
     genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
     genTheme(fmt, src, 'modern');
-    genTheme(fmt, src, 'minimist');
+    genTheme(fmt, src, 'underscore');
     genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
     genTheme(fmt, src, 'jsonresume-theme-boilerplate', 'node_modules/jsonresume-theme-boilerplate' );
