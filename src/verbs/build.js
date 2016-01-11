@@ -88,7 +88,8 @@ Implementation of the 'build' verb for HackMyResume.
     rez = _.reduceRight( sheets, function( a, b, idx ) {
       return extend( true, b, a );
     });
-    (sheets.length > 1) && this.stat( HME.afterMerge, { r: rez } );
+    // TODO: Fix this condition
+    (sheets.length) && this.stat( HME.afterMerge, { r: rez } );
 
     // Expand output resumes...
     var targets = expand( dst, theme );
@@ -155,11 +156,11 @@ Implementation of the 'build' verb for HackMyResume.
       // If targInfo.fmt.files exists, this format is backed by a document.
       // Fluent/FRESH themes are handled here.
       if( targInfo.fmt.files && targInfo.fmt.files.length ) {
-          theFormat = _fmts.filter(
-            function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
-          MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
-          _opts.targets = finished;
-          return theFormat.gen.generate( rez, f, _opts );
+        theFormat = _fmts.filter(
+          function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
+        MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
+        _opts.targets = finished;
+        return theFormat.gen.generate( rez, f, _opts );
       }
 
       //Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme

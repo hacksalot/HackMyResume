@@ -24,6 +24,8 @@ Definition of the `main` function.
     , StringUtils = require('../utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
+    , SAFELOAD = require('../utils/safe-json-loader')
+    , PAD = require('string-padding')
     , Command = require('commander').Command;
 
 
@@ -33,20 +35,23 @@ Definition of the `main` function.
   @license MIT. See LICENSE.md for details.
   @module main.js
   */
-  var main = module.exports = function( args ) {
+  var main = module.exports = function( rawArgs ) {
 
-    args = initialize( args );
+    var initInfo = initialize( rawArgs );
+    var args = initInfo.args;
 
     // Create the top-level (application) command...
     var program = new Command('hackmyresume')
       .version(PKG.version)
       .description(chalk.yellow.bold('*** HackMyResume ***'))
-      .option('-o --opts <optionsFile>', 'Path to a .hackmyrc options file')
+      //.option('-o --optionsSafe <optionsFile>', 'Path to a .hackmyrc options file', /^\"(.*)\"$/i )
       .option('-s --silent', 'Run in silent mode')
       .option('--no-color', 'Disable colors')
       .option('--color', 'Enable colors')
       .option('-d --debug', 'Enable diagnostics', false)
-      .option('-v --version', 'Show the version');
+      .option('-v --version', 'Show the version')
+      .allowUnknownOption();
+      program.jsonArgs = initInfo.options;
       //.usage('COMMAND <sources> [TO <targets>]');
 
     // Create the NEW command
@@ -121,20 +126,12 @@ Definition of the `main` function.
 
     logMsg( title );
 
-    // Support case-insensitive sub-commands (build, generate, validate, etc.)..
-    var oVerb, verb = '', args = ar.slice(), cleanArgs = args.slice(2);
-    if( cleanArgs.length ) {
-      var verbIdx = _.findIndex( cleanArgs, function(v){ return v[0] !== '-'; });
-      if( verbIdx !== -1 ) {
-        oVerb = cleanArgs[ verbIdx ];
-        verb = args[ verbIdx + 2 ] = oVerb.trim().toLowerCase();
-      }
-    }
+    var o = initOptions( ar );
 
     // Handle invalid verbs here (a bit easier here than in commander.js)...
-    if( verb && !HMR.verbs[ verb ] && !HMR.alias[ verb ] ) {
+    if( o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ] ) {
       throw { fluenterror: HACKMYSTATUS.invalidCommand, shouldExit: true,
-              attempted: oVerb };
+              attempted: o.orgVerb };
     }
 
     // Override the .missingArgument behavior
@@ -150,9 +147,48 @@ Definition of the `main` function.
       return chalk.green.bold(manPage);
     };
 
-    return args;
+    return {
+      args: o.args,
+      options: o.json
+    };
   }
 
+
+  function initOptions( ar ) {
+    var oVerb, verb = '', args = ar.slice(), cleanArgs = args.slice(2), oJSON;
+    if( cleanArgs.length ) {
+
+      // Support case-insensitive sub-commands (build, generate, validate, etc.)..
+      var vidx = _.findIndex( cleanArgs, function(v){ return v[0] !== '-'; });
+      if( vidx !== -1 ) {
+        oVerb = cleanArgs[ vidx ];
+        verb = args[ vidx + 2 ] = oVerb.trim().toLowerCase();
+      }
+
+      // Remove --options --opts -o and process separately
+      var optsIdx = _.findIndex( cleanArgs, function(v){
+        return v === '-o' || v === '--options' || v === '--opts';
+      });
+      if(optsIdx !== -1) {
+        optStr = cleanArgs[ optsIdx + 1];
+        args.splice( optsIdx + 2, 2 );
+        if( optStr && (optStr = optStr.trim()) ) {
+          //var myJSON = JSON.parse(optStr);
+          if( optStr[0] === '{')
+            oJSON = eval('(' + optStr + ')'); // jshint ignore:line
+          else
+            oJSON = SAFELOAD.loadSafeJson( optStr );
+        }
+      }
+    }
+
+    return {
+      orgVerb: oVerb,
+      verb: verb,
+      json: oJSON,
+      args: args
+    };
+  }
 
 
   /**
@@ -160,7 +196,7 @@ Definition of the `main` function.
   */
   function execute( src, dst, opts, log ) {
 
-    loadOptions.call( this, opts );
+    loadOptions.call( this, opts, this.parent.jsonArgs );
     require( '../core/error-handler' ).init( _opts.debug );
     var out = new OUTPUT( _opts );
     var v = new HMR.verbs[ this.name() ]();
@@ -173,21 +209,35 @@ Definition of the `main` function.
 
   /**
   Initialize HackMyResume options.
+  TODO: Options loading is a little hacky, for two reasons:
+    - Commander.js idiosyncracies
+    - Need to accept JSON inputs from the command line.
   */
-  function loadOptions( o ) {
-    o.opts = this.parent.opts;
+  function loadOptions( o, cmdO ) {
+
+    // o and this.opts() seem to be the same (command-specific options)
+
     // Load the specified options file (if any) and apply options
-    if( o.opts && String.is( o.opts )) {
-      var json = safeLoadJSON( PATH.relative( process.cwd(), o.opts ) );
-      json && ( o = EXTEND( true, o, json ) );
-      if( !json ) {
-        throw safeLoadJSON.error;
-      }
-    }
+    if( cmdO )
+      o = EXTEND(true, o, cmdO);
+
     // Merge in command-line options
     o = EXTEND( true, o, this.opts() );
-    o.silent = this.parent.silent;
-    o.debug = this.parent.debug;
+
+    // Kludge parent-level options until piping issue is resolved
+    if( this.parent.silent !== undefined && this.parent.silent !== null)
+      o.silent = this.parent.silent;
+    if( this.parent.debug !== undefined && this.parent.debug !== null)
+      o.debug = this.parent.debug;
+
+    if( o.debug ) {
+      logMsg(chalk.cyan('Merged options: '));
+      _.each(o, function(val, key) {
+        logMsg(chalk.cyan('%s: %s'), PAD(key,10), val);
+      });
+    }
+
+    // Cache
     _opts = o;
   }
 
@@ -228,9 +278,8 @@ Definition of the `main` function.
   /**
   Simple logging placeholder.
   */
-  function logMsg( msg ) {
-    msg = msg || '';
-    _opts.silent || console.log( msg );
+  function logMsg() {
+    _opts.silent || console.log.apply( console.log, arguments );
   }
 
 
