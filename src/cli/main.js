@@ -24,7 +24,7 @@ Definition of the `main` function.
     , StringUtils = require('../utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
-    , SAFELOAD = require('../utils/safe-json-loader')
+    , SAFELOADJSON = require('../utils/safe-json-loader')
     , PAD = require('string-padding')
     , Command = require('commander').Command;
 
@@ -176,8 +176,9 @@ Definition of the `main` function.
           //var myJSON = JSON.parse(optStr);
           if( optStr[0] === '{')
             oJSON = eval('(' + optStr + ')'); // jshint ignore:line
-          else
-            oJSON = SAFELOAD.loadSafeJson( optStr );
+          else {
+            oJSON = SAFELOADJSON( optStr );
+          }
         }
       }
     }
