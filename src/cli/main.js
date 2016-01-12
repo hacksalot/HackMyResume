@@ -170,7 +170,7 @@ Definition of the `main` function.
         return v === '-o' || v === '--options' || v === '--opts';
       });
       if(optsIdx !== -1) {
-        optStr = cleanArgs[ optsIdx + 1];
+        var optStr = cleanArgs[ optsIdx + 1];
         args.splice( optsIdx + 2, 2 );
         if( optStr && (optStr = optStr.trim()) ) {
           //var myJSON = JSON.parse(optStr);
