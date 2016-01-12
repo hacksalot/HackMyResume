@@ -4,10 +4,9 @@
 
 /**
 Command-line interface (CLI) for HackMyResume.
-@license MIT. Copyright (c) 2015 hacksalot (https://github.com/hacksalot)
+@license MIT. See LICENSE.md for details.
 @module index.js
 */
-
 
 
 
