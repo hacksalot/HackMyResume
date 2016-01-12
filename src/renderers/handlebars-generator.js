@@ -60,7 +60,7 @@ Definition of the HandlebarsGenerator class.
 
 
   function registerPartials(format, theme) {
-    if( format === 'html' || format === 'doc' || format == 'md' ) {
+    if( _.contains( ['html','doc','md','txt'], format )) {
 
       // Locate the global partials folder
       var partialsFolder = PATH.join(
