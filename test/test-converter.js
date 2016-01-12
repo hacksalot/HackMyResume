@@ -6,6 +6,7 @@ var chai = require('chai')
   , parsePath = require('parse-filepath')
   , _ = require('underscore')
 	, FRESHResume = require('../src/core/fresh-resume')
+  , JRSResume = require('../src/core/jrs-resume')
   , CONVERTER = require('../src/core/convert')
   , FS = require('fs')
   , MKDIRP = require('mkdirp')
@@ -20,19 +21,23 @@ describe('FRESH/JRS converter', function () {
 	  it('should round-trip from JRS to FRESH to JRS without modifying or losing data', function () {
 
       var fileA = path.join( __dirname, 'resumes/jrs-0.0.0/richard-hendriks.json' );
-      var fileB = path.join( __dirname, 'sandbox/richard-hendriks.json' );
+      var fileB = path.join( __dirname, 'sandbox/richard-hendriks.converted.fresh.json' );
+      var fileC = path.join( __dirname, 'sandbox/richard-hendriks.converted.jrs.json' );
 
-      _sheet = new FRESHResume().open( fileA );
+      _sheet = new JRSResume().open( fileA );
       MKDIRP.sync( parsePath( fileB ).dirname );
-      _sheet.saveAs( fileB, 'JRS' );
+      _sheet.saveAs( fileB, 'FRESH' );
+
+      var freshSheet = new FRESHResume().open( fileB );
+      freshSheet.saveAs( fileC, 'JRS' );
 
       var rawA = FS.readFileSync( fileA, 'utf8' );
-      var rawB = FS.readFileSync( fileB, 'utf8' );
+      var rawC = FS.readFileSync( fileC, 'utf8' );
 
       var objA = JSON.parse( rawA );
-      var objB = JSON.parse( rawB );
+      var objC = JSON.parse( rawC );
 
-      _.isEqual(objA, objB).should.equal(true);
+      _.isEqual(objA, objC).should.equal(true);
 
     });
 
