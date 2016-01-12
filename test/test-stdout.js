@@ -88,4 +88,19 @@ describe('Testing Ouput interface', function () {
   run('HMR should output help doc with --help',
       ['--help'], [ manPage ]);
 
+  run('HMR should accept raw JSON via --options',
+      [
+        'build',
+        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        '-o',
+        "{ theme: 'compact', debug: true, pdf: 'wkhtmltopdf' }"],
+      [ 'Applying COMPACT theme', '(with wkhtmltopdf)'] );
+
+  run('HMR should accept a JSON settings file via --options',
+      [
+        'build',
+        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        '--options',
+        "test/hmr-options.json"],
+      [ 'Applying POSITIVE theme'] );
 });
