@@ -44,7 +44,6 @@ Definition of the `main` function.
     var program = new Command('hackmyresume')
       .version(PKG.version)
       .description(chalk.yellow.bold('*** HackMyResume ***'))
-      //.option('-o --optionsSafe <optionsFile>', 'Path to a .hackmyrc options file', /^\"(.*)\"$/i )
       .option('-s --silent', 'Run in silent mode')
       .option('--no-color', 'Disable colors')
       .option('--color', 'Enable colors')
@@ -52,7 +51,6 @@ Definition of the `main` function.
       .option('-v --version', 'Show the version')
       .allowUnknownOption();
       program.jsonArgs = initInfo.options;
-      //.usage('COMMAND <sources> [TO <targets>]');
 
     // Create the NEW command
     program
@@ -78,7 +76,6 @@ Definition of the `main` function.
     // Create the CONVERT command
     program
       .command('convert')
-      //.arguments('<sources...>')
       .description('Convert a resume to/from FRESH or JSON RESUME format.')
       .action(function() {
         var x = splitSrcDest.call( this );
@@ -98,8 +95,6 @@ Definition of the `main` function.
     program
       .command('build')
       .alias('generate')
-      //.arguments('<sources> TO [targets]')
-      //.usage('...')
       .option('-t --theme <theme>', 'Theme name or path')
       .option('-n --no-prettify', 'Disable HTML prettification', true)
       .option('-c --css <option>', 'CSS linking / embedding', 'embed')
