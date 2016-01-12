@@ -14,6 +14,7 @@ Definition of the HtmlPdfCLIGenerator class.
     , FS = require('fs-extra')
     , HTML = require( 'html' )
     , PATH = require('path')
+    , SPAWN = require('../utils/safe-spawn')
     , SLASH = require('slash');
 
 
@@ -77,24 +78,8 @@ Definition of the HtmlPdfCLIGenerator class.
       // Save the markup to a temporary file
       var tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync( tempFile, markup, 'utf8' );
+      var info = SPAWN( 'wkhtmltopdf', [ tempFile, fOut ] );
 
-      var spawn = require('child_process').spawnSync;
-      var info = spawn('wkhtmltopdf', [
-        tempFile, fOut
-      ]);
-      if( info.error ) {
-        throw {
-          cmd: 'wkhtmltopdf',
-          inner: info.error
-        };
-      }
-
-      // child.stdout.on('data', function(chunk) {
-      //   // output will be here in chunks
-      // });
-
-      // or if you want to send output elsewhere
-      //child.stdout.pipe(dest);
     },
 
 
@@ -111,28 +96,15 @@ Definition of the HtmlPdfCLIGenerator class.
       // Save the markup to a temporary file
       var tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync( tempFile, markup, 'utf8' );
-
       var scriptPath = SLASH( PATH.relative( process.cwd(),
         PATH.resolve( __dirname, '../utils/rasterize.js' ) ) );
       var sourcePath = SLASH( PATH.relative( process.cwd(), tempFile) );
       var destPath = SLASH( PATH.relative( process.cwd(), fOut) );
+      var info = SPAWN('phantomjs', [ scriptPath, sourcePath, destPath ]);
 
-      var spawn = require('child_process').spawnSync;
-      var info = spawn('phantomjs', [ scriptPath, sourcePath, destPath ]);
-      if( info.error ) {
-        throw {
-          cmd: 'phantomjs',
-          inner: info.error
-        };
-      }
-
-      // child.stdout.on('data', function(chunk) {
-      //   // output will be here in chunks
-      // });
-      //
-      // // or if you want to send output elsewhere
-      // child.stdout.pipe(dest);
     }
+
+
 
   };
 
