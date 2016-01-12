@@ -92,6 +92,8 @@ describe('Testing Ouput interface', function () {
       [
         'build',
         'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'to',
+        'test/sandbox/temp/janeq-1.all',
         '-o',
         "{ theme: 'compact', debug: true, pdf: 'wkhtmltopdf' }"],
       [ 'Applying COMPACT theme', '(with wkhtmltopdf)'] );
@@ -100,7 +102,22 @@ describe('Testing Ouput interface', function () {
       [
         'build',
         'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'to',
+        'test/sandbox/temp/janeq-2.all',
         '--options',
         "test/hmr-options.json"],
       [ 'Applying POSITIVE theme'] );
+
+  run('Explicit command line options should override --options',
+      [
+        'build',
+        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'to',
+        'test/sandbox/temp/janeq-3.all',
+        '--options',
+        "test/hmr-options.json",
+        "-t",
+        "modern"
+      ],
+      [ 'Applying MODERN theme'] );
 });
