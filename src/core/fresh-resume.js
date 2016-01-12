@@ -38,10 +38,11 @@ Definition of the FRESHResume class.
   /**
   Initialize the FreshResume from file.
   */
-  FreshResume.prototype.open = function( file, title ) {
-    this.imp = { fileName: file };
-    this.imp.raw = FS.readFileSync( file, 'utf8' );
-    return this.parse( this.imp.raw, title );
+  FreshResume.prototype.open = function( file, opts ) {
+    var raw = FS.readFileSync( file, 'utf8' );
+    var ret = this.parse( raw, opts );
+    this.imp.fileName = file;
+    return ret;
   };
 
 
@@ -60,32 +61,46 @@ Definition of the FRESHResume class.
   Open and parse the specified FRESH resume. Merge the JSON object model onto
   this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
+  @param rep The raw JSON representation.
+  @param opts Resume loading and parsing options.
+  {
+    date: Perform safe date conversion.
+    sort: Sort resume items by date.
+    computer: Prepare computed resume totals.
+  }
   */
   FreshResume.prototype.parseJSON = function( rep, opts ) {
 
-    // Convert JSON Resume to FRESH if necessary
-    if( rep.basics ) {
-      rep = CONVERTER.toFRESH( rep );
-      rep.imp = rep.imp || { };
-      rep.imp.orgFormat = 'JRS';
-    }
+    // // Convert JSON Resume to FRESH if necessary
+    // // TODO: Not sure if this code path is still executed. JRS resumes should
+    // // be loaded via JRSResume, not here.
+    // if( rep.basics ) {
+    //   throw "Invalid resume conversion path";
+    //   rep = CONVERTER.toFRESH( rep );
+    //   rep.imp = rep.imp || { };
+    //   rep.imp.orgFormat = 'JRS';
+    // }
 
     // Now apply the resume representation onto this object
     extend( true, this, rep );
 
-    // Set up metadata
-    opts = opts || { };
-    if( opts.imp === undefined || opts.imp ) {
-      this.imp = this.imp || { };
-      this.imp.title = (opts.title || this.imp.title) || this.name;
+    // If the resume already has a .imp object, then we are being called from
+    // the .dupe method, and there's no need to do any post processing
+    if( !this.imp ) {
+      // Set up metadata TODO: Clean up metadata on the object model.
+      opts = opts || { };
+      if( opts.imp === undefined || opts.imp ) {
+        this.imp = this.imp || { };
+        this.imp.title = (opts.title || this.imp.title) || this.name;
+      }
+      // Parse dates, sort dates, and calculate computed values
+      (opts.date === undefined || opts.date) && _parseDates.call( this );
+      (opts.sort === undefined || opts.sort) && this.sort();
+      (opts.compute === undefined || opts.compute) && (this.computed = {
+         numYears: this.duration(),
+         keywords: this.keywords()
+      });
     }
-    // Parse dates, sort dates, and calculate computed values
-    (opts.date === undefined || opts.date) && _parseDates.call( this );
-    (opts.sort === undefined || opts.sort) && this.sort();
-    (opts.compute === undefined || opts.compute) && (this.computed = {
-       numYears: this.duration(),
-       keywords: this.keywords()
-    });
     return this;
   };
 
@@ -122,10 +137,15 @@ Definition of the FRESHResume class.
 
   /**
   Duplicate this FreshResume instance.
+  This method first extend()s this object onto an empty, creating a deep copy,
+  and then passes the result into a new FreshResume instance via .parseJSON.
+  We do it this way to create a true clone of the object without re-running any
+  of the associated processing.
   */
   FreshResume.prototype.dupe = function() {
+    var jso = extend( true, { }, this );
     var rnew = new FreshResume();
-    rnew.parse( this.stringify(), { } );
+    rnew.parseJSON( jso, { } );
     return rnew;
   };
 
@@ -160,6 +180,7 @@ Definition of the FRESHResume class.
   /**
   Create a copy of this resume in which all string fields have been run through
   a transformation function (such as a Markdown filter or XML encoder).
+  TODO: Move this out of FRESHResume.
   */
   FreshResume.prototype.transformStrings = function( filt, transformer ) {
     var ret = this.dupe();

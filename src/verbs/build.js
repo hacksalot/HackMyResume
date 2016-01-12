@@ -79,8 +79,8 @@ Implementation of the 'build' verb for HackMyResume.
     // Load input resumes...
     if( !src || !src.length ) { throw { fluenterror: 3 }; }
     var sheets = ResumeFactory.load(src, {
-      log: _log, format: theme.render ? 'JRS' : 'FRESH',
-      objectify: true, throw: true
+      format: theme.render ? 'JRS' : 'FRESH',
+      objectify: true, throw: true, inner: { sort: _opts.sort }
     }, this).map(function(sh){ return sh.rez; });
 
     // Merge input resumes...
@@ -122,6 +122,7 @@ Implementation of the 'build' verb for HackMyResume.
     _opts.tips = opts.tips;
     _opts.noTips = opts.noTips;
     _opts.debug = opts.debug;
+    _opts.sort = opts.sort;
 
     // If two or more files are passed to the GENERATE command and the TO
     // keyword is omitted, the last file specifies the output file.
@@ -178,7 +179,8 @@ Implementation of the 'build' verb for HackMyResume.
       }
     }
     catch( ex ) {
-      _err( ex );
+      console.log('Exception thrown');
+      console.log(ex); // TODO
     }
   }
 

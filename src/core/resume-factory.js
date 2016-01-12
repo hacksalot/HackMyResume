@@ -31,6 +31,18 @@ Definition of the ResumeFactory class.
 
     /**
     Load one or more resumes from disk.
+
+    @param opts An options object with settings for the factory as well as
+    passthrough settings for FRESHResume or JRSResume. Structure:
+
+        {
+          format: 'FRESH',    // Format to open as. ('FRESH', 'JRS', null)
+          objectify: true,    // FRESH/JRSResume or raw JSON?
+          inner: {            // Passthru options for FRESH/JRSResume
+            sort: false
+          }
+        }
+
     */
     load: function ( sources, opts, emitter ) {
 
@@ -47,7 +59,7 @@ Definition of the ResumeFactory class.
     */
     loadOne: function( src, opts, emitter ) {
 
-      var toFormat = opts.format;
+      var toFormat = opts.format;     // Can be null
       var objectify = opts.objectify;
 
       // Get the destination format. Can be 'fresh', 'jrs', or null/undefined.
@@ -73,7 +85,7 @@ Definition of the ResumeFactory class.
       var rez;
       if( objectify ) {
         var ResumeClass = require('../core/' + (toFormat || orgFormat) + '-resume');
-        rez = new ResumeClass().parseJSON( json );
+        rez = new ResumeClass().parseJSON( json, opts.inner );
         rez.i().file = src;
       }
 

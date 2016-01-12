@@ -99,6 +99,7 @@ Definition of the `main` function.
       .option('-n --no-prettify', 'Disable HTML prettification', true)
       .option('-c --css <option>', 'CSS linking / embedding', 'embed')
       .option('-p --pdf <engine>', 'PDF generation engine')
+      .option('--no-sort', 'Sort resume sections by date', false)
       .option('--no-tips', 'Disable theme tips and warnings.', false)
       .description('Generate resume to multiple formats')
       .action(function( sources, targets, options ) {
