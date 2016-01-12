@@ -81,7 +81,7 @@ Implementation of the 'build' verb for HackMyResume.
     var sheets = ResumeFactory.load(src, {
       log: _log, format: theme.render ? 'JRS' : 'FRESH',
       objectify: true, throw: true
-    }).map(function(sh){ return sh.rez; });
+    }, this).map(function(sh){ return sh.rez; });
 
     // Merge input resumes...
     (sheets.length > 1) && this.stat( HME.beforeMerge, { f: _.clone(sheets) });
