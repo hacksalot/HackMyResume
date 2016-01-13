@@ -141,6 +141,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
       var that = this;
 
       // "Generate": process individual files within the theme
+      // TODO: refactor
       genInfo.files.forEach(function( file ){
 
         var thisFilePath;
@@ -168,9 +169,9 @@ Definition of the TemplateGenerator class. TODO: Refactor
             that.onAfterSave && that.onAfterSave(
               { outputFile: fileName, mk: file.data, opts: that.opts } );
           }
-          catch(ex) {
-            console.log(ex);
-            require('../core/error-handler').err(ex, false);
+          catch( ex ) {
+            that.stat( HME.error, ex.fluenterrror ||
+              { fluenterror: HACKMYSTATUS.fileSaveError, inner: ex } );
           }
         }
         else if( file.info.action === null/* && theme.explicit*/ ) {
@@ -179,10 +180,9 @@ Definition of the TemplateGenerator class. TODO: Refactor
             MKDIRP.sync( PATH.dirname(thisFilePath) );
             FS.copySync( file.info.path, thisFilePath );
           }
-          catch(ex) {
-            console.log('B');
-            ex.showStack = true;
-            require('../core/error-handler').err( ex );
+          catch( ex ) {
+            that.stat( HME.error, ex.fluenterrror ||
+              { fluenterror: HACKMYSTATUS.fileSaveError, inner: ex } );
           }
         }
       });
@@ -281,8 +281,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
         theme );
     }
     catch(ex) {
-      ex.showStack = true;
-      require('../core/error-handler').err( ex );
+      that.stat( HME.error, ex.fluenterrror ||
+        { fluenterror: HACKMYSTATUS.generateError, inner: ex } );
     }
   }
 

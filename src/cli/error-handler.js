@@ -10,7 +10,7 @@ Error-handling routines for HackMyResume.
 
 
 
-  var HACKMYSTATUS = require('./status-codes')
+  var HACKMYSTATUS = require('../core/status-codes')
     , PKG = require('../../package.json')
     , FS = require('fs')
     , FCMD = require('../hackmyapi')

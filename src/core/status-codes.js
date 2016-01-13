@@ -22,7 +22,9 @@ Status codes for HackMyResume.
     invalidFormat: 12,
     notOnPath: 13,
     readError: 14,
-    parseError: 15
+    parseError: 15,
+    fileSaveError: 16,
+    generateError: 17
   };
 
 }());
