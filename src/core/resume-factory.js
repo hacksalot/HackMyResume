@@ -67,7 +67,7 @@ Definition of the ResumeFactory class.
 
       // Load and parse the resume JSON
       var info = _parse( src, opts, emitter );
-      if( info.error ) return info;
+      if( info.fluenterror ) return info;
 
       // Determine the resume format: FRESH or JRS
       var json = info.json;
@@ -123,6 +123,8 @@ Definition of the ResumeFactory class.
         inner: e, raw: rawData, file: fileName, shouldExit: false
       };
       eve && eve.err( ex.fluenterror, ex );
+      if( opts.throw ) throw ex;
+      return ex;
     }
 
   }

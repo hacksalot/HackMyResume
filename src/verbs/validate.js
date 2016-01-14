@@ -57,8 +57,8 @@ Implementation of the 'validate' verb for HackMyResume.
       var ret =  { file: src, isValid: false };
 
       // If there was an error reading the resume
-      if( src.error ) {
-        if( opts.assert ) throw { fluenterror: HACKMYSTATUS.invalid };
+      if( src.fluenterror ) {
+        if( opts.assert ) throw src;
         return ret;
       }
 

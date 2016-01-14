@@ -1,3 +1,10 @@
+/**
+Output test routines for HackMyResume.
+@module test-stdout.js
+*/
+
+
+
 var chai = require('chai')
   , expect = chai.expect
   , HMRMAIN = require('../src/cli/main')
@@ -7,23 +14,29 @@ var chai = require('chai')
   , PKG = require('../package.json')
   , _ = require('underscore');
 
+
+
 var gather = '';
 var ConsoleLogOrg = console.log;
 var ProcessExitOrg = process.exit;
 
+
+
 describe('Testing Ouput interface', function () {
 
-
-
+  // TODO: use sinon
+  // Replacement for console.log
   function MyConsoleLog( msg ) {
     gather += Array.prototype.slice.call(arguments).join(' ');
     ConsoleLogOrg.apply(this, arguments);
   }
 
+  // Replacement for process.exit()
   function MyProcessExit() {
 
   }
 
+  // HackMyResume CLI stub. Handle a single HMR invocation.
   function HackMyResumeStub( args ) {
 
     console.log = MyConsoleLog;
@@ -45,6 +58,8 @@ describe('Testing Ouput interface', function () {
 
   }
 
+  // Run a test through the stub, gathering console.log output into "gather"
+  // and testing against it.
   function run( title, args, tests ) {
     it( title, function() {
 
@@ -78,7 +93,8 @@ describe('Testing Ouput interface', function () {
 
   run('BUILD should display an error on a broken resume',
      ['build',
-      'node_modules/fresh-test-resumes/src/johnny-trouble.broken.fresh.json'
+      'node_modules/fresh-test-resumes/src/johnny-trouble.broken.fresh.json',
+      '-t', 'modern'
     ], [ title, 'Error: Invalid or corrupt JSON on line'  ]);
 
   run('CONVERT should output a tip when no source is specified',

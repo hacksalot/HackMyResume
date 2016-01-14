@@ -40,13 +40,16 @@ Implementation of the 'analyze' verb for HackMyResume.
   function analyze( sources, dst, opts ) {
     this.stat('begin');
     if( !sources || !sources.length ) throw { fluenterror: 3 };
+
     var nlzrs = _loadInspectors();
+
     _.each(sources, function(src) {
       var result = ResumeFactory.loadOne( src, {
-        format: 'FRESH', objectify: true, throw: false
-      });
-      result.error || _analyze.call(this, result, nlzrs, opts );
+        format: 'FRESH', objectify: true
+      }, this);
+      result.fluenterror || _analyze.call(this, result, nlzrs, opts );
     }, this);
+
     this.stat('end');
   }
 

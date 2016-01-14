@@ -67,7 +67,7 @@ Implementation of the 'build' verb for HackMyResume.
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
     this.stat( HME.beforeTheme, { theme: _opts.theme });
-    var tFolder = verifyTheme( _opts.theme );
+    var tFolder = verifyTheme.call( this, _opts.theme );
     var theme = loadTheme( tFolder );
     this.stat( HME.afterTheme, { theme: theme });
 
