@@ -17,6 +17,6 @@ try {
 }
 catch( ex ) {
 
-  require('./cli/error-handler').err( ex, true );
+  require('./cli/error').err( ex, true );
 
 }

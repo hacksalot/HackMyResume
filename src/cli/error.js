@@ -1,6 +1,6 @@
 /**
 Error-handling routines for HackMyResume.
-@module error-handler.js
+@module error.js
 @license MIT. See LICENSE.md for details.
 */
 // TODO: Logging library

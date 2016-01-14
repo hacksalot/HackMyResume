@@ -217,7 +217,7 @@ Definition of the `main` function.
   function execute( src, dst, opts, log ) {
 
     loadOptions.call( this, opts, this.parent.jsonArgs );
-    var hand = require( './error-handler' );
+    var hand = require( './error' );
     hand.init( _opts.debug, _opts.assert );
     var v = new HMR.verbs[ this.name() ]();
     _out.init( _opts );

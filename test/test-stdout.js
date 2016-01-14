@@ -37,7 +37,7 @@ describe('Testing Ouput interface', function () {
       HMRMAIN( args );
     }
     catch( ex ) {
-      require('../src/cli/error-handler').err( ex, false );
+      require('../src/cli/error').err( ex, false );
     }
     CHALK.enabled = true;
     process.exit = ProcessExitOrg;
