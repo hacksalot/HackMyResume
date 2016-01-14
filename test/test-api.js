@@ -1,5 +1,5 @@
 /**
-@module test-cli.js
+@module test-api.js
 */
 
 var chai = require('chai')
