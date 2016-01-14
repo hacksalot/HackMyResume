@@ -71,16 +71,6 @@ Definition of the FRESHResume class.
   */
   FreshResume.prototype.parseJSON = function( rep, opts ) {
 
-    // // Convert JSON Resume to FRESH if necessary
-    // // TODO: Not sure if this code path is still executed. JRS resumes should
-    // // be loaded via JRSResume, not here.
-    // if( rep.basics ) {
-    //   throw "Invalid resume conversion path";
-    //   rep = CONVERTER.toFRESH( rep );
-    //   rep.imp = rep.imp || { };
-    //   rep.imp.orgFormat = 'JRS';
-    // }
-
     // Now apply the resume representation onto this object
     extend( true, this, rep );
 

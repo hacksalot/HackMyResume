@@ -57,13 +57,13 @@ Definition of the Verb class.
 
 
     /**
-    Fire the 'hmr:error' error event.
+    Handle an error condition.
     */
     err: function( errorCode, payload, hot ) {
       payload = payload || { };
       payload.sub = payload.fluenterror = errorCode;
       payload.throw = hot;
-      this.fire('error', payload);
+      this.fire( 'error', payload );
       if( hot ) throw payload;
       return true;
     },

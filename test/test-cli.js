@@ -10,6 +10,7 @@ var chai = require('chai')
 	, FRESHResume = require('../src/core/fresh-resume')
   , FCMD = require( '../src/hackmyapi')
   , validator = require('is-my-json-valid')
+  , HMRMAIN = require('../src/cli/main')
   , EXTEND = require('../src/utils/extend');
 
 chai.config.includeStack = false;
@@ -74,6 +75,9 @@ describe('Testing CLI interface', function () {
         function runIt() {
           try {
             var v = new FCMD.verbs[verb]();
+            v.on('hmr:error', function(ex) {
+              throw ex;
+            });
             v.invoke( src, dst, opts, opts.silent ?
               function(){} : function(msg){ msg = msg || ''; console.log(msg); } );
           }

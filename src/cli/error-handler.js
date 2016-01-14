@@ -28,33 +28,43 @@ Error-handling routines for HackMyResume.
   */
   var ErrorHandler = module.exports = {
 
-    init: function( debug ) {
+    init: function( debug, assert ) {
       this.debug = debug;
+      this.assert = assert;
       return this;
     },
 
     err: function( ex, shouldExit ) {
 
+      if( ex.pass )
+        throw ex;
+
       if( ex.fluenterror ) {
 
+        // Output the error message
         var objError = assembleError( ex );
-        o( this[ 'format' + (objError.warning ? 'Warning' : 'Error')]( objError.msg ) );
+        o( this[ 'format' + (objError.warning ? 'Warning' : 'Error')](
+          objError.msg
+        ));
 
+        // Output the stack (sometimes)
         if( objError.showStack )
           o( chalk.red( ex.stack || ex.inner.stack ) );
 
+        // Quit if necessary
         if( objError.quit ) {
           this.debug && o(
             chalk.cyan('Exiting with error code ' + ex.fluenterror.toString()));
+          if( this.assert ) { ex.pass = true; throw ex; }
           process.exit( ex.fluenterror );
         }
+
       }
       else {
         o( ex );
         var stackTrace = ex.stack || (ex.inner && ex.inner.stack);
         if( stackTrace && this.debug )
           o( ex.stack || ex.inner.stack );
-
         // if( this.debug )
         //   o( ex.stack || ex.inner.stack );
       }

@@ -50,6 +50,7 @@ Definition of the `main` function.
       .option('--no-color', 'Disable colors')
       .option('--color', 'Enable colors')
       .option('-d --debug', 'Enable diagnostics', false)
+      .option('-a --assert', 'Treat warnings as errors', false)
       .option('-v --version', 'Show the version')
       .allowUnknownOption();
       program.jsonArgs = initInfo.options;
@@ -69,7 +70,6 @@ Definition of the `main` function.
     program
       .command('validate')
       .arguments('<sources...>')
-      .option('-a --assert', 'Treat validation warnings as errors', false)
       .description('Validate a resume in FRESH or JSON RESUME format.')
       .action(function(sources) {
         execute.call( this, sources, [], this.opts(), logMsg);
@@ -217,11 +217,14 @@ Definition of the `main` function.
   function execute( src, dst, opts, log ) {
 
     loadOptions.call( this, opts, this.parent.jsonArgs );
-    var hand = require( './error-handler' ).init( _opts.debug );
+    var hand = require( './error-handler' );
+    hand.init( _opts.debug, _opts.assert );
     var v = new HMR.verbs[ this.name() ]();
     _out.init( _opts );
     v.on( 'hmr:status', function() { _out.do.apply( _out, arguments ); });
-    v.on( 'hmr:error', function() { hand.err.apply( hand, arguments ); });
+    v.on( 'hmr:error', function() {
+      hand.err.apply( hand, arguments );
+    });
     v.invoke.call( v, src, dst, _opts, log );
 
   }
@@ -250,6 +253,8 @@ Definition of the `main` function.
       o.silent = this.parent.silent;
     if( this.parent.debug !== undefined && this.parent.debug !== null)
       o.debug = this.parent.debug;
+    if( this.parent.assert !== undefined && this.parent.assert !== null)
+      o.assert = this.parent.assert;
 
     if( o.debug ) {
       logMsg(chalk.cyan('OPTIONS:') + '\n');
