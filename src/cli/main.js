@@ -19,14 +19,16 @@ Definition of the `main` function.
     , HACKMYSTATUS = require('../core/status-codes')
     , HME = require('../core/event-codes')
     , safeLoadJSON = require('../utils/safe-json-loader')
-    , _opts = { }
-    , title = chalk.white.bold('\n*** HackMyResume v' + PKG.version + ' ***')
     , StringUtils = require('../utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
     , SAFELOADJSON = require('../utils/safe-json-loader')
     , PAD = require('string-padding')
     , Command = require('commander').Command;
+
+  var _opts = { };
+  var _title = chalk.white.bold('\n*** HackMyResume v' +PKG.version+ ' ***');
+  var _out = new OUTPUT( _opts );
 
 
 
@@ -120,9 +122,19 @@ Definition of the `main` function.
   */
   function initialize( ar ) {
 
-    logMsg( title );
+    logMsg( _title );
 
     var o = initOptions( ar );
+    if( o.debug ) {
+      _out.log(chalk.cyan('The -d or --debug switch was specified. DEBUG mode engaged.'));
+      _out.log('');
+      _out.log(chalk.cyan(PAD('  Platform:',20, null, PAD.RIGHT)) + chalk.cyan.bold( process.platform ));
+      _out.log(chalk.cyan(PAD('  Node.js:',20, null, PAD.RIGHT)) + chalk.cyan.bold( process.version ));
+      _out.log(chalk.cyan(PAD('  HackMyResume:',20, null, PAD.RIGHT)) + chalk.cyan.bold('v' + PKG.version ));
+      _out.log(chalk.cyan(PAD('  FRESCA:',20, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies.fresca ));
+      _out.log(chalk.cyan(PAD('  fresh-themes:',20, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies['fresh-themes'] ));
+      _out.log('');
+    }
 
     // Handle invalid verbs here (a bit easier here than in commander.js)...
     if( o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ] ) {
@@ -150,6 +162,10 @@ Definition of the `main` function.
   }
 
 
+
+  /**
+  Init options prior to setting up command infrastructure.
+  */
   function initOptions( ar ) {
     var oVerb, verb = '', args = ar.slice(), cleanArgs = args.slice(2), oJSON;
     if( cleanArgs.length ) {
@@ -179,7 +195,13 @@ Definition of the `main` function.
       }
     }
 
+    // Grab the --debug flag
+    var isDebug = _.some( args, function(v) {
+      return v === '-d' || v === '--debug';
+    });
+
     return {
+      debug: isDebug,
       orgVerb: oVerb,
       verb: verb,
       json: oJSON,
@@ -194,10 +216,11 @@ Definition of the `main` function.
   function execute( src, dst, opts, log ) {
 
     loadOptions.call( this, opts, this.parent.jsonArgs );
-    require( './error-handler' ).init( _opts.debug );
-    var out = new OUTPUT( _opts );
+    var hand = require( './error-handler' ).init( _opts.debug );
     var v = new HMR.verbs[ this.name() ]();
-    v.on( 'hmr:status', function() { out.do.apply( out, arguments ); });
+    _out.init( _opts );
+    v.on( 'hmr:status', function() { _out.do.apply( _out, arguments ); });
+    v.on( 'hmr:error', function() { hand.err.apply( hand, arguments ); });
     v.invoke.call( v, src, dst, _opts, log );
 
   }
@@ -228,14 +251,15 @@ Definition of the `main` function.
       o.debug = this.parent.debug;
 
     if( o.debug ) {
-      logMsg(chalk.cyan('Merged options: '));
+      logMsg(chalk.cyan('OPTIONS:') + '\n');
       _.each(o, function(val, key) {
-        logMsg(chalk.cyan('%s: %s'), PAD(key,10), val);
+        logMsg(chalk.cyan('  %s') + chalk.cyan.bold(' %s'), PAD(key,17,null,PAD.RIGHT), val);
       });
+      logMsg('');
     }
 
     // Cache
-    _opts = o;
+    EXTEND(true, _opts, o);
   }
 
 

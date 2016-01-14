@@ -14,50 +14,71 @@ Output routines for HackMyResume.
     , HME = require('../core/event-codes')
     , _ = require('underscore')
     , Class = require('../utils/class.js')
+    , M2C = require('../utils/md2chalk.js')
     , PATH = require('path')
     , LO = require('lodash')
     , FS = require('fs')
+    , EXTEND = require('../utils/extend')
     , HANDLEBARS = require('handlebars')
     , pad = require('string-padding');
 
 
 
   /**
-  A stateful output handler. All HMR console output handled here.
+  A stateful output module. All HMR console output handled here.
   */
   var OutputHandler = module.exports = Class.extend({
 
 
 
     init: function( opts ) {
-      this.opts = opts;
+      this.opts = EXTEND( true, this.opts || { }, opts );
     },
 
 
 
     log: function( msg ) {
       msg = msg || '';
-      this.opts.silent || console.log( msg );
+      this.opts.silent || console.log.apply( console.log, arguments );
     },
 
 
 
     do: function( evt ) {
 
+      var that = this;
+      function L() {
+        that.log.apply( that, arguments );
+      }
+
       switch( evt.sub ) {
 
+        case HME.error:
+          //L('ERROR occured');
+          break;
+
         case HME.beforeCreate:
-          this.log( chalk.green('Creating new ') +
-            chalk.green.bold(evt.fmt) +
-            chalk.green(' resume: ') + chalk.green.bold(evt.file));
+          L(
+            M2C('Creating new **%s** resume: **%s**', 'green'),
+            evt.fmt, evt.file
+          );
           break;
 
         case HME.beforeRead:
-          this.log( chalk.cyan('Reading resume: ' + chalk.bold( evt.file )));
+          L(
+            M2C('Reading resume: **%s**', 'cyan'), evt.file
+          );
+          break;
+
+        case HME.beforeTheme:
+          this.opts.debug && L(
+            M2C('Verifying theme:    **%s**', 'cyan'), evt.theme.toUpperCase()
+          );
           break;
 
         case HME.afterTheme:
           this.theme = evt.theme;
+          this.opts.debug && L( M2C('Verifying outputs:  ???', 'cyan') );
           break;
 
         case HME.beforeMerge:
@@ -66,15 +87,14 @@ Output routines for HackMyResume.
             msg += ((idx === 0) ? chalk.cyan('Merging ') :
              chalk.cyan(' onto ')) + chalk.cyan.bold(a.i().file);
           });
-          this.log( msg );
+          L( msg );
           break;
 
         case HME.afterMerge:
-          var numFormats = Object.keys(this.theme.formats).length;
-          this.log( chalk.yellow('Applying ') +
-            chalk.yellow.bold( this.theme.name.toUpperCase() ) +
-            chalk.yellow(' theme (' + numFormats + ' format' +
-            ( evt.numFormats === 1 ? ')' : 's)') ));
+          var numFormats = Object.keys( this.theme.formats ).length;
+          L( M2C('Applying **%s** theme (%s format%s)', 'yellow'),
+            this.theme.name.toUpperCase(),
+            numFormats, ( numFormats === 1 ? '' : 's') );
           break;
 
         case HME.end:
@@ -83,23 +103,21 @@ Output routines for HackMyResume.
             if( this.opts.tips && (this.theme.message || this.theme.render) ) {
               var WRAP = require('word-wrap');
               if( this.theme.message ) {
-                this.log( WRAP( chalk.gray('The ' + themeName + ' theme says: "') +
+                L( WRAP( chalk.gray('The ' + themeName + ' theme says: "') +
                 chalk.white(this.theme.message) + chalk.gray('"'),
                   { width: this.opts.wrap, indent: '' } ));
               }
               else if ( this.theme.render ) {
-                this.log(  WRAP( chalk.gray('The ' + themeName +
-                  ' theme says: "') + chalk.white('For best results view JSON ' +
-                  'Resume themes over a local or remote HTTP connection. For ' +
-                  'example:'), { width: this.opts.wrap, indent: '' }
-                ));
-                this.log( '');
-                this.log(
-                  '    npm install http-server -g\r' +
+                L( M2C( 'The **' + themeName + '** theme says:', 'cyan'));
+                L( WRAP( '"For best results view JSON Resume themes over a ' +
+                    'local or remote HTTP connection. For example:',
+                    { width: this.opts.wrap, indent: '' })
+                );
+                L('');
+                L('    npm install http-server -g\r' +
                   '    http-server <resume-folder>' );
-                this.log('');
-                this.log(chalk.white('For more information, see the README."'),
-                  { width: this.opts.wrap, indent: '' } );
+                L('');
+                L(chalk.white('For more information, see the README."'));
               }
             }
           }
@@ -113,7 +131,7 @@ Output routines for HackMyResume.
                 suffix = chalk.green(' (with ' + this.opts.pdf + ')');
               }
               else {
-                this.log( chalk.gray('Skipping   ') +
+                L( chalk.gray('Skipping   ') +
                   chalk.white.bold( pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT)) +
                   chalk.gray(' resume') + suffix + chalk.green(': ') +
                   chalk.white( evt.file ));
@@ -122,7 +140,7 @@ Output routines for HackMyResume.
             }
           }
 
-          this.log( chalk.green('Generating ') +
+          L( chalk.green('Generating ') +
             chalk.green.bold(
               pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT)) +
             chalk.green(' resume') + suffix + chalk.green(': ') +
@@ -130,7 +148,7 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforeAnalyze:
-          this.log(chalk.cyan('Analyzing ') + chalk.cyan.bold(evt.fmt) +
+          L(chalk.cyan('Analyzing ') + chalk.cyan.bold(evt.fmt) +
             chalk.cyan(' resume: ') + chalk.cyan.bold(evt.file));
           break;
 
@@ -148,20 +166,20 @@ Output routines for HackMyResume.
 
         case HME.beforeConvert:
           // TODO: Core should not log
-          this.log( chalk.green('Converting ') + chalk.green.bold(evt.srcFile) +
+          L( chalk.green('Converting ') + chalk.green.bold(evt.srcFile) +
             chalk.green(' (' + evt.srcFmt + ') to ') + chalk.green.bold(evt.dstFile) +
             chalk.green(' (' + evt.dstFmt + ').'));
           break;
 
         case HME.afterValidate:
           var style = evt.isValid ? 'green' : 'yellow';
-          this.log( chalk.white('Validating ') + chalk.white.bold(evt.file) + chalk.white(' against ') +
+          L( chalk.white('Validating ') + chalk.white.bold(evt.file) + chalk.white(' against ') +
             chalk.white.bold( evt.fmt ).toUpperCase() +
             chalk.white(' schema: ') + chalk[style].bold(evt.isValid ? 'VALID!' : 'INVALID'));
 
           if( evt.errors ) {
             _.each(evt.errors, function(err,idx) {
-              this.log( chalk.yellow.bold('--> ') +
+              L( chalk.yellow.bold('--> ') +
                 chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
                 err.message) );
             }, this);

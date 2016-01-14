@@ -66,6 +66,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
+    this.stat( HME.beforeTheme, { theme: _opts.theme });
     var tFolder = verifyTheme( _opts.theme );
     var theme = loadTheme( tFolder );
     this.stat( HME.afterTheme, { theme: theme });
@@ -73,15 +74,15 @@ Implementation of the 'build' verb for HackMyResume.
     // Check for invalid outputs
     var inv = verifyOutputs.call( this, dst, theme );
     if( inv && inv.length ) {
-      throw {fluenterror: HACKMYSTATUS.invalidFormat, data: inv, theme: theme};
+      this.err( HACKMYSTATUS.invalidFormat, { data: inv, theme: theme } );
     }
 
     // Load input resumes...
-    if( !src || !src.length ) { throw { fluenterror: 3 }; }
+    if( !src || !src.length ) { this.err( HACKMYSTATUS.resumeNotFound ); }
     var sheets = ResumeFactory.load(src, {
       format: theme.render ? 'JRS' : 'FRESH',
       objectify: true, throw: true, inner: { sort: _opts.sort }
-    }, this).map(function(sh){ return sh.rez; });
+    }, this).map( function(sh){ return sh.rez; });
 
     // Merge input resumes...
     (sheets.length > 1) && this.stat( HME.beforeMerge, { f: _.clone(sheets) });
@@ -179,8 +180,10 @@ Implementation of the 'build' verb for HackMyResume.
       }
     }
     catch( ex ) {
-      console.log('Exception thrown');
-      console.log(ex); // TODO
+      // Catch any errors caused by generating this file and don't let them
+      // propagate -- typically we want to continue processing other formats
+      // even if this format failed.
+      this.err( HME.generate, { inner: ex } );
     }
   }
 
@@ -282,7 +285,7 @@ Implementation of the 'build' verb for HackMyResume.
     if( !exists( tFolder ) ) {
       tFolder = PATH.resolve( themeNameOrPath );
       if( !exists( tFolder ) ) {
-        throw { fluenterror: 1, data: _opts.theme };
+        this.err( HACKMYSTATUS.themeNotFound, { data: _opts.theme } );
       }
     }
     return tFolder;

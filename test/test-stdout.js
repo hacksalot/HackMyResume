@@ -70,11 +70,16 @@ describe('Testing Ouput interface', function () {
   run('BUILD should output a tip when no source is specified',
       ['build'], [ title, feedMe ]);
 
-  run('VALIATE should output a tip when no source is specified',
+  run('VALIDATE should output a tip when no source is specified',
      ['validate'], [ title, feedMe ]);
 
   run('ANALYZE should output a tip when no source is specified',
       ['analyze'], [ title, feedMe ]);
+
+  run('BUILD should display an error on a broken resume',
+     ['build',
+      'node_modules/fresh-test-resumes/src/johnny-trouble.broken.fresh.json'
+    ], [ title, 'Error: Invalid or corrupt JSON on line'  ]);
 
   run('CONVERT should output a tip when no source is specified',
       ['convert'], [ title, feedMe ]);

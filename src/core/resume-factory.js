@@ -104,21 +104,25 @@ Definition of the ResumeFactory class.
     var rawData;
     try {
 
+      // Read the file
       eve && eve.stat( HME.beforeRead, { file: fileName });
       rawData = FS.readFileSync( fileName, 'utf8' );
       eve && eve.stat( HME.afterRead, { data: rawData });
+
+      // Parse the file
       eve && eve.stat( HME.beforeParse, { data: rawData });
-      var ret = {
-        json: JSON.parse( rawData )
-      };
+      var ret = { json: JSON.parse( rawData ) };
       eve && eve.stat( HME.afterParse, { data: ret.json } );
+
       return ret;
     }
-    catch( ex ) {
-      throw {
+    catch( e ) {
+      // Can be ENOENT, EACCES, SyntaxError, etc.
+      var ex = {
         fluenterror: rawData ? HACKMYSTATUS.parseError : HACKMYSTATUS.readError,
-        inner: ex, raw: rawData, file: fileName, shouldExit: false
+        inner: e, raw: rawData, file: fileName, shouldExit: false
       };
+      eve && eve.err( ex.fluenterror, ex );
     }
 
   }

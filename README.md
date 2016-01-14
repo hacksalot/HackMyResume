@@ -279,6 +279,36 @@ hackmyresume BUILD me.json TO out/resume.all
 `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and
 `out/resume.json`.
 
+### Building PDFs
+
+HackMyResume takes a unique approach to PDF generation. Instead of enforcing
+a specific PDF engine on users, HackMyResume will attempt to work with whatever
+PDF engine you have installed through the engine's command-line interface (CLI).
+Currently that means one or both of...
+
+- [wkhtmltopdf][3]
+- [Phantom.js][3]
+
+..with support for other engines planned in the future. **One or both of these
+engines must be installed and accessible on your PATH in order to generate PDF
+resumes with HackMyResume**. That means you should be able to invoke either of
+these tools directly from your shell or terminal without error:
+
+```bash
+wkhtmltopdf input.html output.pdf
+phantomjs script.js input.html output.pdf
+```
+
+Assuming you've installed one or both of these engines on your system, you can
+tell HackMyResume which flavor of PDF generation to use via the `--pdf` option
+(`-p` for short):
+
+```bash
+hackmyresume BUILD resume.json TO out.all --pdf phantom
+hackmyresume BUILD resume.json TO out.all --pdf wkhtmltopdf
+hackmyresume BUILD resume.json TO out.all --pdf none
+```
+
 ### Analyzing
 
 HackMyResume can analyze your resume for keywords, employment gaps, and other
@@ -292,7 +322,7 @@ Depending on the HackMyResume version, you should see output similar to:
 
 
 ```
-*** HackMyResume v1.4.1 ***
+*** HackMyResume v1.6.0 ***
 Reading resume: resume.json
 Analyzing FRESH resume: resume.json
 
@@ -388,7 +418,7 @@ hackmyresume VALIDATE resumeA.json resumeB.json
 HackMyResume will validate each specified resume in turn:
 
 ```bash
-*** HackMyResume v0.9.0 ***
+*** HackMyResume v1.6.0 ***
 Validating JSON resume: resumeA.json (INVALID)
 Validating JSON resume: resumeB.json (VALID)
 ```

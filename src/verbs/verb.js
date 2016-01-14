@@ -23,15 +23,30 @@ Definition of the Verb class.
   */
   var Verb = module.exports = Class.extend({
 
+
+
+    /**
+    Constructor. Automatically called at creation.
+    */
     init: function( moniker ) {
       this.moniker = moniker;
       this.emitter = new EVENTS.EventEmitter();
     },
 
+
+
+    /**
+    Forward subscriptions to the event emitter.
+    */
     on: function() {
       this.emitter.on.apply( this.emitter, arguments );
     },
 
+
+
+    /**
+    Fire an arbitrary event, scoped to "hmr:".
+    */
     fire: function(evtName, payload) {
       payload = payload || { };
       payload.cmd = this.moniker;
@@ -39,11 +54,29 @@ Definition of the Verb class.
       return true;
     },
 
+
+
+    /**
+    Fire the 'hmr:error' error event.
+    */
+    err: function( errorCode, payload, hot ) {
+      payload = payload || { };
+      payload.sub = payload.fluenterror = errorCode;
+      payload.throw = hot;
+      this.fire('error', payload);
+      if( hot ) throw payload;
+      return true;
+    },
+
+
+
+    /**
+    Fire the 'hmr:status' error event.
+    */
     stat: function( subEvent, payload ) {
       payload = payload || { };
-      payload.cmd = this.moniker;
       payload.sub = subEvent;
-      this.emitter.emit( 'hmr:status', payload );
+      this.fire('status', payload);
       return true;
     }
 

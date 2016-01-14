@@ -18,89 +18,90 @@ Error-handling routines for HackMyResume.
     , WRAP = require('word-wrap')
     , chalk = require('chalk')
     , SyntaxErrorEx = require('../utils/syntax-error-ex');
+    require('string.prototype.startswith');
 
 
 
   /**
-  An amorphous blob of error handling code for HackMyResume.
+  Error handler for HackMyResume. All errors are handled here.
   @class ErrorHandler
   */
   var ErrorHandler = module.exports = {
 
     init: function( debug ) {
       this.debug = debug;
+      return this;
     },
 
     err: function( ex, shouldExit ) {
 
-      var msg = '', exitCode, log = console.log, showStack = ex.showStack;
+      if( ex.fluenterror ) {
 
-      // If the exception has been handled elsewhere and shouldExit is true,
-      // let's get out of here, otherwise silently return.
-      if( ex.handled ) {
-        if( shouldExit )
-          process.exit( exitCode );
-        return;
-      }
+        var objError = assembleError( ex );
+        o( this[ 'format' + (objError.warning ? 'Warning' : 'Error')]( objError.msg ) );
 
-      // Get an error message -- either a HackMyResume error message or the
-      // exception's associated error message
-      if( ex.fluenterror ){
-        var errInfo = get_error_msg( ex );
-        msg = errInfo.msg;
-        exitCode = ex.fluenterror;
-        showStack = errInfo.showStack;
+        if( objError.showStack )
+          o( chalk.red( ex.stack || ex.inner.stack ) );
+
+        if( objError.quit ) {
+          this.debug && o(
+            chalk.cyan('Exiting with error code ' + ex.fluenterror.toString()));
+          process.exit( ex.fluenterror );
+        }
       }
       else {
-        msg = ex.toString();
-        exitCode = -1;
-        // Deal with pesky 'Error:' prefix.
-        var idx = msg.indexOf('Error: ');
-        msg = idx === -1 ? msg : msg.substring( idx + 7 );
+        o( ex );
+        var stackTrace = ex.stack || (ex.inner && ex.inner.stack)
+        if( stackTrace && this.debug )
+          o( ex.stack || ex.inner.stack );
+
+        // if( this.debug )
+        //   o( ex.stack || ex.inner.stack );
       }
 
-      // Log non-HackMyResume-handled errors in red with ERROR prefix. Log HMR
-      // errors as-is.
-      ex.fluenterror ?
-        log( msg.toString() ) :
-        log( chalk.red.bold('ERROR: ' + msg.toString()) );
+    },
 
-      // Selectively show the stack trace
-      if( (ex.stack || (ex.inner && ex.inner.stack)) &&
-         ((showStack && ex.code !== 'ENOENT' ) || (this.debug) ))
-        log( chalk.red( ex.stack || ex.inner.stack ) );
+    formatError: function( msg ) {
+      return chalk.red.bold(
+        msg.toUpperCase().startsWith('ERROR:') ? msg : 'Error: ' + msg );
+    },
 
-      // Let the error code be the process's return code.
-      ( shouldExit || ex.shouldExit ) && process.exit( exitCode );
+    formatWarning: function( brief, msg ) {
+      return chalk.yellow(brief) + chalk.yellow(msg || '');
     }
 
   };
 
 
+  var o = function() {
+    console.log.apply( console.log, arguments );
+  };
 
-  function get_error_msg( ex ) {
+  function assembleError( ex ) {
 
-    var msg = '', withStack = false, isError = false;
+    var msg = '', withStack = false, isError = false, quit = true, warn = true;
+
     switch( ex.fluenterror ) {
 
       case HACKMYSTATUS.themeNotFound:
-        msg = formatWarning(
+        msg =
            chalk.bold("Couldn't find the '" + ex.data + "' theme."),
           " Please specify the name of a preinstalled FRESH theme " +
-          "or the path to a locally installed FRESH or JSON Resume theme.");
+          "or the path to a locally installed FRESH or JSON Resume theme.";
         break;
 
       case HACKMYSTATUS.copyCSS:
-        msg = formatWarning("Couldn't copy CSS file to destination folder.");
+        msg = "Couldn't copy CSS file to destination folder.";
+        quit = false;
         break;
 
       case HACKMYSTATUS.resumeNotFound:
-        msg = formatWarning('Please ' + chalk.bold('feed me a resume') +
-          ' in FRESH or JSON Resume format.');
+        msg = 'Please ' + chalk.bold('feed me a resume') +
+          ' in FRESH or JSON Resume format.';
         break;
 
       case HACKMYSTATUS.missingCommand:
-        msg = formatWarning("Please " +chalk.bold("give me a command") + " (");
+        msg = "Please " +chalk.bold("give me a command") + " (";
 
         msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
           return (idx === ar.length - 1 ? chalk.yellow('or ') : '') +
@@ -112,79 +113,81 @@ Error-handling routines for HackMyResume.
         break;
 
       case HACKMYSTATUS.invalidCommand:
-        msg = formatWarning('Invalid command: "'+chalk.bold(ex.attempted)+'"');
+        msg = 'Invalid command: "'+chalk.bold(ex.attempted)+'"';
         break;
 
       case HACKMYSTATUS.resumeNotFoundAlt:
-        msg = formatWarning('Please ' + chalk.bold('feed me a resume') +
-          ' in either FRESH or JSON Resume format.');
+        msg = 'Please ' + chalk.bold('feed me a resume') +
+          ' in either FRESH or JSON Resume format.';
         break;
 
       case HACKMYSTATUS.inputOutputParity:
-        msg = formatWarning('Please ' +
+        msg = 'Please ' +
           chalk.bold('specify an output file name') +
-          ' for every input file you wish to convert.');
+          ' for every input file you wish to convert.';
         break;
 
       case HACKMYSTATUS.createNameMissing:
-        msg = formatWarning('Please ' +
-          chalk.bold('specify the filename of the resume') + ' to create.');
+        msg = 'Please ' +
+          chalk.bold('specify the filename of the resume') + ' to create.';
         break;
 
       case HACKMYSTATUS.pdfGeneration:
-        msg = formatError(chalk.bold('ERROR: PDF generation failed. ') +
-          'Make sure wkhtmltopdf is installed and accessible from your path.');
+        msg = chalk.bold('PDF generation failed. ') +
+          'Make sure wkhtmltopdf is installed and accessible from your path.';
         if( ex.inner ) msg += chalk.red('\n' + ex.inner);
-        withStack = true;
+        withStack = true; quit = false; warn = false;
         break;
 
       case HACKMYSTATUS.invalid:
-        msg = formatError('Validation failed and the --assert option was ' +
-          'specified.');
+        msg = 'Validation failed and the --assert option was ' +
+          'specified.';
+        warn = false;
         break;
 
       case HACKMYSTATUS.invalidFormat:
         ex.data.forEach(function(d){ msg +=
-          formatWarning('The ' + chalk.bold(ex.theme.name.toUpperCase()) +
+          'The ' + chalk.bold(ex.theme.name.toUpperCase()) +
           " theme doesn't support the " + chalk.bold(d.format.toUpperCase()) +
-          " format.\n");
+          " format.\n";
         });
         break;
 
       case HACKMYSTATUS.notOnPath:
-        msg = formatError( ex.engine + " wasn't found on your system path or" +
-          " is inaccessible. PDF not generated." );
+        msg =  ex.engine + " wasn't found on your system path or" +
+          " is inaccessible. PDF not generated.";
+        quit = false;
+        warn = false;
         break;
 
       case HACKMYSTATUS.readError:
-        msg = formatError( ex.inner.toString() );
+        msg = ex.inner.toString();
+        warn = false;
         break;
 
       case HACKMYSTATUS.parseError:
         if( SyntaxErrorEx.is( ex.inner )) {
           var se = new SyntaxErrorEx( ex, ex.raw );
-          msg = formatError( 'Invalid or corrupt JSON on line ' + se.line +
-            ' column ' + se.col );
+          msg = 'Invalid or corrupt JSON on line ' + se.line +
+            ' column ' + se.col + '.';
         }
         else {
           msg = formatError( ex.inner.toString() );
         }
+        warn = false;
         break;
 
     }
+
     return {
-      msg: msg,
-      withStack: withStack
+      warning: warn,         // True if this is a warning, false if error
+      msg: msg,              // The error message to display
+      withStack: withStack,  // Whether to include the stack
+      quit: quit
     };
   }
 
-  function formatError( msg ) {
-    return chalk.red.bold( 'ERROR: ' + msg );
-  }
 
-  function formatWarning( brief, msg ) {
-    return chalk.yellow(brief) + chalk.yellow(msg || '');
-  }
 
 
 }());
