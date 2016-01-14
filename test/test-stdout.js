@@ -16,7 +16,7 @@ describe('Testing Ouput interface', function () {
 
 
   function MyConsoleLog( msg ) {
-    gather += msg;
+    gather += Array.prototype.slice.call(arguments).join(' ');
     ConsoleLogOrg.apply(this, arguments);
   }
 
@@ -101,7 +101,7 @@ describe('Testing Ouput interface', function () {
         'test/sandbox/temp/janeq-1.all',
         '-o',
         "{ theme: 'compact', debug: true, pdf: 'wkhtmltopdf' }"],
-      [ 'Applying COMPACT theme', '(with wkhtmltopdf)'] );
+      [ 'Applying COMPACT theme (', '(with wkhtmltopdf)'] );
 
   run('HMR should accept a JSON settings file via --options',
       [

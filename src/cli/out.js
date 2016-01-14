@@ -39,7 +39,9 @@ Output routines for HackMyResume.
 
     log: function( msg ) {
       msg = msg || '';
-      this.opts.silent || console.log.apply( console.log, arguments );
+      var printf = require('printf');
+      var finished = printf.apply( printf, arguments );
+      this.opts.silent || console.log( finished );
     },
 
 

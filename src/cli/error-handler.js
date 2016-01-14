@@ -51,7 +51,7 @@ Error-handling routines for HackMyResume.
       }
       else {
         o( ex );
-        var stackTrace = ex.stack || (ex.inner && ex.inner.stack)
+        var stackTrace = ex.stack || (ex.inner && ex.inner.stack);
         if( stackTrace && this.debug )
           o( ex.stack || ex.inner.stack );
 
