@@ -22,7 +22,6 @@ Definition of the `main` function.
     , StringUtils = require('../utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
-    , SAFELOADJSON = require('../utils/safe-json-loader')
     , PAD = require('string-padding')
     , Command = require('commander').Command;
 
@@ -91,6 +90,15 @@ Definition of the `main` function.
       .description('Analyze one or more resumes.')
       .action(function( sources ) {
         execute.call( this, sources, [], this.opts(), logMsg);
+      });
+
+    // Create the PEEK command
+    program
+      .command('peek')
+      .arguments('<sources...>')
+      .description('Peek at a resume field or section')
+      .action(function( sources, sectionOrField ) {
+        execute.call( this, sources, [ sources.pop() ], this.opts(), logMsg);
       });
 
     // Create the BUILD command
@@ -189,7 +197,8 @@ Definition of the `main` function.
           if( optStr[0] === '{')
             oJSON = eval('(' + optStr + ')'); // jshint ignore:line
           else {
-            oJSON = SAFELOADJSON( optStr );
+            oJSON = safeLoadJSON( optStr );
+            // TODO: Error handling
           }
         }
       }

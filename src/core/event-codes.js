@@ -32,7 +32,9 @@ Event code definitions.
     afterConvert:     16,
     verifyOutputs:    17,
     beforeParse:      18,
-    afterParse:       19
+    afterParse:       19,
+    beforePeek:       20,
+    afterPeek:        21
   };
 
 

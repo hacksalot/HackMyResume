@@ -16,6 +16,7 @@ Error-handling routines for HackMyResume.
     , FCMD = require('../hackmyapi')
     , PATH = require('path')
     , WRAP = require('word-wrap')
+    , M2C = require('../utils/md2chalk.js')
     , chalk = require('chalk')
     , SyntaxErrorEx = require('../utils/syntax-error-ex');
     require('string.prototype.startswith');
@@ -182,7 +183,7 @@ Error-handling routines for HackMyResume.
             ' column ' + se.col + '.';
         }
         else {
-          msg = formatError( ex.inner.toString() );
+          msg = ex;
         }
         warn = false;
         break;

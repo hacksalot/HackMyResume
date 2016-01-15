@@ -189,6 +189,20 @@ Output routines for HackMyResume.
 
           break;
 
+        case HME.beforePeek:
+          if( evt.target )
+            L(M2C('Peeking at **%s** in **%s**...', 'cyan'), evt.target, evt.file);
+          else
+            L(M2C('Peeking at **%s**...', 'cyan'), evt.file);
+          break;
+
+        case HME.afterPeek:
+          if( evt.target )
+            console.dir( evt.target, { depth: null, colors: true } );
+          else
+            L(M2C('The specified key **%s** was not found in **%s**.', 'yellow'), evt.requested, evt.file);
+          break;
+
       }
     }
 

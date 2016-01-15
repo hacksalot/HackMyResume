@@ -19,7 +19,8 @@ External API surface for HackMyResume.
       analyze: require('./verbs/analyze'),
       validate: require('./verbs/validate'),
       convert: require('./verbs/convert'),
-      new: require('./verbs/create')
+      new: require('./verbs/create'),
+      peek: require('./verbs/peek')
     },
     alias: {
       generate: require('./verbs/build'),
