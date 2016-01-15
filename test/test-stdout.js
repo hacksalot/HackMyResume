@@ -80,7 +80,7 @@ describe('Testing Ouput interface', function () {
   var manPage = FS.readFileSync( PATH.resolve( __dirname, '../src/cli/use.txt' ), 'utf8');
 
   run('HMR should output a help string when no command is specified',
-      [], [ title, 'Please give me a command (BUILD, ANALYZE, VALIDATE, CONVERT, or NEW).' ]);
+      [], [ title, 'Please give me a command (BUILD, ANALYZE, VALIDATE, CONVERT, NEW, or PEEK).' ]);
 
   run('BUILD should output a tip when no source is specified',
       ['build'], [ title, feedMe ]);
