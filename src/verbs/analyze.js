@@ -13,6 +13,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
     , HME = require('../core/event-codes')
+    , HMSTATUS = require('../core/status-codes')
     , _ = require('underscore')
     , ResumeFactory = require('../core/resume-factory')
     , Verb = require('../verbs/verb')
@@ -39,7 +40,8 @@ Implementation of the 'analyze' verb for HackMyResume.
   */
   function analyze( sources, dst, opts ) {
     this.stat('begin');
-    if( !sources || !sources.length ) throw { fluenterror: 3 };
+    if( !sources || !sources.length )
+      throw { fluenterror: HMSTATUS.resumeNotFound };
 
     var nlzrs = _loadInspectors();
 
