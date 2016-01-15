@@ -9,6 +9,7 @@ Available commands:
   VALIDATE      Validate your resume for errors and typos.
   CONVERT       Convert your resume between FRESH and JSON Resume.
   NEW           Create a new resume in FRESH or JSON Resume format.
+  PEEK          View a specific field or element on your resume.
 
 Available options:
 
@@ -33,6 +34,7 @@ Examples:
   hackmyresume  NEW my-new-resume.json --format JRS
   hackmyresume  CONVERT resume-fresh.json TO resume-jrs.json
   hackmyresume  VALIDATE resume.json
+  hackmyresume  PEEK resume.json employment[2].summary
 
 Tips:
 
@@ -46,5 +48,4 @@ Tips:
     listing of all available JSON Resume themes.
   - Visit https://github.com/fluentdesk/fresh-themes for a complete
     listing of all available FRESH themes.
-  - Report bugs to https://githut.com/hacksalot/HackMyResume/issues
-    for a quick fix, often within 24 hours.
+  - Report bugs to https://githut.com/hacksalot/HackMyResume/issues.
