@@ -98,7 +98,8 @@ Definition of the `main` function.
       .arguments('<sources...>')
       .description('Peek at a resume field or section')
       .action(function( sources, sectionOrField ) {
-        execute.call( this, sources, [ sources.pop() ], this.opts(), logMsg);
+        var dst = (sources && sources.length > 1) ? [sources.pop()] : [];
+        execute.call( this, sources, dst, this.opts(), logMsg);
       });
 
     // Create the BUILD command
@@ -197,7 +198,9 @@ Definition of the `main` function.
           if( optStr[0] === '{')
             oJSON = eval('(' + optStr + ')'); // jshint ignore:line
           else {
-            oJSON = safeLoadJSON( optStr );
+            var inf = safeLoadJSON( optStr );
+            if( !inf.ex )
+              oJSON = inf.json;
             // TODO: Error handling
           }
         }
