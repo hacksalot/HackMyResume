@@ -18,10 +18,10 @@
 7|convert doesnt-exist.json
 3|validate
 14|validate doesnt-exist.json
-0|validate node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json
+0|validate node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json
 3|peek
 14|peek doesnt-exist.json
 14|peek doesnt-exist.json not.a.path
 0|peek test/resumes/jrs-0.0.0/richard-hendriks.json work[0]
-0|peek node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json employment.history[1]
-0|peek node_modules/fresh-test-resumes/src/johnny-trouble.fresh.json skills.sets
+0|peek node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json employment.history[1]
+0|peek node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json skills.sets

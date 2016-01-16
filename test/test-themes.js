@@ -77,8 +77,8 @@ function folderContains( needle, haystack ) {
   });
 }
 
-genThemes( 'jane-q-fullstacker', ['node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json'], 'FRESH' );
-genThemes( 'johnny-trouble', ['node_modules/fresh-test-resumes/src/johnny-trouble.fresh.json'], 'FRESH' );
+genThemes( 'jane-q-fullstacker', ['node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json'], 'FRESH' );
+genThemes( 'johnny-trouble', ['node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json'], 'FRESH' );
 genThemes( 'richard-hendriks', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], 'JRS' );
 
 describe('Verifying generated theme files...', function() {

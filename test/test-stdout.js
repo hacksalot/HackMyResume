@@ -93,7 +93,7 @@ describe('Testing Ouput interface', function () {
 
   run('BUILD should display an error on a broken resume',
      ['build',
-      'node_modules/fresh-test-resumes/src/johnny-trouble.broken.fresh.json',
+      'node_modules/fresh-test-resumes/src/fresh/johnny-trouble.broken.json',
       '-t', 'modern'
     ], [ title, 'Error: Invalid or corrupt JSON on line'  ]);
 
@@ -112,7 +112,7 @@ describe('Testing Ouput interface', function () {
   run('HMR should accept raw JSON via --options',
       [
         'build',
-        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json',
         'to',
         'test/sandbox/temp/janeq-1.all',
         '-o',
@@ -122,7 +122,7 @@ describe('Testing Ouput interface', function () {
   run('HMR should accept a JSON settings file via --options',
       [
         'build',
-        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json',
         'to',
         'test/sandbox/temp/janeq-2.all',
         '--options',
@@ -132,7 +132,7 @@ describe('Testing Ouput interface', function () {
   run('Explicit command line options should override --options',
       [
         'build',
-        'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json',
+        'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json',
         'to',
         'test/sandbox/temp/janeq-3.all',
         '--options',

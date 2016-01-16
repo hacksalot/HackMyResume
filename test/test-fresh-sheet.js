@@ -58,5 +58,5 @@ function testResume(opts) {
 }
 
 var sects = [ 'info', 'employment', 'service', 'skills', 'education', 'writing', 'recognition', 'references' ];
-testResume({ title: 'jane-q-fullstacker', path: 'node_modules/fresh-test-resumes/src/jane-fullstacker.fresh.json', duration: 7, sections: sects });
-testResume({ title: 'johnny-trouble-resume', path: 'node_modules/fresh-test-resumes/src/johnny-trouble.fresh.json', duration: 4, sections: sects });
+testResume({ title: 'jane-q-fullstacker', path: 'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json', duration: 7, sections: sects });
+testResume({ title: 'johnny-trouble-resume', path: 'node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json', duration: 4, sections: sects });

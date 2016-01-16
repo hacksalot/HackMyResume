@@ -22,7 +22,7 @@ var ProcessExitOrg = process.exit;
 var commandRetVal = 0;
 
 
-describe('Testing Ouput interface', function () {
+describe('Testing CLI interface', function () {
 
   // TODO: use sinon
   // Replacement for process.exit()
