@@ -1,0 +1,46 @@
+beforeCreate:
+  msg: Creating new **%s** resume: **%s**
+beforeRead:
+  msg: Reading resume: **%s**
+beforeTheme:
+  msg: Verifying theme:    **%s**
+afterTheme:
+  msg: Verifying outputs:  ???
+beforeMerge:
+  msg:
+    - Merging **%s**
+    - " onto **%s**"
+afterMerge:
+  msg: Applying **%s** theme (%s format%s)
+afterBuild:
+  msg:
+    - "The **%s** theme says:"
+    - |
+        "For best results view JSON Resume themes over a
+        local or remote HTTP connection. For example:
+
+          npm install http-server -g
+          http-server <resume-folder>
+
+        For more information, see the README."
+beforeGenerate:
+  msg:
+    - " (with %s)"
+    - "Skipping %s resume: %s"
+    - "Generating **%s** resume: **%s**"
+beforeAnalyze:
+  msg: "Analyzing **%s** resume: **%s**"
+beforeConvert:
+  msg: "Converting **%s** (**%s**) to **%s** (**%s**)"
+afterValidate:
+  msg:
+    - "Validating **%s** against the **%s** schema: "
+    - "VALID!"
+    - "INVALID"
+    - "BROKEN"
+beforePeek:
+  msg:
+    - Peeking at **%s** in **%s**
+    - Peeking at **%s**
+afterPeek:
+  msg: "The specified key **%s** was not found in **%s**."

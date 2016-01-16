@@ -50,7 +50,7 @@ Implementation of the 'peek' verb for HackMyResume.
       if( obj.ex ) {
         this.err( obj.ex.fluenterror, obj.ex );
       }
-      var targ = objPath ? __.get( obj.json, objPath ) : obj;
+      var targ = objPath ? __.get( obj.json, objPath ) : obj.json;
 
       this.stat( HMEVENT.afterPeek, { file: t, requested: objPath, target: targ } );
     }, this);

@@ -20,6 +20,8 @@ Output routines for HackMyResume.
     , FS = require('fs')
     , EXTEND = require('../utils/extend')
     , HANDLEBARS = require('handlebars')
+    , YAML = require('yamljs')
+    , printf = require('printf')
     , pad = require('string-padding');
 
 
@@ -33,6 +35,7 @@ Output routines for HackMyResume.
 
     init: function( opts ) {
       this.opts = EXTEND( true, this.opts || { }, opts );
+      this.msgs = YAML.load(PATH.join( __dirname, 'msg.yml' ));
     },
 
 
@@ -60,41 +63,43 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforeCreate:
-          L(
-            M2C('Creating new **%s** resume: **%s**', 'green'),
-            evt.fmt, evt.file
-          );
+          L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file );
           break;
 
         case HME.beforeRead:
           L(
-            M2C('Reading resume: **%s**', 'cyan'), evt.file
+            M2C( this.msgs.beforeRead.msg, 'cyan' ), evt.file
           );
           break;
 
+        case HME.afterRead:
+          break;
+
         case HME.beforeTheme:
-          this.opts.debug && L(
-            M2C('Verifying theme:    **%s**', 'cyan'), evt.theme.toUpperCase()
-          );
+          this.opts.debug &&
+            L( M2C( this.msgs.beforeTheme.msg, 'cyan'), evt.theme.toUpperCase() );
           break;
 
         case HME.afterTheme:
           this.theme = evt.theme;
-          this.opts.debug && L( M2C('Verifying outputs:  ???', 'cyan') );
+          this.opts.debug && L( M2C(this.msgs.beforeTheme.msg, 'cyan'), evt.theme );
           break;
 
         case HME.beforeMerge:
           var msg = '';
           evt.f.reverse().forEach( function( a, idx ) {
-            msg += ((idx === 0) ? chalk.cyan('Merging ') :
-             chalk.cyan(' onto ')) + chalk.cyan.bold(a.i().file);
-          });
-          L( msg );
+            msg += printf(
+              ((idx === 0) ?
+                this.msgs.beforeMerge.msg[0] :
+                this.msgs.beforeMerge.msg[1] ), a.i().file
+            );
+          }, this);
+          L( M2C(msg, 'cyan') );
           break;
 
         case HME.afterMerge:
           var numFormats = Object.keys( this.theme.formats ).length;
-          L( M2C('Applying **%s** theme (%s format%s)', 'yellow'),
+          L( M2C(this.msgs.afterMerge.msg, 'yellow'),
             this.theme.name.toUpperCase(),
             numFormats, ( numFormats === 1 ? '' : 's') );
           break;
@@ -105,21 +110,12 @@ Output routines for HackMyResume.
             if( this.opts.tips && (this.theme.message || this.theme.render) ) {
               var WRAP = require('word-wrap');
               if( this.theme.message ) {
-                L( WRAP( chalk.gray('The ' + themeName + ' theme says: "') +
-                chalk.white(this.theme.message) + chalk.gray('"'),
-                  { width: this.opts.wrap, indent: '' } ));
+                L( M2C( this.msgs.afterBuild.msg[0], 'cyan' ), themeName );
+                L( M2C( this.theme.message, 'white' ));
               }
               else if ( this.theme.render ) {
-                L( M2C( 'The **' + themeName + '** theme says:', 'cyan'));
-                L( WRAP( '"For best results view JSON Resume themes over a ' +
-                    'local or remote HTTP connection. For example:',
-                    { width: this.opts.wrap, indent: '' })
-                );
-                L('');
-                L('    npm install http-server -g\r' +
-                  '    http-server <resume-folder>' );
-                L('');
-                L(chalk.white('For more information, see the README."'));
+                L( M2C( this.msgs.afterBuild.msg[0], 'cyan'), themeName);
+                L( M2C( this.msgs.afterBuild.msg[1], 'white'));
               }
             }
           }
@@ -130,28 +126,23 @@ Output routines for HackMyResume.
           if( evt.fmt === 'pdf' ) {
             if( this.opts.pdf ) {
               if( this.opts.pdf !== 'none' ) {
-                suffix = chalk.green(' (with ' + this.opts.pdf + ')');
+                suffix = printf( M2C( this.msgs.beforeGenerate.msg[0], 'green' ), this.opts.pdf );
               }
               else {
-                L( chalk.gray('Skipping   ') +
-                  chalk.white.bold( pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT)) +
-                  chalk.gray(' resume') + suffix + chalk.green(': ') +
-                  chalk.white( evt.file ));
+                L( M2C( this.msgs.beforeGenerate.msg[1], 'gray' ),
+                  evt.fmt.toUpperCase(), evt.file );
                 return;
               }
             }
           }
 
-          L( chalk.green('Generating ') +
-            chalk.green.bold(
-              pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT)) +
-            chalk.green(' resume') + suffix + chalk.green(': ') +
-            chalk.green.bold( PATH.relative(process.cwd(), evt.file )) );
+          L( M2C( this.msgs.beforeGenerate.msg[2] + suffix, 'green' ),
+              pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT),
+              PATH.relative(process.cwd(), evt.file ));
           break;
 
         case HME.beforeAnalyze:
-          L(chalk.cyan('Analyzing ') + chalk.cyan.bold(evt.fmt) +
-            chalk.cyan(' resume: ') + chalk.cyan.bold(evt.file));
+          L( M2C( this.msgs.beforeAnalyze.msg, 'cyan' ), evt.fmt, evt.file);
           break;
 
         case HME.afterAnalyze:
@@ -167,17 +158,20 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforeConvert:
-          // TODO: Core should not log
-          L( chalk.green('Converting ') + chalk.green.bold(evt.srcFile) +
-            chalk.green(' (' + evt.srcFmt + ') to ') + chalk.green.bold(evt.dstFile) +
-            chalk.green(' (' + evt.dstFmt + ').'));
+          L( M2C( this.msgs.beforeConvert.msg, 'green' ),
+            evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt
+          );
           break;
 
         case HME.afterValidate:
           var style = evt.isValid ? 'green' : 'yellow';
-          L( chalk.white('Validating ') + chalk.white.bold(evt.file) + chalk.white(' against ') +
-            chalk.white.bold( evt.fmt ).toUpperCase() +
-            chalk.white(' schema: ') + chalk[style].bold(evt.isValid ? 'VALID!' : 'INVALID'));
+          L(
+            M2C( this.msgs.afterValidate.msg[0], 'white' ) +
+            chalk[style].bold( evt.isValid ?
+                               this.msgs.afterValidate.msg[1] :
+                               this.msgs.afterValidate.msg[2] ),
+            evt.file, evt.fmt
+          );
 
           if( evt.errors ) {
             _.each(evt.errors, function(err,idx) {
@@ -191,16 +185,16 @@ Output routines for HackMyResume.
 
         case HME.beforePeek:
           if( evt.target )
-            L(M2C('Peeking at **%s** in **%s**...', 'cyan'), evt.target, evt.file);
+            L(M2C(this.msgs.beforePeek.msg[0], 'cyan'), evt.target, evt.file);
           else
-            L(M2C('Peeking at **%s**...', 'cyan'), evt.file);
+            L(M2C(this.msgs.beforePeek.msg[1], 'cyan'), evt.file);
           break;
 
         case HME.afterPeek:
           if( evt.target )
             console.dir( evt.target, { depth: null, colors: true } );
           else
-            L(M2C('The specified key **%s** was not found in **%s**.', 'yellow'), evt.requested, evt.file);
+            L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
           break;
 
       }
