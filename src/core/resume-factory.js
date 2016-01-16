@@ -13,7 +13,7 @@ Definition of the ResumeFactory class.
   var FS          = require('fs'),
   HACKMYSTATUS    = require('./status-codes'),
   HME             = require('./event-codes'),
-  ResumeConverter = require('./convert'),
+  ResumeConverter = require('fresh-jrs-converter'),
   chalk           = require('chalk'),
   SyntaxErrorEx   = require('../utils/syntax-error-ex'),
   _               = require('underscore');

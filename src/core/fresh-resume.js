@@ -19,7 +19,7 @@ Definition of the FRESHResume class.
     , moment = require('moment')
     , XML = require('xml-escape')
     , MD = require('marked')
-    , CONVERTER = require('./convert')
+    , CONVERTER = require('fresh-jrs-converter')
     , JRSResume = require('./jrs-resume');
 
 

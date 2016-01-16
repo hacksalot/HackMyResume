@@ -16,7 +16,7 @@ Definition of the JRSResume class.
     , _ = require('underscore')
     , PATH = require('path')
     , MD = require('marked')
-    , CONVERTER = require('./convert')
+    , CONVERTER = require('fresh-jrs-converter')
     , moment = require('moment');
 
 
