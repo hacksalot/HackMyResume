@@ -18,6 +18,8 @@ Error-handling routines for HackMyResume.
     , WRAP = require('word-wrap')
     , M2C = require('../utils/md2chalk.js')
     , chalk = require('chalk')
+    , YAML = require('yamljs')
+    , printf = require('printf')
     , SyntaxErrorEx = require('../utils/syntax-error-ex');
     require('string.prototype.startswith');
 
@@ -32,10 +34,15 @@ Error-handling routines for HackMyResume.
     init: function( debug, assert ) {
       this.debug = debug;
       this.assert = assert;
+      this.msgs = require('./msg.js').errors;
       return this;
     },
 
     err: function( ex, shouldExit ) {
+
+      if( !this.msgs ) {
+        this.msgs = require('./msg.js').errors;
+      }
 
       if( ex.pass )
         throw ex;
@@ -43,7 +50,7 @@ Error-handling routines for HackMyResume.
       if( ex.fluenterror ) {
 
         // Output the error message
-        var objError = assembleError( ex );
+        var objError = assembleError.call( this, ex );
         o( this[ 'format' + (objError.warning ? 'Warning' : 'Error')](
           objError.msg
         ));
@@ -95,25 +102,20 @@ Error-handling routines for HackMyResume.
     switch( ex.fluenterror ) {
 
       case HACKMYSTATUS.themeNotFound:
-        msg =
-           chalk.bold("Couldn't find the '" + ex.data + "' theme."),
-          " Please specify the name of a preinstalled FRESH theme " +
-          "or the path to a locally installed FRESH or JSON Resume theme.";
+        msg = printf( M2C( this.msgs.themeNotFound.msg, 'yellow' ), ex.data);
         break;
 
       case HACKMYSTATUS.copyCSS:
-        msg = "Couldn't copy CSS file to destination folder.";
+        msg = M2C( this.msgs.copyCSS.msg, 'red' );
         quit = false;
         break;
 
       case HACKMYSTATUS.resumeNotFound:
-        msg = 'Please ' + chalk.bold('feed me a resume') +
-          ' in FRESH or JSON Resume format.';
+        msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
         break;
 
       case HACKMYSTATUS.missingCommand:
-        msg = "Please " +chalk.bold("give me a command") + " (";
-
+        msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
         msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
           return (idx === ar.length - 1 ? chalk.yellow('or ') : '') +
             chalk.yellow.bold(v.toUpperCase());
@@ -124,49 +126,41 @@ Error-handling routines for HackMyResume.
         break;
 
       case HACKMYSTATUS.invalidCommand:
-        msg = 'Invalid command: "'+chalk.bold(ex.attempted)+'"';
+        msg = printf( M2C( this.msgs.invalidCommand.msg, 'yellow'), ex.attempted );
         break;
 
       case HACKMYSTATUS.resumeNotFoundAlt:
-        msg = 'Please ' + chalk.bold('feed me a resume') +
-          ' in either FRESH or JSON Resume format.';
+        msg = M2C( this.msgs.resumeNotFoundAlt.msg, 'yellow' );
         break;
 
       case HACKMYSTATUS.inputOutputParity:
-        msg = 'Please ' +
-          chalk.bold('specify an output file name') +
-          ' for every input file you wish to convert.';
+        msg = M2C( this.msgs.inputOutputParity.msg );
         break;
 
       case HACKMYSTATUS.createNameMissing:
-        msg = 'Please ' +
-          chalk.bold('specify the filename of the resume') + ' to create.';
+        msg = M2C( this.msgs.createNameMissing.msg );
         break;
 
       case HACKMYSTATUS.pdfGeneration:
-        msg = chalk.bold('PDF generation failed. ') +
-          'Make sure wkhtmltopdf is installed and accessible from your path.';
+        msg = M2C( this.msgs.pdfGeneration.msg, 'bold' );
         if( ex.inner ) msg += chalk.red('\n' + ex.inner);
         withStack = true; quit = false; warn = false;
         break;
 
       case HACKMYSTATUS.invalid:
-        msg = 'Validation failed and the --assert option was ' +
-          'specified.';
+        msg = M2C( this.msgs.invalid.msg, 'red' );
         warn = false;
         break;
 
       case HACKMYSTATUS.invalidFormat:
-        ex.data.forEach(function(d){ msg +=
-          'The ' + chalk.bold(ex.theme.name.toUpperCase()) +
-          " theme doesn't support the " + chalk.bold(d.format.toUpperCase()) +
-          " format.\n";
+        ex.data.forEach(function(d){
+          msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
+            ex.theme.name.toUpperCase(), d.format.toUpperCase());
         });
         break;
 
       case HACKMYSTATUS.notOnPath:
-        msg =  ex.engine + " wasn't found on your system path or" +
-          " is inaccessible. PDF not generated.";
+        msg = printf( M2C(this.msgs.notOnPath, 'bold'), ex.engine);
         quit = false;
         warn = false;
         break;
@@ -179,8 +173,8 @@ Error-handling routines for HackMyResume.
       case HACKMYSTATUS.parseError:
         if( SyntaxErrorEx.is( ex.inner )) {
           var se = new SyntaxErrorEx( ex, ex.raw );
-          msg = 'Invalid or corrupt JSON on line ' + se.line +
-            ' column ' + se.col + '.';
+          msg = printf( M2C( this.msgs.parseError.msg, 'red' ),
+            se.line, se.col);
         }
         else {
           msg = ex;

@@ -35,7 +35,7 @@ Output routines for HackMyResume.
 
     init: function( opts ) {
       this.opts = EXTEND( true, this.opts || { }, opts );
-      this.msgs = YAML.load(PATH.join( __dirname, 'msg.yml' ));
+      this.msgs = YAML.load(PATH.join( __dirname, 'msg.yml' )).events;
     },
 
 

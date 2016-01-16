@@ -1,46 +1,76 @@
-beforeCreate:
-  msg: Creating new **%s** resume: **%s**
-beforeRead:
-  msg: Reading resume: **%s**
-beforeTheme:
-  msg: Verifying theme:    **%s**
-afterTheme:
-  msg: Verifying outputs:  ???
-beforeMerge:
-  msg:
-    - Merging **%s**
-    - " onto **%s**"
-afterMerge:
-  msg: Applying **%s** theme (%s format%s)
-afterBuild:
-  msg:
-    - "The **%s** theme says:"
-    - |
-        "For best results view JSON Resume themes over a
-        local or remote HTTP connection. For example:
+events:
+  beforeCreate:
+    msg: Creating new **%s** resume: **%s**
+  beforeRead:
+    msg: Reading resume: **%s**
+  beforeTheme:
+    msg: Verifying theme:    **%s**
+  afterTheme:
+    msg: Verifying outputs:  ???
+  beforeMerge:
+    msg:
+      - Merging **%s**
+      - " onto **%s**"
+  afterMerge:
+    msg: Applying **%s** theme (%s format%s)
+  afterBuild:
+    msg:
+      - "The **%s** theme says:"
+      - |
+          "For best results view JSON Resume themes over a
+          local or remote HTTP connection. For example:
 
-          npm install http-server -g
-          http-server <resume-folder>
+            npm install http-server -g
+            http-server <resume-folder>
 
-        For more information, see the README."
-beforeGenerate:
-  msg:
-    - " (with %s)"
-    - "Skipping %s resume: %s"
-    - "Generating **%s** resume: **%s**"
-beforeAnalyze:
-  msg: "Analyzing **%s** resume: **%s**"
-beforeConvert:
-  msg: "Converting **%s** (**%s**) to **%s** (**%s**)"
-afterValidate:
-  msg:
-    - "Validating **%s** against the **%s** schema: "
-    - "VALID!"
-    - "INVALID"
-    - "BROKEN"
-beforePeek:
-  msg:
-    - Peeking at **%s** in **%s**
-    - Peeking at **%s**
-afterPeek:
-  msg: "The specified key **%s** was not found in **%s**."
+          For more information, see the README."
+  beforeGenerate:
+    msg:
+      - " (with %s)"
+      - "Skipping %s resume: %s"
+      - "Generating **%s** resume: **%s**"
+  beforeAnalyze:
+    msg: "Analyzing **%s** resume: **%s**"
+  beforeConvert:
+    msg: "Converting **%s** (**%s**) to **%s** (**%s**)"
+  afterValidate:
+    msg:
+      - "Validating **%s** against the **%s** schema: "
+      - "VALID!"
+      - "INVALID"
+      - "BROKEN"
+  beforePeek:
+    msg:
+      - Peeking at **%s** in **%s**
+      - Peeking at **%s**
+  afterPeek:
+    msg: "The specified key **%s** was not found in **%s**."
+errors:
+  themeNotFound:
+    msg: >
+      Couldn't find the '%s' theme. Please specify the name of a preinstalled
+      FRESH theme or the path to a locally installed FRESH or JSON Resume theme.
+  copyCSS:
+    msg: Couldn't copy CSS file to destination folder.
+  resumeNotFound:
+    msg: Please **feed me a resume** in FRESH or JSON Resume format.
+  missingCommand:
+    msg: Please **give me a command**
+  invalidCommand:
+    msg: Invalid command: '%s'
+  resumeNotFoundAlt:
+    msg: Please **feed me a resume** in either FRESH or JSON Resume format.
+  inputOutputParity:
+    msg: Please **specify an output file name** for every input file you wish to convert.
+  createNameMissing:
+    msg: Please **specify the filename** of the resume to create.
+  pdfGeneration:
+    msg: PDF generation failed. Make sure wkhtmltopdf is installed and accessible from your path.
+  invalid:
+    msg: Validation failed and the --assert option was specified.
+  invalidFormat:
+    msg: The **%s** theme doesn't support the **%s** format.
+  notOnPath:
+    msg: %s wasn't found on your system path or is inaccessible. PDF not generated.
+  parseError:
+    msg: Invalid or corrupt JSON on line %s column %s.
