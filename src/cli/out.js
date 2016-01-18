@@ -100,7 +100,7 @@ Output routines for HackMyResume.
                 this.msgs.beforeMerge.msg[1] ), a.i().file
             );
           }, this);
-          L( M2C(msg, 'cyan') );
+          L( M2C(msg, 'green') );
           break;
 
         case HME.afterMerge:
@@ -148,7 +148,7 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforeAnalyze:
-          L( M2C( this.msgs.beforeAnalyze.msg, 'cyan' ), evt.fmt, evt.file);
+          L( M2C( this.msgs.beforeAnalyze.msg, 'green' ), evt.fmt, evt.file);
           break;
 
         case HME.afterAnalyze:
@@ -167,6 +167,11 @@ Output routines for HackMyResume.
           L( M2C( this.msgs.beforeConvert.msg, 'green' ),
             evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt
           );
+          break;
+
+        case HME.afterInlineConvert:
+          L( M2C( this.msgs.afterInlineConvert.msg, 'green'),
+            evt.file, evt.fmt );
           break;
 
         case HME.afterValidate:

@@ -15,8 +15,11 @@ Implementation of the 'build' verb for HackMyResume.
     , MD             = require('marked')
     , MKDIRP         = require('mkdirp')
     , EXTEND         = require('../utils/extend')
-    , HACKMYSTATUS   = require('../core/status-codes')
-    , HME            = require('../core/event-codes')
+    , HMSTATUS       = require('../core/status-codes')
+    , HMEVENT        = require('../core/event-codes')
+    , RConverter     = require('fresh-jrs-converter')
+    , RTYPES         = { FRESH: require('../core/fresh-resume'),
+                         JRS: require('../core/jrs-resume') }
     , parsePath      = require('parse-filepath')
     , _opts          = require('../core/default-options')
     , FluentTheme    = require('../core/fresh-theme')
@@ -43,9 +46,9 @@ Implementation of the 'build' verb for HackMyResume.
 
     /** Invoke the Build command. */
     invoke: function() {
-      this.stat( HME.begin, { cmd: 'build' } );
+      this.stat( HMEVENT.begin, { cmd: 'build' } );
       build.apply( this, arguments );
-      this.stat( HME.end );
+      this.stat( HMEVENT.end );
     }
 
   });
@@ -63,7 +66,7 @@ Implementation of the 'build' verb for HackMyResume.
   function build( src, dst, opts ) {
 
 
-    if( !src || !src.length ) { this.err( HACKMYSTATUS.resumeNotFound ); }
+    if( !src || !src.length ) { this.err( HMSTATUS.resumeNotFound ); }
 
     prep( src, dst, opts );
 
@@ -76,24 +79,36 @@ Implementation of the 'build' verb for HackMyResume.
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
-    this.stat( HME.beforeTheme, { theme: _opts.theme });
+    this.stat( HMEVENT.beforeTheme, { theme: _opts.theme });
     var tFolder = verifyTheme.call( this, _opts.theme );
     var theme = loadTheme( tFolder );
-    this.stat( HME.afterTheme, { theme: theme });
+    this.stat( HMEVENT.afterTheme, { theme: theme });
 
     // Check for invalid outputs
     var inv = verifyOutputs.call( this, dst, theme );
     if( inv && inv.length ) {
-      this.err( HACKMYSTATUS.invalidFormat, { data: inv, theme: theme } );
+      this.err( HMSTATUS.invalidFormat, { data: inv, theme: theme } );
     }
 
+    // Convert resume inputs as necessary
+    var toFormat = theme.render ? 'JRS' : 'FRESH';
+    sheets.forEach( function( sh, idx ) {
+      if( sh.format() !== toFormat ) {
+        this.stat( HMEVENT.beforeInlineConvert );
+        sheets[ idx ] = new (RTYPES[ toFormat ])();
+        var convJSON = RConverter[ 'to' + toFormat ]( sh );
+        sheets[ idx ].parseJSON( convJSON );
+        this.stat( HMEVENT.afterInlineConvert, { file: sh.i().file, fmt: toFormat } );
+      }
+    }, this);
+
     // Merge input resumes...
-    (sheets.length > 1) && this.stat( HME.beforeMerge, { f: _.clone(sheets) });
+    (sheets.length > 1) && this.stat( HMEVENT.beforeMerge, { f: _.clone(sheets) });
     rez = _.reduceRight( sheets, function( a, b, idx ) {
       return extend( true, b, a );
     });
     // TODO: Fix this condition
-    (sheets.length) && this.stat( HME.afterMerge, { r: rez } );
+    (sheets.length) && this.stat( HMEVENT.afterMerge, { r: rez } );
 
     // Expand output resumes...
     var targets = expand( dst, theme );
@@ -151,7 +166,7 @@ Implementation of the 'build' verb for HackMyResume.
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
-      this.stat( HME.beforeGenerate, {
+      this.stat( HMEVENT.beforeGenerate, {
         fmt: targInfo.fmt.outFormat,
         file: PATH.relative(process.cwd(), f)
       });
@@ -184,7 +199,7 @@ Implementation of the 'build' verb for HackMyResume.
       // Catch any errors caused by generating this file and don't let them
       // propagate -- typically we want to continue processing other formats
       // even if this format failed.
-      this.err( HME.generate, { inner: ex } );
+      this.err( HMEVENT.generate, { inner: ex } );
     }
   }
 
@@ -195,7 +210,7 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function verifyOutputs( targets, theme ) {
 
-    this.stat(HME.verifyOutputs, { targets: targets, theme: theme });
+    this.stat(HMEVENT.verifyOutputs, { targets: targets, theme: theme });
 
     return _.reject(
       targets.map( function( t ) {
@@ -286,7 +301,7 @@ Implementation of the 'build' verb for HackMyResume.
     if( !exists( tFolder ) ) {
       tFolder = PATH.resolve( themeNameOrPath );
       if( !exists( tFolder ) ) {
-        this.err( HACKMYSTATUS.themeNotFound, { data: _opts.theme } );
+        this.err( HMSTATUS.themeNotFound, { data: _opts.theme } );
       }
     }
     return tFolder;

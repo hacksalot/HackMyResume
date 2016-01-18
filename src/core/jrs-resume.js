@@ -39,7 +39,7 @@ Definition of the JRSResume class.
     //this.imp = { fileName: file }; <-- schema violation, tuck it into .basics
     this.basics = {
       imp: {
-        fileName: file,
+        file: file,
         raw: FS.readFileSync( file, 'utf8' )
       }
     };
@@ -91,8 +91,8 @@ Definition of the JRSResume class.
   Save the sheet to disk (for environments that have disk access).
   */
   JRSResume.prototype.save = function( filename ) {
-    this.basics.imp.fileName = filename || this.basics.imp.fileName;
-    FS.writeFileSync(this.basics.imp.fileName, this.stringify( this ), 'utf8');
+    this.basics.imp.file = filename || this.basics.imp.file;
+    FS.writeFileSync(this.basics.imp.file, this.stringify( this ), 'utf8');
     return this;
   };
 
@@ -104,8 +104,8 @@ Definition of the JRSResume class.
   JRSResume.prototype.saveAs = function( filename, format ) {
 
     if( format === 'JRS' ) {
-      this.basics.imp.fileName = filename || this.imp.fileName;
-      FS.writeFileSync( this.basics.imp.fileName, this.stringify(), 'utf8' );
+      this.basics.imp.file = filename || this.basics.imp.file;
+      FS.writeFileSync( this.basics.imp.file, this.stringify(), 'utf8' );
     }
     else {
       var newRep = CONVERTER.toFRESH( this );
@@ -171,8 +171,9 @@ Definition of the JRSResume class.
   so tuck this into the .basic sub-object.
   */
   JRSResume.prototype.i = function() {
-    this.basics = this.basics || { imp: { } };
-    return this.basics;
+    this.basics = this.basics || { };
+    this.basics.imp = this.basics.imp || { };
+    return this.basics.imp;
   };
 
 

@@ -13,9 +13,9 @@ Implementation of the 'convert' verb for HackMyResume.
   var ResumeFactory = require('../core/resume-factory')
     , chalk = require('chalk')
     , Verb = require('../verbs/verb')
-    , HACKMYSTATUS = require('../core/status-codes')
+    , HMSTATUS = require('../core/status-codes')
     , _ = require('underscore')
-    , HME = require('../core/event-codes');
+    , HMEVENT = require('../core/event-codes');
 
 
   var ConvertVerb = module.exports = Verb.extend({
@@ -25,7 +25,9 @@ Implementation of the 'convert' verb for HackMyResume.
     },
 
     invoke: function() {
+      this.stat( HMEVENT.begin, { cmd: 'convert' });
       convert.apply( this, arguments );
+      this.stat( HMEVENT.end );
     }
 
   });
@@ -41,17 +43,17 @@ Implementation of the 'convert' verb for HackMyResume.
     if( !srcs || !srcs.length ) { throw { fluenterror: 6 }; }
     if( !dst || !dst.length ) {
       if( srcs.length === 1 ) {
-        throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+        throw { fluenterror: HMSTATUS.inputOutputParity };
       }
       else if( srcs.length === 2 ) {
         dst = dst || []; dst.push( srcs.pop() );
       }
       else {
-        throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+        throw { fluenterror: HMSTATUS.inputOutputParity };
       }
     }
     if(srcs && dst && srcs.length && dst.length && srcs.length !== dst.length){
-      throw { fluenterror: HACKMYSTATUS.inputOutputParity };
+      throw { fluenterror: HMSTATUS.inputOutputParity };
     }
 
     // Load source resumes
@@ -67,7 +69,7 @@ Implementation of the 'convert' verb for HackMyResume.
           'JRS' : 'FRESH'
         , targetFormat = srcFmt === 'JRS' ? 'FRESH' : 'JRS';
 
-      this.stat(HME.beforeConvert, { srcFile: rinfo.file, srcFmt: srcFmt, dstFile: dst[idx], dstFmt: targetFormat });
+      this.stat(HMEVENT.beforeConvert, { srcFile: rinfo.file, srcFmt: srcFmt, dstFile: dst[idx], dstFmt: targetFormat });
 
       // Save it to the destination format
       s.saveAs( dst[idx], targetFormat );

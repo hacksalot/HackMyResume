@@ -15,8 +15,8 @@ Implementation of the 'create' verb for HackMyResume.
     , chalk = require('chalk')
     , Verb = require('../verbs/verb')
     , _ = require('underscore')
-    , HACKMYSTATUS = require('../core/status-codes')
-    , HME = require('../core/event-codes');
+    , HMSTATUS = require('../core/status-codes')
+    , HMEVENT = require('../core/event-codes');
 
 
 
@@ -27,7 +27,9 @@ Implementation of the 'create' verb for HackMyResume.
     },
 
     invoke: function() {
+      this.stat( HMEVENT.begin, { cmd: 'create' });
       create.apply( this, arguments );
+      this.stat( HMEVENT.begin, { cmd: 'convert' });
     }
 
   });
@@ -39,19 +41,17 @@ Implementation of the 'create' verb for HackMyResume.
   */
   function create( src, dst, opts ) {
 
-    if(!src || !src.length) throw {fluenterror: HACKMYSTATUS.createNameMissing};
-    this.stat( HME.begin );
+    if(!src || !src.length) throw {fluenterror: HMSTATUS.createNameMissing};
 
     _.each( src, function( t ) {
       var safeFmt = opts.format.toUpperCase();
-      this.stat( HME.beforeCreate, { fmt: safeFmt, file: t } );
+      this.stat( HMEVENT.beforeCreate, { fmt: safeFmt, file: t } );
       MKDIRP.sync( PATH.dirname( t ) ); // Ensure dest folder exists;
       var RezClass = require('../core/' + safeFmt.toLowerCase() + '-resume' );
       RezClass.default().save(t);
-      this.stat( HME.afterCreate, { fmt: safeFmt, file: t } );
+      this.stat( HMEVENT.afterCreate, { fmt: safeFmt, file: t } );
     }, this);
 
-    this.stat( HME.end );
   }
 
 

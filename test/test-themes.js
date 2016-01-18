@@ -32,18 +32,16 @@ function genThemes( title, src, fmt ) {
             format: fmt,
             prettify: true,
             silent: false,
-            css: 'embed'
+            css: 'embed',
+            debug: true
           };
           try {
             var v = new HMR.verbs.build();
-            v.invoke( src, dst, opts, function(msg) {
-              msg = msg || '';
-              console.log(msg);
-            });
+            v.invoke( src, dst, opts );
           }
           catch(ex) {
-            console.log(ex);
-            console.log(ex.stack);
+            console.error( ex );
+            console.error( ex.stack );
             throw ex;
           }
         }
@@ -70,7 +68,7 @@ function folderContains( needle, haystack ) {
   return _.some( READFILES( path.join(__dirname, haystack) ), function( absPath ) {
     if( FS.lstatSync( absPath ).isFile() ) {
       if( fileContains( absPath, needle ) ) {
-        console.log('Found invalid metadata in ' + absPath);
+        console.error('Found invalid metadata in ' + absPath);
         return true;
       }
     }

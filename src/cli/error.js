@@ -10,7 +10,7 @@ Error-handling routines for HackMyResume.
 
 
 
-  var HACKMYSTATUS = require('../core/status-codes')
+  var HMSTATUS = require('../core/status-codes')
     , PKG = require('../../package.json')
     , FS = require('fs')
     , FCMD = require('../hackmyapi')
@@ -31,14 +31,17 @@ Error-handling routines for HackMyResume.
   */
   var ErrorHandler = module.exports = {
 
-    init: function( debug, assert ) {
+    init: function( debug, assert, silent ) {
       this.debug = debug;
       this.assert = assert;
+      this.silent = silent;
       this.msgs = require('./msg.js').errors;
       return this;
     },
 
     err: function( ex, shouldExit ) {
+
+      var o = this.silent ? function() { } : _defaultLog;
 
       if( !this.msgs ) {
         this.msgs = require('./msg.js').errors;
@@ -91,9 +94,9 @@ Error-handling routines for HackMyResume.
   };
 
 
-  var o = function() {
+  function _defaultLog() {
     console.log.apply( console.log, arguments );
-  };
+  }
 
   function assembleError( ex ) {
 
@@ -101,20 +104,20 @@ Error-handling routines for HackMyResume.
 
     switch( ex.fluenterror ) {
 
-      case HACKMYSTATUS.themeNotFound:
+      case HMSTATUS.themeNotFound:
         msg = printf( M2C( this.msgs.themeNotFound.msg, 'yellow' ), ex.data);
         break;
 
-      case HACKMYSTATUS.copyCSS:
+      case HMSTATUS.copyCSS:
         msg = M2C( this.msgs.copyCSS.msg, 'red' );
         quit = false;
         break;
 
-      case HACKMYSTATUS.resumeNotFound:
+      case HMSTATUS.resumeNotFound:
         msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
         break;
 
-      case HACKMYSTATUS.missingCommand:
+      case HMSTATUS.missingCommand:
         msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
         msg += Object.keys( FCMD.verbs ).map( function(v, idx, ar) {
           return (idx === ar.length - 1 ? chalk.yellow('or ') : '') +
@@ -125,53 +128,53 @@ Error-handling routines for HackMyResume.
           PATH.resolve(__dirname, '../cli/use.txt'), 'utf8' ));
         break;
 
-      case HACKMYSTATUS.invalidCommand:
+      case HMSTATUS.invalidCommand:
         msg = printf( M2C( this.msgs.invalidCommand.msg, 'yellow'), ex.attempted );
         break;
 
-      case HACKMYSTATUS.resumeNotFoundAlt:
+      case HMSTATUS.resumeNotFoundAlt:
         msg = M2C( this.msgs.resumeNotFoundAlt.msg, 'yellow' );
         break;
 
-      case HACKMYSTATUS.inputOutputParity:
+      case HMSTATUS.inputOutputParity:
         msg = M2C( this.msgs.inputOutputParity.msg );
         break;
 
-      case HACKMYSTATUS.createNameMissing:
+      case HMSTATUS.createNameMissing:
         msg = M2C( this.msgs.createNameMissing.msg );
         break;
 
-      case HACKMYSTATUS.pdfGeneration:
+      case HMSTATUS.pdfGeneration:
         msg = M2C( this.msgs.pdfGeneration.msg, 'bold' );
         if( ex.inner ) msg += chalk.red('\n' + ex.inner);
         withStack = true; quit = false; warn = false;
         break;
 
-      case HACKMYSTATUS.invalid:
+      case HMSTATUS.invalid:
         msg = M2C( this.msgs.invalid.msg, 'red' );
         warn = false;
         break;
 
-      case HACKMYSTATUS.invalidFormat:
+      case HMSTATUS.invalidFormat:
         ex.data.forEach(function(d){
           msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
             ex.theme.name.toUpperCase(), d.format.toUpperCase());
         }, this);
         break;
 
-      case HACKMYSTATUS.notOnPath:
+      case HMSTATUS.notOnPath:
         msg = printf( M2C(this.msgs.notOnPath.msg, 'bold'), ex.engine);
         quit = false;
         warn = false;
         break;
 
-      case HACKMYSTATUS.readError:
+      case HMSTATUS.readError:
         console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
         msg = ex.inner.toString();
         warn = false;
         break;
 
-      case HACKMYSTATUS.parseError:
+      case HMSTATUS.parseError:
         if( SyntaxErrorEx.is( ex.inner )) {
           var se = new SyntaxErrorEx( ex, ex.raw );
           msg = printf( M2C( this.msgs.parseError.msg, 'red' ),

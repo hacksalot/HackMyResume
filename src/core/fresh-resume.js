@@ -41,7 +41,7 @@ Definition of the FRESHResume class.
   FreshResume.prototype.open = function( file, opts ) {
     var raw = FS.readFileSync( file, 'utf8' );
     var ret = this.parse( raw, opts );
-    this.imp.fileName = file;
+    this.imp.file = file;
     return ret;
   };
 
@@ -100,8 +100,8 @@ Definition of the FRESHResume class.
   Save the sheet to disk (for environments that have disk access).
   */
   FreshResume.prototype.save = function( filename ) {
-    this.imp.fileName = filename || this.imp.fileName;
-    FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
+    this.imp.file = filename || this.imp.file;
+    FS.writeFileSync( this.imp.file, this.stringify(), 'utf8' );
     return this;
   };
 
@@ -113,8 +113,8 @@ Definition of the FRESHResume class.
   FreshResume.prototype.saveAs = function( filename, format ) {
 
     if( format !== 'JRS' ) {
-      this.imp.fileName = filename || this.imp.fileName;
-      FS.writeFileSync( this.imp.fileName, this.stringify(), 'utf8' );
+      this.imp.file = filename || this.imp.file;
+      FS.writeFileSync( this.imp.file, this.stringify(), 'utf8' );
     }
     else {
       var newRep = CONVERTER.toJRS( this );

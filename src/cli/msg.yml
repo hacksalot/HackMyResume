@@ -47,10 +47,12 @@ events:
       - Peeking at **%s**
   afterPeek:
     msg: "The specified key **%s** was not found in **%s**."
+  afterInlineConvert:
+    msg: Converting **%s** to **%s** format.
 errors:
   themeNotFound:
     msg: >
-      Couldn't find the '%s' theme. Please specify the name of a preinstalled
+      **Couldn't find the '%s' theme.** Please specify the name of a preinstalled
       FRESH theme or the path to a locally installed FRESH or JSON Resume theme.
   copyCSS:
     msg: Couldn't copy CSS file to destination folder.

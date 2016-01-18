@@ -34,7 +34,9 @@ Event code definitions.
     beforeParse:      18,
     afterParse:       19,
     beforePeek:       20,
-    afterPeek:        21
+    afterPeek:        21,
+    beforeInlineConvert: 22,
+    afterInlineConvert: 23
   };
 
 

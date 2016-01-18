@@ -12,7 +12,7 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   var MKDIRP = require('mkdirp')
     , PATH = require('path')
-    , HME = require('../core/event-codes')
+    , HMEVENT = require('../core/event-codes')
     , HMSTATUS = require('../core/status-codes')
     , _ = require('underscore')
     , ResumeFactory = require('../core/resume-factory')
@@ -28,7 +28,9 @@ Implementation of the 'analyze' verb for HackMyResume.
     },
 
     invoke: function() {
+      this.stat( HMEVENT.begin, { cmd: 'analyze' });
       analyze.apply( this, arguments );
+      this.stat( HMEVENT.end );
     }
 
   });
@@ -39,7 +41,6 @@ Implementation of the 'analyze' verb for HackMyResume.
   Run the 'analyze' command.
   */
   function analyze( sources, dst, opts ) {
-    this.stat('begin');
     if( !sources || !sources.length )
       throw { fluenterror: HMSTATUS.resumeNotFound };
 
@@ -52,7 +53,6 @@ Implementation of the 'analyze' verb for HackMyResume.
       result.fluenterror || _analyze.call(this, result, nlzrs, opts );
     }, this);
 
-    this.stat('end');
   }
 
 
@@ -66,11 +66,11 @@ Implementation of the 'analyze' verb for HackMyResume.
       (rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH')) ?
       'FRESH' : 'JRS';
 
-    this.stat( HME.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file });
+    this.stat( HMEVENT.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file });
     var info = _.mapObject( nlzrs, function(val, key) {
       return val.run( resumeObject.rez );
     });
-    this.stat( HME.afterAnalyze, { info: info } );
+    this.stat( HMEVENT.afterAnalyze, { info: info } );
   }
 
 

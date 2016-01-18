@@ -26,7 +26,9 @@ Implementation of the 'peek' verb for HackMyResume.
     },
 
     invoke: function() {
+      this.stat( HMEVENT.begin, { cmd: 'peek' } );
       peek.apply( this, arguments );
+      this.stat( HMEVENT.end );
     }
 
   });
@@ -39,7 +41,6 @@ Implementation of the 'peek' verb for HackMyResume.
   function peek( src, dst, opts ) {
 
     if(!src || !src.length) throw {fluenterror: HMSTATUS.resumeNotFound};
-    this.stat( HMEVENT.begin );
 
     var objPath = (dst && dst[0]) || '';
 
@@ -55,7 +56,6 @@ Implementation of the 'peek' verb for HackMyResume.
       this.stat( HMEVENT.afterPeek, { file: t, requested: objPath, target: targ } );
     }, this);
 
-    this.stat( HMEVENT.end );
   }
 
 

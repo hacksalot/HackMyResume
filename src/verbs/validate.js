@@ -11,8 +11,8 @@ Implementation of the 'validate' verb for HackMyResume.
   var SyntaxErrorEx = require('../utils/syntax-error-ex');
   var chalk = require('chalk');
   var Verb = require('../verbs/verb');
-  var HACKMYSTATUS = require('../core/status-codes');
-  var HME = require('../core/event-codes');
+  var HMSTATUS = require('../core/status-codes');
+  var HMEVENT = require('../core/event-codes');
   var _ = require('underscore');
 
 
@@ -24,7 +24,9 @@ Implementation of the 'validate' verb for HackMyResume.
     },
 
     invoke: function() {
+      this.stat( HMEVENT.begin, { cmd: 'validate' } );
       validate.apply( this, arguments );
+      this.stat( HMEVENT.end );
     }
 
   });
@@ -81,11 +83,11 @@ Implementation of the 'validate' verb for HackMyResume.
         return ret;
       }
 
-      this.stat(HME.afterValidate, { file: src.file, isValid: isValid,
+      this.stat(HMEVENT.afterValidate, { file: src.file, isValid: isValid,
         fmt: fmt.replace('jars', 'JSON Resume'), errors: errors });
 
       if( opts.assert && !isValid ) {
-        throw { fluenterror: HACKMYSTATUS.invalid, shouldExit: true };
+        throw { fluenterror: HMSTATUS.invalid, shouldExit: true };
       }
 
       return ret;

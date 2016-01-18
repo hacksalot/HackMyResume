@@ -131,9 +131,9 @@ Definition of the `main` function.
   /** Massage command-line args and setup Commander.js. */
   function initialize( ar ) {
 
-    logMsg( _title );
-
     var o = initOptions( ar );
+
+    o.silent || logMsg( _title );
 
     // Emit debug prelude if --debug was specified
     if( o.debug ) {
@@ -213,8 +213,14 @@ Definition of the `main` function.
       return v === '-d' || v === '--debug';
     });
 
+    // Grab the --silent flag
+    var isSilent = _.some( args, function(v) {
+      return v === '-s' || v === '--silent';
+    });
+
     return {
       debug: isDebug,
+      silent: isSilent,
       orgVerb: oVerb,
       verb: verb,
       json: oJSON,
@@ -229,7 +235,7 @@ Definition of the `main` function.
 
     loadOptions.call( this, opts, this.parent.jsonArgs );
     var hand = require( './error' );
-    hand.init( _opts.debug, _opts.assert );
+    hand.init( _opts.debug, _opts.assert, _opts.silent );
     var v = new HMR.verbs[ this.name() ]();
     _out.init( _opts );
     v.on( 'hmr:status', function() { _out.do.apply( _out, arguments ); });
@@ -271,7 +277,7 @@ Definition of the `main` function.
       logMsg(chalk.cyan('OPTIONS:') + '\n');
       _.each(o, function(val, key) {
         logMsg(chalk.cyan('  %s') + chalk.cyan.bold(' %s'),
-          PAD(key,17,null,PAD.RIGHT), val);
+          PAD(key,22,null,PAD.RIGHT), val);
       });
       logMsg('');
     }
