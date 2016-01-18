@@ -68,7 +68,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     // Load input resumes as JSON...
     var sheetObjects = ResumeFactory.load(src, {
-      format: null, objectify: false, throw: true, inner: { sort: _opts.sort }
+      format: null, objectify: false, quit: true, inner: { sort: _opts.sort }
     }, this);
 
     var sheets = sheetObjects.map(function(r) { return r.json; });
