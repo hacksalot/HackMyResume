@@ -10,26 +10,23 @@ Implementation of the 'build' verb for HackMyResume.
 
 
 
-  var PATH           = require('path')
+  var _              = require('underscore')
+    , PATH           = require('path')
     , FS             = require('fs')
     , MD             = require('marked')
     , MKDIRP         = require('mkdirp')
-    , EXTEND         = require('../utils/extend')
+    , extend         = require('extend')
+    , parsePath      = require('parse-filepath')
+    , RConverter     = require('fresh-jrs-converter')
     , HMSTATUS       = require('../core/status-codes')
     , HMEVENT        = require('../core/event-codes')
-    , RConverter     = require('fresh-jrs-converter')
     , RTYPES         = { FRESH: require('../core/fresh-resume'),
                          JRS: require('../core/jrs-resume') }
-    , parsePath      = require('parse-filepath')
     , _opts          = require('../core/default-options')
-    , FluentTheme    = require('../core/fresh-theme')
+    , FRESHTheme     = require('../core/fresh-theme')
     , JRSTheme       = require('../core/jrs-theme')
     , ResumeFactory  = require('../core/resume-factory')
-    , _              = require('underscore')
     , _fmts          = require('../core/default-formats')
-    , extend         = require('../utils/extend')
-    , chalk          = require('chalk')
-    , pad            = require('string-padding')
     , Verb           = require('../verbs/verb');
 
   var _err, _log, _rezObj;
@@ -346,7 +343,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     // Create a FRESH or JRS theme object
     var theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ?
-      new JRSTheme().open(tFolder) : new FluentTheme().open( tFolder );
+      new JRSTheme().open(tFolder) : new FRESHTheme().open( tFolder );
 
     // Cache the theme object
     _opts.themeObj = theTheme;

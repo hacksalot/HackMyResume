@@ -16,7 +16,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
     , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
     , BaseGenerator = require( './base-generator' )
-    , EXTEND = require('../utils/extend')
+    , EXTEND = require('extend')
     , FRESHTheme = require('../core/fresh-theme')
     , JRSTheme = require('../core/jrs-theme');
 

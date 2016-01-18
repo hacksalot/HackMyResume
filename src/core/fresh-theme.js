@@ -9,13 +9,12 @@ Definition of the FRESHTheme class.
 
 
   var FS = require('fs')
-    , extend = require('../utils/extend')
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')
     , parsePath = require('parse-filepath')
     , pathExists = require('path-exists').sync
-    , EXTEND = require('../utils/extend')
+    , EXTEND = require('extend')
     , moment = require('moment')
     , READFILES = require('recursive-readdir-sync');
 

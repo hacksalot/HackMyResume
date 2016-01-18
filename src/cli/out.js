@@ -18,7 +18,7 @@ Output routines for HackMyResume.
     , PATH = require('path')
     , LO = require('lodash')
     , FS = require('fs')
-    , EXTEND = require('../utils/extend')
+    , EXTEND = require('extend')
     , HANDLEBARS = require('handlebars')
     , YAML = require('yamljs')
     , printf = require('printf')

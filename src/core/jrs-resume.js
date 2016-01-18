@@ -11,7 +11,7 @@ Definition of the JRSResume class.
 
 
   var FS = require('fs')
-    , extend = require('../utils/extend')
+    , extend = require('extend')
     , validator = require('is-my-json-valid')
     , _ = require('underscore')
     , PATH = require('path')

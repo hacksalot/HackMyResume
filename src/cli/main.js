@@ -13,7 +13,7 @@ Definition of the `main` function.
   var HMR  = require( '../hackmyapi')
     , PKG = require('../../package.json')
     , FS = require('fs')
-    , EXTEND = require('../utils/extend')
+    , EXTEND = require('extend')
     , chalk = require('chalk')
     , PATH = require('path')
     , HACKMYSTATUS = require('../core/status-codes')
