@@ -32,7 +32,7 @@ Definition of the HandlebarsGenerator class.
     generate: function( json, jst, format, cssInfo, opts, theme ) {
 
       registerPartials( format, theme );
-      registerHelpers( theme );
+      registerHelpers( theme, opts );
 
       // Preprocess text
       var encData = json;
@@ -41,7 +41,7 @@ Definition of the HandlebarsGenerator class.
 
       // Compile and run the Handlebars template.
       var template = HANDLEBARS.compile(jst, { strict: false, assumeObjects: false });
-      return template({
+      return template({ // TODO: Clean
         r: encData,
         RAW: json,
         filt: opts.filters,

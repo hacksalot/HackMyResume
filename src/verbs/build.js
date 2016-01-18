@@ -157,6 +157,8 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function single( targInfo, theme, finished ) {
 
+    var ret, ex;
+
     try {
       if( !targInfo.fmt ) {
         return;
@@ -178,29 +180,42 @@ Implementation of the 'build' verb for HackMyResume.
           function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
         MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
         _opts.targets = finished;
-        return theFormat.gen.generate( rez, f, _opts );
+        _opts.errHandler = this;
+        ret = theFormat.gen.generate( rez, f, _opts );
       }
-
       //Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
       // gets "for free".
       else {
-
         theFormat = _fmts.filter( function(fmt) {
           return fmt.name === targInfo.fmt.outFormat;
         })[0];
-
         var outFolder = PATH.dirname( f );
         MKDIRP.sync( outFolder ); // Ensure dest folder exists;
-
-        return theFormat.gen.generate( rez, f, _opts );
+        _opts.errHandler = this;
+        ret = theFormat.gen.generate( rez, f, _opts );
       }
     }
-    catch( ex ) {
+    catch( e ) {
       // Catch any errors caused by generating this file and don't let them
       // propagate -- typically we want to continue processing other formats
       // even if this format failed.
-      this.err( HMEVENT.generate, { inner: ex } );
+      ex = e;
     }
+
+    this.stat( HMEVENT.afterGenerate, {
+      fmt: targInfo.fmt.outFormat,
+      file: PATH.relative( process.cwd(), f ),
+      error: ex
+    });
+
+    if( ex ) {
+      if( ex.fluenterror )
+        this.err( ex.fluenterror, ex );
+      else
+        this.err( HMSTATUS.generateError, { inner: ex } );
+    }
+
+    return ret;
   }
 
 

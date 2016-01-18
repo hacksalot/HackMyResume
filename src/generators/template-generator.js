@@ -15,6 +15,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
     , PATH = require('path')
     , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
+    , HMSTATUS = require('../core/status-codes')
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
     , FRESHTheme = require('../core/fresh-theme')
@@ -171,7 +172,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
           }
           catch( ex ) {
             that.stat( HME.error, ex.fluenterrror ||
-              { fluenterror: HACKMYSTATUS.fileSaveError, inner: ex } );
+              { fluenterror: HMSTATUS.fileSaveError, inner: ex } );
           }
         }
         else if( file.info.action === null/* && theme.explicit*/ ) {
@@ -182,7 +183,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
           }
           catch( ex ) {
             that.stat( HME.error, ex.fluenterrror ||
-              { fluenterror: HACKMYSTATUS.fileSaveError, inner: ex } );
+              { fluenterror: HMSTATUS.fileSaveError, inner: ex } );
           }
         }
       });
@@ -276,13 +277,19 @@ Definition of the TemplateGenerator class. TODO: Refactor
         file: tplInfo.css ? tplInfo.cssPath : null,
         data: tplInfo.css || null
       };
-
       return this.single( rez, tplInfo.data, this.format, cssInfo, this.opts,
         theme );
     }
     catch(ex) {
-      that.stat( HME.error, ex.fluenterrror ||
-        { fluenterror: HACKMYSTATUS.generateError, inner: ex } );
+      if( ex.fluenterror )
+        throw ex;
+      else {
+        console.log('Ballyhoo');
+        console.log(ex.stack);
+        throw {
+          fluenterror: HMSTATUS.generateError, inner: ex
+        };
+      }
     }
   }
 

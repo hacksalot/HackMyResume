@@ -1,7 +1,7 @@
 /**
 Generic template helper definitions for HackMyResume / FluentCV.
 @license MIT. See LICENSE.md for details.
-@module generic-helpers.js
+@module helpers/generic-helpers
 */
 
 
@@ -10,6 +10,8 @@ Generic template helper definitions for HackMyResume / FluentCV.
   var MD = require('marked')
     , H2W = require('../utils/html-to-wpml')
     , XML = require('xml-escape')
+    , FluentDate = require('../core/fluent-date')
+    , HMSTATUS = require('../core/status-codes')
     , moment = require('moment')
     , LO = require('lodash')
     , _ = require('underscore')
@@ -23,7 +25,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
 
     /**
     Convert the input date to a specified format through Moment.js.
-    If date is invalid, will return the time provided by the user, 
+    If date is invalid, will return the time provided by the user,
     or default to the fallback param or 'Present' if that is set to true
     @method formatDate
     */
@@ -37,23 +39,21 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Format a from/to date range.
+    Given a resume sub-object with a start/end date, format a representation of
+    the date range.
     @method dateRange
     */
-    dateRange: function( obj, fmt, sep, options ) {
-      fmt = (fmt && String.is(fmt) && fmt) || 'YYYY-MM';
-      sep = (sep && String.is(sep) && sep) || ' — ';
-      if( obj.safe ) {
-        var dateA = (obj.safe.start && obj.safe.start.format(fmt)) || '';
-        var dateB = (obj.safe.end && obj.safe.end.format(fmt)) || '';
-        if( obj.safe.start && obj.safe.end ) {
-          return dateA + sep + dateB ;
-        }
-        else if( obj.safe.start || obj.safe.end ) {
-          return dateA || dateB;
-        }
-      }
-      return '';
+    dateRange: function( obj, fmt, sep, fallback, options ) {
+      if( !obj ) return '';
+      return _fromTo( obj.start, obj.end, fmt, sep, fallback, options );
+    },
+
+    /**
+    Format a from/to date range for display.
+    @method toFrom
+    */
+    fromTo: function() {
+      return _fromTo.apply( this, arguments );
     },
 
     /**
@@ -261,6 +261,65 @@ Generic template helper definitions for HackMyResume / FluentCV.
     }
 
   };
+
+
+  /**
+  Report an error to the outside world without throwing an exception. Currently
+  relies on kludging the running verb into. opts.
+  */
+  function _reportError( code, params ) {
+    GenericHelpers.opts.errHandler.err( code, params );
+  }
+
+  /**
+  Format a from/to date range for display.
+  */
+  function _fromTo( dateA, dateB, fmt, sep, fallback ) {
+
+    // Prevent accidental use of safe.start, safe.end, safe.date
+    // The dateRange helper is for raw dates only
+    if( moment.isMoment( dateA ) || moment.isMoment( dateB ) ) {
+      _reportError( HMSTATUS.invalidHelperUse, { helper: 'dateRange' } )
+      return '';
+    }
+
+    var dateFrom, dateTo, dateTemp;
+
+    // Check for 'current', 'present', 'now', '', null, and undefined
+    dateA = dateA || '';
+    dateB = dateB || '';
+    var dateATrim = dateA.trim().toLowerCase();
+    var dateBTrim = dateB.trim().toLowerCase();
+    var reserved = ['current','present','now', ''];
+
+    fmt = (fmt && String.is(fmt) && fmt) || 'YYYY-MM';
+    sep = (sep && String.is(sep) && sep) || ' — ';
+
+    if( _.contains( reserved, dateATrim )) {
+      dateFrom = fallback || '???';
+    }
+    else {
+      dateTemp = FluentDate.fmt( dateA );
+      dateFrom = dateTemp.format( fmt );
+    }
+
+    if( _.contains( reserved, dateBTrim )) {
+      dateTo = fallback || 'Current';
+    }
+    else {
+      dateTemp = FluentDate.fmt( dateB );
+      dateTo = dateTemp.format( fmt );
+    }
+
+    if( dateFrom && dateTo ) {
+      return dateFrom + sep + dateTo;
+    }
+    else if( dateFrom || dateTo ) {
+      return dateFrom || dateTo;
+    }
+
+    return '';
+  }
 
   function skillLevelToIndex( lvl ) {
     var idx = 0;

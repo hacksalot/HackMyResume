@@ -24,7 +24,8 @@ Status codes for HackMyResume.
     readError: 14,
     parseError: 15,
     fileSaveError: 16,
-    generateError: 17
+    generateError: 17,
+    invalidHelperUse: 18
   };
 
 }());

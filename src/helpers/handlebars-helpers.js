@@ -15,9 +15,10 @@ Template helper definitions for Handlebars.
   Register useful Handlebars helpers.
   @method registerHelpers
   */
-  module.exports = function( theme ) {
+  module.exports = function( theme, opts ) {
 
     helpers.theme = theme;
+    helpers.opts = opts;
     HANDLEBARS.registerHelper( helpers );
 
   };

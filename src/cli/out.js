@@ -127,22 +127,22 @@ Output routines for HackMyResume.
           }
           break;
 
-        case HME.beforeGenerate:
+        case HME.afterGenerate:
           var suffix = '';
           if( evt.fmt === 'pdf' ) {
             if( this.opts.pdf ) {
               if( this.opts.pdf !== 'none' ) {
-                suffix = printf( M2C( this.msgs.beforeGenerate.msg[0], 'green' ), this.opts.pdf );
+                suffix = printf( M2C( this.msgs.afterGenerate.msg[0], evt.error ? 'red' : 'green' ), this.opts.pdf );
               }
               else {
-                L( M2C( this.msgs.beforeGenerate.msg[1], 'gray' ),
+                L( M2C( this.msgs.afterGenerate.msg[1], 'gray' ),
                   evt.fmt.toUpperCase(), evt.file );
                 return;
               }
             }
           }
 
-          L( M2C( this.msgs.beforeGenerate.msg[2] + suffix, 'green' ),
+          L( M2C( this.msgs.afterGenerate.msg[2] + suffix, evt.error ? 'red' : 'green' ),
               pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT),
               PATH.relative(process.cwd(), evt.file ));
           break;

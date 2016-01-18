@@ -26,7 +26,7 @@ events:
             http-server <resume-folder>
 
           For more information, see the README."
-  beforeGenerate:
+  afterGenerate:
     msg:
       - " (with %s)"
       - "Skipping %s resume: %s"
@@ -80,3 +80,5 @@ errors:
     msg: Reading **???** resume: **%s**
   parseError:
     msg: Invalid or corrupt JSON on line %s column %s.
+  invalidHelperUse:
+    msg: Invalid use of the **%s** theme helper.

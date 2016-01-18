@@ -155,11 +155,21 @@ Error-handling routines for HackMyResume.
         warn = false;
         break;
 
+      case HMSTATUS.generateError:
+        console.log(ex);
+        break;
+
       case HMSTATUS.invalidFormat:
         ex.data.forEach(function(d){
           msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
             ex.theme.name.toUpperCase(), d.format.toUpperCase());
         }, this);
+        break;
+
+      case HMSTATUS.invalidHelperUse:
+        msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
+        quit = false;
+        warn = true;
         break;
 
       case HMSTATUS.notOnPath:
