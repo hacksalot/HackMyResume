@@ -1,6 +1,6 @@
 /**
 Implementation of the 'analyze' verb for HackMyResume.
-@module create.js
+@module verbs/analyze
 @license MIT. See LICENSE.md for details.
 */
 

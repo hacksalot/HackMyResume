@@ -32,8 +32,8 @@ Definition of the ResumeFactory class.
     /**
     Load one or more resumes from disk.
 
-    @param opts An options object with settings for the factory as well as
-    passthrough settings for FRESHResume or JRSResume. Structure:
+    @param {Object} opts An options object with settings for the factory as well
+    as passthrough settings for FRESHResume or JRSResume. Structure:
 
         {
           format: 'FRESH',    // Format to open as. ('FRESH', 'JRS', null)
@@ -107,12 +107,15 @@ Definition of the ResumeFactory class.
       // Read the file
       eve && eve.stat( HME.beforeRead, { file: fileName });
       rawData = FS.readFileSync( fileName, 'utf8' );
-      eve && eve.stat( HME.afterRead, { data: rawData });
+      eve && eve.stat( HME.afterRead, { file: fileName, data: rawData });
 
       // Parse the file
       eve && eve.stat( HME.beforeParse, { data: rawData });
       var ret = { json: JSON.parse( rawData ) };
-      eve && eve.stat( HME.afterParse, { data: ret.json } );
+      var orgFormat = ( ret.json.meta && ret.json.meta.format &&
+                        ret.json.meta.format.startsWith('FRESH@') ) ?
+                        'fresh' : 'jrs';
+      eve && eve.stat( HME.afterParse, { file: fileName, data: ret.json, fmt: orgFormat } );
 
       return ret;
     }

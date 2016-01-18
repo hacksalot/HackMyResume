@@ -156,16 +156,17 @@ Error-handling routines for HackMyResume.
         ex.data.forEach(function(d){
           msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
             ex.theme.name.toUpperCase(), d.format.toUpperCase());
-        });
+        }, this);
         break;
 
       case HACKMYSTATUS.notOnPath:
-        msg = printf( M2C(this.msgs.notOnPath, 'bold'), ex.engine);
+        msg = printf( M2C(this.msgs.notOnPath.msg, 'bold'), ex.engine);
         quit = false;
         warn = false;
         break;
 
       case HACKMYSTATUS.readError:
+        console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
         msg = ex.inner.toString();
         warn = false;
         break;

@@ -1,6 +1,6 @@
 /**
 Implementation of the 'peek' verb for HackMyResume.
-@module peek.js
+@module verbs/peek
 @license MIT. See LICENSE.md for details.
 */
 

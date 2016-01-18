@@ -1,6 +1,6 @@
 /**
 Implementation of the 'validate' verb for HackMyResume.
-@module validate.js
+@module verbs/validate
 @license MIT. See LICENSE.md for details.
 */
 

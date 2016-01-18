@@ -1,6 +1,6 @@
 /**
 Definition of the Verb class.
-@module verb.js
+@module verbs/verb
 @license MIT. See LICENSE.md for details.
 */
 

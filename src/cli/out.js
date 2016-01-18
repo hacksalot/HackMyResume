@@ -22,7 +22,8 @@ Output routines for HackMyResume.
     , HANDLEBARS = require('handlebars')
     , YAML = require('yamljs')
     , printf = require('printf')
-    , pad = require('string-padding');
+    , pad = require('string-padding')
+    , dbgStyle = 'cyan';
 
 
 
@@ -58,8 +59,12 @@ Output routines for HackMyResume.
 
       switch( evt.sub ) {
 
+        case HME.begin:
+          this.opts.debug &&
+          L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() );
+          break;
+
         case HME.error:
-          //L('ERROR occured');
           break;
 
         case HME.beforeCreate:
@@ -67,9 +72,6 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforeRead:
-          L(
-            M2C( this.msgs.beforeRead.msg, 'cyan' ), evt.file
-          );
           break;
 
         case HME.afterRead:
@@ -77,12 +79,16 @@ Output routines for HackMyResume.
 
         case HME.beforeTheme:
           this.opts.debug &&
-            L( M2C( this.msgs.beforeTheme.msg, 'cyan'), evt.theme.toUpperCase() );
+            L( M2C( this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase() );
+          break;
+
+        case HME.afterParse:
+          L( M2C( this.msgs.afterRead.msg, 'green' ), evt.fmt.toUpperCase(), evt.file );
           break;
 
         case HME.afterTheme:
           this.theme = evt.theme;
-          this.opts.debug && L( M2C(this.msgs.beforeTheme.msg, 'cyan'), evt.theme );
+          // this.opts.debug && L( M2C(this.msgs.beforeTheme.msg, 'green'), evt.theme );
           break;
 
         case HME.beforeMerge:
@@ -99,7 +105,7 @@ Output routines for HackMyResume.
 
         case HME.afterMerge:
           var numFormats = Object.keys( this.theme.formats ).length;
-          L( M2C(this.msgs.afterMerge.msg, 'yellow'),
+          L( M2C(this.msgs.afterMerge.msg, 'green'),
             this.theme.name.toUpperCase(),
             numFormats, ( numFormats === 1 ? '' : 's') );
           break;
@@ -180,7 +186,6 @@ Output routines for HackMyResume.
                 err.message) );
             }, this);
           }
-
           break;
 
         case HME.beforePeek:

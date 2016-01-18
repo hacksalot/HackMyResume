@@ -1,6 +1,6 @@
 /**
 Implementation of the 'convert' verb for HackMyResume.
-@module convert.js
+@module verbs/convert
 @license MIT. See LICENSE.md for details.
 */
 

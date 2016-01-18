@@ -1,6 +1,6 @@
 /**
 Implementation of the 'build' verb for HackMyResume.
-@module generate.js
+@module verbs/build
 @license MIT. See LICENSE.md for details.
 */
 
@@ -33,17 +33,19 @@ Implementation of the 'build' verb for HackMyResume.
 
 
 
-  /**
-  An invokable resume generation command.
-  */
+  /** An invokable resume generation command. */
   var BuildVerb = module.exports = Verb.extend({
 
+    /** Create a new build verb. */
     init: function() {
       this._super('build');
     },
 
+    /** Invoke the Build command. */
     invoke: function() {
+      this.stat( HME.begin, { cmd: 'build' } );
       build.apply( this, arguments );
+      this.stat( HME.end );
     }
 
   });
@@ -60,9 +62,17 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function build( src, dst, opts ) {
 
-    this.stat( HME.begin );
+
+    if( !src || !src.length ) { this.err( HACKMYSTATUS.resumeNotFound ); }
 
     prep( src, dst, opts );
+
+    // Load input resumes...
+    var sheets = ResumeFactory.load(src, {
+      format: null, objectify: true, throw: true, inner: { sort: _opts.sort }
+    }, this).map( function(sh) {
+      return sh.rez;
+    });
 
     // Load the theme...we do this first because the theme choice (FRESH or
     // JSON Resume) determines what format we'll convert the resume to.
@@ -76,13 +86,6 @@ Implementation of the 'build' verb for HackMyResume.
     if( inv && inv.length ) {
       this.err( HACKMYSTATUS.invalidFormat, { data: inv, theme: theme } );
     }
-
-    // Load input resumes...
-    if( !src || !src.length ) { this.err( HACKMYSTATUS.resumeNotFound ); }
-    var sheets = ResumeFactory.load(src, {
-      format: theme.render ? 'JRS' : 'FRESH',
-      objectify: true, throw: true, inner: { sort: _opts.sort }
-    }, this).map( function(sh){ return sh.rez; });
 
     // Merge input resumes...
     (sheets.length > 1) && this.stat( HME.beforeMerge, { f: _.clone(sheets) });
@@ -99,8 +102,6 @@ Implementation of the 'build' verb for HackMyResume.
     _.each(targets, function(t) {
       t.final = single.call( this, t, theme, targets );
     }, this);
-
-    this.stat( HME.end );
 
     // Don't send the client back empty-handed
     return { sheet: rez, targets: targets, processed: targets };

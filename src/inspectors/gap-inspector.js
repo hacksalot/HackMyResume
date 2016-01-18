@@ -1,7 +1,7 @@
 /**
 Employment gap analysis for HackMyResume.
 @license MIT. See LICENSE.md for details.
-@module gap-inspector.js
+@module inspectors/gap-inspector
 */
 
 
@@ -19,7 +19,6 @@ Employment gap analysis for HackMyResume.
 
   /**
   Identify gaps in the candidate's employment history.
-  @class gapInspector
   */
   var gapInspector = module.exports = {
 
@@ -32,8 +31,9 @@ Employment gap analysis for HackMyResume.
     /**
     Run the Gap Analyzer on a resume.
     @method run
-    @return An array of object representing gaps in the candidate's employment
-    history. Each object provides the start, end, and duration of the gap:
+    @return {Array} An array of object representing gaps in the candidate's
+    employment history. Each object provides the start, end, and duration of the
+    gap:
         { <-- gap
           start: // A Moment.js date
           end: // A Moment.js date

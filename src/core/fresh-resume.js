@@ -27,7 +27,7 @@ Definition of the FRESHResume class.
   /**
   A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
   object is an instantiation of that JSON decorated with utility methods.
-  @class FreshResume
+  @constructor
   */
   function FreshResume() {
 
@@ -61,8 +61,8 @@ Definition of the FRESHResume class.
   Open and parse the specified FRESH resume. Merge the JSON object model onto
   this Sheet instance with extend() and convert sheet dates to a safe &
   consistent format. Then sort each section by startDate descending.
-  @param rep The raw JSON representation.
-  @param opts Resume loading and parsing options.
+  @param rep {Object} The raw JSON representation.
+  @param opts {Object} Resume loading and parsing options.
   {
     date: Perform safe date conversion.
     sort: Sort resume items by date.

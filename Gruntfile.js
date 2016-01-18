@@ -17,6 +17,16 @@ module.exports = function (grunt) {
       all: { src: ['test/*.js'] }
     },
 
+    jsdoc : {
+      dist : {
+        src: ['src/**/*.js'],
+        options: {
+          private: true,
+          destination: 'doc'
+        }
+      }
+    },
+
     clean: ['test/sandbox'],
 
     yuidoc: {
@@ -47,13 +57,14 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
+  grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   grunt.registerTask('test', 'Test the HackMyResume library.',
-    function( config ) { grunt.task.run( ['clean','jshint','simplemocha:all'] ); });
+    function( config ) { grunt.task.run(['clean','jshint','simplemocha:all']); });
   grunt.registerTask('document', 'Generate HackMyResume library documentation.',
-    function( config ) { grunt.task.run( ['yuidoc'] ); });
-  grunt.registerTask('default', [ 'test', 'yuidoc' ]);
+    function( config ) { grunt.task.run( ['jsdoc'] ); });
+  grunt.registerTask('default', [ 'test', 'jsdoc' ]);
 
 };

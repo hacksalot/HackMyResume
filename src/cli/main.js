@@ -1,6 +1,6 @@
 /**
 Definition of the `main` function.
-@module main.js
+@module cli/main
 @license MIT. See LICENSE.md for details.
 */
 
@@ -32,9 +32,11 @@ Definition of the `main` function.
 
 
   /**
-  Main function for HackMyResume
-  @license MIT. See LICENSE.md for details.
-  @module main.js
+  A callable implementation of the HackMyResume CLI. Encapsulates the command
+  line interface as a single method accepting a parameter array.
+  @alias module:cli/main.main
+  @param rawArgs {Array} An array of command-line parameters. Will either be
+  process.argv (in production) or custom parameters (in test).
   */
   var main = module.exports = function( rawArgs ) {
 
@@ -126,22 +128,23 @@ Definition of the `main` function.
 
 
 
-  /**
-  Massage command-line args and setup Commander.js.
-  */
+  /** Massage command-line args and setup Commander.js. */
   function initialize( ar ) {
 
     logMsg( _title );
 
     var o = initOptions( ar );
+
+    // Emit debug prelude if --debug was specified
     if( o.debug ) {
       _out.log(chalk.cyan('The -d or --debug switch was specified. DEBUG mode engaged.'));
       _out.log('');
-      _out.log(chalk.cyan(PAD('  Platform:',20, null, PAD.RIGHT)) + chalk.cyan.bold( process.platform ));
-      _out.log(chalk.cyan(PAD('  Node.js:',20, null, PAD.RIGHT)) + chalk.cyan.bold( process.version ));
-      _out.log(chalk.cyan(PAD('  HackMyResume:',20, null, PAD.RIGHT)) + chalk.cyan.bold('v' + PKG.version ));
-      _out.log(chalk.cyan(PAD('  FRESCA:',20, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies.fresca ));
-      _out.log(chalk.cyan(PAD('  fresh-themes:',20, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies['fresh-themes'] ));
+      _out.log(chalk.cyan(PAD('  Platform:',25, null, PAD.RIGHT)) + chalk.cyan.bold( process.platform === 'win32' ? 'windows' : process.platform ));
+      _out.log(chalk.cyan(PAD('  Node.js:',25, null, PAD.RIGHT)) + chalk.cyan.bold( process.version ));
+      _out.log(chalk.cyan(PAD('  HackMyResume:',25, null, PAD.RIGHT)) + chalk.cyan.bold('v' + PKG.version ));
+      _out.log(chalk.cyan(PAD('  FRESCA:',25, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies.fresca ));
+      _out.log(chalk.cyan(PAD('  fresh-themes:',25, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies['fresh-themes'] ));
+      _out.log(chalk.cyan(PAD('  fresh-jrs-converter:',25, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies['fresh-jrs-converter'] ));
       _out.log('');
     }
 
@@ -172,14 +175,12 @@ Definition of the `main` function.
 
 
 
-  /**
-  Init options prior to setting up command infrastructure.
-  */
+  /** Init options prior to setting up command infrastructure. */
   function initOptions( ar ) {
     var oVerb, verb = '', args = ar.slice(), cleanArgs = args.slice(2), oJSON;
     if( cleanArgs.length ) {
 
-      // Support case-insensitive sub-commands (build, generate, validate, etc.)..
+      // Support case-insensitive sub-commands (build, generate, validate, etc)
       var vidx = _.findIndex( cleanArgs, function(v){ return v[0] !== '-'; });
       if( vidx !== -1 ) {
         oVerb = cleanArgs[ vidx ];
@@ -223,9 +224,7 @@ Definition of the `main` function.
 
 
 
-  /**
-  Invoke a HackMyResume verb.
-  */
+  /** Invoke a HackMyResume verb. */
   function execute( src, dst, opts, log ) {
 
     loadOptions.call( this, opts, this.parent.jsonArgs );
@@ -271,7 +270,8 @@ Definition of the `main` function.
     if( o.debug ) {
       logMsg(chalk.cyan('OPTIONS:') + '\n');
       _.each(o, function(val, key) {
-        logMsg(chalk.cyan('  %s') + chalk.cyan.bold(' %s'), PAD(key,17,null,PAD.RIGHT), val);
+        logMsg(chalk.cyan('  %s') + chalk.cyan.bold(' %s'),
+          PAD(key,17,null,PAD.RIGHT), val);
       });
       logMsg('');
     }
@@ -282,9 +282,7 @@ Definition of the `main` function.
 
 
 
-  /**
-  Split multiple command-line filenames by the 'TO' keyword
-  */
+  /** Split multiple command-line filenames by the 'TO' keyword */
   function splitSrcDest() {
 
     var params = this.parent.args.filter(function(j) { return String.is(j); });
@@ -314,9 +312,7 @@ Definition of the `main` function.
 
 
 
-  /**
-  Simple logging placeholder.
-  */
+  /** Simple logging placeholder. */
   function logMsg() {
     _opts.silent || console.log.apply( console.log, arguments );
   }

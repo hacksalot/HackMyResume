@@ -1,6 +1,6 @@
 /**
 Implementation of the 'create' verb for HackMyResume.
-@module create.js
+@module verbs/create
 @license MIT. See LICENSE.md for details.
 */
 

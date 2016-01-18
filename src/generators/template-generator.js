@@ -78,8 +78,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
     @method invoke
     @param rez A FreshResume object.
     @param opts Generator options.
-    @returns An array of objects representing the generated output files. Each
-    object has this format:
+    @returns {Array} An array of objects representing the generated output
+    files. Each object has this format:
 
         {
           files: [ { info: { }, data: [ ] }, { ... } ],

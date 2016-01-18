@@ -1,10 +1,12 @@
 events:
+  begin:
+    msg: Invoking **%s** command.
   beforeCreate:
     msg: Creating new **%s** resume: **%s**
-  beforeRead:
-    msg: Reading resume: **%s**
+  afterRead:
+    msg: Reading **%s** resume: **%s**
   beforeTheme:
-    msg: Verifying theme:    **%s**
+    msg: Verifying **%s** theme.
   afterTheme:
     msg: Verifying outputs:  ???
   beforeMerge:
@@ -72,5 +74,7 @@ errors:
     msg: The **%s** theme doesn't support the **%s** format.
   notOnPath:
     msg: %s wasn't found on your system path or is inaccessible. PDF not generated.
+  readError:
+    msg: Reading **???** resume: **%s**
   parseError:
     msg: Invalid or corrupt JSON on line %s column %s.
