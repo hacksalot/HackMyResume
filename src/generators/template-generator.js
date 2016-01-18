@@ -15,7 +15,6 @@ Definition of the TemplateGenerator class. TODO: Refactor
     , PATH = require('path')
     , parsePath = require('parse-filepath')
     , MKDIRP = require('mkdirp')
-    , HMSTATUS = require('../core/status-codes')
     , BaseGenerator = require( './base-generator' )
     , EXTEND = require('../utils/extend')
     , FRESHTheme = require('../core/fresh-theme')
@@ -102,12 +101,13 @@ Definition of the TemplateGenerator class. TODO: Refactor
       var that = this;
 
       // "Generate": process individual files within the theme
+      // The transform() method catches exceptions internally
       return {
         files: curFmt.files.map( function( tplInfo ) {
           return {
             info: tplInfo,
             data: tplInfo.action === 'transform' ?
-              transform.call( that, rez, tplInfo, theme ) : undefined
+              transform.call( that, rez, tplInfo, theme, opts ) : undefined
           };
         }).filter(function(item){ return item !== null; }),
         themeInfo: themeInfo
@@ -153,38 +153,26 @@ Definition of the TemplateGenerator class. TODO: Refactor
 
         if( file.info.action === 'transform' ) {
           thisFilePath = PATH.join( outFolder, file.info.orgPath );
-          try {
-            if( that.onBeforeSave ) {
-              file.data = that.onBeforeSave({
-                theme: theme,
-                outputFile: (file.info.major ? f : thisFilePath),
-                mk: file.data,
-                opts: that.opts
-              });
-              if( !file.data ) return; // PDF etc
-            }
-            var fileName = file.info.major ? f : thisFilePath;
-            MKDIRP.sync( PATH.dirname( fileName ) );
-            FS.writeFileSync( fileName, file.data,
-              { encoding: 'utf8', flags: 'w' } );
-            that.onAfterSave && that.onAfterSave(
-              { outputFile: fileName, mk: file.data, opts: that.opts } );
+          if( that.onBeforeSave ) {
+            file.data = that.onBeforeSave({
+              theme: theme,
+              outputFile: (file.info.major ? f : thisFilePath),
+              mk: file.data,
+              opts: that.opts
+            });
+            if( !file.data ) return; // PDF etc
           }
-          catch( ex ) {
-            that.stat( HME.error, ex.fluenterrror ||
-              { fluenterror: HMSTATUS.fileSaveError, inner: ex } );
-          }
+          var fileName = file.info.major ? f : thisFilePath;
+          MKDIRP.sync( PATH.dirname( fileName ) );
+          FS.writeFileSync( fileName, file.data,
+            { encoding: 'utf8', flags: 'w' } );
+          that.onAfterSave && that.onAfterSave(
+            { outputFile: fileName, mk: file.data, opts: that.opts } );
         }
         else if( file.info.action === null/* && theme.explicit*/ ) {
           thisFilePath = PATH.join( outFolder, file.info.orgPath );
-          try {
-            MKDIRP.sync( PATH.dirname(thisFilePath) );
-            FS.copySync( file.info.path, thisFilePath );
-          }
-          catch( ex ) {
-            that.stat( HME.error, ex.fluenterrror ||
-              { fluenterror: HMSTATUS.fileSaveError, inner: ex } );
-          }
+          MKDIRP.sync( PATH.dirname(thisFilePath) );
+          FS.copySync( file.info.path, thisFilePath );
         }
       });
 
@@ -271,7 +259,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
 
 
 
-  function transform( rez, tplInfo, theme ) {
+  function transform( rez, tplInfo, theme, opts ) {
     try {
       var cssInfo = {
         file: tplInfo.css ? tplInfo.cssPath : null,
@@ -281,15 +269,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
         theme );
     }
     catch(ex) {
-      if( ex.fluenterror )
-        throw ex;
-      else {
-        console.log('Ballyhoo');
-        console.log(ex.stack);
-        throw {
-          fluenterror: HMSTATUS.generateError, inner: ex
-        };
-      }
+      if( opts.errHandler ) opts.errHandler(ex);
+      else throw ex;
     }
   }
 

@@ -59,8 +59,10 @@ Error-handling routines for HackMyResume.
         ));
 
         // Output the stack (sometimes)
-        if( objError.showStack )
-          o( chalk.red( ex.stack || ex.inner.stack ) );
+        if( objError.withStack ) {
+          var stack = ex.stack || (ex.inner && ex.inner.stack);
+          stack && o( chalk.red( stack ) );
+        }
 
         // Quit if necessary
         if( objError.quit ) {
@@ -101,6 +103,7 @@ Error-handling routines for HackMyResume.
   function assembleError( ex ) {
 
     var msg = '', withStack = false, isError = false, quit = true, warn = true;
+    if( this.debug ) withStack = true;
 
     switch( ex.fluenterror ) {
 
@@ -156,7 +159,15 @@ Error-handling routines for HackMyResume.
         break;
 
       case HMSTATUS.generateError:
-        console.log(ex);
+        msg = (ex.inner && ex.inner.toString()) || ex;
+        quit = false;
+        warn = false;
+        break;
+
+      case HMSTATUS.fileSaveError:
+        msg = printf( M2C( this.msgs.fileSaveError.msg ), (ex.inner || ex).toString() );
+        warn = false;
+        quit = false;
         break;
 
       case HMSTATUS.invalidFormat:
@@ -182,6 +193,11 @@ Error-handling routines for HackMyResume.
         console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
         msg = ex.inner.toString();
         warn = false;
+        break;
+
+      case HMSTATUS.mixedMerge:
+        msg = M2C( this.msgs.mixedMerge.msg );
+        quit = false;
         break;
 
       case HMSTATUS.parseError:

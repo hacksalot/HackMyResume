@@ -279,7 +279,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     // Prevent accidental use of safe.start, safe.end, safe.date
     // The dateRange helper is for raw dates only
     if( moment.isMoment( dateA ) || moment.isMoment( dateB ) ) {
-      _reportError( HMSTATUS.invalidHelperUse, { helper: 'dateRange' } )
+      _reportError( HMSTATUS.invalidHelperUse, { helper: 'dateRange' } );
       return '';
     }
 

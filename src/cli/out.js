@@ -97,13 +97,16 @@ Output routines for HackMyResume.
             msg += printf(
               ((idx === 0) ?
                 this.msgs.beforeMerge.msg[0] :
-                this.msgs.beforeMerge.msg[1] ), a.i().file
+                this.msgs.beforeMerge.msg[1] ), a.file
             );
           }, this);
-          L( M2C(msg, 'green') );
+          L( M2C(msg, evt.mixed ? 'yellow' : 'green') );
           break;
 
         case HME.afterMerge:
+          break;
+
+        case HME.applyTheme:
           var numFormats = Object.keys( this.theme.formats ).length;
           L( M2C(this.msgs.afterMerge.msg, 'green'),
             this.theme.name.toUpperCase(),

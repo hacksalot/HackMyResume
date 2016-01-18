@@ -32,7 +32,7 @@ Implementation of the 'build' verb for HackMyResume.
     , pad            = require('string-padding')
     , Verb           = require('../verbs/verb');
 
-  var _err, _log, rez;
+  var _err, _log, _rezObj;
 
 
 
@@ -65,50 +65,62 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function build( src, dst, opts ) {
 
-
     if( !src || !src.length ) { this.err( HMSTATUS.resumeNotFound ); }
 
     prep( src, dst, opts );
 
-    // Load input resumes...
-    var sheets = ResumeFactory.load(src, {
-      format: null, objectify: true, throw: true, inner: { sort: _opts.sort }
-    }, this).map( function(sh) {
-      return sh.rez;
-    });
+    // Load input resumes as JSON...
+    var sheetObjects = ResumeFactory.load(src, {
+      format: null, objectify: false, throw: true, inner: { sort: _opts.sort }
+    }, this);
 
-    // Load the theme...we do this first because the theme choice (FRESH or
-    // JSON Resume) determines what format we'll convert the resume to.
+    var sheets = sheetObjects.map(function(r) { return r.json; });
+
+    // Load the theme...
     this.stat( HMEVENT.beforeTheme, { theme: _opts.theme });
     var tFolder = verifyTheme.call( this, _opts.theme );
     var theme = loadTheme( tFolder );
     this.stat( HMEVENT.afterTheme, { theme: theme });
 
-    // Check for invalid outputs
+    // Check for invalid outputs...
     var inv = verifyOutputs.call( this, dst, theme );
     if( inv && inv.length ) {
       this.err( HMSTATUS.invalidFormat, { data: inv, theme: theme } );
     }
 
-    // Convert resume inputs as necessary
-    var toFormat = theme.render ? 'JRS' : 'FRESH';
-    sheets.forEach( function( sh, idx ) {
-      if( sh.format() !== toFormat ) {
-        this.stat( HMEVENT.beforeInlineConvert );
-        sheets[ idx ] = new (RTYPES[ toFormat ])();
-        var convJSON = RConverter[ 'to' + toFormat ]( sh );
-        sheets[ idx ].parseJSON( convJSON );
-        this.stat( HMEVENT.afterInlineConvert, { file: sh.i().file, fmt: toFormat } );
-      }
-    }, this);
+    // Merge input resumes, yielding a single source resume.
+    var rez;
+    if( sheets.length > 1 ) {
 
-    // Merge input resumes...
-    (sheets.length > 1) && this.stat( HMEVENT.beforeMerge, { f: _.clone(sheets) });
-    rez = _.reduceRight( sheets, function( a, b, idx ) {
-      return extend( true, b, a );
-    });
-    // TODO: Fix this condition
-    (sheets.length) && this.stat( HMEVENT.afterMerge, { r: rez } );
+      var isFRESH = !sheets[0].basics;
+      var mixed = _.any( sheets, function(s) { return isFRESH ? s.basics : !s.basics; });
+      this.stat( HMEVENT.beforeMerge, { f: _.clone(sheetObjects), mixed: mixed });
+      if( mixed ) {
+        this.err( HMSTATUS.mixedMerge );
+      }
+      rez = _.reduceRight( sheets, function( a, b, idx ) {
+        return extend( true, b, a );
+      });
+      this.stat( HMEVENT.afterMerge, { r: rez } );
+    }
+    else {
+      rez = sheets[0];
+    }
+
+    this.stat( HMEVENT.applyTheme, { r: rez });
+
+
+    // Convert the merged source resume to the theme's format, if necessary
+    var orgFormat = rez.basics ? 'JRS' : 'FRESH';
+    var toFormat = theme.render ? 'JRS' : 'FRESH';
+    if( toFormat !== orgFormat ) {
+      this.stat( HMEVENT.beforeInlineConvert );
+      rez = RConverter[ 'to' + toFormat ]( rez );
+      this.stat( HMEVENT.afterInlineConvert, { file: sheetObjects[0].file, fmt: toFormat });
+    }
+
+    // Load the resume into a FRESHResume or JRSResume object
+    _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
 
     // Expand output resumes...
     var targets = expand( dst, theme );
@@ -148,6 +160,10 @@ Implementation of the 'build' verb for HackMyResume.
   }
 
 
+  function handleInternalError( ex ) {
+    console.log(ex);
+  }
+
 
   /**
   Generate a single target resume such as "out/rez.html" or "out/rez.doc".
@@ -157,14 +173,12 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function single( targInfo, theme, finished ) {
 
-    var ret, ex;
+    var ret, ex, f = targInfo.file;
 
     try {
-      if( !targInfo.fmt ) {
-        return;
-      }
-      var f = targInfo.file
-        , fType = targInfo.fmt.outFormat
+
+      if( !targInfo.fmt ) {  return; }
+      var fType = targInfo.fmt.outFormat
         , fName = PATH.basename(f, '.' + fType)
         , theFormat;
 
@@ -180,8 +194,8 @@ Implementation of the 'build' verb for HackMyResume.
           function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
         MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
         _opts.targets = finished;
-        _opts.errHandler = this;
-        ret = theFormat.gen.generate( rez, f, _opts );
+        _opts.errHandler = handleInternalError;
+        ret = theFormat.gen.generate( _rezObj, f, _opts );
       }
       //Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
       // gets "for free".
@@ -191,8 +205,8 @@ Implementation of the 'build' verb for HackMyResume.
         })[0];
         var outFolder = PATH.dirname( f );
         MKDIRP.sync( outFolder ); // Ensure dest folder exists;
-        _opts.errHandler = this;
-        ret = theFormat.gen.generate( rez, f, _opts );
+        _opts.errHandler = handleInternalError;
+        ret = theFormat.gen.generate( _rezObj, f, _opts );
       }
     }
     catch( e ) {
