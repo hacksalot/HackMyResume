@@ -125,6 +125,7 @@ Definition of the ResumeFactory class.
         fluenterror: rawData ? HACKMYSTATUS.parseError : HACKMYSTATUS.readError,
         inner: e, raw: rawData, file: fileName, shouldExit: false
       };
+      opts.quit && (ex.quit = true);
       eve && eve.err( ex.fluenterror, ex );
       if( opts.throw ) throw ex;
       return ex;

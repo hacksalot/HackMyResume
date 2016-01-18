@@ -198,9 +198,9 @@ Output routines for HackMyResume.
 
         case HME.beforePeek:
           if( evt.target )
-            L(M2C(this.msgs.beforePeek.msg[0], 'cyan'), evt.target, evt.file);
+            L(M2C(this.msgs.beforePeek.msg[0], evt.isError ? 'red' : 'green'), evt.target, evt.file);
           else
-            L(M2C(this.msgs.beforePeek.msg[1], 'cyan'), evt.file);
+            L(M2C(this.msgs.beforePeek.msg[1], evt.isError ? 'red' : 'green'), evt.file);
           break;
 
         case HME.afterPeek:

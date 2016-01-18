@@ -65,7 +65,7 @@ Error-handling routines for HackMyResume.
         }
 
         // Quit if necessary
-        if( objError.quit ) {
+        if( ex.quit || objError.quit ) {
           this.debug && o(
             chalk.cyan('Exiting with error code ' + ex.fluenterror.toString()));
           if( this.assert ) { ex.pass = true; throw ex; }
@@ -85,6 +85,7 @@ Error-handling routines for HackMyResume.
     },
 
     formatError: function( msg ) {
+      msg = msg || '';
       return chalk.red.bold(
         msg.toUpperCase().startsWith('ERROR:') ? msg : 'Error: ' + msg );
     },
@@ -102,7 +103,7 @@ Error-handling routines for HackMyResume.
 
   function assembleError( ex ) {
 
-    var msg = '', withStack = false, isError = false, quit = true, warn = true;
+    var msg = '', withStack = false, isError = false, quit = false, warn = true;
     if( this.debug ) withStack = true;
 
     switch( ex.fluenterror ) {
@@ -190,7 +191,7 @@ Error-handling routines for HackMyResume.
         break;
 
       case HMSTATUS.readError:
-        console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
+        if( !ex.quiet ) console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
         msg = ex.inner.toString();
         warn = false;
         break;
@@ -202,9 +203,14 @@ Error-handling routines for HackMyResume.
 
       case HMSTATUS.parseError:
         if( SyntaxErrorEx.is( ex.inner )) {
+          console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
           var se = new SyntaxErrorEx( ex, ex.raw );
           msg = printf( M2C( this.msgs.parseError.msg, 'red' ),
             se.line, se.col);
+        }
+        else if( ex.inner && ex.inner.line !== undefined && ex.inner.col !== undefined ) {
+          msg = printf( M2C( this.msgs.parseError.msg, 'red' ),
+            ex.inner.line, ex.inner.col);
         }
         else {
           msg = ex;
