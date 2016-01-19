@@ -13,7 +13,7 @@ events:
     msg:
       - Merging **%s**
       - " onto **%s**"
-  afterMerge:
+  applyTheme:
     msg: Applying **%s** theme (%s format%s)
   afterBuild:
     msg:

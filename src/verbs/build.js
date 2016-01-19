@@ -90,7 +90,6 @@ Implementation of the 'build' verb for HackMyResume.
     // Merge input resumes, yielding a single source resume.
     var rez;
     if( sheets.length > 1 ) {
-
       var isFRESH = !sheets[0].basics;
       var mixed = _.any( sheets, function(s) { return isFRESH ? s.basics : !s.basics; });
       this.stat( HMEVENT.beforeMerge, { f: _.clone(sheetObjects), mixed: mixed });
@@ -106,9 +105,6 @@ Implementation of the 'build' verb for HackMyResume.
       rez = sheets[0];
     }
 
-    this.stat( HMEVENT.applyTheme, { r: rez });
-
-
     // Convert the merged source resume to the theme's format, if necessary
     var orgFormat = rez.basics ? 'JRS' : 'FRESH';
     var toFormat = theme.render ? 'JRS' : 'FRESH';
@@ -117,6 +113,11 @@ Implementation of the 'build' verb for HackMyResume.
       rez = RConverter[ 'to' + toFormat ]( rez );
       this.stat( HMEVENT.afterInlineConvert, { file: sheetObjects[0].file, fmt: toFormat });
     }
+
+    // Add freebie formats to the theme
+    addFreebieFormats( theme  );
+    this.stat( HMEVENT.applyTheme, { r: rez });
+
 
     // Load the resume into a FRESHResume or JRSResume object
     _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
@@ -257,13 +258,15 @@ Implementation of the 'build' verb for HackMyResume.
 
 
   /**
-  Expand output files. For example, "foo.all" should be expanded to
-  ["foo.html", "foo.doc", "foo.pdf", "etc"].
-  @param dst An array of output files as specified by the user.
+  Reinforce the chosen theme with "freebie" formats provided by HackMyResume.
+  A "freebie" format is an output format such as JSON, YML, or PNG that can be
+  generated directly from the resume model or from one of the theme's declared
+  output formats. For example, the PNG format can be generated for any theme
+  that declares an HTML format; the theme doesn't have to provide an explicit
+  PNG template.
   @param theTheme A FRESHTheme or JRSTheme object.
   */
-  function expand( dst, theTheme ) {
-
+  function addFreebieFormats( theTheme ) {
     // Add freebie formats (JSON, YAML, PNG) every theme gets...
     // Add HTML-driven PNG only if the theme has an HTML format.
     theTheme.formats.json = theTheme.formats.json || {
@@ -280,6 +283,17 @@ Implementation of the 'build' verb for HackMyResume.
         ext: 'yml', path: null, data: null
       };
     }
+  }
+
+
+
+  /**
+  Expand output files. For example, "foo.all" should be expanded to
+  ["foo.html", "foo.doc", "foo.pdf", "etc"].
+  @param dst An array of output files as specified by the user.
+  @param theTheme A FRESHTheme or JRSTheme object.
+  */
+  function expand( dst, theTheme ) {
 
     // Set up the destination collection. It's either the array of files passed
     // by the user or 'out/resume.all' if no targets were specified.
