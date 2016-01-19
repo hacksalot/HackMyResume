@@ -46,9 +46,26 @@ Implementation of the 'peek' verb for HackMyResume.
 
     _.each( src, function( t ) {
 
-      var obj = safeLoadJSON( t );
-      this.stat( HMEVENT.beforePeek, { file: t, target: objPath, isError: obj.ex } );
+      // Fire the 'beforePeek' event 2nd, so we have error/warning/success
+      this.stat( HMEVENT.beforePeek, { file: t, target: objPath } );
 
+      // Load the input file JSON 1st
+      var obj = safeLoadJSON( t );
+
+      // Fetch the requested object path (or the entire file)
+      var tgt;
+      if( !obj.ex )
+        tgt = objPath ? __.get( obj.json, objPath ) : obj.json;
+
+      // Fire the 'afterPeek' event with collected info
+      this.stat( HMEVENT.afterPeek, {
+        file: t,
+        requested: objPath,
+        target: tgt,
+        error: obj.ex
+      });
+
+      // safeLoadJSON can only return a READ error or a PARSE error
       if( obj.ex ) {
         if( obj.ex.operation === 'parse' )
           this.err( HMSTATUS.parseError, obj.ex );
@@ -56,12 +73,7 @@ Implementation of the 'peek' verb for HackMyResume.
           obj.ex.quiet = true;
           this.err( HMSTATUS.readError, obj.ex );
         }
-        return;
-      }
-
-      var targ = objPath ? __.get( obj.json, objPath ) : obj.json;
-      this.stat( HMEVENT.afterPeek, { file: t, requested: objPath, target: targ } );
-
+      }      
 
     }, this);
 

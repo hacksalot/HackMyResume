@@ -197,16 +197,22 @@ Output routines for HackMyResume.
           break;
 
         case HME.beforePeek:
-          if( evt.target )
-            L(M2C(this.msgs.beforePeek.msg[0], evt.isError ? 'red' : 'green'), evt.target, evt.file);
-          else
-            L(M2C(this.msgs.beforePeek.msg[1], evt.isError ? 'red' : 'green'), evt.file);
+          // if( evt.target )
+          //   L(M2C(this.msgs.beforePeek.msg[0], evt.isError ? 'red' : 'green'), evt.target, evt.file);
+          // else
+          //   L(M2C(this.msgs.beforePeek.msg[1], evt.isError ? 'red' : 'green'), evt.file);
           break;
 
         case HME.afterPeek:
-          if( evt.target )
-            console.dir( evt.target, { depth: null, colors: true } );
+          var sty = evt.error ? 'red' : ( evt.target !== undefined ? 'green' : 'yellow' );
+          if( evt.requested )
+            L(M2C(this.msgs.beforePeek.msg[0], sty), evt.requested, evt.file);
           else
+            L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file);
+
+          if( evt.target !== undefined )
+            console.dir( evt.target, { depth: null, colors: true } );
+          else if( !evt.error )
             L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
           break;
 
