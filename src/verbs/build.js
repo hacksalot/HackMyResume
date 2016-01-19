@@ -62,7 +62,9 @@ Implementation of the 'build' verb for HackMyResume.
   */
   function build( src, dst, opts ) {
 
-    if( !src || !src.length ) { this.err( HMSTATUS.resumeNotFound ); }
+    if( !src || !src.length ) {
+      this.err( HMSTATUS.resumeNotFound, { quit: true } );
+    }
 
     prep( src, dst, opts );
 

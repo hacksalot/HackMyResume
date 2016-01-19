@@ -1,8 +1,8 @@
 0|
-4|--help
-4|-h
-4|--debug
-4|-d
+0|--help
+0|-h
+0|--debug
+0|-d
 5|notacommand
 3|build
 14|build doesnt-exist.json

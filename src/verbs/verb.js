@@ -78,7 +78,18 @@ Definition of the Verb class.
       payload.sub = subEvent;
       this.fire('status', payload);
       return true;
+    },
+
+
+    /**
+    Associate error info with the invocation.
+    */
+    setError: function( code, obj ) {
+      this.errorCode = code;
+      this.errorObj = obj;
     }
+
+
 
   });
 

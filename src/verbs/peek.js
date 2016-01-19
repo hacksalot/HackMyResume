@@ -67,13 +67,12 @@ Implementation of the 'peek' verb for HackMyResume.
 
       // safeLoadJSON can only return a READ error or a PARSE error
       if( obj.ex ) {
-        if( obj.ex.operation === 'parse' )
-          this.err( HMSTATUS.parseError, obj.ex );
-        else {
+        var errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
+        if( errCode === HMSTATUS.readError )
           obj.ex.quiet = true;
-          this.err( HMSTATUS.readError, obj.ex );
-        }
-      }      
+        this.setError( errCode, obj.ex );
+        this.err( errCode, obj.ex );
+      }
 
     }, this);
 

@@ -38,7 +38,9 @@ Implementation of the 'validate' verb for HackMyResume.
   */
   function validate( sources, unused, opts ) {
 
-    if( !sources || !sources.length ) { throw { fluenterror: 6 }; }
+    if( !sources || !sources.length )
+      throw { fluenterror: HMSTATUS.resumeNotFoundAlt, quit: true };
+
     var isValid = true;
 
     var validator = require('is-my-json-valid');
@@ -61,6 +63,7 @@ Implementation of the 'validate' verb for HackMyResume.
       // If there was an error reading the resume
       if( src.fluenterror ) {
         if( opts.assert ) throw src;
+        this.setError( src.fluenterror, src );
         return ret;
       }
 

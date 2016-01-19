@@ -42,7 +42,7 @@ Implementation of the 'analyze' verb for HackMyResume.
   */
   function analyze( sources, dst, opts ) {
     if( !sources || !sources.length )
-      throw { fluenterror: HMSTATUS.resumeNotFound };
+      throw { fluenterror: HMSTATUS.resumeNotFound, quit: true };
 
     var nlzrs = _loadInspectors();
 
@@ -50,7 +50,10 @@ Implementation of the 'analyze' verb for HackMyResume.
       var result = ResumeFactory.loadOne( src, {
         format: 'FRESH', objectify: true
       }, this);
-      result.fluenterror || _analyze.call(this, result, nlzrs, opts );
+      if( result.fluenterror )
+        this.setError( result.fluenterror, result );
+      else
+        _analyze.call(this, result, nlzrs, opts );
     }, this);
 
   }

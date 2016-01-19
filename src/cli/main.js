@@ -16,7 +16,7 @@ Definition of the `main` function.
     , EXTEND = require('extend')
     , chalk = require('chalk')
     , PATH = require('path')
-    , HACKMYSTATUS = require('../core/status-codes')
+    , HMSTATUS = require('../core/status-codes')
     , HME = require('../core/event-codes')
     , safeLoadJSON = require('../utils/safe-json-loader')
     , StringUtils = require('../utils/string.js')
@@ -150,14 +150,15 @@ Definition of the `main` function.
 
     // Handle invalid verbs here (a bit easier here than in commander.js)...
     if( o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ] ) {
-      throw { fluenterror: HACKMYSTATUS.invalidCommand, shouldExit: true,
+      throw { fluenterror: HMSTATUS.invalidCommand, quit: true,
               attempted: o.orgVerb };
     }
 
     // Override the .missingArgument behavior
     Command.prototype.missingArgument = function(name) {
-      if( this.name() !== 'new' )
-        throw { fluenterror: HACKMYSTATUS.resumeNotFound };
+      if( this.name() !== 'new' ) {
+        throw { fluenterror: HMSTATUS.resumeNotFound, quit: true };
+      }
     };
 
     // Override the .helpInformation behavior
@@ -243,7 +244,8 @@ Definition of the `main` function.
       hand.err.apply( hand, arguments );
     });
     v.invoke.call( v, src, dst, _opts, log );
-
+    if( v.errorCode )
+      process.exit(v.errorCode);
   }
 
 
@@ -293,7 +295,7 @@ Definition of the `main` function.
 
     var params = this.parent.args.filter(function(j) { return String.is(j); });
     if( params.length === 0 )
-      throw { fluenterror: HACKMYSTATUS.resumeNotFound };
+      throw { fluenterror: HMSTATUS.resumeNotFound, quit: true };
 
     // Find the TO keyword, if any
     var splitAt = _.findIndex( params, function(p) {

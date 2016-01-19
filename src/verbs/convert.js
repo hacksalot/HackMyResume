@@ -40,20 +40,20 @@ Implementation of the 'convert' verb for HackMyResume.
   function convert( srcs, dst, opts ) {
 
     // Housekeeping
-    if( !srcs || !srcs.length ) { throw { fluenterror: 6 }; }
+    if( !srcs || !srcs.length ) { throw { fluenterror: 6, quit: true }; }
     if( !dst || !dst.length ) {
       if( srcs.length === 1 ) {
-        throw { fluenterror: HMSTATUS.inputOutputParity };
+        throw { fluenterror: HMSTATUS.inputOutputParity, quit: true };
       }
       else if( srcs.length === 2 ) {
         dst = dst || []; dst.push( srcs.pop() );
       }
       else {
-        throw { fluenterror: HMSTATUS.inputOutputParity };
+        throw { fluenterror: HMSTATUS.inputOutputParity, quit: true };
       }
     }
     if(srcs && dst && srcs.length && dst.length && srcs.length !== dst.length){
-      throw { fluenterror: HMSTATUS.inputOutputParity };
+      throw { fluenterror: HMSTATUS.inputOutputParity, quit: true };
     }
 
     // Load source resumes

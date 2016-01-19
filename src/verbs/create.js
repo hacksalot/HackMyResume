@@ -41,7 +41,8 @@ Implementation of the 'create' verb for HackMyResume.
   */
   function create( src, dst, opts ) {
 
-    if(!src || !src.length) throw {fluenterror: HMSTATUS.createNameMissing};
+    if( !src || !src.length )
+      throw { fluenterror: HMSTATUS.createNameMissing, quit: true };
 
     _.each( src, function( t ) {
       var safeFmt = opts.format.toUpperCase();
