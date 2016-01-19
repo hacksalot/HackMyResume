@@ -61,8 +61,14 @@ Implementation of the 'convert' verb for HackMyResume.
 
       // Load the resume
       var rinfo = ResumeFactory.loadOne( src, {
-        format: null, objectify: true, throw: true
+        format: null, objectify: true, throw: false
       });
+
+      // If a load error occurs, report it and move on to the next file (if any)
+      if( rinfo.fluenterror ) {
+        this.err( rinfo.fluenterror, rinfo );
+        return;
+      }
 
       var s = rinfo.rez
         , srcFmt = ((s.basics && s.basics.imp) || s.imp).orgFormat === 'JRS' ?
