@@ -44,8 +44,9 @@ Implementation of the 'build' verb for HackMyResume.
     /** Invoke the Build command. */
     invoke: function() {
       this.stat( HMEVENT.begin, { cmd: 'build' } );
-      build.apply( this, arguments );
+      var ret = build.apply( this, arguments );
       this.stat( HMEVENT.end );
+      return ret;
     }
 
   });
@@ -118,7 +119,6 @@ Implementation of the 'build' verb for HackMyResume.
     addFreebieFormats( theme  );
     this.stat( HMEVENT.applyTheme, { r: rez });
 
-
     // Load the resume into a FRESHResume or JRSResume object
     _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
 
@@ -131,7 +131,7 @@ Implementation of the 'build' verb for HackMyResume.
     }, this);
 
     // Don't send the client back empty-handed
-    return { sheet: rez, targets: targets, processed: targets };
+    return { sheet: _rezObj, targets: targets, processed: targets };
   }
 
 
