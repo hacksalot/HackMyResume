@@ -1,7 +1,7 @@
 /**
 Definition of the JRSResume class.
 @license MIT. See LICENSE.md for details.
-@module jrs-resume.js
+@module core/jrs-resume
 */
 
 
@@ -60,14 +60,35 @@ Definition of the JRSResume class.
 
 
   /**
-  Initialize the JRSResume from JSON.
-  Open and parse the specified JRS resume. Merge the JSON object model onto this
-  Sheet instance with extend() and convert sheet dates to a safe & consistent
-  format. Then sort each section by startDate descending.
+  Initialize the JRSResume object from JSON.
+  Open and parse the specified JRS resume. Merge the JSON object model onto
+  this Sheet instance with extend() and convert sheet dates to a safe &
+  consistent format. Then sort each section by startDate descending.
+  @param rep {Object} The raw JSON representation.
+  @param opts {Object} Resume loading and parsing options.
+  {
+    date: Perform safe date conversion.
+    sort: Sort resume items by date.
+    compute: Prepare computed resume totals.
+  }
   */
   JRSResume.prototype.parseJSON = function( rep, opts ) {
     opts = opts || { };
-    extend( true, this, rep );
+
+    // Ignore any element with the 'ignore: true' designator.
+    var that = this, traverse = require('traverse'), ignoreList = [];
+    var scrubbed = traverse( rep ).map( function( x ) {
+      if( !this.isLeaf && this.node.ignore ) {
+        if ( this.node.ignore === true || this.node.ignore === 'true' ) {
+          ignoreList.push( this.node );
+          this.remove();
+        }
+      }
+    });
+
+    // Extend resume properties onto ourself.
+    extend( true, this, scrubbed );
+
     // Set up metadata
     if( opts.imp === undefined || opts.imp ) {
       this.basics.imp = this.basics.imp || { };

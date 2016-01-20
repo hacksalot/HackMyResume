@@ -1,7 +1,7 @@
 /**
 Definition of the FRESHResume class.
-@license MIT. See LICENSE .md for details.
-@module fresh-resume.js
+@license MIT. See LICENSE.md for details.
+@module core/fresh-resume
 */
 
 
@@ -48,7 +48,7 @@ Definition of the FRESHResume class.
 
 
   /**
-  Initialize the the FreshResume from string.
+  Initialize the the FreshResume from JSON string data.
   */
   FreshResume.prototype.parse = function( stringData, opts ) {
     return this.parseJSON( JSON.parse( stringData ), opts );
@@ -66,13 +66,24 @@ Definition of the FRESHResume class.
   {
     date: Perform safe date conversion.
     sort: Sort resume items by date.
-    computer: Prepare computed resume totals.
+    compute: Prepare computed resume totals.
   }
   */
   FreshResume.prototype.parseJSON = function( rep, opts ) {
 
+    // Ignore any element with the 'ignore: true' designator.
+    var that = this, traverse = require('traverse'), ignoreList = [];
+    var scrubbed = traverse( rep ).map( function( x ) {
+      if( !this.isLeaf && this.node.ignore ) {
+        if ( this.node.ignore === true || this.node.ignore === 'true' ) {
+          ignoreList.push( this.node );
+          this.remove();
+        }
+      }
+    });
+
     // Now apply the resume representation onto this object
-    extend( true, this, rep );
+    extend( true, this, scrubbed );
 
     // If the resume already has a .imp object, then we are being called from
     // the .dupe method, and there's no need to do any post processing
