@@ -160,9 +160,11 @@ Implementation of the 'build' verb for HackMyResume.
   }
 
 
+
   function handleInternalError( ex ) {
     console.log(ex);
   }
+
 
 
   /**
@@ -194,7 +196,6 @@ Implementation of the 'build' verb for HackMyResume.
           function(fmt) { return fmt.name === targInfo.fmt.outFormat; })[0];
         MKDIRP.sync( PATH.dirname( f ) ); // Ensure dest folder exists;
         _opts.targets = finished;
-        _opts.errHandler = handleInternalError;
         ret = theFormat.gen.generate( _rezObj, f, _opts );
       }
       //Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
@@ -205,7 +206,6 @@ Implementation of the 'build' verb for HackMyResume.
         })[0];
         var outFolder = PATH.dirname( f );
         MKDIRP.sync( outFolder ); // Ensure dest folder exists;
-        _opts.errHandler = handleInternalError;
         ret = theFormat.gen.generate( _rezObj, f, _opts );
       }
     }

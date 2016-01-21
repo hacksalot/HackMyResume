@@ -17,6 +17,7 @@ Definition of the HandlebarsGenerator class.
     , PATH = require('path')
     , parsePath = require('parse-filepath')
     , READFILES = require('recursive-readdir-sync')
+    , HMSTATUS = require('../core/status-codes')
     , SLASH = require('slash');
 
 
@@ -39,17 +40,27 @@ Definition of the HandlebarsGenerator class.
       ( format === 'html' || format === 'pdf' ) && (encData = json.markdownify());
       ( format === 'doc' ) && (encData = json.xmlify());
 
-      // Compile and run the Handlebars template.
-      var template = HANDLEBARS.compile(jst, { strict: false, assumeObjects: false });
-      return template({ // TODO: Clean
-        r: encData,
-        RAW: json,
-        filt: opts.filters,
-        cssInfo: cssInfo,
-        format: format,
-        opts: opts,
-        headFragment: opts.headFragment || ''
-      });
+      try {
+        // Compile and run the Handlebars template.
+        var template = HANDLEBARS.compile(jst, { strict: false, assumeObjects: false });
+        return template({ // TODO: Clean
+          r: encData,
+          RAW: json,
+          filt: opts.filters,
+          cssInfo: cssInfo,
+          format: format,
+          opts: opts,
+          headFragment: opts.headFragment || ''
+        });
+
+      }
+      catch( ex ) {
+        throw {
+          fluenterror: template ?
+            HMSTATUS.invokeTemplate : HMSTATUS.compileTemplate,
+          inner: ex
+        };
+      }
 
     }
 

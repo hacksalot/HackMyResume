@@ -86,3 +86,7 @@ errors:
     msg: An error occurred while writing %s to disk: %s.
   mixedMerge:
     msg: "**Warning:** merging mixed resume types. Errors may occur."
+  invokeTemplate:
+    msg: "An error occurred during template invocation."
+  compileTemplate:
+    msg: "An error occurred during template compilation."

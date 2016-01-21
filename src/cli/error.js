@@ -1,9 +1,9 @@
 /**
 Error-handling routines for HackMyResume.
-@module error.js
+@module cli/error
 @license MIT. See LICENSE.md for details.
 */
-// TODO: Logging library
+
 
 
 (function() {
@@ -31,6 +31,8 @@ Error-handling routines for HackMyResume.
   */
   var ErrorHandler = module.exports = {
 
+
+
     init: function( debug, assert, silent ) {
       this.debug = debug;
       this.assert = assert;
@@ -39,29 +41,30 @@ Error-handling routines for HackMyResume.
       return this;
     },
 
+
+
     err: function( ex, shouldExit ) {
 
+      // Short-circuit logging output if --silent is on
       var o = this.silent ? function() { } : _defaultLog;
 
-      if( !this.msgs ) {
-        this.msgs = require('./msg.js').errors;
-      }
+      // Special case; can probably be removed.
+      if( ex.pass ) throw ex;
 
-      if( ex.pass )
-        throw ex;
+      // Load error messages
+      this.msgs = this.msgs || require('./msg.js').errors;
 
+      // Handle packaged HMR exceptions
       if( ex.fluenterror ) {
 
         // Output the error message
         var objError = assembleError.call( this, ex );
-        o( this[ 'format' + (objError.warning ? 'Warning' : 'Error')](
-          objError.msg
-        ));
+        o( this[ 'format_' + objError.etype ]( objError.msg ));
 
         // Output the stack (sometimes)
         if( objError.withStack ) {
           var stack = ex.stack || (ex.inner && ex.inner.stack);
-          stack && o( chalk.red( stack ) );
+          stack && o( chalk.gray( stack ) );
         }
 
         // Quit if necessary
@@ -73,37 +76,51 @@ Error-handling routines for HackMyResume.
         }
 
       }
+
+      // Handle raw exceptions
       else {
         o( ex );
         var stackTrace = ex.stack || (ex.inner && ex.inner.stack);
         if( stackTrace && this.debug )
-          o( ex.stack || ex.inner.stack );
-        // if( this.debug )
-        //   o( ex.stack || ex.inner.stack );
+          o( M2C(ex.stack || ex.inner.stack, 'gray') );
       }
 
     },
 
-    formatError: function( msg ) {
+
+
+    format_error: function( msg ) {
       msg = msg || '';
       return chalk.red.bold(
         msg.toUpperCase().startsWith('ERROR:') ? msg : 'Error: ' + msg );
     },
 
-    formatWarning: function( brief, msg ) {
+
+
+    format_warning: function( brief, msg ) {
       return chalk.yellow(brief) + chalk.yellow(msg || '');
+    },
+
+
+    format_custom: function( msg ) {
+      return msg;
     }
 
+
+
   };
+
 
 
   function _defaultLog() {
     console.log.apply( console.log, arguments );
   }
 
+
+
   function assembleError( ex ) {
 
-    var msg = '', withStack = false, isError = false, quit = false, warn = true;
+    var msg = '', withStack = false, quit = false, etype = 'warning';
     if( this.debug ) withStack = true;
 
     switch( ex.fluenterror ) {
@@ -151,23 +168,23 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.pdfGeneration:
         msg = M2C( this.msgs.pdfGeneration.msg, 'bold' );
         if( ex.inner ) msg += chalk.red('\n' + ex.inner);
-        withStack = true; quit = false; warn = false;
+        withStack = true; quit = false; etype = 'error';
         break;
 
       case HMSTATUS.invalid:
         msg = M2C( this.msgs.invalid.msg, 'red' );
-        warn = false;
+        etype = 'error';
         break;
 
       case HMSTATUS.generateError:
         msg = (ex.inner && ex.inner.toString()) || ex;
         quit = false;
-        warn = false;
+        etype = 'error';
         break;
 
       case HMSTATUS.fileSaveError:
         msg = printf( M2C( this.msgs.fileSaveError.msg ), (ex.inner || ex).toString() );
-        warn = false;
+        etype = 'error';
         quit = false;
         break;
 
@@ -181,24 +198,36 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.invalidHelperUse:
         msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
         quit = false;
-        warn = true;
+        etype = 'error';
         break;
 
       case HMSTATUS.notOnPath:
         msg = printf( M2C(this.msgs.notOnPath.msg, 'bold'), ex.engine);
         quit = false;
-        warn = false;
+        etype = 'error';
         break;
 
       case HMSTATUS.readError:
-        if( !ex.quiet ) console.error( printf( M2C(this.msgs.readError.msg, 'red'), ex.file ) );
+        if( !ex.quiet )
+          console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file));
         msg = ex.inner.toString();
-        warn = false;
+        etype = 'error';
         break;
 
       case HMSTATUS.mixedMerge:
         msg = M2C( this.msgs.mixedMerge.msg );
         quit = false;
+        break;
+
+      case HMSTATUS.invokeTemplate:
+        msg = M2C( this.msgs.invokeTemplate.msg, 'red' );
+        msg += M2C( '\n' + WRAP(ex.inner.toString(), { width: 60, indent: '   ' }), 'gray' );
+        etype = 'custom';
+        break;
+
+      case HMSTATUS.compileTemplate:
+        //msg = printf( M2C( this.msgs.compileTemplate.msg ), ex.inner);
+        etype = 'error';
         break;
 
       case HMSTATUS.parseError:
@@ -215,16 +244,16 @@ Error-handling routines for HackMyResume.
         else {
           msg = ex;
         }
-        warn = false;
+        etype = 'error';
         break;
 
     }
 
     return {
-      warning: warn,         // True if this is a warning, false if error
       msg: msg,              // The error message to display
       withStack: withStack,  // Whether to include the stack
-      quit: quit
+      quit: quit,
+      etype: etype
     };
   }
 
