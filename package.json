@@ -73,6 +73,7 @@
     "simple-html-tokenizer": "^0.2.0",
     "slash": "^1.0.0",
     "string-padding": "^1.0.2",
+    "string.prototype.endswith": "^0.2.0",
     "string.prototype.startswith": "^0.2.0",
     "traverse": "^0.6.6",
     "underscore": "^1.8.3",
