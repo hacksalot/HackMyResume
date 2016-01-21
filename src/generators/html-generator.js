@@ -10,6 +10,7 @@ Definition of the HTMLGenerator class.
     , FS = require('fs-extra')
     , HTML = require( 'html' )
     , PATH = require('path');
+    require('string.prototype.endswith');
 
   var HtmlGenerator = module.exports = TemplateGenerator.extend({
 
@@ -22,6 +23,8 @@ Definition of the HTMLGenerator class.
     the HTML resume prior to saving.
     */
     onBeforeSave: function( info ) {
+      if( info.outputFile.endsWith('.css') )
+        return info.mk;
       return this.opts.prettify ?
         HTML.prettyPrint( info.mk, this.opts.prettify ) : info.mk;
     }

@@ -188,7 +188,7 @@ Definition of the FRESHTheme class.
       var idx = _.findIndex(fmts, function( fmt ) {
         return fmt && fmt.pre === cssf.pre && fmt.ext === 'html';
       });
-      cssf.action = null;
+      cssf.major = false;
       if( idx > -1) {
         fmts[ idx ].css = cssf.data;
         fmts[ idx ].cssPath = cssf.path;
@@ -200,11 +200,6 @@ Definition of the FRESHTheme class.
           that.overrides = { file: cssf.path, data: cssf.data };
         }
       }
-    });
-
-    // Remove CSS files from the formats array
-    fmts = fmts.filter( function( fmt) {
-      return fmt && (fmt.ext !== 'css');
     });
 
     return formatsHash;

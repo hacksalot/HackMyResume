@@ -13,7 +13,10 @@ Generic template helper definitions for HackMyResume / FluentCV.
     , FluentDate = require('../core/fluent-date')
     , HMSTATUS = require('../core/status-codes')
     , moment = require('moment')
+    , FS = require('fs')
     , LO = require('lodash')
+    , PATH = require('path')
+    , printf = require('printf')
     , _ = require('underscore')
     , unused = require('../utils/string');
 
@@ -72,6 +75,21 @@ Generic template helper definitions for HackMyResume / FluentCV.
             ( obj.sets && obj.sets.length ) ) ?
             options.fn(this) : undefined;
       }
+    },
+
+    fontFace: function( styleName ) {
+      var ret = '';
+      var fontSpec = GenericHelpers.theme.fonts[ styleName ];
+      if( _.isArray( fontSpec ) ) {
+        fontSpec = fontSpec.map( function(ff) {
+          return "'" + ff + "'";
+        });
+        ret = fontSpec.join(', ');
+      }
+      else if( _.isString( fontSpec )) {
+        ret = fontSpec;
+      }
+      return ret;
     },
 
     /**
@@ -218,21 +236,46 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Conditional stylesheet link. Either display the link or embed the stylesheet
-    via <style></style> tag.
+    Conditional stylesheet link. Creates a link to the specified stylesheet with
+    <link> or embeds the styles inline with <style></style>, depending on the
+    theme author's and user's preferences.
+    @param url {String} The path to the CSS file.
+    @param linkage {String} The default link method. Can be either `embed` or
+    `link`. If omitted, defaults to `embed`. Can be overridden by the `--css`
+    command-line switch.
     */
-    styleSheet: function( file, options ) {
-      var styles = ( this.opts.css === 'link') ?
-        '<link href="' + file + '" rel="stylesheet" type="text/css">' :
-        '<style>' + this.cssInfo.data + '</style>';
+
+    styleSheet: function( url, linkage ) {
+
+      // Establish the linkage style
+      linkage = this.opts.css || linkage || 'embed';
+
+      // Create the <link> or <style> tag
+      var ret = '';
+      if( linkage === 'link' ) {
+        ret = printf('<link href="%s" rel="stylesheet" type="text/css">', url);
+      }
+      else {
+        var rawCss = FS.readFileSync(
+          PATH.join( this.opts.themeObj.folder, '/src/', url ), 'utf8' );
+        var renderedCss = this.engine.generateSimple( this, rawCss );
+        ret = printf('<style>%s</style>', renderedCss );
+      }
+
+      // If the currently-executing template is inherited, append styles
       if( this.opts.themeObj.inherits &&
           this.opts.themeObj.inherits.html &&
           this.format === 'html' ) {
-        styles += (this.opts.css === 'link') ?
-          '<link href="' + this.opts.themeObj.overrides.path + '" rel="stylesheet" type="text/css">' :
+        ret += (linkage === 'link') ?
+          '<link href="' + this.opts.themeObj.overrides.path +
+          '" rel="stylesheet" type="text/css">' :
           '<style>' + this.opts.themeObj.overrides.data + '</style>';
       }
-      return styles;
+
+      // TODO: It would be nice to use Handlebar.SafeString here, but these
+      // are supposed to be generic helpers. Provide an equivalent, or expose
+      // it when Handlebars is the chosen engine, which is most of the time.
+      return ret;
     },
 
     /**

@@ -79,7 +79,7 @@ Implementation of the 'build' verb for HackMyResume.
     // Load the theme...
     this.stat( HMEVENT.beforeTheme, { theme: _opts.theme });
     var tFolder = verifyTheme.call( this, _opts.theme );
-    var theme = loadTheme( tFolder );
+    var theme = _opts.themeObj = loadTheme( tFolder );
     this.stat( HMEVENT.afterTheme, { theme: theme });
 
     // Check for invalid outputs...
@@ -144,7 +144,7 @@ Implementation of the 'build' verb for HackMyResume.
     // Cherry-pick options //_opts = extend( true, _opts, opts );
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
-    _opts.css = opts.css || 'embed';
+    _opts.css = opts.css;
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;
     _opts.stitles = opts.sectionTitles;

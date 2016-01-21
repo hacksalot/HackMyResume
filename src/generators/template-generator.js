@@ -4,6 +4,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
 @module template-generator.js
 */
 
+
+
 (function() {
 
 
@@ -22,7 +24,178 @@ Definition of the TemplateGenerator class. TODO: Refactor
 
 
 
-  // Default options.
+  /**
+  TemplateGenerator performs resume generation via local Handlebar or Underscore
+  style template expansion and is appropriate for text-based formats like HTML,
+  plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
+  @class TemplateGenerator
+  */
+  var TemplateGenerator = module.exports = BaseGenerator.extend({
+
+
+
+    /** Constructor. Set the output format and template format for this
+    generator. Will usually be called by a derived generator such as
+    HTMLGenerator or MarkdownGenerator. */
+
+    init: function( outputFormat, templateFormat, cssFile ){
+      this._super( outputFormat );
+      this.tplFormat = templateFormat || outputFormat;
+    },
+
+
+
+    /** Generate a resume using string-based inputs and outputs without touching
+    the filesystem.
+    @method invoke
+    @param rez A FreshResume object.
+    @param opts Generator options.
+    @returns {Array} An array of objects representing the generated output
+    files. */
+
+    invoke: function( rez, opts ) {
+
+      opts = opts ?
+        (this.opts = EXTEND( true, { }, _defaultOpts, opts )) :
+        this.opts;
+
+      // Sort such that CSS files are processed before others
+      var curFmt = opts.themeObj.getFormat( this.format );
+      curFmt.files = _.sortBy( curFmt.files, function(fi) {
+        return fi.ext !== 'css';
+      });
+
+      // Run the transformation!
+      var results = curFmt.files.map( function( tplInfo, idx ) {
+        var trx = this.single( rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt );
+        if( tplInfo.ext === 'css' ) { curFmt.files[idx].data = trx; }
+        else if( tplInfo.ext === 'html' ) {
+          //tplInfo.css contains the CSS data loaded by theme
+          //tplInfo.cssPath contains the absolute path to the source CSS File
+        }
+        return { info: tplInfo, data: trx };
+      }, this);
+
+      return {
+        files: results
+      };
+
+    },
+
+
+
+    /** Generate a resume using file-based inputs and outputs. Requires access
+    to the local filesystem.
+    @method generate
+    @param rez A FreshResume object.
+    @param f Full path to the output resume file to generate.
+    @param opts Generator options. */
+
+    generate: function( rez, f, opts ) {
+
+      // Prepare
+      this.opts = EXTEND( true, { }, _defaultOpts, opts );
+
+      // Call the string-based generation method to perform the generation.
+      var genInfo = this.invoke( rez, null );
+
+      var outFolder = parsePath( f ).dirname;
+      var curFmt = opts.themeObj.getFormat( this.format );
+
+      // Process individual files within this format. For example, the HTML
+      // output format for a theme may have multiple HTML files, CSS files,
+      // etc. Process them here.
+      genInfo.files.forEach(function( file ){
+
+        // Pre-processing
+        var thisFilePath = PATH.join( outFolder, file.info.orgPath );
+        if( this.onBeforeSave ) {
+          file.data = this.onBeforeSave({
+            theme: opts.themeObj,
+            outputFile: (file.info.major ? f : thisFilePath),
+            mk: file.data,
+            opts: this.opts
+          });
+          if( !file.data ) return; // PDF etc
+        }
+
+        // Write the file
+        var fileName = file.info.major ? f : thisFilePath;
+        MKDIRP.sync( PATH.dirname( fileName ) );
+        FS.writeFileSync( fileName, file.data,
+          { encoding: 'utf8', flags: 'w' } );
+
+        // Post-processing
+        this.onAfterSave && this.onAfterSave(
+          { outputFile: fileName, mk: file.data, opts: this.opts } );
+
+      }, this);
+
+      // Some themes require a symlink structure. If so, create it.
+      if( curFmt.symLinks ) {
+        Object.keys( curFmt.symLinks ).forEach( function(loc) {
+          var absLoc = PATH.join(outFolder, loc);
+          var absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
+           // 'file', 'dir', or 'junction' (Windows only)
+          var type = parsePath( absLoc ).extname ? 'file' : 'junction';
+          FS.symlinkSync( absTarg, absLoc, type);
+        });
+      }
+
+      return genInfo;
+
+    },
+
+
+
+    /** Perform a single resume resume transformation using string-based inputs
+    and outputs without touching the local file system.
+    @param json A FRESH or JRS resume object.
+    @param jst The stringified template data
+    @param format The format name, such as "html" or "latex"
+    @param cssInfo Needs to be refactored.
+    @param opts Options and passthrough data. */
+
+    single: function( json, jst, format, opts, theme, curFmt ) {
+      this.opts.freezeBreaks && ( jst = freeze(jst) );
+
+      var eng = require( '../renderers/' + theme.engine  + '-generator' );
+      var result = eng.generate( json, jst, format, curFmt, opts, theme );
+
+      this.opts.freezeBreaks && ( result = unfreeze(result) );
+      return result;
+    }
+
+
+  });
+
+
+
+  /** Export the TemplateGenerator function/ctor. */
+  module.exports = TemplateGenerator;
+
+
+
+
+  /** Freeze newlines for protection against errant JST parsers. */
+  function freeze( markup ) {
+    return markup
+      .replace( _reg.regN, _defaultOpts.nSym )
+      .replace( _reg.regR, _defaultOpts.rSym );
+  }
+
+
+
+  /** Unfreeze newlines when the coast is clear. */
+  function unfreeze( markup ) {
+    return markup
+      .replace( _reg.regSymR, '\r' )
+      .replace( _reg.regSymN, '\n' );
+  }
+
+
+
+  /** Default template generator options. */
   var _defaultOpts = {
     engine: 'underscore',
     keepBreaks: true,
@@ -57,250 +230,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
 
 
 
-  /**
-  TemplateGenerator performs resume generation via local Handlebar or Underscore
-  style template expansion and is appropriate for text-based formats like HTML,
-  plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
-  @class TemplateGenerator
-  */
-  var TemplateGenerator = module.exports = BaseGenerator.extend({
-
-
-
-    init: function( outputFormat, templateFormat, cssFile ){
-      this._super( outputFormat );
-      this.tplFormat = templateFormat || outputFormat;
-    },
-
-
-    /**
-    String-based template generation method.
-    @method invoke
-    @param rez A FreshResume object.
-    @param opts Generator options.
-    @returns {Array} An array of objects representing the generated output
-    files. Each object has this format:
-
-        {
-          files: [ { info: { }, data: [ ] }, { ... } ],
-          themeInfo: { }
-        }
-
-    */
-    invoke: function( rez, opts ) {
-
-      // Carry over options
-      this.opts = EXTEND( true, { }, _defaultOpts, opts );
-
-      // Load the theme
-      var themeInfo = themeFromMoniker.call( this );
-      var theme = themeInfo.theme;
-      var tFolder = themeInfo.folder;
-      var tplFolder = PATH.join( tFolder, 'src' );
-      var curFmt = theme.getFormat( this.format );
-      var that = this;
-
-      // "Generate": process individual files within the theme
-      // The transform() method catches exceptions internally
-      return {
-        files: curFmt.files.map( function( tplInfo ) {
-          return {
-            info: tplInfo,
-            data: tplInfo.action === 'transform' ?
-              transform.call( that, rez, tplInfo, theme, opts ) : undefined
-          };
-        }).filter(function(item){ return item !== null; }),
-        themeInfo: themeInfo
-      };
-
-    },
-
-
-
-    /**
-    File-based template generation method.
-    @method generate
-    @param rez A FreshResume object.
-    @param f Full path to the output resume file to generate.
-    @param opts Generator options.
-    */
-    generate: function( rez, f, opts ) {
-
-      // Call the generation method
-      var genInfo = this.invoke( rez, opts );
-
-      // Carry over options
-      this.opts = EXTEND( true, { }, _defaultOpts, opts );
-
-      // Load the theme
-      var themeInfo = genInfo.themeInfo;
-      var theme = themeInfo.theme;
-      var tFolder = themeInfo.folder;
-      var tplFolder = PATH.join( tFolder, 'src' );
-      var outFolder = parsePath(f).dirname;
-      var curFmt = theme.getFormat( this.format );
-      var that = this;
-
-      // "Generate": process individual files within the theme
-      // TODO: refactor
-      genInfo.files.forEach(function( file ){
-
-        var thisFilePath;
-
-        if( theme.engine === 'jrs' ) {
-          file.info.orgPath = '';
-        }
-
-        if( file.info.action === 'transform' ) {
-          thisFilePath = PATH.join( outFolder, file.info.orgPath );
-          if( that.onBeforeSave ) {
-            file.data = that.onBeforeSave({
-              theme: theme,
-              outputFile: (file.info.major ? f : thisFilePath),
-              mk: file.data,
-              opts: that.opts
-            });
-            if( !file.data ) return; // PDF etc
-          }
-          var fileName = file.info.major ? f : thisFilePath;
-          MKDIRP.sync( PATH.dirname( fileName ) );
-          FS.writeFileSync( fileName, file.data,
-            { encoding: 'utf8', flags: 'w' } );
-          that.onAfterSave && that.onAfterSave(
-            { outputFile: fileName, mk: file.data, opts: that.opts } );
-        }
-        else if( file.info.action === null/* && theme.explicit*/ ) {
-          thisFilePath = PATH.join( outFolder, file.info.orgPath );
-          MKDIRP.sync( PATH.dirname(thisFilePath) );
-          FS.copySync( file.info.path, thisFilePath );
-        }
-      });
-
-      // Some themes require a symlink structure. If so, create it.
-      if( curFmt.symLinks ) {
-        Object.keys( curFmt.symLinks ).forEach( function(loc) {
-          var absLoc = PATH.join(outFolder, loc);
-          var absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
-           // 'file', 'dir', or 'junction' (Windows only)
-          var type = parsePath( absLoc ).extname ? 'file' : 'junction';
-          FS.symlinkSync( absTarg, absLoc, type);
-        });
-      }
-
-      return genInfo;
-
-    },
-
-
-
-    /**
-    Perform a single resume JSON-to-DEST resume transformation.
-    @param json A FRESH or JRS resume object.
-    @param jst The stringified template data
-    @param format The format name, such as "html" or "latex"
-    @param cssInfo Needs to be refactored.
-    @param opts Options and passthrough data.
-    */
-    single: function( json, jst, format, cssInfo, opts, theme ) {
-      this.opts.freezeBreaks && ( jst = freeze(jst) );
-
-      var eng = require( '../renderers/' + theme.engine  + '-generator' );
-      var result = eng.generate( json, jst, format, cssInfo, opts, theme );
-
-      this.opts.freezeBreaks && ( result = unfreeze(result) );
-      return result;
-    }
-
-
-  });
-
-
-
-  /**
-  Export the TemplateGenerator function/ctor.
-  */
-  module.exports = TemplateGenerator;
-
-
-
-  /**
-  Given a theme title, load the corresponding theme.
-  */
-  function themeFromMoniker() {
-
-    // Verify the specified theme name/path
-    var tFolder = PATH.join(
-      parsePath( require.resolve('fresh-themes') ).dirname,
-      '/themes/',
-      this.opts.theme
-    );
-
-    var t;
-    if( this.opts.theme.startsWith('jsonresume-theme-') ) {
-      t = new JRSTheme().open( tFolder );
-    }
-    else {
-      var exists = require('path-exists').sync;
-      if( !exists( tFolder ) ) {
-        tFolder = PATH.resolve( this.opts.theme );
-        if( !exists( tFolder ) ) {
-          throw { fluenterror: this.codes.themeNotFound, data: this.opts.theme};
-        }
-      }
-      t = this.opts.themeObj || new FRESHTheme().open( tFolder );
-    }
-
-    // Load the theme and format
-    return {
-      theme: t,
-      folder: tFolder
-    };
-  }
-
-
-
-  function transform( rez, tplInfo, theme, opts ) {
-    try {
-      var cssInfo = {
-        file: tplInfo.css ? tplInfo.cssPath : null,
-        data: tplInfo.css || null
-      };
-      return this.single( rez, tplInfo.data, this.format, cssInfo, this.opts,
-        theme );
-    }
-    catch(ex) {
-      if( opts.errHandler ) opts.errHandler(ex);
-      else throw ex;
-    }
-  }
-
-
-
-  /**
-  Freeze newlines for protection against errant JST parsers.
-  */
-  function freeze( markup ) {
-    return markup
-      .replace( _reg.regN, _defaultOpts.nSym )
-      .replace( _reg.regR, _defaultOpts.rSym );
-  }
-
-
-
-  /**
-  Unfreeze newlines when the coast is clear.
-  */
-  function unfreeze( markup ) {
-    return markup
-      .replace( _reg.regSymR, '\r' )
-      .replace( _reg.regSymN, '\n' );
-  }
-
-
-
-  /**
-  Regexes for linebreak preservation.
-  */
+  /** Regexes for linebreak preservation. */
   var _reg = {
     regN: new RegExp( '\n', 'g' ),
     regR: new RegExp( '\r', 'g' ),

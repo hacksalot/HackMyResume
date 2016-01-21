@@ -1,7 +1,7 @@
 /**
 Definition of the HandlebarsGenerator class.
 @license MIT. See LICENSE.md for details.
-@module handlebars-generator.js
+@module renderers/handlebars-generator
 */
 
 
@@ -30,29 +30,12 @@ Definition of the HandlebarsGenerator class.
 
 
 
-    generate: function( json, jst, format, cssInfo, opts, theme ) {
-
-      registerPartials( format, theme );
-      registerHelpers( theme, opts );
-
-      // Preprocess text
-      var encData = json;
-      ( format === 'html' || format === 'pdf' ) && (encData = json.markdownify());
-      ( format === 'doc' ) && (encData = json.xmlify());
+    generateSimple: function( data, tpl ) {
 
       try {
         // Compile and run the Handlebars template.
-        var template = HANDLEBARS.compile(jst, { strict: false, assumeObjects: false });
-        return template({ // TODO: Clean
-          r: encData,
-          RAW: json,
-          filt: opts.filters,
-          cssInfo: cssInfo,
-          format: format,
-          opts: opts,
-          headFragment: opts.headFragment || ''
-        });
-
+        var template = HANDLEBARS.compile( tpl, { strict: false, assumeObjects: false } );
+        return template( data );
       }
       catch( ex ) {
         throw {
@@ -62,6 +45,35 @@ Definition of the HandlebarsGenerator class.
         };
       }
 
+    },
+
+
+
+    generate: function( json, jst, format, curFmt, opts, theme ) {
+
+      // Set up partials and helpers
+      registerPartials( format, theme );
+      registerHelpers( theme, opts );
+
+      // Preprocess text
+      var encData = json;
+      ( format === 'html' || format === 'pdf' ) && (encData = json.markdownify());
+      ( format === 'doc' ) && (encData = json.xmlify());
+
+      // Set up the context
+      var ctx = {
+        r: encData,
+        RAW: json,
+        filt: opts.filters,
+        format: format,
+        opts: opts,
+        engine: this,
+        results: curFmt.files,
+        headFragment: opts.headFragment || ''
+      };
+
+      // Render the template
+      return this.generateSimple( ctx, jst );
     }
 
 
