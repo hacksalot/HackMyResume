@@ -36,7 +36,9 @@ Event code definitions.
     beforePeek:       20,
     afterPeek:        21,
     beforeInlineConvert: 22,
-    afterInlineConvert: 23
+    afterInlineConvert: 23,
+    beforeValidate:   24,
+    afterValidate:    25
   };
 
 

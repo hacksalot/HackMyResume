@@ -117,7 +117,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     // Add freebie formats to the theme
     addFreebieFormats( theme  );
-    this.stat( HMEVENT.applyTheme, { r: rez });
+    this.stat( HMEVENT.applyTheme, { r: rez, theme: theme });
 
     // Load the resume into a FRESHResume or JRSResume object
     _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
@@ -157,12 +157,6 @@ Implementation of the 'build' verb for HackMyResume.
     // keyword is omitted, the last file specifies the output file.
     ( src.length > 1 && ( !dst || !dst.length ) ) && dst.push( src.pop() );
 
-  }
-
-
-
-  function handleInternalError( ex ) {
-    console.log(ex);
   }
 
 

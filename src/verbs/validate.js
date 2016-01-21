@@ -4,7 +4,11 @@ Implementation of the 'validate' verb for HackMyResume.
 @license MIT. See LICENSE.md for details.
 */
 
+
+
 (function() {
+
+
 
   var FS = require('fs');
   var ResumeFactory = require('../core/resume-factory');
@@ -17,6 +21,7 @@ Implementation of the 'validate' verb for HackMyResume.
 
 
 
+  /** An invokable resume validation command. */
   var ValidateVerb = module.exports = Verb.extend({
 
     init: function() {
@@ -33,15 +38,11 @@ Implementation of the 'validate' verb for HackMyResume.
 
 
 
-  /**
-  Validate 1 to N resumes in either FRESH or JSON Resume format.
-  */
+  /** Validate 1 to N resumes in FRESH or JSON Resume format. */
   function validate( sources, unused, opts ) {
 
     if( !sources || !sources.length )
       throw { fluenterror: HMSTATUS.resumeNotFoundAlt, quit: true };
-
-    var isValid = true;
 
     var validator = require('is-my-json-valid');
     var schemas = {
@@ -82,14 +83,14 @@ Implementation of the 'validate' verb for HackMyResume.
         }
 
       }
-      catch(exc) {
+      catch( exc ) {
         return ret;
       }
 
-      this.stat(HMEVENT.afterValidate, { file: src.file, isValid: isValid,
-        fmt: fmt.replace('jars', 'JSON Resume'), errors: errors });
+      this.stat( HMEVENT.afterValidate, { file: src.file, isValid: ret.isValid,
+        fmt: fmt.replace( 'jars', 'JSON Resume' ), errors: errors });
 
-      if( opts.assert && !isValid ) {
+      if( opts.assert && !ret.isValid ) {
         throw { fluenterror: HMSTATUS.invalid, shouldExit: true };
       }
 

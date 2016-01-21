@@ -87,8 +87,6 @@ Output routines for HackMyResume.
           break;
 
         case HME.afterTheme:
-          this.theme = evt.theme;
-          // this.opts.debug && L( M2C(this.msgs.beforeTheme.msg, 'green'), evt.theme );
           break;
 
         case HME.beforeMerge:
@@ -107,9 +105,10 @@ Output routines for HackMyResume.
           break;
 
         case HME.applyTheme:
-          var numFormats = Object.keys( this.theme.formats ).length;
+          this.theme = evt.theme;
+          var numFormats = Object.keys( evt.theme.formats ).length;
           L( M2C(this.msgs.applyTheme.msg, 'green'),
-            this.theme.name.toUpperCase(),
+            evt.theme.name.toUpperCase(),
             numFormats, ( numFormats === 1 ? '' : 's') );
           break;
 
