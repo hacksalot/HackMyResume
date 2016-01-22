@@ -8,7 +8,9 @@ Definition of the UnderscoreGenerator class.
 
 
 
-  var _ = require('underscore');
+  var _ = require('underscore')
+    , registerHelpers = require('../helpers/underscore-helpers')
+    , HMSTATUS = require('../core/status-codes');
 
 
   /**
@@ -16,6 +18,23 @@ Definition of the UnderscoreGenerator class.
   @class UnderscoreGenerator
   */
   var UnderscoreGenerator = module.exports = {
+
+    generateSimple: function( data, tpl ) {
+
+      try {
+        // Compile and run the Handlebars template.
+        var template = _.template( tpl );
+        return template( data );
+      }
+      catch( ex ) {
+        throw {
+          fluenterror: template ?
+            HMSTATUS.invokeTemplate : HMSTATUS.compileTemplate,
+          inner: ex
+        };
+      }
+
+    },
 
     generate: function( json, jst, format, cssInfo, opts, theme ) {
 
@@ -31,23 +50,20 @@ Definition of the UnderscoreGenerator class.
       // Strip {# comments #}
       jst = jst.replace( delims.comment, '');
 
-      var helpers = require('../helpers/generic-helpers');
-      helpers.opts = opts;
-      helpers.cssInfo = cssInfo;
-
-      // Compile and run the template. TODO: avoid unnecessary recompiles.
-      var compiled = _.template(jst);
-      var ret = compiled({
+      var ctx = {
         r: format === 'html' || format === 'pdf' || format === 'png' ? json.markdownify() : json,
         filt: opts.filters,
         XML: require('xml-escape'),
         RAW: json,
         cssInfo: cssInfo,
+        //engine: this,
         headFragment: opts.headFragment || '',
-        opts: opts,
-        h: helpers
-      });
-      return ret;
+        opts: opts
+      };
+
+      registerHelpers( theme, opts, cssInfo, ctx, this );
+
+      return this.generateSimple( ctx, jst );
     }
 
   };
