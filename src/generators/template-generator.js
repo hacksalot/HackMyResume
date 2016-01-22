@@ -108,6 +108,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
       genInfo.files.forEach(function( file ){
 
         // Pre-processing
+        file.info.orgPath = file.info.orgPath || ''; // <-- For JRS themes
         var thisFilePath = PATH.join( outFolder, file.info.orgPath );
         if( this.onBeforeSave ) {
           file.data = this.onBeforeSave({
