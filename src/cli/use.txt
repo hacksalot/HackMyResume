@@ -15,12 +15,12 @@ Available options:
 
   --theme -t    Path to a FRESH or JSON Resume theme.
   --pdf -p      Specify the PDF engine to use (if any).
-  --opts -o     Load options from an external JSON file.
+  --options -o  Load options from an external JSON file.
   --format -f   The format (FRESH or JSON Resume) to use.
   --debug -d    Emit extended debugging info.
   --assert -a   Treat resume validation warnings as errors.
   --no-colors   Disable terminal colors.
-  --no-tips     Disable theme messages and tips.
+  --tips        Display theme messages and tips.
   --help -h     Display help documentation.
   --version -v  Display the current version.
 
