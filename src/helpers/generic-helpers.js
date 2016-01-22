@@ -93,7 +93,8 @@ Generic template helper definitions for HackMyResume / FluentCV.
     /**
     Emit a comma-delimited list of font names suitable associated with the
     provided key.
-    @param styleName
+    @param key {String} A named style from the "fonts" section of the theme's
+    theme.json file. For example: 'default' or 'heading1'.
     */
     fontList: function( key ) {
       var ret = '';
