@@ -83,7 +83,10 @@ Output routines for HackMyResume.
           break;
 
         case HME.afterParse:
-          L( M2C( this.msgs.afterRead.msg, 'green' ), evt.fmt.toUpperCase(), evt.file );
+          L(
+            M2C( this.msgs.afterRead.msg, 'gray', 'white.dim'), evt.fmt.toUpperCase(), evt.file
+          );
+
           break;
 
         case HME.afterTheme:
@@ -107,7 +110,7 @@ Output routines for HackMyResume.
         case HME.applyTheme:
           this.theme = evt.theme;
           var numFormats = Object.keys( evt.theme.formats ).length;
-          L( M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'green'),
+          L( M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'gray', evt.status === 'error' ? 'bold' : 'white.dim'),
             evt.theme.name.toUpperCase(),
             numFormats, ( numFormats === 1 ? '' : 's') );
           break;
@@ -172,7 +175,7 @@ Output routines for HackMyResume.
           break;
 
         case HME.afterInlineConvert:
-          L( M2C( this.msgs.afterInlineConvert.msg, 'green'),
+          L( M2C( this.msgs.afterInlineConvert.msg, 'gray', 'white.dim' ),
             evt.file, evt.fmt );
           break;
 
