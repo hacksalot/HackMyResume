@@ -15,7 +15,9 @@ Definition of the FRESHTheme class.
     , parsePath = require('parse-filepath')
     , pathExists = require('path-exists').sync
     , EXTEND = require('extend')
+    , HMSTATUS = require('./status-codes')
     , moment = require('moment')
+    , loadSafeJson = require('../utils/safe-json-loader')
     , READFILES = require('recursive-readdir-sync');
 
 
@@ -46,11 +48,17 @@ Definition of the FRESHTheme class.
 
     // Load the theme
     var themeFile = PATH.join( themeFolder, 'theme.json' );
-    var themeInfo = JSON.parse( FS.readFileSync( themeFile, 'utf8' ) );
+    var themeInfo = loadSafeJson( themeFile );
+    if( themeInfo.ex ) throw {
+      fluenterror: themeInfo.ex.operation === 'parse' ?
+        HMSTATUS.parseError : HMSTATUS.readError,
+      inner: themeInfo.ex.inner
+    };
+
     var that = this;
 
     // Move properties from the theme JSON file to the theme object
-    EXTEND( true, this, themeInfo );
+    EXTEND( true, this, themeInfo.json );
 
     // Check for an "inherits" entry in the theme JSON.
     if( this.inherits ) {

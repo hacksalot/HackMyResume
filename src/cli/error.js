@@ -198,7 +198,7 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.invalidHelperUse:
         msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
         quit = false;
-        etype = 'error';
+        etype = 'warning';
         break;
 
       case HMSTATUS.notOnPath:
@@ -226,8 +226,16 @@ Error-handling routines for HackMyResume.
         break;
 
       case HMSTATUS.compileTemplate:
-        //msg = printf( M2C( this.msgs.compileTemplate.msg ), ex.inner);
         etype = 'error';
+        break;
+
+      case HMSTATUS.themeLoad:
+        msg = M2C( printf( this.msgs.themeLoad.msg, ex.attempted.toUpperCase() ), 'red');
+        if( ex.inner && ex.inner.fluenterror ) {
+          msg += M2C('\nError: ', 'red') + assembleError.call( this, ex.inner ).msg;
+        }
+        quit = true;
+        etype = 'custom';
         break;
 
       case HMSTATUS.parseError:

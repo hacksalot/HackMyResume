@@ -74,12 +74,30 @@ Implementation of the 'build' verb for HackMyResume.
       format: null, objectify: false, quit: true, inner: { sort: _opts.sort }
     }, this);
 
+    // Explicit check for any resume loading errors...
+    if( !sheetObjects ||
+        _.some( sheetObjects, function(so) { return so.fluenterror; } ) ) {
+      return null;
+    }
+
     var sheets = sheetObjects.map(function(r) { return r.json; });
 
     // Load the theme...
+    var theme;
     this.stat( HMEVENT.beforeTheme, { theme: _opts.theme });
-    var tFolder = verifyTheme.call( this, _opts.theme );
-    var theme = _opts.themeObj = loadTheme( tFolder );
+    try {
+      var tFolder = verifyTheme.call( this, _opts.theme );
+      theme = _opts.themeObj = loadTheme( tFolder );
+    }
+    catch( ex ) {
+      var newEx = {
+        fluenterror: HMSTATUS.themeLoad,
+        inner: ex,
+        attempted: _opts.theme
+      };
+      this.err( HMSTATUS.themeLoad, newEx );
+      return null;
+    }
     this.stat( HMEVENT.afterTheme, { theme: theme });
 
     // Check for invalid outputs...
@@ -149,6 +167,7 @@ Implementation of the 'build' verb for HackMyResume.
     _opts.wrap = opts.wrap || 60;
     _opts.stitles = opts.sectionTitles;
     _opts.tips = opts.tips;
+    _opts.errHandler = opts.errHandler;
     _opts.noTips = opts.noTips;
     _opts.debug = opts.debug;
     _opts.sort = opts.sort;

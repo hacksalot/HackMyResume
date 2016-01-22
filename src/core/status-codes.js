@@ -28,7 +28,8 @@ Status codes for HackMyResume.
     invalidHelperUse: 18,
     mixedMerge: 19,
     invokeTemplate: 20,
-    compileTemplate: 21
+    compileTemplate: 21,
+    themeLoad: 22
   };
 
 }());

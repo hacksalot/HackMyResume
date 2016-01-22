@@ -81,7 +81,7 @@ errors:
   parseError:
     msg: Invalid or corrupt JSON on line %s column %s.
   invalidHelperUse:
-    msg: Invalid use of the **%s** theme helper.
+    msg: Warning: Invalid use of the **%s** theme helper.
   fileSaveError:
     msg: An error occurred while writing %s to disk: %s.
   mixedMerge:
@@ -90,3 +90,5 @@ errors:
     msg: "An error occurred during template invocation."
   compileTemplate:
     msg: "An error occurred during template compilation."
+  themeLoad:
+    msg: "Applying **%s** theme (? formats)"

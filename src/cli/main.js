@@ -238,6 +238,7 @@ Definition of the `main` function.
     var hand = require( './error' );
     hand.init( _opts.debug, _opts.assert, _opts.silent );
     var v = new HMR.verbs[ this.name() ]();
+    _opts.errHandler = v;
     _out.init( _opts );
     v.on( 'hmr:status', function() { _out.do.apply( _out, arguments ); });
     v.on( 'hmr:error', function() {

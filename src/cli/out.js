@@ -107,7 +107,7 @@ Output routines for HackMyResume.
         case HME.applyTheme:
           this.theme = evt.theme;
           var numFormats = Object.keys( evt.theme.formats ).length;
-          L( M2C(this.msgs.applyTheme.msg, 'green'),
+          L( M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'green'),
             evt.theme.name.toUpperCase(),
             numFormats, ( numFormats === 1 ? '' : 's') );
           break;
