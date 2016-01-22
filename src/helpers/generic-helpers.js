@@ -246,6 +246,14 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
+    Convert text to lowercase.
+    @method toLower
+    */
+    toUpper: function( txt ) {
+      return txt && txt.trim() ? txt.toUpperCase() : '';
+    },
+
+    /**
     Return true if either value is truthy.
     @method either
     */
