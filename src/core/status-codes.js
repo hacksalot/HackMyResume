@@ -29,7 +29,8 @@ Status codes for HackMyResume.
     mixedMerge: 19,
     invokeTemplate: 20,
     compileTemplate: 21,
-    themeLoad: 22
+    themeLoad: 22,
+    invalidParamCount: 23
   };
 
 }());

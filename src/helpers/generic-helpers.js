@@ -79,15 +79,29 @@ Generic template helper definitions for HackMyResume / FluentCV.
     provided key.
     @param key {String} A named style from the "fonts" section of the theme's
     theme.json file. For example: 'default' or 'heading1'.
+    @param defFont {String} The font to use if the specified key isn't present.
+    Can be any valid font-face name such as 'Helvetica Neue' or 'Calibri'.
     */
-    fontFace: function( key ) {
-      if( key && key.trim() && GenericHelpers.theme.fonts ) {
-        var fontSpec = GenericHelpers.theme.fonts[ key ];
-        if( fontSpec )
-          return String.is( fontSpec ) ? fontSpec : fontSpec[0];
+    fontFace: function( key, defFont ) {
+
+      var ret = '';
+      if( arguments.length !== 3 ) { // key, defFont, and the HandleBars options
+        _reportError( HMSTATUS.invalidHelperUse, {
+          helper: 'fontFace', error: HMSTATUS.invalidParamCount, expected: 2
+        });
       }
-      _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
-      return '';
+      else if( !GenericHelpers.theme.fonts ) {
+        ret = defFont;
+      }
+      else {
+        var fontSpec = GenericHelpers.theme.fonts[ key ];
+        if( !fontSpec )
+          _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
+        else
+          ret = String.is( fontSpec ) ? fontSpec : fontSpec[0];
+      }
+
+      return ret;
     },
 
     /**
@@ -95,19 +109,35 @@ Generic template helper definitions for HackMyResume / FluentCV.
     provided key.
     @param key {String} A named style from the "fonts" section of the theme's
     theme.json file. For example: 'default' or 'heading1'.
+    @param defFont {String} The font to use if the specified key isn't present.
+    Can be any valid font-face name such as 'Helvetica Neue' or 'Calibri'.
     */
-    fontList: function( key ) {
+    fontList: function( key, defFontList, sep ) {
       var ret = '';
-      var fontSpec = GenericHelpers.theme.fonts[ key ];
-      if( _.isArray( fontSpec ) ) {
-        fontSpec = fontSpec.map( function(ff) {
-          return "'" + ff + "'";
+      if( !_.contains( [3,4], arguments.length ) ) {
+        _reportError( HMSTATUS.invalidHelperUse, {
+          helper: 'fontList', error: HMSTATUS.invalidParamCount, expected: [2,3]
         });
-        ret = fontSpec.join(', ');
       }
-      else if( _.isString( fontSpec )) {
-        ret = fontSpec;
+      else if( !GenericHelpers.theme.fonts ) {
+        ret = defFontList;
       }
+      else {
+        var fontSpec = GenericHelpers.theme.fonts[ key ];
+        if( !fontSpec ) {
+          _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
+        }
+        else if( _.isArray( fontSpec ) ) {
+          fontSpec = fontSpec.map( function(ff) {
+            return "'" + ff + "'";
+          });
+          ret = fontSpec.join( sep === undefined ? ', ' : (sep || '') );
+        }
+        else if( _.isString( fontSpec )) {
+          ret = fontSpec;
+        }
+      }
+
       return ret;
     },
 

@@ -197,6 +197,9 @@ Error-handling routines for HackMyResume.
 
       case HMSTATUS.invalidHelperUse:
         msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
+        if( ex.error ) {
+          msg += printf( '\n--> ' + M2C( this.msgs.invalidParamCount.msg ), ex.expected );
+        }
         quit = false;
         etype = 'warning';
         break;
