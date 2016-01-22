@@ -20,10 +20,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     , _ = require('underscore')
     , unused = require('../utils/string');
 
-  /**
-  Generic template helper function definitions.
-  @class GenericHelpers
-  */
+  /** Generic template helper function definitions. */
   var GenericHelpers = module.exports = {
 
     /**
@@ -77,9 +74,30 @@ Generic template helper definitions for HackMyResume / FluentCV.
       }
     },
 
-    fontFace: function( styleName ) {
+    /**
+    Emit the font face (such as 'Helvetica' or 'Calibri') associated with the
+    provided key.
+    @param key {String} A named style from the "fonts" section of the theme's
+    theme.json file. For example: 'default' or 'heading1'.
+    */
+    fontFace: function( key ) {
+      if( key && key.trim() && GenericHelpers.theme.fonts ) {
+        var fontSpec = GenericHelpers.theme.fonts[ key ];
+        if( fontSpec )
+          return String.is( fontSpec ) ? fontSpec : fontSpec[0];
+      }
+      _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
+      return '';
+    },
+
+    /**
+    Emit a comma-delimited list of font names suitable associated with the
+    provided key.
+    @param styleName
+    */
+    fontList: function( key ) {
       var ret = '';
-      var fontSpec = GenericHelpers.theme.fonts[ styleName ];
+      var fontSpec = GenericHelpers.theme.fonts[ key ];
       if( _.isArray( fontSpec ) ) {
         fontSpec = fontSpec.map( function(ff) {
           return "'" + ff + "'";
