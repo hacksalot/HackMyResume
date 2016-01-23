@@ -94,3 +94,5 @@ errors:
     msg: "Applying **%s** theme (? formats)"
   invalidParamCount:
     msg: "Invalid number of parameters. Expected: **%s**."
+  missingParam:
+    msg: The '**%s**' parameter was needed but not supplied.

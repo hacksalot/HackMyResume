@@ -84,21 +84,51 @@ Generic template helper definitions for HackMyResume / FluentCV.
     */
     fontFace: function( key, defFont ) {
 
-      var ret = '';
-      if( arguments.length !== 3 ) { // key, defFont, and the HandleBars options
+      var ret = ''
+        , hasDef = defFont && String.is( defFont )
+        , fontSpec;
+
+      // Key must be specified
+      if( !( key && key.trim()) ) {
         _reportError( HMSTATUS.invalidHelperUse, {
-          helper: 'fontFace', error: HMSTATUS.invalidParamCount, expected: 2
+          helper: 'fontFace', error: HMSTATUS.missingParam, expected: 'key'
         });
       }
+
+      // If the theme doesn't have a "fonts" section, use defFont.
       else if( !GenericHelpers.theme.fonts ) {
         ret = defFont;
+        if( !hasDef ) {
+          _reportError( HMSTATUS.invalidHelperUse, {
+            helper: 'fontFace', error: HMSTATUS.missingParam,
+            expected: 'defFont'});
+        }
       }
+
+      // If the theme has a "fonts" section, lookup the font face.
+      else if (fontSpec = GenericHelpers.theme.fonts[ key ]) { // jshint ignore:line
+
+        ret = String.is( fontSpec ) ? fontSpec : // [1]
+          (_.isArray( fontSpec ) && fontSpec[0]);
+
+        if( !(ret && ret.trim()) ) {
+          ret = defFont; // [2]
+          if( !hasDef ) {
+            _reportError( HMSTATUS.invalidHelperUse, {
+              helper: 'fontFace', error: HMSTATUS.missingParam,
+              expected: 'defFont'});
+          }
+        }
+      }
+
+      // The key wasn't found in the "fonts" section. Default to defFont.
       else {
-        var fontSpec = GenericHelpers.theme.fonts[ key ];
-        if( !fontSpec )
-          _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
-        else
-          ret = String.is( fontSpec ) ? fontSpec : fontSpec[0];
+        if( !hasDef ) {
+          _reportError( HMSTATUS.invalidHelperUse, {
+            helper: 'fontFace', error: HMSTATUS.missingParam,
+            expected: 'defFont'});
+        }
+        ret = defFont;
       }
 
       return ret;
@@ -109,25 +139,38 @@ Generic template helper definitions for HackMyResume / FluentCV.
     provided key.
     @param key {String} A named style from the "fonts" section of the theme's
     theme.json file. For example: 'default' or 'heading1'.
-    @param defFont {String} The font to use if the specified key isn't present.
-    Can be any valid font-face name such as 'Helvetica Neue' or 'Calibri'.
+    @param defFontList {Array} The font list to use if the specified key isn't
+    present. Can be an array of valid font-face name such as 'Helvetica Neue'
+    or 'Calibri'.
+    @param sep {String} The default separator to use in the rendered output.
+    Defaults to ", " (comma with a space).
     */
     fontList: function( key, defFontList, sep ) {
-      var ret = '';
-      if( !_.contains( [3,4], arguments.length ) ) {
+
+      var ret = ''
+        , hasDef = defFontList && String.is( defFontList )
+        , fontSpec;
+
+      // Key must be specified
+      if( !( key && key.trim()) ) {
         _reportError( HMSTATUS.invalidHelperUse, {
-          helper: 'fontList', error: HMSTATUS.invalidParamCount, expected: [2,3]
+          helper: 'fontList', error: HMSTATUS.missingParam, expected: 'key'
         });
       }
+
+      // If the theme doesn't have a "fonts" section, use defFont
       else if( !GenericHelpers.theme.fonts ) {
         ret = defFontList;
-      }
-      else {
-        var fontSpec = GenericHelpers.theme.fonts[ key ];
-        if( !fontSpec ) {
-          _reportError( HMSTATUS.invalidHelperUse, { helper: 'fontFace' } );
+        if( !hasDef ) {
+          _reportError( HMSTATUS.invalidHelperUse, {
+            helper: 'fontList', error: HMSTATUS.missingParam,
+            expected: 'defFontList'});
         }
-        else if( _.isArray( fontSpec ) ) {
+      }
+
+      // If the theme has a "fonts" section, lookup the font list.
+      else if( fontSpec = GenericHelpers.theme.fonts[ key ] ) { // jshint ignore:line
+        if( _.isArray( fontSpec ) ) {
           fontSpec = fontSpec.map( function(ff) {
             return "'" + ff + "'";
           });
@@ -136,6 +179,16 @@ Generic template helper definitions for HackMyResume / FluentCV.
         else if( _.isString( fontSpec )) {
           ret = fontSpec;
         }
+      }
+
+      // The key wasn't found in the "fonts" section. Default to defFont.
+      else {
+        if( !hasDef ) {
+          _reportError( HMSTATUS.invalidHelperUse, {
+            helper: 'fontList', error: HMSTATUS.missingParam,
+            expected: 'defFontList'});
+        }
+        ret = defFontList;
       }
 
       return ret;
@@ -447,3 +500,22 @@ Generic template helper definitions for HackMyResume / FluentCV.
   }
 
 }());
+
+// Note [1] --------------------------------------------------------------------
+// Make sure it's precisely a string or array since some template engines jam
+// their options/context object into the last parameter and we are allowing the
+// defFont parameter to be omitted in certain cases. This is a little kludgy,
+// but works fine for this case. If we start doing this regularly, we should
+// rebind these parameters.
+
+// Note [2]: -------------------------------------------------------------------
+// If execution reaches here, some sort of cosmic ray or sunspot has landed on
+// HackMyResume, or a theme author is deliberately messing with us by doing
+// something like:
+//
+// "fonts": {
+//   "default": "",
+//   "heading1": null
+// }
+//
+// Rather than sort it out, we'll just fall back to defFont.

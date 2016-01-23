@@ -18,6 +18,7 @@ Error-handling routines for HackMyResume.
     , WRAP = require('word-wrap')
     , M2C = require('../utils/md2chalk.js')
     , chalk = require('chalk')
+    , extend = require('extend')
     , YAML = require('yamljs')
     , printf = require('printf')
     , SyntaxErrorEx = require('../utils/syntax-error-ex');
@@ -195,10 +196,15 @@ Error-handling routines for HackMyResume.
         }, this);
         break;
 
+      case HMSTATUS.missingParam:
+        msg = printf( M2C( this.msgs.missingParam.msg ), ex.expected, ex.helper );
+        break;
+
       case HMSTATUS.invalidHelperUse:
         msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
         if( ex.error ) {
-          msg += printf( '\n--> ' + M2C( this.msgs.invalidParamCount.msg ), ex.expected );
+          msg += '\n--> ' + assembleError.call( this, extend( true, {}, ex, {fluenterror: ex.error} )).msg;
+          //msg += printf( '\n--> ' + M2C( this.msgs.invalidParamCount.msg ), ex.expected );
         }
         quit = false;
         etype = 'warning';

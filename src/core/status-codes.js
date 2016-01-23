@@ -30,7 +30,8 @@ Status codes for HackMyResume.
     invokeTemplate: 20,
     compileTemplate: 21,
     themeLoad: 22,
-    invalidParamCount: 23
+    invalidParamCount: 23,
+    missingParam: 24
   };
 
 }());
