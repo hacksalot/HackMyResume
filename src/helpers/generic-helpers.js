@@ -85,50 +85,38 @@ Generic template helper definitions for HackMyResume / FluentCV.
     fontFace: function( key, defFont ) {
 
       var ret = ''
-        , hasDef = defFont && String.is( defFont )
-        , fontSpec;
+        , hasDef = defFont && String.is( defFont );
 
       // Key must be specified
       if( !( key && key.trim()) ) {
         _reportError( HMSTATUS.invalidHelperUse, {
           helper: 'fontFace', error: HMSTATUS.missingParam, expected: 'key'
         });
-      }
-
-      // If the theme doesn't have a "fonts" section, use defFont.
-      else if( !GenericHelpers.theme.fonts ) {
-        ret = defFont;
-        if( !hasDef ) {
-          _reportError( HMSTATUS.invalidHelperUse, {
-            helper: 'fontFace', error: HMSTATUS.missingParam,
-            expected: 'defFont'});
-        }
+        return ret;
       }
 
       // If the theme has a "fonts" section, lookup the font face.
-      else if (fontSpec = GenericHelpers.theme.fonts[ key ]) { // jshint ignore:line
-
-        ret = String.is( fontSpec ) ? fontSpec : // [1]
-          (_.isArray( fontSpec ) && fontSpec[0]);
-
-        if( !(ret && ret.trim()) ) {
-          ret = defFont; // [2]
-          if( !hasDef ) {
-            _reportError( HMSTATUS.invalidHelperUse, {
-              helper: 'fontFace', error: HMSTATUS.missingParam,
-              expected: 'defFont'});
-          }
+      else if( GenericHelpers.theme.fonts ) {
+        var fontSpec = LO.get( GenericHelpers.theme.fonts, this.format + '.' + key );
+        if( !fontSpec ) {
+          // Check for an "all" format
+          if( GenericHelpers.theme.fonts.all )
+            fontSpec = GenericHelpers.theme.fonts.all[ key ];
+        }
+        if( fontSpec ) {
+          ret = String.is( fontSpec ) ? fontSpec : // [1]
+            (_.isArray( fontSpec ) && fontSpec[0]);
         }
       }
 
-      // The key wasn't found in the "fonts" section. Default to defFont.
-      else {
-        if( !hasDef ) {
+      // We weren't able to lookup the specified key. Default to defFont.
+      if( !(ret && ret.trim()) ) {
+        ret = defFont;
+        if( !defFont ) {
           _reportError( HMSTATUS.invalidHelperUse, {
             helper: 'fontFace', error: HMSTATUS.missingParam,
             expected: 'defFont'});
         }
-        ret = defFont;
       }
 
       return ret;
@@ -148,8 +136,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     fontList: function( key, defFontList, sep ) {
 
       var ret = ''
-        , hasDef = defFontList && String.is( defFontList )
-        , fontSpec;
+        , hasDef = defFontList && String.is( defFontList );
 
       // Key must be specified
       if( !( key && key.trim()) ) {
@@ -158,37 +145,32 @@ Generic template helper definitions for HackMyResume / FluentCV.
         });
       }
 
-      // If the theme doesn't have a "fonts" section, use defFont
-      else if( !GenericHelpers.theme.fonts ) {
-        ret = defFontList;
-        if( !hasDef ) {
-          _reportError( HMSTATUS.invalidHelperUse, {
-            helper: 'fontList', error: HMSTATUS.missingParam,
-            expected: 'defFontList'});
-        }
-      }
-
       // If the theme has a "fonts" section, lookup the font list.
-      else if( fontSpec = GenericHelpers.theme.fonts[ key ] ) { // jshint ignore:line
-        if( _.isArray( fontSpec ) ) {
-          fontSpec = fontSpec.map( function(ff) {
-            return "'" + ff + "'";
-          });
-          ret = fontSpec.join( sep === undefined ? ', ' : (sep || '') );
+      else if( GenericHelpers.theme.fonts ) {
+        var fontSpec = LO.get( GenericHelpers.theme.fonts, this.format + '.' + key );
+        if( !fontSpec ) {
+          if( GenericHelpers.theme.fonts.all )
+            fontSpec = GenericHelpers.theme.fonts.all[ key ];
         }
-        else if( _.isString( fontSpec )) {
-          ret = fontSpec;
+
+        if( fontSpec ) {
+          if( _.isArray( fontSpec ) ) {
+            fontSpec = fontSpec.map( function(ff) {
+              return "'" + ff + "'";
+            });
+            ret = fontSpec.join( sep === undefined ? ', ' : (sep || '') );
+          }
+          else if( _.isString( fontSpec )) { ret = fontSpec; }
         }
       }
 
       // The key wasn't found in the "fonts" section. Default to defFont.
-      else {
-        if( !hasDef ) {
+      if( !(ret && ret.trim()) ) {
+        ret = defFontList;
+        if( !hasDef )
           _reportError( HMSTATUS.invalidHelperUse, {
             helper: 'fontList', error: HMSTATUS.missingParam,
             expected: 'defFontList'});
-        }
-        ret = defFontList;
       }
 
       return ret;
