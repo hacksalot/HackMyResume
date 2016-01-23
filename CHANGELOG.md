@@ -2,21 +2,27 @@ CHANGELOG
 =========
 ## v1.6.0
 
-### Added
+### Major Improvements
 
-- Improved consistency and coverage for all FRESH themes.
+- Better consistency and coverage for all FRESH resumes and themes ([#45][i45]).
 
-- Support for new `projects` and `affiliations` resume sections.
+- Initial support for overridable fonts in FRESH themes. Like a particular
+theme, but want to change the typography? The specific fonts used by a theme
+can now be overridden by the user. (FRESH themes only).
 
-- Better handling of start and end dates on `employment`, `projects`,
-`education`, and other sections with start/end dates. A missing or empty
-end date will be interpreted as "currently employed/engaged/involved with
-the job/project/education", as will the words "current", "present", or "new".
+- New resume sections! Support for `projects` and `affiliation` resume sections
+for technical and creative projects and memberships / clubs / associations,
+respectively ([#92][i92]).
 
 - New command! `PEEK` at any arbitrary field or entry on your `.json` resume.
 
-- Annotated the HTML and MS Word (XML) formats of the Modern theme for FRESH
-theme authors.
+### Added
+
+- Improved handling of start and end dates on `employment`, `projects`,
+`education`, and other sections with start/end dates.
+
+- Support for an `.ignore` property on any FRESH or JSON Resume section or field.
+Ignored properties will be treated by HackMyResume as if they weren't present.
 
 - Emit extended status and error info with the `--debug` or `-d` switch.
 
@@ -33,9 +39,12 @@ in your resume `.json` file.
 
 - Improvements to the starter resume emitted by `hackmyresume new`.
 
-- Refactored colors in HackMyResume output. Errors will now display as red,
-warnings as yellow, successful operations as green, and informational warnings
-as cyan. Similar to the color scheme used by Bootstrap.
+- Theme Authoring: Annotated the HTML and MS Word (XML) formats of the Modern
+theme for FRESH theme authors.
+
+- Theme Authoring: Support for templatized CSS files in FRESH themes. CSS files
+are now expanded via Handlebars or Underscore prior to copying to the
+destination.
 
 - Added CHANGELOG.md (this file).
 
@@ -43,20 +52,47 @@ as cyan. Similar to the color scheme used by Bootstrap.
 
 - Rewrote the HackMyResume man/help page.
 
-- Minor updates to the FRESCA schema.
+- Minor incremental updates to the [FRESCA][fresca] schema.
 
 - PDF generation now uses asynchronous `spawn()` which has better compatibility
-with old or boutique versions of Node.js. Synchronous spawn is preserved as an
-internal code path.
+with old or boutique versions of Node.js.
+
+- Refactored colors in HackMyResume output. Errors will now display as red,
+warnings as yellow, successful operations as green, and informational messages
+as cyan.
+
+- Theme messages and usage tips will no longer display during resume generation
+by default. Use the `--tips` option to view them.
+
+- The `--no-tips` option (default: false) has been replaced with the `--tips`
+option, also defaulting to false.
+
+- Removed the `hello-world` theme from the [prebuilt themes][themes] that ship
+with HackMyResume. It can be installed separately from NPM:
+
+  ```bash
+  npm install fresh-theme-hello-world
+  hackmyresume resume.json -t node_modules/fresh-theme-hello-world
+  ```
+
+- sd
 
 ### Fixed
 
-- Issue with synchronous spawning of PDF generation process on older
-versions of Node.
+- PDF generation issues on older versions of Node.
 
-- Issue with stack traces not being emitted correctly when needed.
+- Stack traces not being emitted correctly.
 
-- Issue with `speaking` section not appearing on generated resume.
+- Missing `speaking` section will now appear on generated resumes ([#101][i101]).
+
+- Incomplete `education` details will now appear on generated resumes ([#65][i65]).
+
+- Missing employment end date being interpreted as "employment ends today"
+([#84][i84]).
+
+- Merging multiple source resumes during `BUILD` sometimes fails.
+
+- Document `--pdf` flag in README ([#111][i111]).
 
 ### Internal
 
@@ -259,3 +295,12 @@ theme.
 ## v1.0.0
 
 - Initial public 1.0 release.
+
+[i45]: https://github.com/hacksalot/HackMyResume/issues/45
+[i65]: https://github.com/hacksalot/HackMyResume/issues/65
+[i84]: https://github.com/hacksalot/HackMyResume/issues/84
+[i92]: https://github.com/hacksalot/HackMyResume/issues/92
+[i101]: https://github.com/hacksalot/HackMyResume/issues/101
+[i111]: https://github.com/hacksalot/HackMyResume/issues/111
+[fresca]: https://github.com/fluentdesk/FRESCA
+[themes]: https://github.com/fluentdesk/fresh-themes
