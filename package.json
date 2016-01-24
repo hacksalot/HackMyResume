@@ -42,7 +42,6 @@
   "bugs": {
     "url": "https://github.com/hacksalot/HackMyResume/issues"
   },
-  "main": "src/hackmyapi.js",
   "bin": {
     "hackmyresume": "src/index.js"
   },
