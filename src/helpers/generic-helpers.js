@@ -57,7 +57,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Return a named color value.
+    Return a named color value as an RRGGBB string.
     @method toFrom
     */
     color: function( colorName, colorDefault ) {
@@ -100,7 +100,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     theme.json file. For example: 'default' or 'heading1'.
     */
     fontSize: function( key, defSize, units ){
-      console.log('defSize is ' + defSize);
+
       var ret = ''
         , hasDef = defSize && ( String.is( defSize ) || _.isNumber( defSize ));
 
