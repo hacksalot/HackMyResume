@@ -10,7 +10,7 @@ shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
 plain text, and other arbitrary formats. Fight the power, save trees. Compatible
 with [FRESH][fresca] and [JRS][6] resumes.*
 
-![](assets/resume-bouqet.png)
+![](assets/hackmyresume.cli.1.6.0.png)
 
 HackMyResume is a dev-friendly, local-only Swiss Army knife for resumes and CVs.
 Use it to:
