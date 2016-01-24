@@ -3,54 +3,93 @@ Development Roadmap
 
 ## Short-Term
 
-- The **FluentCV Desktop 1.0 beta release** will present HackMyResume
+### FluentCV Desktop: Beta 1
+
+The **FluentCV Desktop 1.0 beta release** will present HackMyResume
 functionality in a cross-platform desktop application for OS X, Linux, and
 Windows.
 
-- The **fresh-themes 1.0** release will bring 100% coverage of the FRESH and JRS
+### GitHub Integration
+
+HackMyResume will offer GitHub integration for versioned resume storage and
+retrieval via the `COMMIT` or `STORE` command(s) starting in 1.7.0 or 1.8.0.
+
+### fresh-themes 1.0.0
+
+The **fresh-themes 1.0** release will bring 100% coverage of the FRESH and JRS
 object models&mdash;all resume sections and fields&mdash;along with
 documentation, theme developer's guide, new themes, and a freeze to the FRESH
 theme structure.
 
-- **Better LaTeX support** including Markdown-to-LaTeX translation and more
-LaTeX-driven themes and formats.
+### Better LaTeX support
 
-- **StackOverflow and LinkedIn** support will start appearing in v1.7.0, with
-incremental improvements in 1.8.0 and beyond.
+Including Markdown-to-LaTeX translation and more LaTeX-driven themes / formats.
 
-- **Better resume sorting** of items and sections: ascending, descending, by
+### StackOverflow and LinkedIn support
+
+Will start appearing in v1.7.0, with incremental improvements in 1.8.0 and
+beyond.
+
+### Improved resume sorting and arranging
+
+**Better resume sorting** of items and sections: ascending, descending, by
 date or other criteria ([#67][i67]).
 
-- **Support remote loading** of themes and resumes over `http`, `https`, and
+### Remote resume / theme loading
+
+Support remote loading of themes and resumes over `http`, `https`, and
 `git://`. Enable these usage patterns:
 
-      hackmyresume build https://somesite.com/my-resume.json -t informatic
+    ```bash
+    hackmyresume build https://somesite.com/my-resume.json -t informatic
 
-      hackmyresume build resume.json -t npm:fresh-theme-ergonomic
+    hackmyresume build resume.json -t npm:fresh-theme-ergonomic
 
-      hackmyresume analyze https://github.com/foo/my-resume
+    hackmyresume analyze https://github.com/foo/my-resume
+    ```
 
-- **100% code coverage**. Should reduce certain classes of errors and allow us
-to display a nifty 100% code coverage badge.
+### 100% code coverage
 
-- Improved **documentation and samples**.
+Should reduce certain classes of errors and allow HMR to display a nifty 100%
+code coverage badge.
+
+### Improved **documentation and samples**
+
+Expanded documentation and samples throughout.
 
 ## Mid-Term
 
-- Introduce **character sheets** support ([#117][i117]), with a twist.
+### Cover letters and job descriptions
 
-- Add support for schema-driven **cover letters** and **job descriptions**.
+Add support for schema-driven **cover letters** and **job descriptions**.
 
-- Basic support for **rich text** `.rtf` output formats.
+### Character Sheets
 
-- Investigate adding [**groff**][groff] support, because that would, indeed, be
+HackMyResume 2.0 will ship with support for, yes, RPG-style character sheets.
+This will demonstrate the tool's ability to flow arbitrary JSON to concrete
+document(s) and provide unique albeit niche functionality around various games
+([#117][i117]).
+
+### Rich text (.rtf) output formats
+
+Basic support for **rich text** `.rtf` output formats.
+
+### Investigate: groff support
+
+Investigate adding [**groff**][groff] support, because that would, indeed, be
 [dope][d] ([#37][i37]).
 
-- Investigate adding [**org mode**][om] support ([#38][i38]).
+### Investigate: org-mode support
 
-- Investigate adding [**Scribus SLA**][scri] support ([#54][i54]).
+Investigate adding [**org mode**][om] support ([#38][i38]).
 
-- Support **JSON Resume 1.0.0** when released.
+### Investigate: Scribus
+
+Investigate adding [**Scribus SLA**][scri] support ([#54][i54]).
+
+### Support JSON Resume 1.0.0
+
+When released.
 
 ## Long-Term
 
