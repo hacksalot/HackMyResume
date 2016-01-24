@@ -10,16 +10,16 @@ Definition of the `main` function.
 
 
 
-  var HMR  = require( 'hackmyapi')
+  var HMR  = require( 'hackmycore')
     , PKG = require('../../package.json')
     , FS = require('fs')
     , EXTEND = require('extend')
     , chalk = require('chalk')
     , PATH = require('path')
-    , HMSTATUS = require('hackmyapi/src/core/status-codes')
-    , HME = require('hackmyapi/src/core/event-codes')
-    , safeLoadJSON = require('hackmyapi/src/utils/safe-json-loader')
-    , StringUtils = require('hackmyapi/src/utils/string.js')
+    , HMSTATUS = require('hackmycore/src/core/status-codes')
+    , HME = require('hackmycore/src/core/event-codes')
+    , safeLoadJSON = require('hackmycore/src/utils/safe-json-loader')
+    , StringUtils = require('hackmycore/src/utils/string.js')
     , _ = require('underscore')
     , OUTPUT = require('./out')
     , PAD = require('string-padding')
