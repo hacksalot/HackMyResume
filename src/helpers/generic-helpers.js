@@ -57,6 +57,26 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
+    Return a named color value.
+    @method toFrom
+    */
+    color: function( colorName, colorDefault ) {
+      // Key must be specified
+      if( !( colorName && colorName.trim()) ) {
+        _reportError( HMSTATUS.invalidHelperUse, {
+          helper: 'fontList', error: HMSTATUS.missingParam, expected: 'name'
+        });
+      }
+      else {
+        if( !GenericHelpers.theme.colors ) return colorDefault;
+        var ret = GenericHelpers.theme.colors[ colorName ];
+        if( !(ret && ret.trim()) )
+          return colorDefault;
+        return ret;
+      }
+    },
+
+    /**
     Return true if the section is present on the resume and has at least one
     element.
     @method section
