@@ -11,7 +11,7 @@ events:
     msg: Verifying outputs:  ???
   beforeMerge:
     msg:
-      - Merging **%s**
+      - "Merging **%s**"
       - " onto **%s**"
   applyTheme:
     msg: Applying **%s** theme (**%s** format%s)

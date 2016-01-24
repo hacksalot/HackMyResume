@@ -101,7 +101,7 @@ Output routines for HackMyResume.
                 this.msgs.beforeMerge.msg[1] ), a.file
             );
           }, this);
-          L( M2C(msg, evt.mixed ? 'yellow' : 'green') );
+          L( M2C(msg, evt.mixed ? 'yellow' : 'gray', 'white.dim') );
           break;
 
         case HME.afterMerge:
