@@ -159,7 +159,7 @@ Output routines for HackMyResume.
         case HME.afterAnalyze:
           var info = evt.info;
           var rawTpl = FS.readFileSync( PATH.join( __dirname, 'analyze.hbs' ), 'utf8');
-          HANDLEBARS.registerHelper( require('../helpers/console-helpers') );
+          HANDLEBARS.registerHelper( require('hackmycore/src/helpers/console-helpers') );
           var template = HANDLEBARS.compile(rawTpl, { strict: false, assumeObjects: false });
           var tot = 0;
           info.keywords.forEach(function(g) { tot += g.count; });
