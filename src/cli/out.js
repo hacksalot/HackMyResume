@@ -11,10 +11,10 @@ Output routines for HackMyResume.
 
 
   var chalk = require('chalk')
-    , HME = require('../core/event-codes')
+    , HME = require('hackmyapi/src/core/event-codes')
     , _ = require('underscore')
-    , Class = require('../utils/class.js')
-    , M2C = require('../utils/md2chalk.js')
+    , Class = require('hackmyapi/src/utils/class.js')
+    , M2C = require('hackmyapi/src/utils/md2chalk.js')
     , PATH = require('path')
     , LO = require('lodash')
     , FS = require('fs')
