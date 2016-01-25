@@ -6,6 +6,25 @@ module.exports = function (grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    copy: {
+      main: {
+        expand: true,
+        cwd: 'src',
+        src: ['**/*','!**/*.coffee'],
+        dest: 'dist/',
+      },
+    },
+
+    coffee: {
+      main: {
+        expand: true,
+        cwd: 'src',
+        src: ['**/*.coffee'],
+        dest: 'dist/',
+        ext: '.js'
+      }
+    },
+
     simplemocha: {
       options: {
         globals: ['expect', 'should'],
@@ -27,7 +46,10 @@ module.exports = function (grunt) {
       }
     },
 
-    clean: ['test/sandbox'],
+    clean: {
+      test: ['test/sandbox'],
+      dist: ['dist']
+    },
 
     yuidoc: {
       compile: {
@@ -37,7 +59,6 @@ module.exports = function (grunt) {
         url: '<%= pkg.homepage %>',
         options: {
           paths: 'src/',
-          //themedir: 'path/to/custom/theme/',
           outdir: 'docs/'
         }
       }
@@ -54,17 +75,33 @@ module.exports = function (grunt) {
   };
 
   grunt.initConfig( opts );
-
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('test', 'Test the HackMyResume library.',
-    function( config ) { grunt.task.run(['clean','jshint','simplemocha:all']); });
-  grunt.registerTask('document', 'Generate HackMyResume library documentation.',
-    function( config ) { grunt.task.run( ['jsdoc'] ); });
-  grunt.registerTask('default', [ 'test', 'jsdoc' ]);
+  // Use 'grunt test' for local testing
+  grunt.registerTask('test', 'Test the HackMyResume application.',
+    function( config ) {
+      grunt.task.run(['clean:test','build','jshint','simplemocha:all']);
+    });
+
+  // Use 'grunt document' to build docs
+  grunt.registerTask('document', 'Generate HackMyResume documentation.',
+    function( config ) {
+      grunt.task.run( ['jsdoc'] );
+    });
+
+  // Use 'grunt build' to build HMR
+  grunt.registerTask('build', 'Build the HackMyResume application.',
+    function( config ) {
+      grunt.task.run( ['clean:dist','copy','coffee'] );
+    });
+
+  // Default task does everything
+  grunt.registerTask('default', [ 'test', 'document' ]);
 
 };

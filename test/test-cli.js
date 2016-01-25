@@ -7,7 +7,7 @@ CLI test routines for HackMyResume.
 
 var chai = require('chai')
   , should = chai.should()
-  , HMRMAIN = require('../src/cli/main')
+  , HMRMAIN = require('../dist/cli/main')
   , CHALK = require('chalk')
   , FS = require('fs')
   , PATH = require('path')
@@ -39,13 +39,12 @@ describe('Testing CLI interface', function () {
     process.exit = MyProcessExit;
 
     try {
-      var HMRMAIN = require('../src/cli/main');
       HMRMAIN( args );
     }
     catch( ex ) {
-      require('../src/cli/error').err( ex, false );
-      //if(ex.stack || (ex.inner && ex.inner.stacl))
-        //console.log(ex.stack || ex.inner.stack);
+      require('../dist/cli/error').err( ex, false );
+      if(ex.stack || (ex.inner && ex.inner.stacl))
+        console.log(ex.stack || ex.inner.stack);
     }
     process.exit = ProcessExitOrg;
 

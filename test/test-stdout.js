@@ -7,7 +7,7 @@ Output test routines for HackMyResume.
 
 var chai = require('chai')
   , expect = chai.expect
-  , HMRMAIN = require('../src/cli/main')
+  , HMRMAIN = require('../dist/cli/main')
   , CHALK = require('chalk')
   , FS = require('fs')
   , PATH = require('path')
@@ -46,11 +46,10 @@ describe('Testing Ouput interface', function () {
     try {
       args.unshift( process.argv[1] );
       args.unshift( process.argv[0] );
-      var HMRMAIN = require('../src/cli/main');
       HMRMAIN( args );
     }
     catch( ex ) {
-      require('../src/cli/error').err( ex, false );
+      require('../dist/cli/error').err( ex, false );
     }
     CHALK.enabled = true;
     process.exit = ProcessExitOrg;
