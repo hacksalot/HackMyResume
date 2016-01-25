@@ -46,7 +46,10 @@ module.exports = function (grunt) {
       }
     },
 
-    clean: ['dist','test/sandbox'],
+    clean: {
+      test: ['test/sandbox'],
+      dist: ['dist']
+    },
 
     yuidoc: {
       compile: {
@@ -80,21 +83,25 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
+  // Use 'grunt test' for local testing
   grunt.registerTask('test', 'Test the HackMyResume application.',
     function( config ) {
-      grunt.task.run(['build','jshint','simplemocha:all']);
+      grunt.task.run(['clean:test','build','jshint','simplemocha:all']);
     });
 
+  // Use 'grunt document' to build docs
   grunt.registerTask('document', 'Generate HackMyResume documentation.',
     function( config ) {
       grunt.task.run( ['jsdoc'] );
     });
 
+  // Use 'grunt build' to build HMR
   grunt.registerTask('build', 'Build the HackMyResume application.',
     function( config ) {
-      grunt.task.run( ['clean','copy','coffee'] );
+      grunt.task.run( ['clean:dist','copy','coffee'] );
     });
 
-  grunt.registerTask('default', [ 'test', 'jsdoc' ]);
+  // Default task does everything
+  grunt.registerTask('default', [ 'test', 'document' ]);
 
 };
