@@ -10,7 +10,7 @@ shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
 plain text, and other arbitrary formats. Fight the power, save trees. Compatible
 with [FRESH][fresca] and [JRS][6] resumes.*
 
-![](assets/resume-bouqet.png)
+![](assets/hackmyresume.cli.1.6.0.png)
 
 HackMyResume is a dev-friendly, local-only Swiss Army knife for resumes and CVs.
 Use it to:
@@ -107,7 +107,7 @@ Use it when you need to submit, upload, print, or email resumes in specific
 formats.
 
     ```bash
-    # hackmyresume BUILD <INPUTS> TO <OUTPUTS> [-t THEME]
+    # hackmyresume BUILD <INPUTS...> TO <OUTPUTS...> [-t THEME]
     hackmyresume BUILD resume.json TO out/resume.all
     hackmyresume BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
     ```
@@ -115,7 +115,7 @@ formats.
 - **new** creates a new resume in FRESH or JSON Resume format.
 
     ```bash
-    # hackmyresume NEW <OUTPUTS> [-f <FORMAT>]
+    # hackmyresume NEW <OUTPUTS...> [-f <FORMAT>]
     hackmyresume NEW resume.json
     hackmyresume NEW resume.json -f fresh
     hackmyresume NEW r1.json r2.json -f jrs
@@ -123,12 +123,18 @@ formats.
 
 - **analyze** inspects your resume for keywords, duration, and other metrics.
 
+    ```bash
+    # hackmyresume ANALYZE <INPUTS...>
+    hackmyresume ANALYZE resume.json
+    hackmyresume ANALYZE r1.json r2.json
+    ```
+
 - **convert** converts your source resume between FRESH and JSON Resume
 formats. Use it to convert between the two formats to take advantage of tools
 and services.
 
     ```bash
-    # hackmyresume CONVERT <INPUTS> TO <OUTPUTS>
+    # hackmyresume CONVERT <INPUTS...> TO <OUTPUTS...>
     hackmyresume CONVERT resume.json TO resume-jrs.json
     hackmyresume CONVERT 1.json 2.json 3.json TO out/1.json out/2.json out/3.json
     ```
@@ -137,10 +143,21 @@ and services.
 Resume schema. Use it to make sure your resume data is sufficient and complete.
 
     ```bash
-    # hackmyresume VALIDATE <INPUTS>
+    # hackmyresume VALIDATE <INPUTS...>
     hackmyresume VALIDATE resume.json
     hackmyresume VALIDATE r1.json r2.json r3.json
     ```
+
+- **peek** echoes your resume or any field, property, or object path on your
+resume to standard output.
+
+    ```bash
+    # hackmyresume PEEK <INPUTS...> [OBJECT-PATH]
+    hackmyresume PEEK rez.json # Echo the whole resume
+    hackmyresume PEEK rez.json info.brief # Echo the "info.brief" field
+    hackmyresume PEEK rez.json employment.history[1] # Echo the 1st job
+    hackmyresume PEEK rez.json rez2.json info.brief # Compare value
+    ```    
 
 ## Supported Output Formats
 
@@ -209,24 +226,36 @@ Generating YAML resume: out/resume.yml
 
 ### Applying a theme
 
-HackMyResume can work with any FRESH or JSON Resume theme. To specify a theme
-when generating your resume, use the `-t` or `--theme` parameter:
+HackMyResume can work with any FRESH or JSON Resume theme (the latter must be
+installed first). To specify a theme when generating your resume, use the `-t`
+or `--theme` parameter:
 
 ```bash
 hackmyresume BUILD resume.json TO out/rez.all -t [theme]
 ```
 
-The `[theme]` parameter can be the name of a predefined theme or the path to any
+The `[theme]` parameter can be the name of a predefined theme OR the path to any
 FRESH or JSON Resume theme folder:
 
 ```bash
 hackmyresume BUILD resume.json TO out/rez.all -t modern
 hackmyresume BUILD resume.json TO OUT.rez.all -t ../some-folder/my-custom-theme/
-hackmyresume BUILD resume.json TO OUT.rez.all -t npm_modules/jsonresume-theme-classy
+hackmyresume BUILD resume.json TO OUT.rez.all -t node_modules/jsonresume-theme-classy
 ```
 
-As of v1.4.0, available predefined themes are `positive`, `modern`, `compact`,
-`minimist`, and `hello-world`.
+FRESH themes are currently pre-installed with HackMyResume. JSON Resume themes
+can be installed prior to use:
+
+```bash
+# Install a JSON Resume theme into a local node_modules subfolder:
+npm install jsonresume-theme-[name]
+# Use it with HackMyResume
+hackmyresume build resume.json -t node_modules/jsonresume-theme-[name]
+```
+
+As of v1.6.0, available predefined FRESH themes are `positive`, `modern`,
+`compact`, `minimist`, and `hello-world`. For a list of JSON Resume themes,
+check the [NPM Registry](https://www.npmjs.com/search?q=jsonresume-theme).
 
 ### Merging resumes
 
@@ -279,6 +308,39 @@ hackmyresume BUILD me.json TO out/resume.all
 `out/resume.doc`, `out/resume.html`, `out/resume.txt`, `out/resume.pdf`, and
 `out/resume.json`.
 
+### Building PDFs
+
+*Users who don't care about PDFs can turn off PDF generation across all themes
+and formats with the `--pdf none` switch.*
+
+HackMyResume takes a unique approach to PDF generation. Instead of enforcing
+a specific PDF engine on users, HackMyResume will attempt to work with whatever
+PDF engine you have installed through the engine's command-line interface (CLI).
+Currently that means one or both of...
+
+- [wkhtmltopdf][3]
+- [Phantom.js][3]
+
+..with support for other engines planned in the future. But for now, **one or
+both of these engines must be installed and accessible on your PATH in order to
+generate PDF resumes with HackMyResume**. That means you should be able to
+invoke either of these tools directly from your shell or terminal without error:
+
+```bash
+wkhtmltopdf input.html output.pdf
+phantomjs script.js input.html output.pdf
+```
+
+Assuming you've installed one or both of these engines on your system, you can
+tell HackMyResume which flavor of PDF generation to use via the `--pdf` option
+(`-p` for short):
+
+```bash
+hackmyresume BUILD resume.json TO out.all --pdf phantom
+hackmyresume BUILD resume.json TO out.all --pdf wkhtmltopdf
+hackmyresume BUILD resume.json TO out.all --pdf none
+```
+
 ### Analyzing
 
 HackMyResume can analyze your resume for keywords, employment gaps, and other
@@ -292,7 +354,7 @@ Depending on the HackMyResume version, you should see output similar to:
 
 
 ```
-*** HackMyResume v1.4.1 ***
+*** HackMyResume v1.6.0 ***
 Reading resume: resume.json
 Analyzing FRESH resume: resume.json
 
@@ -388,7 +450,7 @@ hackmyresume VALIDATE resumeA.json resumeB.json
 HackMyResume will validate each specified resume in turn:
 
 ```bash
-*** HackMyResume v0.9.0 ***
+*** HackMyResume v1.6.0 ***
 Validating JSON resume: resumeA.json (INVALID)
 Validating JSON resume: resumeB.json (VALID)
 ```
@@ -407,10 +469,17 @@ where <INPUTS> is one or more resumes in FRESH or JSON Resume format, and
 autodetect the format (FRESH or JRS) of each input resume and convert it to the
 other format (JRS or FRESH).
 
-### External options
+### File-based Options
 
-Starting in v1.4.x you can pass options into HackMyResume via an external
-options or ".hackmyrc" file.
+You can pass options into HackMyResume via an external options or ".hackmyrc"
+file with the `--options` or `-o` switch:
+
+```bash
+hackmyresume BUILD resume.json -o path/to/options.json
+```
+
+The options file can contain any documented HackMyResume option, including
+`theme`, `silent`, `debug`, `pdf`, `css`, and other settings.
 
 ```javascript
 {
@@ -421,6 +490,18 @@ options or ".hackmyrc" file.
     "employment": "Work"
   }
 }
+```
+
+If a particular option is specified both on the command line and in an external
+options file, the explicit command-line option takes precedence.
+
+```bash
+# path/to/options.json specifes the POSITIVE theme
+# -t parameter specifies the COMPACT theme
+# The -t parameter wins.
+hackmyresume BUILD resume.json -o path/to/options.json -t compact
+> Reading resume: resume.json
+> Applying COMPACT theme (7 formats)
 ```
 
 ### Prettifying

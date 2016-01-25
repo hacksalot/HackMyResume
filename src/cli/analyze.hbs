@@ -1,0 +1,30 @@
+
+{{style "SECTIONS (" "bold"}}{{style totals.numSections "white" }}{{style ")" "bold"}}
+
+        employment:     {{v totals.totals.employment "-" 2 "bold" }}
+          projects:     {{v totals.totals.projects "-" 2 "bold" }}
+         education:     {{v totals.totals.education "-" 2 "bold" }}
+           service:     {{v totals.totals.service "-" 2 "bold" }}
+            skills:     {{v totals.totals.skills "-" 2 "bold" }}
+           writing:     {{v totals.totals.writing "-" 2 "bold" }}
+          speaking:     {{v totals.totals.speaking "-" 2 "bold" }}
+           reading:     {{v totals.totals.reading "-" 2 "bold" }}
+            social:     {{v totals.totals.social "-" 2 "bold" }}
+        references:     {{v totals.totals.references "-" 2 "bold" }}
+      testimonials:     {{v totals.totals.testimonials "-" 2 "bold" }}
+         languages:     {{v totals.totals.languages "-" 2 "bold" }}
+         interests:     {{v totals.totals.interests "-" 2 "bold" }}
+
+{{style "COVERAGE (" "bold"}}{{style coverage.pct "white"}}{{style ")" "bold"}}
+
+        Total Days:  {{v coverage.duration.total "-" 5 "bold" }}
+          Employed:  {{v coverage.duration.work "-" 5 "bold" }}
+              Gaps:  {{v coverage.gaps.length "-" 5 "bold" }}  [{{#if coverage.gaps.length }}{{#each coverage.gaps }}{{#unless @first}} {{/unless}}{{gapLength duration }}{{/each}}{{/if}}]
+          Overlaps:  {{v coverage.overlaps.length "-" 5 "bold" }}  [{{#if coverage.overlaps.length }}{{#each coverage.overlaps }}{{#unless @first}} {{/unless}}{{gapLength duration }}{{/each}}{{/if}}]
+
+{{style "KEYWORDS (" "bold"}}{{style keywords.length "white" }}{{style ")" "bold"}}
+
+{{#each keywords }}{{{pad name 18}}}:  {{v count "-" 5 "bold"}} mention{{#isPlural count}}s{{/isPlural}}
+{{/each}}
+    -------------------------------
+{{v keywords.length "0" 9 "bold"}} {{style "KEYWORDS" "bold"}}   {{v keywords.totalKeywords "0" 5 "bold"}} {{style "mentions" "bold"}}

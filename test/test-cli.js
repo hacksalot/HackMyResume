@@ -1,94 +1,76 @@
 /**
+CLI test routines for HackMyResume.
 @module test-cli.js
 */
 
-var chai = require('chai')
-  , expect = chai.expect
-  , should = chai.should()
-  , path = require('path')
-  , _ = require('underscore')
-	, FRESHResume = require('../src/core/fresh-resume')
-  , FCMD = require( '../src/hackmyapi')
-  , validator = require('is-my-json-valid')
-  , EXTEND = require('../src/utils/extend');
 
-chai.config.includeStack = false;
+
+var chai = require('chai')
+  , should = chai.should()
+  , HMRMAIN = require('../src/cli/main')
+  , CHALK = require('chalk')
+  , FS = require('fs')
+  , PATH = require('path')
+  , PKG = require('../package.json')
+  , _ = require('underscore');
+
+
+
+var gather = '';
+var ConsoleLogOrg = console.log;
+var ProcessExitOrg = process.exit;
+var commandRetVal = 0;
+
 
 describe('Testing CLI interface', function () {
 
-    var _sheet;
+  // TODO: use sinon
+  // Replacement for process.exit()
+  function MyProcessExit( retVal ) {
+    commandRetVal = retVal;
+  }
 
+  // HackMyResume CLI stub. Handle a single HMR invocation.
+  function HackMyResumeStub( argsString ) {
 
-    var opts = {
-      format: 'FRESH',
-      prettify: true,
-      silent: false,
-      assert: true  // Causes validation errors to throw exceptions
-    };
+    var args = argsString.split(' ');
+    args.unshift( process.argv[1] );
+    args.unshift( process.argv[0] );
+    process.exit = MyProcessExit;
 
-    var opts2 = {
-      format: 'JRS',
-      prettify: true,
-      silent: true
-    };
-
-    var sb = 'test/sandbox/';
-    var ft = 'node_modules/fresh-test-resumes/src/';
-
-    [
-
-      [ 'new',      [sb + 'new-fresh-resume.json'], [], opts, ' (FRESH format)' ],
-      [ 'new',      [sb + 'new-jrs-resume.json'], [], opts2, ' (JRS format)'],
-      [ 'new',      [sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (multiple FRESH resumes)' ],
-      [ 'new',      [sb + 'new-jrs-1.json', sb + 'new-jrs-2.json', sb + 'new-jrs-3.json'], [], opts, ' (multiple JRS resumes)' ],
-      [ '!new',     [], [], opts, " (when a filename isn't specified)" ],
-
-      [ 'validate', [ft + 'jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
-      [ 'validate', [ft + 'johnny-trouble.fresh.json'], [], opts, ' (johnny-trouble|FRESH)' ],
-      [ 'validate', [sb + 'new-fresh-resume.json'], [], opts, ' (new-fresh-resume|FRESH)' ],
-      [ 'validate', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks.json|JRS)' ],
-      [ 'validate', ['test/resumes/jrs-0.0.0/jane-incomplete.json'], [], opts2, ' (jane-incomplete.json|JRS)' ],
-      [ 'validate', [sb + 'new-1.json', sb + 'new-jrs-resume.json', sb + 'new-1.json', sb + 'new-2.json', sb + 'new-3.json'], [], opts, ' (5|BOTH)' ],
-
-      [ 'analyze',  [ft + 'jane-fullstacker.fresh.json'], [], opts, ' (jane-q-fullstacker|FRESH)' ],
-      [ 'analyze',  ['test/resumes/jrs-0.0.0/richard-hendriks.json'], [], opts2, ' (richard-hendriks|JRS)' ],
-
-      [ 'build',    [ ft + 'jane-fullstacker.fresh.json', ft + 'override/jane-fullstacker-override.fresh.json' ], [ sb + 'merged/jane-fullstacker-gamedev.fresh.all'], opts, ' (jane-q-fullstacker w/ override|FRESH)' ],
-      [ '!build',   [ ft + 'jane-fullstacker.fresh.json'], [ sb + 'shouldnt-exist.pdf' ], EXTEND(true, opts, { theme: 'awesome' }), ' (jane-q-fullstacker + Awesome + PDF|FRESH)' ]
-
-    ].forEach( function(a) {
-
-      run.apply( /* The players of */ null, a );
-
-    });
-
-
-    function run( verb, src, dst, opts, msg ) {
-      msg = msg || '.';
-      var shouldSucceed = true;
-      if( verb[0] === '!' ) {
-        verb = verb.substr(1);
-        shouldSucceed = false;
-      }
-      it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' SUCCEED' : ' FAIL') + msg, function () {
-        function runIt() {
-          try {
-            FCMD.verbs[verb]( src, dst, opts, opts.silent ?
-              function(){} : function(msg){ msg = msg || ''; console.log(msg); } );
-          }
-          catch(ex) {
-            console.error(ex);
-            console.error(ex.stack);
-            throw ex;
-          }
-        }
-        if( shouldSucceed )
-          runIt.should.not.Throw();
-        else
-          runIt.should.Throw();
-      });
+    try {
+      var HMRMAIN = require('../src/cli/main');
+      HMRMAIN( args );
     }
+    catch( ex ) {
+      require('../src/cli/error').err( ex, false );
+      //if(ex.stack || (ex.inner && ex.inner.stacl))
+        //console.log(ex.stack || ex.inner.stack);
+    }
+    process.exit = ProcessExitOrg;
 
+  }
 
+  // Run a test through the stub, gathering console.log output into "gather"
+  // and testing against it.
+  function run( args, expErr ) {
+    var title = args;
+    it( 'Testing: "' + title + '"\n\n', function() {
+      commandRetVal = 0;
+      HackMyResumeStub( args );
+      commandRetVal.should.equal( parseInt(expErr, 10) );
+    });
+  }
+
+  var lines = FS.readFileSync( PATH.join( __dirname, './test-hmr.txt'), 'utf8').split('\n');
+  lines.forEach(function(l){
+    if( l && l.trim() ) {
+      if(l[0] !== '#') {
+        var lineInfo = l.split('|');
+        var errCode = lineInfo[0];
+        run( lineInfo.length > 1 ? lineInfo[1] : '', errCode );
+      }
+    }
+  });
 
 });
