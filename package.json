@@ -43,7 +43,7 @@
     "url": "https://github.com/hacksalot/HackMyResume/issues"
   },
   "bin": {
-    "hackmyresume": "src/index.js"
+    "hackmyresume": "dist/index.js"
   },
   "homepage": "https://github.com/hacksalot/HackMyResume",
   "dependencies": {
@@ -68,6 +68,8 @@
     "grunt": "*",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-yuidoc": "^0.10.0",
     "grunt-jsdoc": "^1.1.0",
