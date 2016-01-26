@@ -1,230 +1,163 @@
+
 /**
 Output routines for HackMyResume.
 @license MIT. See LICENSE.md for details.
-@module out.js
-*/
-
-
+@module cli/out
+ */
 
 (function() {
+  var Class, EXTEND, FS, HANDLEBARS, HME, LO, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
+
+  chalk = require('chalk');
+
+  HME = require('hackmycore/dist/core/event-codes');
+
+  _ = require('underscore');
+
+  Class = require('hackmycore/dist/utils/class.js');
+
+  M2C = require('hackmycore/dist/utils/md2chalk.js');
+
+  PATH = require('path');
+
+  LO = require('lodash');
+
+  FS = require('fs');
+
+  EXTEND = require('extend');
+
+  HANDLEBARS = require('handlebars');
+
+  YAML = require('yamljs');
+
+  printf = require('printf');
+
+  pad = require('string-padding');
+
+  dbgStyle = 'cyan';
 
 
+  /** A stateful output module. All HMR console output handled here. */
 
-  var chalk = require('chalk')
-    , HME = require('hackmycore/dist/core/event-codes')
-    , _ = require('underscore')
-    , Class = require('hackmycore/dist/utils/class.js')
-    , M2C = require('hackmycore/dist/utils/md2chalk.js')
-    , PATH = require('path')
-    , LO = require('lodash')
-    , FS = require('fs')
-    , EXTEND = require('extend')
-    , HANDLEBARS = require('handlebars')
-    , YAML = require('yamljs')
-    , printf = require('printf')
-    , pad = require('string-padding')
-    , dbgStyle = 'cyan';
-
-    chalk.enabled = false;
-
-
-  /**
-  A stateful output module. All HMR console output handled here.
-  */
-  var OutputHandler = module.exports = Class.extend({
-
-
-
-    init: function( opts ) {
-      this.opts = EXTEND( true, this.opts || { }, opts );
-      this.msgs = YAML.load(PATH.join( __dirname, 'msg.yml' )).events;
+  OutputHandler = module.exports = Class.extend({
+    init: function(opts) {
+      this.opts = EXTEND(true, this.opts || {}, opts);
+      return this.msgs = YAML.load(PATH.join(__dirname, 'msg.yml')).events;
     },
-
-
-
-    log: function( msg ) {
+    log: function(msg) {
+      var finished;
       msg = msg || '';
-      var printf = require('printf');
-      var finished = printf.apply( printf, arguments );
-      this.opts.silent || console.log( finished );
+      printf = require('printf');
+      finished = printf.apply(printf, arguments);
+      return this.opts.silent || console.log(finished);
     },
-
-
-
-    do: function( evt ) {
-
-      var that = this;
-      function L() {
-        that.log.apply( that, arguments );
-      }
-
-      switch( evt.sub ) {
-
+    "do": function(evt) {
+      var L, WRAP, info, msg, numFormats, output, rawTpl, ref, ref1, ref2, sty, style, suffix, template, that, themeName, tot;
+      that = this;
+      L = function() {
+        return that.log.apply(that, arguments);
+      };
+      switch (evt.sub) {
         case HME.begin:
-          this.opts.debug &&
-          L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() );
-          break;
-
-        case HME.error:
-          break;
-
+          return this.opts.debug && L(M2C(this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase());
         case HME.beforeCreate:
-          L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file );
+          L(M2C(this.msgs.beforeCreate.msg, 'green'), evt.fmt, evt.file);
           break;
-
-        case HME.beforeRead:
-          break;
-
-        case HME.afterRead:
-          break;
-
         case HME.beforeTheme:
-          this.opts.debug &&
-            L( M2C( this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase() );
-          break;
-
+          return this.opts.debug && L(M2C(this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase());
         case HME.afterParse:
-          L(
-            M2C( this.msgs.afterRead.msg, 'gray', 'white.dim'), evt.fmt.toUpperCase(), evt.file
-          );
-
-          break;
-
-        case HME.afterTheme:
-          break;
-
+          return L(M2C(this.msgs.afterRead.msg, 'gray', 'white.dim'), evt.fmt.toUpperCase(), evt.file);
         case HME.beforeMerge:
-          var msg = '';
-          evt.f.reverse().forEach( function( a, idx ) {
-            msg += printf(
-              ((idx === 0) ?
-                this.msgs.beforeMerge.msg[0] :
-                this.msgs.beforeMerge.msg[1] ), a.file
-            );
+          msg = '';
+          evt.f.reverse().forEach(function(a, idx) {
+            return msg += printf((idx === 0 ? this.msgs.beforeMerge.msg[0] : this.msgs.beforeMerge.msg[1]), a.file);
           }, this);
-          L( M2C(msg, evt.mixed ? 'yellow' : 'gray', 'white.dim') );
-          break;
-
-        case HME.afterMerge:
-          break;
-
+          return L(M2C(msg, (ref = evt.mixed) != null ? ref : {
+            'yellow': 'gray'
+          }, 'white.dim'));
         case HME.applyTheme:
           this.theme = evt.theme;
-          var numFormats = Object.keys( evt.theme.formats ).length;
-          L( M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'gray', evt.status === 'error' ? 'bold' : 'white.dim'),
-            evt.theme.name.toUpperCase(),
-            numFormats, ( numFormats === 1 ? '' : 's') );
-          break;
-
+          numFormats = Object.keys(evt.theme.formats).length;
+          return L(M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'gray', evt.status === 'error' ? 'bold' : 'white.dim'), evt.theme.name.toUpperCase(), numFormats, (ref1 = numFormats === 1) != null ? ref1 : {
+            '': 's'
+          });
         case HME.end:
-          if( evt.cmd === 'build' ) {
-            var themeName = this.theme.name.toUpperCase();
-            if( this.opts.tips && (this.theme.message || this.theme.render) ) {
-              var WRAP = require('word-wrap');
-              if( this.theme.message ) {
-                L( M2C( this.msgs.afterBuild.msg[0], 'cyan' ), themeName );
-                L( M2C( this.theme.message, 'white' ));
-              }
-              else if ( this.theme.render ) {
-                L( M2C( this.msgs.afterBuild.msg[0], 'cyan'), themeName);
-                L( M2C( this.msgs.afterBuild.msg[1], 'white'));
+          if (evt.cmd === 'build') {
+            themeName = this.theme.name.toUpperCase();
+            if (this.opts.tips && (this.theme.message || this.theme.render)) {
+              WRAP = require('word-wrap');
+              if (this.theme.message) {
+                L(M2C(this.msgs.afterBuild.msg[0], 'cyan'), themeName);
+                return L(M2C(this.theme.message, 'white'));
+              } else if (this.theme.render) {
+                L(M2C(this.msgs.afterBuild.msg[0], 'cyan'), themeName);
+                return L(M2C(this.msgs.afterBuild.msg[1], 'white'));
               }
             }
           }
           break;
-
         case HME.afterGenerate:
-          var suffix = '';
-          if( evt.fmt === 'pdf' ) {
-            if( this.opts.pdf ) {
-              if( this.opts.pdf !== 'none' ) {
-                suffix = printf( M2C( this.msgs.afterGenerate.msg[0], evt.error ? 'red' : 'green' ), this.opts.pdf );
-              }
-              else {
-                L( M2C( this.msgs.afterGenerate.msg[1], 'gray' ),
-                  evt.fmt.toUpperCase(), evt.file );
+          suffix = '';
+          if (evt.fmt === 'pdf') {
+            if (this.opts.pdf) {
+              if (this.opts.pdf !== 'none') {
+                suffix = printf(M2C(this.msgs.afterGenerate.msg[0], evt.error ? 'red' : 'green'), this.opts.pdf);
+              } else {
+                L(M2C(this.msgs.afterGenerate.msg[1], 'gray'), evt.fmt.toUpperCase(), evt.file);
                 return;
               }
             }
           }
-
-          L( M2C( this.msgs.afterGenerate.msg[2] + suffix, evt.error ? 'red' : 'green' ),
-              pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT),
-              PATH.relative(process.cwd(), evt.file ));
-          break;
-
+          return L(M2C(this.msgs.afterGenerate.msg[2] + suffix, evt.error ? 'red' : 'green'), pad(evt.fmt.toUpperCase(), 4, null, pad.RIGHT), PATH.relative(process.cwd(), evt.file));
         case HME.beforeAnalyze:
-          L( M2C( this.msgs.beforeAnalyze.msg, 'green' ), evt.fmt, evt.file);
-          break;
-
+          return L(M2C(this.msgs.beforeAnalyze.msg, 'green'), evt.fmt, evt.file);
         case HME.afterAnalyze:
-          var info = evt.info;
-          var rawTpl = FS.readFileSync( PATH.join( __dirname, 'analyze.hbs' ), 'utf8');
-          HANDLEBARS.registerHelper( require('hackmycore/dist/helpers/console-helpers') );
-          var template = HANDLEBARS.compile(rawTpl, { strict: false, assumeObjects: false });
-          var tot = 0;
-          info.keywords.forEach(function(g) { tot += g.count; });
+          info = evt.info;
+          rawTpl = FS.readFileSync(PATH.join(__dirname, 'analyze.hbs'), 'utf8');
+          HANDLEBARS.registerHelper(require('hackmycore/dist/helpers/console-helpers'));
+          template = HANDLEBARS.compile(rawTpl, {
+            strict: false,
+            assumeObjects: false
+          });
+          tot = 0;
+          info.keywords.forEach(function(g) {
+            return tot += g.count;
+          });
           info.keywords.totalKeywords = tot;
-          var output = template( info );
-          this.log( chalk.cyan(output) );
-          break;
-
+          output = template(info);
+          return this.log(chalk.cyan(output));
         case HME.beforeConvert:
-          L( M2C( this.msgs.beforeConvert.msg, 'green' ),
-            evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt
-          );
-          break;
-
+          return L(M2C(this.msgs.beforeConvert.msg, 'green'), evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt);
         case HME.afterInlineConvert:
-          L( M2C( this.msgs.afterInlineConvert.msg, 'gray', 'white.dim' ),
-            evt.file, evt.fmt );
-          break;
-
+          return L(M2C(this.msgs.afterInlineConvert.msg, 'gray', 'white.dim'), evt.file, evt.fmt);
         case HME.afterValidate:
-          var style = evt.isValid ? 'green' : 'yellow';
-          L(
-            M2C( this.msgs.afterValidate.msg[0], 'white' ) +
-            chalk[style].bold( evt.isValid ?
-                               this.msgs.afterValidate.msg[1] :
-                               this.msgs.afterValidate.msg[2] ),
-            evt.file, evt.fmt
-          );
-
-          if( evt.errors ) {
-            _.each(evt.errors, function(err,idx) {
-              L( chalk.yellow.bold('--> ') +
-                chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' +
-                err.message) );
+          style = (ref2 = evt.isValid) != null ? ref2 : {
+            'green': 'yellow'
+          };
+          L(M2C(this.msgs.afterValidate.msg[0], 'white') + chalk[style].bold(evt.isValid ? this.msgs.afterValidate.msg[1] : this.msgs.afterValidate.msg[2]), evt.file, evt.fmt);
+          if (evt.errors) {
+            return _.each(evt.errors, function(err, idx) {
+              return L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));
             }, this);
           }
           break;
-
-        case HME.beforePeek:
-          // if( evt.target )
-          //   L(M2C(this.msgs.beforePeek.msg[0], evt.isError ? 'red' : 'green'), evt.target, evt.file);
-          // else
-          //   L(M2C(this.msgs.beforePeek.msg[1], evt.isError ? 'red' : 'green'), evt.file);
-          break;
-
         case HME.afterPeek:
-          var sty = evt.error ? 'red' : ( evt.target !== undefined ? 'green' : 'yellow' );
-          if( evt.requested )
+          sty = evt.error ? 'red' : (evt.target !== void 0 ? 'green' : 'yellow');
+          if (evt.requested) {
             L(M2C(this.msgs.beforePeek.msg[0], sty), evt.requested, evt.file);
-          else
+          } else {
             L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file);
-
-          if( evt.target !== undefined )
-            console.dir( evt.target, { depth: null, colors: true } );
-          else if( !evt.error )
-            L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
-          break;
-
+          }
+          if (evt.target !== void 0) {
+            return console.dir(evt.target, {
+              depth: null,
+              colors: true
+            });
+          } else if (!evt.error) {
+            return L(M2C(this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
+          }
       }
     }
-
-
-
   });
 
-
-}());
+}).call(this);

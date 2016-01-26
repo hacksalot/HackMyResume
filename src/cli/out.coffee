@@ -93,14 +93,14 @@ OutputHandler = module.exports = Class.extend
         if evt.fmt == 'pdf'
           if this.opts.pdf
             if this.opts.pdf != 'none'
-              suffix = printf( M2C( this.msgs.afterGenerate.msg[0], evt.error ? 'red' : 'green' ), this.opts.pdf )
+              suffix = printf( M2C( this.msgs.afterGenerate.msg[0], if evt.error then 'red' else 'green' ), this.opts.pdf )
             else
-              L( M2C( this.msgs.afterGenerate.msg[1], 'gray' ), evt.fmt.toUpperCase(), evt.file );
+              L( M2C( this.msgs.afterGenerate.msg[1], 'gray' ), evt.fmt.toUpperCase(), evt.file )
               return
 
-        L( M2C( this.msgs.afterGenerate.msg[2] + suffix, evt.error ? 'red' : 'green' ),
-            pad(evt.fmt.toUpperCase(),4,null,pad.RIGHT),
-            PATH.relative(process.cwd(), evt.file ));
+        L( M2C( this.msgs.afterGenerate.msg[2] + suffix, if evt.error then 'red' else 'green' ),
+            pad( evt.fmt.toUpperCase(),4,null,pad.RIGHT ),
+            PATH.relative( process.cwd(), evt.file ) );
 
       when HME.beforeAnalyze
         L( M2C( this.msgs.beforeAnalyze.msg, 'green' ), evt.fmt, evt.file)
