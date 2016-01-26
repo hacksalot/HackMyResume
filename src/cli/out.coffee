@@ -47,25 +47,25 @@ OutputHandler = module.exports = Class.extend
 
       when HME.begin
         this.opts.debug &&
-        L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() );
+        L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() )
 
       when HME.beforeCreate
-        L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file );
+        L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
         break;
 
       when HME.beforeTheme
         this.opts.debug &&
-          L( M2C( this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase() );
+          L( M2C( this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase() )
 
       when HME.afterParse
-        L( M2C( this.msgs.afterRead.msg, 'gray', 'white.dim'), evt.fmt.toUpperCase(), evt.file );
+        L( M2C( this.msgs.afterRead.msg, 'gray', 'white.dim'), evt.fmt.toUpperCase(), evt.file )
 
       when HME.beforeMerge
         msg = ''
-        evt.f.reverse().forEach( ( a, idx ) ->
+        evt.f.reverse().forEach ( a, idx ) ->
           msg += printf( (if idx == 0 then @msgs.beforeMerge.msg[0] else @msgs.beforeMerge.msg[1]), a.file )
-        , @);
-        L( M2C(msg, evt.mixed ? 'yellow' : 'gray', 'white.dim') )
+        , @
+        L( M2C(msg, (if evt.mixed then 'yellow' else 'gray'), 'white.dim') )
 
       when HME.applyTheme
         @theme = evt.theme;
@@ -74,7 +74,7 @@ OutputHandler = module.exports = Class.extend
           if evt.status == 'error' then 'red' else 'gray',
           if evt.status == 'error' then 'bold' else 'white.dim'),
           evt.theme.name.toUpperCase(),
-          numFormats, ( numFormats == 1 ? '' : 's') )
+          numFormats, if numFormats == 1 then '' else 's' )
 
       when HME.end
         if evt.cmd == 'build'
@@ -126,7 +126,7 @@ OutputHandler = module.exports = Class.extend
           evt.file, evt.fmt );
 
       when HME.afterValidate
-        style = evt.isValid ? 'green' : 'yellow'
+        style = if evt.isValid then 'green' else 'yellow'
         L(
           M2C( this.msgs.afterValidate.msg[0], 'white' ) +
           chalk[style].bold(

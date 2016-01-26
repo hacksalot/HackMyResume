@@ -52,7 +52,7 @@ Output routines for HackMyResume.
       return this.opts.silent || console.log(finished);
     },
     "do": function(evt) {
-      var L, WRAP, info, msg, numFormats, output, rawTpl, ref, ref1, ref2, sty, style, suffix, template, that, themeName, tot;
+      var L, WRAP, info, msg, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
       that = this;
       L = function() {
         return that.log.apply(that, arguments);
@@ -72,15 +72,11 @@ Output routines for HackMyResume.
           evt.f.reverse().forEach(function(a, idx) {
             return msg += printf((idx === 0 ? this.msgs.beforeMerge.msg[0] : this.msgs.beforeMerge.msg[1]), a.file);
           }, this);
-          return L(M2C(msg, (ref = evt.mixed) != null ? ref : {
-            'yellow': 'gray'
-          }, 'white.dim'));
+          return L(M2C(msg, (evt.mixed ? 'yellow' : 'gray'), 'white.dim'));
         case HME.applyTheme:
           this.theme = evt.theme;
           numFormats = Object.keys(evt.theme.formats).length;
-          return L(M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'gray', evt.status === 'error' ? 'bold' : 'white.dim'), evt.theme.name.toUpperCase(), numFormats, (ref1 = numFormats === 1) != null ? ref1 : {
-            '': 's'
-          });
+          return L(M2C(this.msgs.applyTheme.msg, evt.status === 'error' ? 'red' : 'gray', evt.status === 'error' ? 'bold' : 'white.dim'), evt.theme.name.toUpperCase(), numFormats, numFormats === 1 ? '' : 's');
         case HME.end:
           if (evt.cmd === 'build') {
             themeName = this.theme.name.toUpperCase();
@@ -131,9 +127,7 @@ Output routines for HackMyResume.
         case HME.afterInlineConvert:
           return L(M2C(this.msgs.afterInlineConvert.msg, 'gray', 'white.dim'), evt.file, evt.fmt);
         case HME.afterValidate:
-          style = (ref2 = evt.isValid) != null ? ref2 : {
-            'green': 'yellow'
-          };
+          style = evt.isValid ? 'green' : 'yellow';
           L(M2C(this.msgs.afterValidate.msg[0], 'white') + chalk[style].bold(evt.isValid ? this.msgs.afterValidate.msg[1] : this.msgs.afterValidate.msg[2]), evt.file, evt.fmt);
           if (evt.errors) {
             return _.each(evt.errors, function(err, idx) {
