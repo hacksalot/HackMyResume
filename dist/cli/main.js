@@ -20,13 +20,13 @@ Definition of the `main` function.
 
   PATH = require('path');
 
-  HMSTATUS = require('hackmycore/src/core/status-codes');
+  HMSTATUS = require('hackmycore/dist/core/status-codes');
 
-  HME = require('hackmycore/src/core/event-codes');
+  HME = require('hackmycore/dist/core/event-codes');
 
-  safeLoadJSON = require('hackmycore/src/utils/safe-json-loader');
+  safeLoadJSON = require('hackmycore/dist/utils/safe-json-loader');
 
-  StringUtils = require('hackmycore/src/utils/string.js');
+  StringUtils = require('hackmycore/dist/utils/string.js');
 
   _ = require('underscore');
 

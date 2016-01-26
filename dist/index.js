@@ -17,8 +17,6 @@ try {
 }
 catch( ex ) {
 
-  console.log(ex);
-  if(ex.stack) console.log(ex.stack);
   require('./cli/error').err( ex, true );
 
 }

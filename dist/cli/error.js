@@ -10,18 +10,18 @@ Error-handling routines for HackMyResume.
 
 
 
-  var HMSTATUS = require('hackmycore/src/core/status-codes')
+  var HMSTATUS = require('hackmycore/dist/core/status-codes')
     , PKG = require('../../package.json')
     , FS = require('fs')
     , FCMD = require('hackmycore')
     , PATH = require('path')
     , WRAP = require('word-wrap')
-    , M2C = require('hackmycore/src/utils/md2chalk.js')
+    , M2C = require('hackmycore/dist/utils/md2chalk.js')
     , chalk = require('chalk')
     , extend = require('extend')
     , YAML = require('yamljs')
     , printf = require('printf')
-    , SyntaxErrorEx = require('hackmycore/src/utils/syntax-error-ex');
+    , SyntaxErrorEx = require('hackmycore/dist/utils/syntax-error-ex');
     require('string.prototype.startswith');
 
 
