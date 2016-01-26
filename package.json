@@ -52,7 +52,7 @@
     "copy": "^0.1.3",
     "extend": "^3.0.0",
     "fresca": "~0.6.0",
-    "hackmycore": "^0.2.0",
+    "hackmycore": "^0.3.0",
     "handlebars": "^4.0.5",
     "lodash": "^3.10.1",
     "printf": "^0.2.3",
