@@ -1,0 +1,7 @@
+src/
+assets/
+test/
+doc/
+.travis.yml
+Gruntfile.js
+.gitattributes
