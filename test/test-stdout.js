@@ -12,6 +12,7 @@ var chai = require('chai')
   , FS = require('fs')
   , PATH = require('path')
   , PKG = require('../package.json')
+  , STRIPCOLOR = require('stripcolorcodes')
   , _ = require('underscore');
 
 
@@ -27,7 +28,8 @@ describe('Testing Ouput interface', function () {
   // TODO: use sinon
   // Replacement for console.log
   function MyConsoleLog( msg ) {
-    gather += Array.prototype.slice.call(arguments).join(' ');
+    var tx = Array.prototype.slice.call(arguments).join(' ');
+    gather += STRIPCOLOR( tx );
     ConsoleLogOrg.apply(this, arguments);
   }
 

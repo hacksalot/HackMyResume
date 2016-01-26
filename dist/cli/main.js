@@ -136,7 +136,7 @@ Definition of the `main` function.
 
   initOptions = function(ar) {
     oVerb;
-    var args, cleanArgs, inf, isDebug, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
+    var args, cleanArgs, inf, isDebug, isMono, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
     verb = '';
     args = ar.slice();
     cleanArgs = args.slice(2);
@@ -177,7 +177,11 @@ Definition of the `main` function.
     isSilent = _.some(args, function(v) {
       return v === '-s' || v === '--silent';
     });
+    isMono = _.some(args, function(v) {
+      return v === '--no-color';
+    });
     return {
+      color: !isMono,
       debug: isDebug,
       silent: isSilent,
       orgVerb: oVerb,

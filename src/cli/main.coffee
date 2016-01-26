@@ -33,7 +33,7 @@ line interface as a single method accepting a parameter array.
 @param rawArgs {Array} An array of command-line parameters. Will either be
 process.argv (in production) or custom parameters (in test).
 ###
-main = module.exports = (rawArgs ) ->
+main = module.exports = (rawArgs) ->
 
   initInfo = initialize( rawArgs )
   args = initInfo.args
@@ -175,21 +175,20 @@ initOptions = ( ar ) ->
   oVerb
   verb = ''
   args = ar.slice()
-  cleanArgs = args.slice(2)
+  cleanArgs = args.slice( 2 )
   oJSON
 
   if cleanArgs.length
 
     # Support case-insensitive sub-commands (build, generate, validate, etc)
-    vidx = _.findIndex( cleanArgs, (v) -> return v[0] != '-' )
+    vidx = _.findIndex cleanArgs, (v) -> v[0] != '-'
     if vidx != -1
       oVerb = cleanArgs[ vidx ]
       verb = args[ vidx + 2 ] = oVerb.trim().toLowerCase()
 
     # Remove --options --opts -o and process separately
-    optsIdx = _.findIndex( cleanArgs, (v) ->
-      return v == '-o' || v == '--options' || v == '--opts'
-    );
+    optsIdx = _.findIndex cleanArgs, (v) ->
+      v == '-o' || v == '--options' || v == '--opts'
 
     if optsIdx != -1
       optStr = cleanArgs[ optsIdx + 1]
@@ -206,7 +205,6 @@ initOptions = ( ar ) ->
             oJSON = inf.json
           # TODO: Error handling
 
-
   # Grab the --debug flag
   isDebug = _.some( args, (v) ->
     return v == '-d' || v == '--debug'
@@ -217,7 +215,11 @@ initOptions = ( ar ) ->
     return v == '-s' || v == '--silent'
   )
 
+  # Grab the --no-color flag
+  isMono = _.some args, (v) -> v == '--no-color'
+
   return {
+    color: !isMono,
     debug: isDebug,
     silent: isSilent,
     orgVerb: oVerb,
@@ -279,11 +281,11 @@ loadOptions = ( o, cmdO ) ->
     logMsg('');
 
   # Cache
-  EXTEND(true, _opts, o)
+  EXTEND( true, _opts, o )
   return
 
 ### Split multiple command-line filenames by the 'TO' keyword ###
-splitSrcDest = ->
+splitSrcDest = () ->
 
   params = this.parent.args.filter((j) -> return String.is(j) )
   if params.length == 0
@@ -309,5 +311,5 @@ splitSrcDest = ->
 
 
 ### Simple logging placeholder. ###
-logMsg = ->
+logMsg = () ->
   _opts.silent || console.log.apply( console.log, arguments )
