@@ -8,7 +8,7 @@ Definition of the `main` function.
 (function() {
   var Command, EXTEND, FS, HME, HMR, HMSTATUS, OUTPUT, PAD, PATH, PKG, StringUtils, _, _opts, _out, _title, chalk, execute, initOptions, initialize, loadOptions, logMsg, main, safeLoadJSON, splitSrcDest;
 
-  HMR = require('hackmycore');
+  HMR = require('../hmc');
 
   PKG = require('../../package.json');
 
@@ -20,13 +20,13 @@ Definition of the `main` function.
 
   PATH = require('path');
 
-  HMSTATUS = require('hackmycore/src/core/status-codes');
+  HMSTATUS = require('../hmc/dist/core/status-codes');
 
-  HME = require('hackmycore/src/core/event-codes');
+  HME = require('../hmc/dist/core/event-codes');
 
-  safeLoadJSON = require('hackmycore/src/utils/safe-json-loader');
+  safeLoadJSON = require('../hmc/dist/utils/safe-json-loader');
 
-  StringUtils = require('hackmycore/src/utils/string.js');
+  StringUtils = require('../hmc/dist/utils/string.js');
 
   _ = require('underscore');
 
@@ -136,7 +136,7 @@ Definition of the `main` function.
 
   initOptions = function(ar) {
     oVerb;
-    var args, cleanArgs, inf, isDebug, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
+    var args, cleanArgs, inf, isDebug, isMono, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
     verb = '';
     args = ar.slice();
     cleanArgs = args.slice(2);
@@ -177,7 +177,11 @@ Definition of the `main` function.
     isSilent = _.some(args, function(v) {
       return v === '-s' || v === '--silent';
     });
+    isMono = _.some(args, function(v) {
+      return v === '--no-color';
+    });
     return {
+      color: !isMono,
       debug: isDebug,
       silent: isSilent,
       orgVerb: oVerb,

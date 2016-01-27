@@ -10,16 +10,22 @@ module.exports = function (grunt) {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['**/*','!**/*.coffee'],
+        src: ['**/*','!**/*.coffee','!hmc/**'],
         dest: 'dist/',
       },
+      core: {
+        expand: true,
+        cwd: 'src',
+        src: ['hmc/dist/**/*','hmc/package.json'],
+        dest: 'dist/',
+      }
     },
 
     coffee: {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['**/*.coffee'],
+        src: ['cli/**/*.coffee'],
         dest: 'dist/',
         ext: '.js'
       }
@@ -69,7 +75,7 @@ module.exports = function (grunt) {
         laxcomma: true,
         expr: true
       },
-      all: ['Gruntfile.js', 'src/**/*.js', 'test/*.js']
+      all: ['Gruntfile.js', 'dist/cli/**/*.js', 'test/*.js']
     }
 
   };

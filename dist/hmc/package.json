@@ -1,74 +1,45 @@
 {
-  "name": "hackmyresume",
-  "version": "1.7.1",
-  "description": "Generate polished résumés and CVs in HTML, Markdown, LaTeX, MS Word, PDF, plain text, JSON, XML, YAML, smoke signal, and carrier pigeon.",
+  "name": "hackmycore",
+  "version": "0.4.0",
+  "description": "The open core library for HackMyResume and FluentCV.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hacksalot/HackMyResume.git"
+    "url": "https://github.com/hacksalot/HackMyCore.git"
   },
   "scripts": {
     "test": "grunt clean:test && mocha",
     "grunt": "grunt"
   },
-  "keywords": [
-    "resume",
-    "CV",
-    "portfolio",
-    "employment",
-    "career",
-    "Markdown",
-    "JSON",
-    "Word",
-    "PDF",
-    "YAML",
-    "HTML",
-    "LaTeX",
-    "CLI",
-    "Handlebars",
-    "Underscore",
-    "template"
-  ],
   "author": "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)",
-  "contributors": [
-    "aruberto (https://github.com/aruberto)",
-    "jjanusch (https://github.com/driftdev)",
-    "robertmain (https://github.com/robertmain)",
-    "tomheon (https://github.com/tomheon)",
-    "zhuangya (https://github.com/zhuangya)",
-    "hacksalot <hacksalot@indevious.com> (https://github.com/hacksalot)"
-  ],
+  "contributors": [],
   "license": "MIT",
-  "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/hacksalot/HackMyResume/issues"
+    "url": "https://github.com/hacksalot/HackMyCore/issues"
   },
-  "bin": {
-    "hackmyresume": "dist/index.js"
-  },
-  "homepage": "https://github.com/hacksalot/HackMyResume",
+  "main": "dist/index.js",
+  "homepage": "https://github.com/hacksalot/HackMyCore",
   "dependencies": {
-    "chalk": "^1.1.1",
-    "commander": "^2.9.0",
     "copy": "^0.1.3",
     "extend": "^3.0.0",
     "fresca": "~0.6.0",
     "fresh-jrs-converter": "^0.2.0",
     "fresh-resume-starter": "^0.2.2",
-    "fresh-themes": "^0.14.0-beta",
-    "fs-extra": "^0.26.4",
+    "fresh-themes": "~0.14.0-beta",
+    "fs-extra": "^0.24.0",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
-    "is-my-json-valid": "^2.12.4",
+    "is-my-json-valid": "^2.12.2",
     "json-lint": "^0.1.0",
+    "jst": "0.0.13",
     "lodash": "^3.10.1",
     "marked": "^0.3.5",
     "mkdirp": "^0.5.1",
-    "moment": "^2.11.1",
+    "moment": "^2.10.6",
     "parse-filepath": "^0.6.3",
     "path-exists": "^2.1.0",
     "printf": "^0.2.3",
     "recursive-readdir-sync": "^1.0.6",
-    "simple-html-tokenizer": "^0.2.1",
+    "simple-html-tokenizer": "^0.2.0",
     "slash": "^1.0.0",
     "string-padding": "^1.0.2",
     "string.prototype.endswith": "^0.2.0",
@@ -81,6 +52,7 @@
   },
   "devDependencies": {
     "chai": "*",
+    "chalk": "^1.1.1",
     "fresh-test-resumes": "^0.6.0",
     "grunt": "*",
     "grunt-cli": "^0.1.13",
@@ -96,7 +68,25 @@
     "jsonresume-theme-modern": "0.0.18",
     "jsonresume-theme-sceptile": "^1.0.5",
     "mocha": "*",
-    "resample": "fluentdesk/resample",
-    "stripcolorcodes": "^0.1.0"
-  }
+    "resample": "fluentdesk/resample"
+  },
+  "keywords": [
+    "resume",
+    "CV",
+    "portfolio",
+    "employment",
+    "career",
+    "HackMyResume",
+    "Markdown",
+    "JSON",
+    "Word",
+    "PDF",
+    "YAML",
+    "HTML",
+    "LaTeX",
+    "CLI",
+    "Handlebars",
+    "Underscore",
+    "template"
+  ]
 }
