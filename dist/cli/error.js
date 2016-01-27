@@ -8,19 +8,19 @@ Error-handling routines for HackMyResume.
 (function() {
   var ErrorHandler, FCMD, FS, HMSTATUS, M2C, PATH, PKG, SyntaxErrorEx, WRAP, YAML, _defaultLog, assembleError, chalk, extend, printf;
 
-  HMSTATUS = require('hackmycore/dist/core/status-codes');
+  HMSTATUS = require('../hmc/dist/core/status-codes');
 
   PKG = require('../../package.json');
 
   FS = require('fs');
 
-  FCMD = require('hackmycore');
+  FCMD = require('../hmc');
 
   PATH = require('path');
 
   WRAP = require('word-wrap');
 
-  M2C = require('hackmycore/dist/utils/md2chalk.js');
+  M2C = require('../hmc/dist/utils/md2chalk.js');
 
   chalk = require('chalk');
 
@@ -30,7 +30,7 @@ Error-handling routines for HackMyResume.
 
   printf = require('printf');
 
-  SyntaxErrorEx = require('hackmycore/dist/utils/syntax-error-ex');
+  SyntaxErrorEx = require('../hmc/dist/utils/syntax-error-ex');
 
   require('string.prototype.startswith');
 

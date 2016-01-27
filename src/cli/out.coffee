@@ -7,10 +7,10 @@ Output routines for HackMyResume.
 
 
 chalk = require('chalk')
-HME = require('hackmycore/dist/core/event-codes')
+HME = require('../hmc/dist/core/event-codes')
 _ = require('underscore')
-Class = require('hackmycore/dist/utils/class.js')
-M2C = require('hackmycore/dist/utils/md2chalk.js')
+Class = require('../hmc/dist/utils/class.js')
+M2C = require('../hmc/dist/utils/md2chalk.js')
 PATH = require('path')
 LO = require('lodash')
 FS = require('fs')
@@ -28,6 +28,7 @@ OutputHandler = module.exports = Class.extend
   init: ( opts ) ->
     @opts = EXTEND( true, this.opts || { }, opts )
     @msgs = YAML.load(PATH.join( __dirname, 'msg.yml' )).events
+    return
 
 
 
@@ -108,7 +109,7 @@ OutputHandler = module.exports = Class.extend
       when HME.afterAnalyze
         info = evt.info
         rawTpl = FS.readFileSync( PATH.join( __dirname, 'analyze.hbs' ), 'utf8')
-        HANDLEBARS.registerHelper( require('hackmycore/dist/helpers/console-helpers') )
+        HANDLEBARS.registerHelper( require('../hmc/dist/helpers/console-helpers') )
         template = HANDLEBARS.compile(rawTpl, { strict: false, assumeObjects: false })
         tot = 0
         info.keywords.forEach (g) -> tot += g.count

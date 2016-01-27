@@ -6,16 +6,16 @@ Definition of the `main` function.
 
 
 
-HMR = require 'hackmycore'
+HMR = require '../hmc'
 PKG = require '../../package.json'
 FS = require 'fs'
 EXTEND = require 'extend'
 chalk = require 'chalk'
 PATH = require 'path'
-HMSTATUS = require 'hackmycore/dist/core/status-codes'
-HME = require 'hackmycore/dist/core/event-codes'
-safeLoadJSON = require 'hackmycore/dist/utils/safe-json-loader'
-StringUtils = require 'hackmycore/dist/utils/string.js'
+HMSTATUS = require '../hmc/dist/core/status-codes'
+HME = require '../hmc/dist/core/event-codes'
+safeLoadJSON = require '../hmc/dist/utils/safe-json-loader'
+StringUtils = require '../hmc/dist/utils/string.js'
 _ = require 'underscore'
 OUTPUT = require './out'
 PAD = require 'string-padding'
