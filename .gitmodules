@@ -1,0 +1,3 @@
+[submodule "HackMyCore"]
+	path = HackMyCore
+	url = git://github.com/hacksalot/HackMyCore.git
