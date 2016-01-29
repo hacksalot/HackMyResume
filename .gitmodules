@@ -1,3 +1,0 @@
-[submodule "src/hmc"]
-	path = src/hmc
-	url = git://github.com/hacksalot/HackMyCore.git

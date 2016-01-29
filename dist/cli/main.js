@@ -8,7 +8,7 @@ Definition of the `main` function.
 (function() {
   var Command, EXTEND, FS, HME, HMR, HMSTATUS, OUTPUT, PAD, PATH, PKG, StringUtils, _, _opts, _out, _title, chalk, execute, initOptions, initialize, loadOptions, logMsg, main, safeLoadJSON, splitSrcDest;
 
-  HMR = require('../hmc');
+  HMR = require('../index');
 
   PKG = require('../../package.json');
 
@@ -20,13 +20,13 @@ Definition of the `main` function.
 
   PATH = require('path');
 
-  HMSTATUS = require('../hmc/dist/core/status-codes');
+  HMSTATUS = require('../core/status-codes');
 
-  HME = require('../hmc/dist/core/event-codes');
+  HME = require('../core/event-codes');
 
-  safeLoadJSON = require('../hmc/dist/utils/safe-json-loader');
+  safeLoadJSON = require('../utils/safe-json-loader');
 
-  StringUtils = require('../hmc/dist/utils/string.js');
+  StringUtils = require('../utils/string.js');
 
   _ = require('underscore');
 
@@ -210,6 +210,7 @@ Definition of the `main` function.
     });
     v.invoke.call(v, src, dst, _opts, log);
     if (v.errorCode) {
+      console.log('Exiting with error code ' + v.errorCode);
       return process.exit(v.errorCode);
     }
   };

@@ -43,8 +43,9 @@
     "url": "https://github.com/hacksalot/HackMyResume/issues"
   },
   "bin": {
-    "hackmyresume": "dist/index.js"
+    "hackmyresume": "dist/cli/index.js"
   },
+  "main": "src/index.js",
   "homepage": "https://github.com/hacksalot/HackMyResume",
   "dependencies": {
     "chalk": "^1.1.1",

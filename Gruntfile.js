@@ -10,13 +10,7 @@ module.exports = function (grunt) {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['**/*','!**/*.coffee','!hmc/**'],
-        dest: 'dist/',
-      },
-      core: {
-        expand: true,
-        cwd: 'src',
-        src: ['hmc/dist/**/*','hmc/package.json'],
+        src: ['**/*','!**/*.coffee'],
         dest: 'dist/',
       }
     },
@@ -25,7 +19,7 @@ module.exports = function (grunt) {
       main: {
         expand: true,
         cwd: 'src',
-        src: ['cli/**/*.coffee'],
+        src: ['**/*.coffee'],
         dest: 'dist/',
         ext: '.js'
       }
