@@ -108,18 +108,22 @@ Generic template helper definitions for HackMyResume / FluentCV.
     @method section
      */
     section: function(title, options) {
-      var obj;
+      var obj, ret;
       title = title.trim().toLowerCase();
       obj = LO.get(this.r, title);
-      if (_.isArray(obj)) {
-        if (obj.length) {
-          return options.fn(this);
-        } else {
-          return void 0;
+      ret = '';
+      if (obj) {
+        if (_.isArray(obj)) {
+          if (obj.length) {
+            ret = options.fn(this);
+          }
+        } else if (_.isObject(obj)) {
+          if ((obj.history && obj.history.length) || (obj.sets && obj.sets.length)) {
+            ret = options.fn(this);
+          }
         }
-      } else if (_.isObject(obj)) {
-        return (obj.history && obj.history.length) || (obj.sets && obj.sets.length ? options.fn(this) : void 0);
       }
+      return ret;
     },
 
     /**

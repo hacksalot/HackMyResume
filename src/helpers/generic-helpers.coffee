@@ -74,12 +74,15 @@ GenericHelpers = module.exports =
   section: ( title, options ) ->
     title = title.trim().toLowerCase()
     obj = LO.get this.r, title
-    if _.isArray obj
-      return if obj.length then options.fn(this) else undefined;
-    else if _.isObject obj
-      return (obj.history && obj.history.length) ||
-          if ( obj.sets && obj.sets.length )
-          then options.fn(this) else undefined
+    ret = ''
+    if obj
+      if _.isArray obj
+        if obj.length
+          ret = options.fn @
+      else if _.isObject obj
+        if (obj.history && obj.history.length) || (obj.sets && obj.sets.length)
+            ret = options.fn @
+    ret
 
   ###*
   Emit the size of the specified named font.
