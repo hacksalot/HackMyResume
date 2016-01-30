@@ -6,7 +6,9 @@ Definition of the FRESHResume class.
  */
 
 (function() {
-  var CONVERTER, FS, FreshResume, JRSResume, MD, PATH, XML, _, __, _parseDates, extend, moment, validator;
+  var AbstractResume, CONVERTER, FS, FluentDate, FreshResume, JRSResume, MD, PATH, XML, _, __, _parseDates, extend, moment, validator,
+    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   FS = require('fs');
 
@@ -30,6 +32,10 @@ Definition of the FRESHResume class.
 
   JRSResume = require('./jrs-resume');
 
+  FluentDate = require('./fluent-date');
+
+  AbstractResume = require('./abstract-resume');
+
 
   /**
   A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
@@ -37,8 +43,12 @@ Definition of the FRESHResume class.
   @constructor
    */
 
-  FreshResume = (function() {
-    function FreshResume() {}
+  FreshResume = (function(superClass) {
+    extend1(FreshResume, superClass);
+
+    function FreshResume() {
+      return FreshResume.__super__.constructor.apply(this, arguments);
+    }
 
 
     /** Initialize the FreshResume from file. */
@@ -376,36 +386,8 @@ Definition of the FRESHResume class.
       return ret;
     };
 
-
-    /**
-    Calculate the total duration of the sheet. Assumes this.work has been sorted
-    by start date descending, perhaps via a call to Sheet.sort().
-    @returns The total duration of the sheet's work history, that is, the number
-    of years between the start date of the earliest job on the resume and the
-    *latest end date of all jobs in the work history*. This last condition is for
-    sheets that have overlapping jobs.
-     */
-
     FreshResume.prototype.duration = function(unit) {
-      var careerLast, careerStart, empHist, firstJob;
-      unit = unit || 'years';
-      empHist = __.get(this, 'employment.history');
-      if (empHist && empHist.length) {
-        firstJob = _.last(empHist);
-        careerStart = firstJob.start ? firstJob.safe.start : '';
-        if ((typeof careerStart === 'string' || careerStart instanceof String) && !careerStart.trim()) {
-          return 0;
-        }
-        careerLast = _.max(empHist, function(w) {
-          if (w.safe && w.safe.end) {
-            return w.safe.end.unix();
-          } else {
-            return moment().unix();
-          }
-        });
-        return careerLast.safe.end.diff(careerStart, unit);
-      }
-      return 0;
+      return FreshResume.__super__.duration.call(this, 'employment.history', 'start', 'end', unit);
     };
 
 
@@ -420,7 +402,11 @@ Definition of the FRESHResume class.
         if (a.safe.start.isBefore(b.safe.start)) {
           return 1;
         } else {
-          return (a.safe.start.isAfter(b.safe.start) && -1) || 0;
+          if (a.safe.start.isAfter(b.safe.start)) {
+            return -1;
+          } else {
+            return 0;
+          }
         }
       };
       sortSection = function(key) {
@@ -448,7 +434,7 @@ Definition of the FRESHResume class.
 
     return FreshResume;
 
-  })();
+  })(AbstractResume);
 
 
   /**
@@ -499,7 +485,7 @@ Definition of the FRESHResume class.
         return;
       }
       if (Object.prototype.toString.call(obj) === '[object Array]') {
-        return obj.forEach(function(elem) {
+        obj.forEach(function(elem) {
           return replaceDatesInObject(elem);
         });
       } else if (typeof obj === 'object') {
@@ -509,19 +495,19 @@ Definition of the FRESHResume class.
         Object.keys(obj).forEach(function(key) {
           return replaceDatesInObject(obj[key]);
         });
-        return ['start', 'end', 'date'].forEach(function(val) {
+        ['start', 'end', 'date'].forEach(function(val) {
           if ((obj[val] !== void 0) && (!obj.safe || !obj.safe[val])) {
             obj.safe = obj.safe || {};
             obj.safe[val] = _fmt(obj[val]);
             if (obj[val] && (val === 'start') && !obj.end) {
-              return obj.safe.end = _fmt('current');
+              obj.safe.end = _fmt('current');
             }
           }
         });
       }
     };
-    return Object.keys(this).forEach(function(member) {
-      return replaceDatesInObject(that[member]);
+    Object.keys(this).forEach(function(member) {
+      replaceDatesInObject(that[member]);
     });
   };
 

@@ -7,6 +7,7 @@ The HackMyResume date representation.
 
 
 moment = require 'moment'
+require('../utils/string')
 
 ###*
 Create a FluentDate from a string or Moment date object. There are a few date
@@ -30,6 +31,8 @@ class FluentDate
   constructor: (dt) ->
     @rep = this.fmt dt
 
+  @isCurrent: (dt) ->
+    !dt || (String.is(dt) and /^(present|now|current)$/.test(dt))
 
 months = {}
 abbr = {}

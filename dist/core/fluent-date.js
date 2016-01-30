@@ -10,6 +10,8 @@ The HackMyResume date representation.
 
   moment = require('moment');
 
+  require('../utils/string');
+
 
   /**
   Create a FluentDate from a string or Moment date object. There are a few date
@@ -32,6 +34,10 @@ The HackMyResume date representation.
     function FluentDate(dt) {
       this.rep = this.fmt(dt);
     }
+
+    FluentDate.isCurrent = function(dt) {
+      return !dt || (String.is(dt) && /^(present|now|current)$/.test(dt));
+    };
 
     return FluentDate;
 
