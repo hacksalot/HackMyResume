@@ -6,16 +6,16 @@ Definition of the `main` function.
 
 
 
-HMR = require '../hmc'
+HMR = require '../index'
 PKG = require '../../package.json'
 FS = require 'fs'
 EXTEND = require 'extend'
 chalk = require 'chalk'
 PATH = require 'path'
-HMSTATUS = require '../hmc/dist/core/status-codes'
-HME = require '../hmc/dist/core/event-codes'
-safeLoadJSON = require '../hmc/dist/utils/safe-json-loader'
-StringUtils = require '../hmc/dist/utils/string.js'
+HMSTATUS = require '../core/status-codes'
+HME = require '../core/event-codes'
+safeLoadJSON = require '../utils/safe-json-loader'
+StringUtils = require '../utils/string.js'
 _ = require 'underscore'
 OUTPUT = require './out'
 PAD = require 'string-padding'
@@ -243,7 +243,9 @@ execute = ( src, dst, opts, log ) ->
   v.on( 'hmr:error', ->  hand.err.apply( hand, arguments ) )
   v.invoke.call( v, src, dst, _opts, log )
   if v.errorCode
+    console.log 'Exiting with error code ' + v.errorCode
     process.exit(v.errorCode)
+
 
 
 

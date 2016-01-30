@@ -6,19 +6,19 @@ Error-handling routines for HackMyResume.
 
 
 
-HMSTATUS = require('../hmc/dist/core/status-codes')
-PKG = require('../../package.json')
-FS = require('fs')
-FCMD = require('../hmc')
-PATH = require('path')
-WRAP = require('word-wrap')
-M2C = require('../hmc/dist/utils/md2chalk.js')
-chalk = require('chalk')
-extend = require('extend')
-YAML = require('yamljs')
-printf = require('printf')
-SyntaxErrorEx = require('../hmc/dist/utils/syntax-error-ex')
-require('string.prototype.startswith')
+HMSTATUS = require '../core/status-codes'
+PKG = require '../../package.json'
+FS = require 'fs'
+FCMD = require '../index'
+PATH = require 'path'
+WRAP = require 'word-wrap'
+M2C = require '../utils/md2chalk'
+chalk = require 'chalk'
+extend = require 'extend'
+YAML = require 'yamljs'
+printf = require 'printf'
+SyntaxErrorEx = require '../utils/syntax-error-ex'
+require 'string.prototype.startswith'
 
 
 

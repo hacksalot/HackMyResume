@@ -10,13 +10,13 @@ Output routines for HackMyResume.
 
   chalk = require('chalk');
 
-  HME = require('../hmc/dist/core/event-codes');
+  HME = require('../core/event-codes');
 
   _ = require('underscore');
 
-  Class = require('../hmc/dist/utils/class.js');
+  Class = require('../utils/class.js');
 
-  M2C = require('../hmc/dist/utils/md2chalk.js');
+  M2C = require('../utils/md2chalk.js');
 
   PATH = require('path');
 
@@ -110,7 +110,7 @@ Output routines for HackMyResume.
         case HME.afterAnalyze:
           info = evt.info;
           rawTpl = FS.readFileSync(PATH.join(__dirname, 'analyze.hbs'), 'utf8');
-          HANDLEBARS.registerHelper(require('../hmc/dist/helpers/console-helpers'));
+          HANDLEBARS.registerHelper(require('../helpers/console-helpers'));
           template = HANDLEBARS.compile(rawTpl, {
             strict: false,
             assumeObjects: false
