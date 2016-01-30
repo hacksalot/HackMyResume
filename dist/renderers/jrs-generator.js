@@ -36,10 +36,11 @@ Definition of the JRSGenerator class.
     generate: function(json, jst, format, cssInfo, opts, theme) {
       var org, rezHtml, turnoff;
       turnoff = ['log', 'error', 'dir'];
-      org = turnoff.map(c)(function() {
+      org = turnoff.map(function(c) {
         var ret;
         ret = console[c];
-        return console[c] = function() {};
+        console[c] = function() {};
+        return ret;
       });
       rezHtml = theme.render(json.harden());
       turnoff.forEach(function(c, idx) {

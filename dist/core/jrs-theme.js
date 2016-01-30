@@ -6,7 +6,7 @@ Definition of the JRSTheme class.
  */
 
 (function() {
-  var JRSTheme, PATH, _, getFormat, parsePath, pathExists;
+  var JRSTheme, PATH, _, parsePath, pathExists;
 
   _ = require('underscore');
 
@@ -25,17 +25,13 @@ Definition of the JRSTheme class.
   JRSTheme = (function() {
     function JRSTheme() {}
 
-    return JRSTheme;
-
-  })();
-
-  ({
 
     /**
     Open and parse the specified theme.
     @method open
      */
-    open: function(thFolder) {
+
+    JRSTheme.prototype.open = function(thFolder) {
       var pathInfo, pkgJsonPath, thApi, thPkg;
       this.folder = thFolder;
       pathInfo = parsePath(thFolder);
@@ -78,25 +74,31 @@ Definition of the JRSTheme class.
         };
       }
       return this;
-    },
+    };
+
 
     /**
     Determine if the theme supports the output format.
     @method hasFormat
      */
-    hasFormat: function(fmt) {
+
+    JRSTheme.prototype.hasFormat = function(fmt) {
       return _.has(this.formats, fmt);
-    }
+    };
+
 
     /**
     Return the requested output format.
     @method getFormat
      */
-  });
 
-  getFormat = function(fmt) {
-    return this.formats[fmt];
-  };
+    JRSTheme.prototype.getFormat = function(fmt) {
+      return this.formats[fmt];
+    };
+
+    return JRSTheme;
+
+  })();
 
   module.exports = JRSTheme;
 
