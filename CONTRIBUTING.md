@@ -4,16 +4,10 @@ Contributing
 *Note: HackMyResume is also available as [FluentCV][fcv]. Contributors are
 credited in both.*
 
-HackMyResume needs your help! Our contribution workflow is based on [GitHub
-Flow][flow] and we respond to all pull requests and issues, usually within 24
-hours. HackMyResume has no corporate affiliation and no commercial basis, which
-allows the project to maintain a strict user-first policy, rapid development
-velocity, and a liberal stance on contributions and exotic functionality in
-keeping with the spirit (and name) of the tool.
-
-In short, your code is welcome here.
-
 ## How To Contribute
+
+*See [BUILDING.md][building] for instructions on setting up a HackMyResume
+development environment.*
 
 1. Optional: [**open an issue**][iss] identifying the feature or bug you'd like
 to implement or fix. This step isn't required — you can start hacking away on
@@ -25,7 +19,7 @@ similar; call it whatever you like) to perform your work in.
 4. **Install dependencies** by running `npm install` in the top-level
 HackMyResume folder.
 5. Make your **commits** as usual.
-6. **Verify** your changes locally with `npm test`.
+6. **Verify** your changes locally with `grunt test`.
 7. **Push** your commits.
 7. **Submit a pull request** from your feature branch to the HackMyResume `dev`
 branch.
@@ -48,7 +42,7 @@ You can reach hacksalot directly at:
 hacksalot@indevious.com
 ```
 
-Thanks! See you out there in the trenches.
+Thanks for your interest in the HackMyResume project.
 
 [fcv]: https://github.com/fluentdesk/fluentcv
 [flow]: https://guides.github.com/introduction/flow/
@@ -56,3 +50,4 @@ Thanks! See you out there in the trenches.
 [ha]: https://github.com/hacksalot
 [th]: https://github.com/tomheon
 [awesome]: https://github.com/hacksalot/HackMyResume/graphs/contributors
+[building]: https://github.com/hacksalot/HackMyResume/blob/master/BUILDING.md
