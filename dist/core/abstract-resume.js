@@ -29,7 +29,7 @@ Definition of the AbstractResume class.
     AbstractResume.prototype.duration = function(collKey, startKey, endKey, unit) {
       var firstDate, hist, lastDate, new_e;
       unit = unit || 'years';
-      hist = hist || __.get(this, collKey);
+      hist = __.get(this, collKey);
       if (!hist || !hist.length) {
         return 0;
       }

@@ -104,7 +104,6 @@ Implementation of the 'validate' verb for HackMyResume.
           shouldExit: true
         };
       }
-      console.log('1111');
       return ret;
     }, this);
   };

@@ -60,7 +60,7 @@ The HackMyResume date representation.
   module.exports = FluentDate;
 
   FluentDate.fmt = function(dt, throws) {
-    var defTime, month, mt, parts, ref, temp;
+    var month, mt, parts, ref, temp;
     throws = (throws === void 0 || throws === null) || throws;
     if (typeof dt === 'string' || dt instanceof String) {
       dt = dt.toLowerCase().trim();
@@ -78,33 +78,7 @@ The HackMyResume date representation.
       } else if (/^\s*\d{4}\s*$/.test(dt)) {
         return moment(dt, 'YYYY');
       } else if (/^\s*$/.test(dt)) {
-        defTime = {
-          isNull: true,
-          isBefore: function(other) {
-            if (other && !other.isNull) {
-              return true;
-            } else {
-              return false;
-            }
-          },
-          isAfter: function(other) {
-            if (other && !other.isNull) {
-              return false;
-            } else {
-              return false;
-            }
-          },
-          unix: function() {
-            return 0;
-          },
-          format: function() {
-            return '';
-          },
-          diff: function() {
-            return 0;
-          }
-        };
-        return defTime;
+        return moment();
       } else {
         mt = moment(dt);
         if (mt.isValid()) {

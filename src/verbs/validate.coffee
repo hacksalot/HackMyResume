@@ -85,8 +85,6 @@ validate = (sources, unused, opts)  ->
     if opts.assert and !ret.isValid
       throw fluenterror: HMSTATUS.invalid, shouldExit: true
 
-    console.log '1111'
-
-    return ret
+    ret
 
   , @

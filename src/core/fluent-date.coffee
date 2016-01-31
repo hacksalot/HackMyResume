@@ -59,16 +59,7 @@ FluentDate.fmt = ( dt, throws ) ->
     else if /^\s*\d{4}\s*$/.test(dt) # "2015"
       return moment dt, 'YYYY'
     else if /^\s*$/.test(dt) # "", " "
-      defTime =
-        isNull: true
-        isBefore: ( other ) ->
-          if other and !other.isNull then true else false
-        isAfter: ( other ) ->
-          if other and !other.isNull then false else false
-        unix: () -> 0
-        format: () -> ''
-        diff: () -> 0
-      return defTime
+      return moment()
     else
       mt = moment dt
       if mt.isValid()
