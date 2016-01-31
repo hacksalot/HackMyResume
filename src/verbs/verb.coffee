@@ -6,10 +6,10 @@ Definition of the Verb class.
 
 
 
-
 # Use J. Resig's nifty class implementation
 Class = require '../utils/class'
 EVENTS = require 'events'
+HMEVENT = require '../core/event-codes'
 
 
 
@@ -22,24 +22,34 @@ Verb = module.exports = Class.extend
 
 
   ###* Constructor. Automatically called at creation. ###
-  init: ( moniker ) ->
-    @.moniker = moniker
-    @.emitter = new EVENTS.EventEmitter()
+  init: ( moniker, workhorse ) ->
+    @moniker = moniker
+    @emitter = new EVENTS.EventEmitter()
+    @workhorse = workhorse
     return
+
+
+
+  ###* Invoke the command. ###
+  invoke: ->
+    @stat HMEVENT.begin, cmd: @moniker
+    ret = @workhorse.apply @, arguments
+    @stat HMEVENT.end
+    ret
 
 
 
   ###* Forward subscriptions to the event emitter. ###
   on: ->
-    this.emitter.on.apply @.emitter, arguments
+    @emitter.on.apply @emitter, arguments
 
 
 
   ###* Fire an arbitrary event, scoped to "hmr:". ###
   fire: (evtName, payload) ->
     payload = payload || { }
-    payload.cmd = this.moniker
-    this.emitter.emit 'hmr:' + evtName, payload
+    payload.cmd = @moniker
+    @emitter.emit 'hmr:' + evtName, payload
     true
 
 
@@ -60,8 +70,9 @@ Verb = module.exports = Class.extend
   stat: ( subEvent, payload ) ->
     payload = payload || { }
     payload.sub = subEvent
-    this.fire 'status', payload
+    @fire 'status', payload
     true
+
 
 
   ###* Associate error info with the invocation. ###

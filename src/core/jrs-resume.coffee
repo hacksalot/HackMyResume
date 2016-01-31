@@ -14,7 +14,7 @@ PATH = require('path')
 MD = require('marked')
 CONVERTER = require('fresh-jrs-converter')
 moment = require('moment')
-
+AbstractResume = require('./abstract-resume')
 
 
 ###*
@@ -22,7 +22,7 @@ A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
 is an instantiation of that JSON decorated with utility methods.
 @class JRSResume
 ###
-class JRSResume
+class JRSResume extends AbstractResume
 
 
 
@@ -203,25 +203,8 @@ class JRSResume
     ret
 
 
-
-  ###*
-  Calculate the total duration of the sheet. Assumes this.work has been sorted
-  by start date descending, perhaps via a call to Sheet.sort().
-  @returns The total duration of the sheet's work history, that is, the number
-  of years between the start date of the earliest job on the resume and the
-  *latest end date of all jobs in the work history*. This last condition is for
-  sheets that have overlapping jobs.
-  ###
-  duration: ( unit ) ->
-    unit = unit || 'years';
-    if this.work && this.work.length
-      careerStart = this.work[ this.work.length - 1].safeStartDate
-      if (typeof careerStart == 'string' || careerStart instanceof String) && !careerStart.trim()
-        return 0
-      careerLast = _.max( this.work, ( w ) -> w.safeEndDate.unix() ).safeEndDate;
-      return careerLast.diff careerStart, unit
-    0
-
+  duration: (unit) ->
+    super('work', 'startDate', 'endDate', unit)
 
 
   ###*

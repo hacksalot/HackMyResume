@@ -22,14 +22,7 @@ Implementation of the 'peek' verb for HackMyResume.
 
   PeekVerb = module.exports = Verb.extend({
     init: function() {
-      return this._super('peek');
-    },
-    invoke: function() {
-      this.stat(HMEVENT.begin, {
-        cmd: 'peek'
-      });
-      peek.apply(this, arguments);
-      return this.stat(HMEVENT.end);
+      return this._super('peek', peek);
     }
   });
 

@@ -42,14 +42,7 @@ loadTheme = null
 BuildVerb = module.exports = Verb.extend
 
   ###* Create a new build verb. ###
-  init: () -> @._super 'build'
-
-  ###* Invoke the Build command. ###
-  invoke: ->
-    @stat HMEVENT.begin, { cmd: 'build' }
-    ret = build.apply @, arguments
-    @stat HMEVENT.end
-    return ret
+  init: () -> @_super 'build', build
 
 
 
@@ -58,13 +51,13 @@ Given a source resume in FRESH or JRS format, a destination resume path, and a
 theme file, generate 0..N resumes in the desired formats.
 @param src Path to the source JSON resume file: "rez/resume.json".
 @param dst An array of paths to the target resume file(s).
-@param theme Friendly name of the resume theme. Defaults to "modern".
-@param logger Optional logging override.
+@param opts Generation options.
 ###
 build = ( src, dst, opts ) ->
 
   if !src || !src.length
-    @err HMSTATUS.resumeNotFound, { quit: true }
+    @err HMSTATUS.resumeNotFound, quit: true
+    return null
 
   prep src, dst, opts
 
@@ -74,10 +67,14 @@ build = ( src, dst, opts ) ->
   }, @);
 
   # Explicit check for any resume loading errors...
-  if !sheetObjects || _.some( sheetObjects, (so) -> return so.fluenterror )
+  problemSheets = _.filter( sheetObjects, (so) -> return so.fluenterror )
+  if( problemSheets && problemSheets.length )
+    problemSheets[0].quit = true
+    @err problemSheets[0].fluenterror, problemSheets[0]
     return null
 
-  sheets = sheetObjects.map((r) -> return r.json )
+  # Get the collection of raw JSON sheets
+  sheets = sheetObjects.map (r) -> r.json
 
   # Load the theme...
   theme = null
@@ -85,12 +82,14 @@ build = ( src, dst, opts ) ->
   try
     tFolder = verifyTheme.call @, _opts.theme
     theme = _opts.themeObj = loadTheme tFolder
+    addFreebieFormats theme
   catch ex
     newEx =
       fluenterror: HMSTATUS.themeLoad
       inner: ex
       attempted: _opts.theme
-    this.err HMSTATUS.themeLoad, newEx
+      quit: true
+    @err HMSTATUS.themeLoad, newEx
     return null
 
   @stat HMEVENT.afterTheme, { theme: theme }
@@ -98,7 +97,8 @@ build = ( src, dst, opts ) ->
   # Check for invalid outputs...
   inv = verifyOutputs.call @, dst, theme
   if inv && inv.length
-    @err HMSTATUS.invalidFormat, { data: inv, theme: theme }
+    @err HMSTATUS.invalidFormat, data: inv, theme: theme, quit: true
+    return null
 
   ## Merge input resumes, yielding a single source resume.
   rez = null
@@ -107,7 +107,7 @@ build = ( src, dst, opts ) ->
     mixed = _.any sheets, (s) -> return if isFRESH then s.basics else !s.basics
     @stat HMEVENT.beforeMerge, { f: _.clone(sheetObjects), mixed: mixed }
     if mixed
-      this.err HMSTATUS.mixedMerge
+      @err HMSTATUS.mixedMerge
 
     rez = _.reduceRight sheets, ( a, b, idx ) ->
       extend( true, b, a )
@@ -124,8 +124,7 @@ build = ( src, dst, opts ) ->
     rez = RConverter[ 'to' + toFormat ]( rez );
     @stat HMEVENT.afterInlineConvert, { file: sheetObjects[0].file, fmt: toFormat }
 
-  # Add freebie formats to the theme
-  addFreebieFormats theme
+  # Announce the theme
   @stat HMEVENT.applyTheme, { r: rez, theme: theme }
 
   # Load the resume into a FRESHResume or JRSResume object
@@ -195,13 +194,14 @@ single = ( targInfo, theme, finished ) ->
       fmt: targInfo.fmt.outFormat
       file: PATH.relative(process.cwd(), f)
 
+    _opts.targets = finished;
+
     # If targInfo.fmt.files exists, this format is backed by a document.
     # Fluent/FRESH themes are handled here.
     if targInfo.fmt.files && targInfo.fmt.files.length
       theFormat = _fmts.filter(
         (fmt) -> return fmt.name == targInfo.fmt.outFormat )[0];
       MKDIRP.sync( PATH.dirname( f ) ); # Ensure dest folder exists;
-      _opts.targets = finished;
       ret = theFormat.gen.generate( _rezObj, f, _opts );
 
     # Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
@@ -235,17 +235,17 @@ single = ( targInfo, theme, finished ) ->
 
 
 
-###*
-Ensure that user-specified outputs/targets are valid.
-###
+###* Ensure that user-specified outputs/targets are valid. ###
 verifyOutputs = ( targets, theme ) ->
-  @.stat HMEVENT.verifyOutputs, { targets: targets, theme: theme }
+  @stat HMEVENT.verifyOutputs, { targets: targets, theme: theme }
   _.reject targets.map( ( t ) ->
     pathInfo = parsePath t
     {
       format: pathInfo.extname.substr(1)
     }),
     (t) -> t.format == 'all' || theme.hasFormat( t.format )
+
+
 
 ###*
 Reinforce the chosen theme with "freebie" formats provided by HackMyResume.

@@ -21,13 +21,7 @@ safeLoadJSON = require '../utils/safe-json-loader'
 ###* An invokable resume validation command. ###
 ValidateVerb = module.exports = Verb.extend
 
-  init: -> @_super 'validate'
-
-  invoke: ->
-    @stat HMEVENT.begin, { cmd: 'validate' }
-    ret = validate.apply @, arguments
-    @stat HMEVENT.end
-    return ret
+  init: -> @_super 'validate', validate
 
 
 
@@ -85,8 +79,6 @@ validate = (sources, unused, opts)  ->
     if opts.assert and !ret.isValid
       throw fluenterror: HMSTATUS.invalid, shouldExit: true
 
-    console.log '1111'
-
-    return ret
+    ret
 
   , @

@@ -17,6 +17,8 @@ XML = require 'xml-escape'
 MD = require 'marked'
 CONVERTER = require 'fresh-jrs-converter'
 JRSResume = require './jrs-resume'
+FluentDate = require './fluent-date'
+AbstractResume = require './abstract-resume'
 
 
 
@@ -25,7 +27,7 @@ A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
 object is an instantiation of that JSON decorated with utility methods.
 @constructor
 ###
-class FreshResume
+class FreshResume extends AbstractResume
 
   ###* Initialize the FreshResume from file. ###
   open: ( file, opts ) ->
@@ -306,28 +308,8 @@ class FreshResume
     ret
 
 
-
-  ###*
-  Calculate the total duration of the sheet. Assumes this.work has been sorted
-  by start date descending, perhaps via a call to Sheet.sort().
-  @returns The total duration of the sheet's work history, that is, the number
-  of years between the start date of the earliest job on the resume and the
-  *latest end date of all jobs in the work history*. This last condition is for
-  sheets that have overlapping jobs.
-  ###
   duration: (unit) ->
-    unit = unit || 'years'
-    empHist = __.get(this, 'employment.history')
-    if empHist && empHist.length
-      firstJob = _.last( empHist )
-      careerStart = if firstJob.start then firstJob.safe.start else ''
-      if ((typeof careerStart == 'string' || careerStart instanceof String) && !careerStart.trim())
-        return 0
-      careerLast = _.max empHist, ( w ) ->
-        return if w.safe && w.safe.end then w.safe.end.unix() else moment().unix()
-      return careerLast.safe.end.diff careerStart, unit
-    0
-
+    super('employment.history', 'start', 'end', unit)
 
 
   ###*
@@ -337,9 +319,9 @@ class FreshResume
   sort: () ->
 
     byDateDesc = (a,b) ->
-      if ( a.safe.start.isBefore(b.safe.start) )
+      if a.safe.start.isBefore(b.safe.start)
       then 1
-      else ( a.safe.start.isAfter(b.safe.start) && -1 ) || 0
+      else ( if a.safe.start.isAfter(b.safe.start) then -1 else 0 )
 
     sortSection = ( key ) ->
       ar = __.get this, key
@@ -352,10 +334,6 @@ class FreshResume
     sortSection 'service.history'
     sortSection 'projects'
 
-    # this.awards && this.awards.sort( function(a, b) {
-    #   return( a.safeDate.isBefore(b.safeDate) ) ? 1
-    #     : ( a.safeDate.isAfter(b.safeDate) && -1 ) || 0;
-    # });
     @writing && @writing.sort (a, b) ->
       if a.safe.date.isBefore b.safe.date
       then 1
@@ -400,6 +378,7 @@ _parseDates = () ->
     return if !obj
     if Object.prototype.toString.call( obj ) == '[object Array]'
       obj.forEach (elem) -> replaceDatesInObject( elem )
+      return
     else if typeof obj == 'object'
       if obj._isAMomentObject || obj.safe
         return
@@ -410,8 +389,12 @@ _parseDates = () ->
           obj.safe[ val ] = _fmt obj[val]
           if obj[val] && (val == 'start') && !obj.end
             obj.safe.end = _fmt 'current'
-
-  Object.keys( this ).forEach (member) -> replaceDatesInObject(that[member])
+            return
+      return
+  Object.keys( this ).forEach (member) ->
+    replaceDatesInObject(that[member])
+    return
+  return
 
 
 

@@ -6,7 +6,9 @@ Definition of the JRSResume class.
  */
 
 (function() {
-  var CONVERTER, FS, JRSResume, MD, PATH, _, _parseDates, extend, moment, validator;
+  var AbstractResume, CONVERTER, FS, JRSResume, MD, PATH, _, _parseDates, extend, moment, validator,
+    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   FS = require('fs');
 
@@ -24,6 +26,8 @@ Definition of the JRSResume class.
 
   moment = require('moment');
 
+  AbstractResume = require('./abstract-resume');
+
 
   /**
   A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
@@ -31,10 +35,14 @@ Definition of the JRSResume class.
   @class JRSResume
    */
 
-  JRSResume = (function() {
+  JRSResume = (function(superClass) {
     var clear, format;
 
-    function JRSResume() {}
+    extend1(JRSResume, superClass);
+
+    function JRSResume() {
+      return JRSResume.__super__.constructor.apply(this, arguments);
+    }
 
 
     /** Initialize the JSResume from file. */
@@ -249,30 +257,8 @@ Definition of the JRSResume class.
       return ret;
     };
 
-
-    /**
-    Calculate the total duration of the sheet. Assumes this.work has been sorted
-    by start date descending, perhaps via a call to Sheet.sort().
-    @returns The total duration of the sheet's work history, that is, the number
-    of years between the start date of the earliest job on the resume and the
-    *latest end date of all jobs in the work history*. This last condition is for
-    sheets that have overlapping jobs.
-     */
-
     JRSResume.prototype.duration = function(unit) {
-      var careerLast, careerStart;
-      unit = unit || 'years';
-      if (this.work && this.work.length) {
-        careerStart = this.work[this.work.length - 1].safeStartDate;
-        if ((typeof careerStart === 'string' || careerStart instanceof String) && !careerStart.trim()) {
-          return 0;
-        }
-        careerLast = _.max(this.work, function(w) {
-          return w.safeEndDate.unix();
-        }).safeEndDate;
-        return careerLast.diff(careerStart, unit);
-      }
-      return 0;
+      return JRSResume.__super__.duration.call(this, 'work', 'startDate', 'endDate', unit);
     };
 
 
@@ -372,7 +358,7 @@ Definition of the JRSResume class.
 
     return JRSResume;
 
-  })();
+  })(AbstractResume);
 
 
   /** Get the default (empty) sheet. */

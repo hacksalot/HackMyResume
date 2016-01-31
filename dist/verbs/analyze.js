@@ -26,14 +26,7 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   AnalyzeVerb = module.exports = Verb.extend({
     init: function() {
-      return this._super('analyze');
-    },
-    invoke: function() {
-      this.stat(HMEVENT.begin, {
-        cmd: 'analyze'
-      });
-      analyze.apply(this, arguments);
-      return this.stat(HMEVENT.end);
+      return this._super('analyze', analyze);
     }
   });
 

@@ -25,9 +25,10 @@ JRSGenerator = module.exports =
 
     # Disable JRS theme chatter (console.log, console.error, etc.)
     turnoff = ['log', 'error', 'dir'];
-    org = turnoff.map(c) ->
+    org = turnoff.map (c) ->
       ret = console[c]
       console[c] = () ->
+      ret
 
     # Freeze and render
     rezHtml = theme.render json.harden()
