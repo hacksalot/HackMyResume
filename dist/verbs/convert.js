@@ -22,14 +22,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
   ConvertVerb = module.exports = Verb.extend({
     init: function() {
-      return this._super('convert');
-    },
-    invoke: function() {
-      this.stat(HMEVENT.begin, {
-        cmd: 'convert'
-      });
-      convert.apply(this, arguments);
-      return this.stat(HMEVENT.end);
+      return this._super('convert', convert);
     }
   });
 

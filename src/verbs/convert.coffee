@@ -17,12 +17,7 @@ HMEVENT = require('../core/event-codes');
 
 ConvertVerb = module.exports = Verb.extend
 
-  init: -> @._super 'convert'
-
-  invoke: ->
-    @.stat HMEVENT.begin, { cmd: 'convert' }
-    convert.apply @, arguments
-    @.stat HMEVENT.end
+  init: -> @_super 'convert', convert
 
 
 

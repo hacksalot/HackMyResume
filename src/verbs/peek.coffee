@@ -17,12 +17,7 @@ HMEVENT = require('../core/event-codes')
 
 PeekVerb = module.exports = Verb.extend
 
-  init: -> @._super('peek')
-
-  invoke: ->
-    @.stat HMEVENT.begin, { cmd: 'peek' }
-    peek.apply @, arguments
-    @.stat HMEVENT.end
+  init: -> @_super 'peek', peek
 
 
 

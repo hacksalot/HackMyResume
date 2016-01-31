@@ -24,16 +24,7 @@ Implementation of the 'create' verb for HackMyResume.
 
   CreateVerb = module.exports = Verb.extend({
     init: function() {
-      return this._super('new');
-    },
-    invoke: function() {
-      this.stat(HMEVENT.begin, {
-        cmd: 'create'
-      });
-      create.apply(this, arguments);
-      this.stat(HMEVENT.begin, {
-        cmd: 'convert'
-      });
+      return this._super('new', create);
     }
   });
 

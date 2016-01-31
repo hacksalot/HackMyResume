@@ -6,11 +6,13 @@ Definition of the Verb class.
  */
 
 (function() {
-  var Class, EVENTS, Verb;
+  var Class, EVENTS, HMEVENT, Verb;
 
   Class = require('../utils/class');
 
   EVENTS = require('events');
+
+  HMEVENT = require('../core/event-codes');
 
 
   /**
@@ -21,9 +23,21 @@ Definition of the Verb class.
   Verb = module.exports = Class.extend({
 
     /** Constructor. Automatically called at creation. */
-    init: function(moniker) {
+    init: function(moniker, workhorse) {
       this.moniker = moniker;
       this.emitter = new EVENTS.EventEmitter();
+      this.workhorse = workhorse;
+    },
+
+    /** Invoke the command. */
+    invoke: function() {
+      var ret;
+      this.stat(HMEVENT.begin, {
+        cmd: this.moniker
+      });
+      ret = this.workhorse.apply(this, arguments);
+      this.stat(HMEVENT.end);
+      return ret;
     },
 
     /** Forward subscriptions to the event emitter. */

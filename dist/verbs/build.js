@@ -74,18 +74,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     /** Create a new build verb. */
     init: function() {
-      return this._super('build');
-    },
-
-    /** Invoke the Build command. */
-    invoke: function() {
-      var ret;
-      this.stat(HMEVENT.begin, {
-        cmd: 'build'
-      });
-      ret = build.apply(this, arguments);
-      this.stat(HMEVENT.end);
-      return ret;
+      return this._super('build', build);
     }
   });
 
@@ -95,16 +84,16 @@ Implementation of the 'build' verb for HackMyResume.
   theme file, generate 0..N resumes in the desired formats.
   @param src Path to the source JSON resume file: "rez/resume.json".
   @param dst An array of paths to the target resume file(s).
-  @param theme Friendly name of the resume theme. Defaults to "modern".
-  @param logger Optional logging override.
+  @param opts Generation options.
    */
 
   build = function(src, dst, opts) {
-    var ex, inv, isFRESH, mixed, newEx, orgFormat, rez, sheetObjects, sheets, tFolder, targets, theme, toFormat;
+    var ex, inv, isFRESH, mixed, newEx, orgFormat, problemSheets, rez, sheetObjects, sheets, tFolder, targets, theme, toFormat;
     if (!src || !src.length) {
       this.err(HMSTATUS.resumeNotFound, {
         quit: true
       });
+      return null;
     }
     prep(src, dst, opts);
     sheetObjects = ResumeFactory.load(src, {
@@ -115,9 +104,12 @@ Implementation of the 'build' verb for HackMyResume.
         sort: _opts.sort
       }
     }, this);
-    if (!sheetObjects || _.some(sheetObjects, function(so) {
+    problemSheets = _.filter(sheetObjects, function(so) {
       return so.fluenterror;
-    })) {
+    });
+    if (problemSheets && problemSheets.length) {
+      problemSheets[0].quit = true;
+      this.err(problemSheets[0].fluenterror, problemSheets[0]);
       return null;
     }
     sheets = sheetObjects.map(function(r) {
@@ -130,12 +122,14 @@ Implementation of the 'build' verb for HackMyResume.
     try {
       tFolder = verifyTheme.call(this, _opts.theme);
       theme = _opts.themeObj = loadTheme(tFolder);
+      addFreebieFormats(theme);
     } catch (_error) {
       ex = _error;
       newEx = {
         fluenterror: HMSTATUS.themeLoad,
         inner: ex,
-        attempted: _opts.theme
+        attempted: _opts.theme,
+        quit: true
       };
       this.err(HMSTATUS.themeLoad, newEx);
       return null;
@@ -147,8 +141,10 @@ Implementation of the 'build' verb for HackMyResume.
     if (inv && inv.length) {
       this.err(HMSTATUS.invalidFormat, {
         data: inv,
-        theme: theme
+        theme: theme,
+        quit: true
       });
+      return null;
     }
     rez = null;
     if (sheets.length > 1) {
@@ -186,7 +182,6 @@ Implementation of the 'build' verb for HackMyResume.
         fmt: toFormat
       });
     }
-    addFreebieFormats(theme);
     this.stat(HMEVENT.applyTheme, {
       r: rez,
       theme: theme
@@ -284,9 +279,7 @@ Implementation of the 'build' verb for HackMyResume.
   };
 
 
-  /**
-  Ensure that user-specified outputs/targets are valid.
-   */
+  /** Ensure that user-specified outputs/targets are valid. */
 
   verifyOutputs = function(targets, theme) {
     this.stat(HMEVENT.verifyOutputs, {

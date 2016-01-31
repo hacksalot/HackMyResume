@@ -19,12 +19,7 @@ chalk         = require('chalk')
 
 AnalyzeVerb = module.exports = Verb.extend
 
-  init: -> @._super 'analyze'
-
-  invoke: ->
-    @.stat HMEVENT.begin, { cmd: 'analyze' }
-    analyze.apply @, arguments
-    @.stat HMEVENT.end
+  init: -> @_super 'analyze', analyze
 
 
 

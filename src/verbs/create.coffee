@@ -17,13 +17,8 @@ HMEVENT = require('../core/event-codes')
 
 CreateVerb = module.exports = Verb.extend
 
-  init: -> @._super('new')
+  init: -> @_super 'new', create
 
-  invoke: ->
-    @.stat HMEVENT.begin, { cmd: 'create' }
-    create.apply @, arguments
-    @.stat HMEVENT.begin, { cmd: 'convert' }
-    return
 
 
 ###*
