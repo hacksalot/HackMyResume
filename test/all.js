@@ -9,3 +9,4 @@ require('./scripts/test-jrs-sheet');
 require('./scripts/test-themes');
 require('./scripts/test-api');
 require('./scripts/test-output');
+require('./scripts/test-dates');
