@@ -242,12 +242,12 @@ Implementation of the 'build' verb for HackMyResume.
         fmt: targInfo.fmt.outFormat,
         file: PATH.relative(process.cwd(), f)
       });
+      _opts.targets = finished;
       if (targInfo.fmt.files && targInfo.fmt.files.length) {
         theFormat = _fmts.filter(function(fmt) {
           return fmt.name === targInfo.fmt.outFormat;
         })[0];
         MKDIRP.sync(PATH.dirname(f));
-        _opts.targets = finished;
         ret = theFormat.gen.generate(_rezObj, f, _opts);
       } else {
         theFormat = _fmts.filter(function(fmt) {

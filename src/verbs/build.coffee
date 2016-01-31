@@ -82,7 +82,7 @@ build = ( src, dst, opts ) ->
   try
     tFolder = verifyTheme.call @, _opts.theme
     theme = _opts.themeObj = loadTheme tFolder
-    addFreebieFormats theme    
+    addFreebieFormats theme
   catch ex
     newEx =
       fluenterror: HMSTATUS.themeLoad
@@ -124,7 +124,7 @@ build = ( src, dst, opts ) ->
     rez = RConverter[ 'to' + toFormat ]( rez );
     @stat HMEVENT.afterInlineConvert, { file: sheetObjects[0].file, fmt: toFormat }
 
-  # Add freebie formats to the theme
+  # Announce the theme
   @stat HMEVENT.applyTheme, { r: rez, theme: theme }
 
   # Load the resume into a FRESHResume or JRSResume object
@@ -194,13 +194,14 @@ single = ( targInfo, theme, finished ) ->
       fmt: targInfo.fmt.outFormat
       file: PATH.relative(process.cwd(), f)
 
+    _opts.targets = finished;
+
     # If targInfo.fmt.files exists, this format is backed by a document.
     # Fluent/FRESH themes are handled here.
     if targInfo.fmt.files && targInfo.fmt.files.length
       theFormat = _fmts.filter(
         (fmt) -> return fmt.name == targInfo.fmt.outFormat )[0];
       MKDIRP.sync( PATH.dirname( f ) ); # Ensure dest folder exists;
-      _opts.targets = finished;
       ret = theFormat.gen.generate( _rezObj, f, _opts );
 
     # Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
