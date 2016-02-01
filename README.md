@@ -4,6 +4,7 @@ HackMyResume
 [![Latest release][img-release]][latest-release]
 [![Build status (MASTER)][img-master]][travis-url-master]
 [![Build status (DEV)][img-dev]][travis-url-dev]
+[![Join the chat at https://gitter.im/hacksalot/HackMyResume](https://badges.gitter.im/hacksalot/HackMyResume.svg)](https://gitter.im/hacksalot/HackMyResume?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 *Create polished résumés and CVs in multiple formats from your command line or
 shell. Author in clean Markdown and JSON, export to Word, HTML, PDF, LaTeX,
