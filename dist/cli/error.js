@@ -140,7 +140,6 @@ Error-handling routines for HackMyResume.
         if (ex.inner) {
           msg += chalk.red('\n' + ex.inner);
         }
-        withStack = true;
         quit = false;
         etype = 'error';
         break;

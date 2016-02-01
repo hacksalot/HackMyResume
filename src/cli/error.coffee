@@ -139,7 +139,6 @@ assembleError = ( ex ) ->
     when HMSTATUS.pdfGeneration
       msg = M2C( this.msgs.pdfGeneration.msg, 'bold' )
       msg += chalk.red('\n' + ex.inner) if ex.inner
-      withStack = true
       quit = false
       etype = 'error'
 

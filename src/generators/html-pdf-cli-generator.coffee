@@ -6,12 +6,12 @@ Definition of the HtmlPdfCLIGenerator class.
 
 
 
-TemplateGenerator = require('./template-generator')
-FS = require('fs-extra')
-HTML = require( 'html' )
-PATH = require('path')
-SPAWN = require('../utils/safe-spawn')
-SLASH = require('slash');
+TemplateGenerator = require './template-generator'
+FS = require 'fs-extra'
+PATH = require 'path'
+SLASH = require 'slash'
+_ = require 'underscore'
+HMSTATUS = require '../core/status-codes'
 
 
 
@@ -29,25 +29,18 @@ HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend
 
   ###* Generate the binary PDF. ###
   onBeforeSave: ( info ) ->
-    try
-      safe_eng = info.opts.pdf || 'wkhtmltopdf';
-      if safe_eng != 'none'
-        engines[ safe_eng ].call this, info.mk, info.outputFile
-        return null # halt further processing
-    catch ex
-      # { [Error: write EPIPE] code: 'EPIPE', errno: 'EPIPE', ... }
-      # { [Error: ENOENT] }
-      if ex.inner && ex.inner.code == 'ENOENT'
-        throw
-          fluenterror: this.codes.notOnPath
-          inner: ex.inner
-          engine: ex.cmd,
-          stack: ex.inner && ex.inner.stack
-      else
-        throw
-          fluenterror: this.codes.pdfGeneration
-          inner: ex
-          stack: ex.stack
+    safe_eng = info.opts.pdf || 'wkhtmltopdf';
+    if safe_eng == 'phantom'
+      safe_eng = 'phantomjs'
+    if _.has engines, safe_eng
+      @SPAWN = require '../utils/safe-spawn'
+      @errHandler = info.opts.errHandler
+      engines[ safe_eng ].call @, info.mk, info.outputFile, @onError
+      return null # halt further processing
+
+  onError: (ex, param) ->
+    param.errHandler.err HMSTATUS.pdfGeneration, ex
+    return
 
 
 
@@ -63,11 +56,11 @@ engines =
   TODO: If HTML generation has run, reuse that output
   TODO: Local web server to ease wkhtmltopdf rendering
   ###
-  wkhtmltopdf: (markup, fOut) ->
+  wkhtmltopdf: (markup, fOut, on_error) ->
     # Save the markup to a temporary file
     tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'
-    info = SPAWN 'wkhtmltopdf', [ tempFile, fOut ]
+    @SPAWN 'wkhtmltopdf', [ tempFile, fOut ], false, on_error, @
 
 
 
@@ -78,8 +71,7 @@ engines =
   TODO: If HTML generation has run, reuse that output
   TODO: Local web server to ease Phantom rendering
   ###
-
-  phantom: ( markup, fOut ) ->
+  phantomjs: ( markup, fOut, on_error ) ->
 
     # Save the markup to a temporary file
     tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
@@ -88,4 +80,4 @@ engines =
       PATH.resolve( __dirname, '../utils/rasterize.js' ) ) );
     sourcePath = SLASH( PATH.relative( process.cwd(), tempFile) );
     destPath = SLASH( PATH.relative( process.cwd(), fOut) );
-    info = SPAWN('phantomjs', [ scriptPath, sourcePath, destPath ]);
+    @SPAWN 'phantomjs', [ scriptPath, sourcePath, destPath ], false, on_error, @

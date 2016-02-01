@@ -15,7 +15,7 @@ module.exports =
   resumeNotFoundAlt: 6
   inputOutputParity: 7
   createNameMissing: 8
-  pdfgeneration: 9
+  pdfGeneration: 9
   missingPackageJSON: 10
   invalid: 11
   invalidFormat: 12
