@@ -66,7 +66,8 @@ Definition of the Verb class.
       payload["throw"] = hot;
       this.setError(errorCode, payload);
       if (payload.quit) {
-        this.reject(payload);
+        console.log(payload);
+        this.reject(errorCode);
       }
       this.fire('error', payload);
       if (hot) {

@@ -63,7 +63,7 @@ var tests = [
     ' (multiple JRS resumes)'
   ],
 
-  [ '!new',
+  [ 'new',
     [],
     [],
     opts,
@@ -152,7 +152,7 @@ var tests = [
     }
   ],
 
-  [ '!build',
+  [ 'build',
     [ ft + 'jane-fullstacker.json'],
     [ sb + 'shouldnt-exist.pdf' ],
     EXTEND(true, {}, opts, { theme: 'awesome' }),
@@ -172,16 +172,24 @@ describe('Testing API interface', function () {
         shouldSucceed = false;
       }
 
-      it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' SUCCEED' : ' FAIL') + msg, function () {
+      it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' NOT THROW' : ' THROW') + msg, function () {
 
         function runIt() {
           try {
             var v = new FCMD.verbs[verb]();
             v.on('hmr:error', function(ex) { throw ex; });
-            var r = v.invoke( src, dst, opts );
-            if( fnTest )
-              if( !fnTest( r.sheet ) )
-                throw "Test: Unexpected API result.";
+            var prom = v.invoke( src, dst, opts );
+            prom.then(
+              function( obj ) {
+                if( fnTest )
+                  if( !fnTest( obj ) )
+                    throw "Test: Unexpected API result.";
+              },
+              function( error ) {
+                throw error;
+              }
+            );
+
           }
           catch(ex) {
             console.error(ex);

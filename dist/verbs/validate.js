@@ -58,7 +58,6 @@ Implementation of the 'validate' verb for HackMyResume.
       }
       r = _validateOne.call(this, t, validator, schemas);
       if (r.fluenterror) {
-        console.log(r);
         r.quit = opts.assert;
         this.err(r.fluenterror, r);
       }

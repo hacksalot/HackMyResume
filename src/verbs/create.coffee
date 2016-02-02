@@ -39,7 +39,7 @@ _create = ( src, dst, opts ) ->
   , @
 
   if @hasError() and !opts.assert
-    @reject results
+    @reject @errorCode
   else if !@hasError()
     @resolve results
   results

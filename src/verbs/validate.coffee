@@ -43,7 +43,6 @@ _validate = (sources, unused, opts)  ->
     return { } if @hasError() and opts.assert
     r = _validateOne.call @, t, validator, schemas
     if r.fluenterror
-      console.log r
       r.quit = opts.assert
       @err r.fluenterror, r
     r

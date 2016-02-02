@@ -64,7 +64,8 @@ Verb = module.exports = Class.extend
     payload.throw = hot
     @setError errorCode, payload
     if payload.quit
-      @reject payload
+      console.log payload
+      @reject errorCode
     @fire 'error', payload
     if hot
       throw payload

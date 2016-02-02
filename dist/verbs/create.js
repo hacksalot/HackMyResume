@@ -52,7 +52,7 @@ Implementation of the 'create' verb for HackMyResume.
       return r;
     }, this);
     if (this.hasError() && !opts.assert) {
-      this.reject(results);
+      this.reject(this.errorCode);
     } else if (!this.hasError()) {
       this.resolve(results);
     }

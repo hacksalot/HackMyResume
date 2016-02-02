@@ -119,12 +119,9 @@ Definition of the `main` function.
       }, true);
     }
     Command.prototype.missingArgument = function(name) {
-      if (this.name() !== 'new') {
-        throw {
-          fluenterror: HMSTATUS.resumeNotFound,
-          quit: true
-        };
-      }
+      _err.err({
+        fluenterror: this.name() !== 'new' ? HMSTATUS.resumeNotFound : HMSTATUS.createNameMissing
+      }, true);
     };
     Command.prototype.helpInformation = function() {
       var manPage;

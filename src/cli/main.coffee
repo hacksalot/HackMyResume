@@ -157,8 +157,14 @@ initialize = ( ar, exitCallback ) ->
 
   # Override the .missingArgument behavior
   Command.prototype.missingArgument = (name) ->
-    if this.name() != 'new'
-      throw { fluenterror: HMSTATUS.resumeNotFound, quit: true }
+    _err.err
+      fluenterror:
+        if this.name() != 'new'
+        then HMSTATUS.resumeNotFound
+        else HMSTATUS.createNameMissing
+      , true
+    return
+
 
   # Override the .helpInformation behavior
   Command.prototype.helpInformation = ->
