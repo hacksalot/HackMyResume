@@ -3,6 +3,8 @@ events:
     msg: Invoking **%s** command.
   beforeCreate:
     msg: Creating new **%s** resume: **%s**
+  afterCreate:
+    msg: Creating new **%s** resume: **%s**
   afterRead:
     msg: Reading **%s** resume: **%s**
   beforeTheme:
@@ -96,3 +98,5 @@ errors:
     msg: "Invalid number of parameters. Expected: **%s**."
   missingParam:
     msg: The '**%s**' parameter was needed but not supplied.
+  createError:
+    msg: Failed to create **'%s'**.

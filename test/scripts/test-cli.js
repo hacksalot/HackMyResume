@@ -14,7 +14,8 @@ var chai = require('chai')
   , PATH = require('path')
   , PKG = require('../../package.json')
   , STRIPCOLOR = require('stripcolorcodes')
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , EXEC = require('child_process').execSync
 
 
 
@@ -40,34 +41,18 @@ function MyConsoleLog() {
 describe('Testing CLI interface', function () {
 
 
-
-  // HackMyResume CLI stub. Handle a single HMR invocation.
-  function HackMyResumeStub( argsString ) {
-
-    var args = argsString.split(' ');
-    args.unshift( process.argv[1] );
-    args.unshift( process.argv[0] );
-    process.exit = MyProcessExit;
-
-    try {
-      HMRMAIN( args );
-    }
-    catch( ex ) {
-      require('../../dist/cli/error').err( ex, false );
-      if(ex.stack || (ex.inner && ex.inner.stacl))
-        console.log(ex.stack || ex.inner.stack);
-    }
-    process.exit = ProcessExitOrg;
-
-  }
-
   // Run a test through the stub, gathering console.log output into "gather"
   // and testing against it.
   function run( args, expErr ) {
     var title = args;
     it( 'Testing: "' + title + '"\n\n', function() {
-      commandRetVal = 0;
-      HackMyResumeStub( args );
+      try {
+        EXEC('hackmyresume ' + args);
+        commandRetVal = 0;
+      }
+      catch(ex) {
+        commandRetVal = ex.status;
+      }
       commandRetVal.should.equal( parseInt(expErr, 10) );
     });
   }

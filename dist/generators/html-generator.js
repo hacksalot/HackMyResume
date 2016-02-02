@@ -40,3 +40,5 @@ Definition of the HTMLGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=html-generator.js.map

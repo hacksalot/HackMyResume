@@ -6,25 +6,25 @@ Implementation of the 'build' verb for HackMyResume.
 
 
 
-_              = require('underscore')
-PATH           = require('path')
-FS             = require('fs')
-MD             = require('marked')
-MKDIRP         = require('mkdirp')
-extend         = require('extend')
-parsePath      = require('parse-filepath')
-RConverter     = require('fresh-jrs-converter')
-HMSTATUS       = require('../core/status-codes')
-HMEVENT        = require('../core/event-codes')
+_              = require 'underscore'
+PATH           = require 'path'
+FS             = require 'fs'
+MD             = require 'marked'
+MKDIRP         = require 'mkdirp'
+extend         = require 'extend'
+parsePath      = require 'parse-filepath'
+RConverter     = require 'fresh-jrs-converter'
+HMSTATUS       = require '../core/status-codes'
+HMEVENT        = require '../core/event-codes'
 RTYPES         =
-  FRESH: require('../core/fresh-resume')
-  JRS: require('../core/jrs-resume')
-_opts          = require('../core/default-options')
-FRESHTheme     = require('../core/fresh-theme')
-JRSTheme       = require('../core/jrs-theme')
-ResumeFactory  = require('../core/resume-factory')
-_fmts          = require('../core/default-formats')
-Verb           = require('../verbs/verb')
+  FRESH: require '../core/fresh-resume'
+  JRS: require '../core/jrs-resume'
+_opts          = require '../core/default-options'
+FRESHTheme     = require '../core/fresh-theme'
+JRSTheme       = require '../core/jrs-theme'
+ResumeFactory  = require '../core/resume-factory'
+_fmts          = require '../core/default-formats'
+Verb           = require '../verbs/verb'
 
 _err = null
 _log = null
@@ -42,7 +42,7 @@ loadTheme = null
 BuildVerb = module.exports = Verb.extend
 
   ###* Create a new build verb. ###
-  init: () -> @_super 'build', build
+  init: () -> @_super 'build', _build
 
 
 
@@ -53,23 +53,23 @@ theme file, generate 0..N resumes in the desired formats.
 @param dst An array of paths to the target resume file(s).
 @param opts Generation options.
 ###
-build = ( src, dst, opts ) ->
+_build = ( src, dst, opts ) ->
 
   if !src || !src.length
     @err HMSTATUS.resumeNotFound, quit: true
     return null
 
-  prep src, dst, opts
+  _prep src, dst, opts
 
   # Load input resumes as JSON...
-  sheetObjects = ResumeFactory.load(src, {
+  sheetObjects = ResumeFactory.load src,
     format: null, objectify: false, quit: true, inner: { sort: _opts.sort }
-  }, @);
+  , @
 
   # Explicit check for any resume loading errors...
-  problemSheets = _.filter( sheetObjects, (so) -> return so.fluenterror )
-  if( problemSheets && problemSheets.length )
-    problemSheets[0].quit = true
+  problemSheets = _.filter sheetObjects, (so) -> so.fluenterror
+  if problemSheets and problemSheets.length
+    problemSheets[0].quit = true # can't go on
     @err problemSheets[0].fluenterror, problemSheets[0]
     return null
 
@@ -80,27 +80,27 @@ build = ( src, dst, opts ) ->
   theme = null
   @stat HMEVENT.beforeTheme, { theme: _opts.theme }
   try
-    tFolder = verifyTheme.call @, _opts.theme
-    theme = _opts.themeObj = loadTheme tFolder
-    addFreebieFormats theme
-  catch ex
+    tFolder = _verifyTheme.call @, _opts.theme
+    theme = _opts.themeObj = _loadTheme tFolder
+    _addFreebieFormats theme
+  catch
     newEx =
       fluenterror: HMSTATUS.themeLoad
-      inner: ex
+      inner: _error
       attempted: _opts.theme
       quit: true
     @err HMSTATUS.themeLoad, newEx
     return null
 
-  @stat HMEVENT.afterTheme, { theme: theme }
+  @stat HMEVENT.afterTheme, theme: theme
 
   # Check for invalid outputs...
-  inv = verifyOutputs.call @, dst, theme
+  inv = _verifyOutputs.call @, dst, theme
   if inv && inv.length
     @err HMSTATUS.invalidFormat, data: inv, theme: theme, quit: true
     return null
 
-  ## Merge input resumes, yielding a single source resume.
+  ## Merge input resumes, yielding a single source resume...
   rez = null
   if sheets.length > 1
     isFRESH = !sheets[0].basics
@@ -108,15 +108,13 @@ build = ( src, dst, opts ) ->
     @stat HMEVENT.beforeMerge, { f: _.clone(sheetObjects), mixed: mixed }
     if mixed
       @err HMSTATUS.mixedMerge
-
     rez = _.reduceRight sheets, ( a, b, idx ) ->
       extend( true, b, a )
-
     @stat HMEVENT.afterMerge, { r: rez }
   else
     rez = sheets[0];
 
-  # Convert the merged source resume to the theme's format, if necessary
+  # Convert the merged source resume to the theme's format, if necessary..
   orgFormat = if rez.basics then 'JRS' else 'FRESH';
   toFormat = if theme.render then 'JRS' else 'FRESH';
   if toFormat != orgFormat
@@ -125,30 +123,41 @@ build = ( src, dst, opts ) ->
     @stat HMEVENT.afterInlineConvert, { file: sheetObjects[0].file, fmt: toFormat }
 
   # Announce the theme
-  @stat HMEVENT.applyTheme, { r: rez, theme: theme }
+  @stat HMEVENT.applyTheme, r: rez, theme: theme
 
   # Load the resume into a FRESHResume or JRSResume object
   _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
 
   # Expand output resumes...
-  targets = expand( dst, theme );
+  targets = _expand dst, theme
 
   # Run the transformation!
   _.each targets, (t) ->
-    t.final = single.call this, t, theme, targets
+    return { } if @hasError() and opts.assert
+    t.final = _single.call @, t, theme, targets
+    if t.final.fluenterror
+      t.final.quit = opts.assert
+      @err t.final.fluenterror, t.final
+    return
   , @
 
-  # Don't send the client back empty-handed
-  sheet: _rezObj
-  targets: targets
-  processed: targets
+  results =
+    sheet: _rezObj
+    targets: targets
+    processed: targets
+
+  if @hasError() and !opts.assert
+    @reject results
+  else if !@hasError()
+    @resolve results
+  results
 
 
 
 ###*
 Prepare for a BUILD run.
 ###
-prep = ( src, dst, opts ) ->
+_prep = ( src, dst, opts ) ->
 
   # Cherry-pick options //_opts = extend( true, _opts, opts );
   _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
@@ -176,7 +185,7 @@ TODO: Refactor.
 @param targInfo Information for the target resume.
 @param theme A FRESHTheme or JRSTheme object.
 ###
-single = ( targInfo, theme, finished ) ->
+_single = ( targInfo, theme, finished ) ->
 
   ret = null
   ex = null
@@ -207,12 +216,13 @@ single = ( targInfo, theme, finished ) ->
     # Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
     # gets "for free".
     else
+
       theFormat = _fmts.filter( (fmt) ->
         return fmt.name == targInfo.fmt.outFormat
       )[0];
       outFolder = PATH.dirname f
-      MKDIRP.sync( outFolder ); # Ensure dest folder exists;
-      ret = theFormat.gen.generate( _rezObj, f, _opts );
+      MKDIRP.sync outFolder # Ensure dest folder exists;
+      ret = theFormat.gen.generate _rezObj, f, _opts
 
   catch e
     # Catch any errors caused by generating this file and don't let them
@@ -227,16 +237,15 @@ single = ( targInfo, theme, finished ) ->
 
   if ex
     if ex.fluenterror
-      this.err( ex.fluenterror, ex );
+      ret = ex
     else
-      this.err( HMSTATUS.generateError, { inner: ex } );
-
-  return ret
+      ret = fluenterror: HMSTATUS.generateError, inner: ex
+  ret
 
 
 
 ###* Ensure that user-specified outputs/targets are valid. ###
-verifyOutputs = ( targets, theme ) ->
+_verifyOutputs = ( targets, theme ) ->
   @stat HMEVENT.verifyOutputs, { targets: targets, theme: theme }
   _.reject targets.map( ( t ) ->
     pathInfo = parsePath t
@@ -256,7 +265,7 @@ that declares an HTML format; the theme doesn't have to provide an explicit
 PNG template.
 @param theTheme A FRESHTheme or JRSTheme object.
 ###
-addFreebieFormats = ( theTheme ) ->
+_addFreebieFormats = ( theTheme ) ->
   # Add freebie formats (JSON, YAML, PNG) every theme gets...
   # Add HTML-driven PNG only if the theme has an HTML format.
   theTheme.formats.json = theTheme.formats.json || {
@@ -282,7 +291,7 @@ Expand output files. For example, "foo.all" should be expanded to
 @param dst An array of output files as specified by the user.
 @param theTheme A FRESHTheme or JRSTheme object.
 ###
-expand = ( dst, theTheme ) ->
+_expand = ( dst, theTheme ) ->
 
   # Set up the destination collection. It's either the array of files passed
   # by the user or 'out/resume.all' if no targets were specified.
@@ -309,7 +318,7 @@ expand = ( dst, theTheme ) ->
 ###*
 Verify the specified theme name/path.
 ###
-verifyTheme = ( themeNameOrPath ) ->
+_verifyTheme = ( themeNameOrPath ) ->
   tFolder = PATH.join(
     parsePath( require.resolve('fresh-themes') ).dirname,
     '/themes/',
@@ -328,7 +337,7 @@ verifyTheme = ( themeNameOrPath ) ->
 Load the specified theme, which could be either a FRESH theme or a JSON Resume
 theme.
 ###
-loadTheme = ( tFolder ) ->
+_loadTheme = ( tFolder ) ->
 
   # Create a FRESH or JRS theme object
   theTheme =

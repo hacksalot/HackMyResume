@@ -17,3 +17,5 @@ Definition of the WordGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=word-generator.js.map

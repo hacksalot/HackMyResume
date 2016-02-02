@@ -22,3 +22,5 @@ Definition of the YAMLGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=yaml-generator.js.map

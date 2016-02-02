@@ -28,3 +28,4 @@ JsonYamlGenerator = module.exports = BaseGenerator.extend
   generate: ( rez, f, opts ) ->
     data = YAML.stringify JSON.parse( rez.stringify() ), Infinity, 2
     FS.writeFileSync f, data, 'utf8'
+    data

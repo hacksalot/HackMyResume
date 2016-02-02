@@ -16,40 +16,44 @@ Verb          = require('../verbs/verb')
 chalk         = require('chalk')
 
 
-
+###* An invokable resume analysis command. ###
 AnalyzeVerb = module.exports = Verb.extend
 
-  init: -> @_super 'analyze', analyze
+  init: -> @_super 'analyze', _analyze
 
 
 
-###*
-Run the 'analyze' command.
-###
-analyze = ( sources, dst, opts ) ->
+###* Private workhorse for the 'analyze' command. ###
+_analyze = ( sources, dst, opts ) ->
 
   if !sources || !sources.length
-    throw
-      fluenterror: HMSTATUS.resumeNotFound
-      quit: true
+    @err HMSTATUS.resumeNotFound, { quit: true }
+    return null
 
   nlzrs = _loadInspectors()
+  results = _.map sources, (src) ->
+    r = ResumeFactory.loadOne src, format: 'FRESH', objectify: true, @
+    return { } if opts.assert and @hasError()
 
-  _.each(sources, (src) ->
-    result = ResumeFactory.loadOne src, format: 'FRESH', objectify: true, @
-    if result.fluenterror
-      this.setError result.fluenterror, result
+    if r.fluenterror
+      r.quit = opts.assert
+      @err r.fluenterror, r
+      r
     else
-      _analyze.call @, result, nlzrs, opts
-  , @)
+      _analyzeOne.call @, r, nlzrs, opts
+  , @
+
+
+  if @hasError() and !opts.assert
+    @reject @errorCode
+  else if !@hasError()
+    @resolve results
+  results
 
 
 
-###*
-Analyze a single resume.
-###
-_analyze = ( resumeObject, nlzrs, opts ) ->
-
+###* Analyze a single resume. ###
+_analyzeOne = ( resumeObject, nlzrs, opts ) ->
   rez = resumeObject.rez
   safeFormat =
     if rez.meta and rez.meta.format and rez.meta.format.startsWith 'FRESH'
@@ -58,12 +62,10 @@ _analyze = ( resumeObject, nlzrs, opts ) ->
   this.stat( HMEVENT.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file })
   info = _.mapObject nlzrs, (val, key) ->  val.run rez
   this.stat HMEVENT.afterAnalyze, { info: info }
+  info
 
 
 
-###*
-Load inspectors.
-###
 _loadInspectors = ->
     totals: require '../inspectors/totals-inspector'
     coverage: require '../inspectors/gap-inspector'

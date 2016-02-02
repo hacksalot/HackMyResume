@@ -31,7 +31,10 @@ Status codes for HackMyResume.
     compileTemplate: 21,
     themeLoad: 22,
     invalidParamCount: 23,
-    missingParam: 24
+    missingParam: 24,
+    createError: 25
   };
 
 }).call(this);
+
+//# sourceMappingURL=status-codes.js.map

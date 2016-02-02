@@ -31,8 +31,11 @@ Definition of the JsonYamlGenerator class.
     generate: function(rez, f, opts) {
       var data;
       data = YAML.stringify(JSON.parse(rez.stringify()), Infinity, 2);
-      return FS.writeFileSync(f, data, 'utf8');
+      FS.writeFileSync(f, data, 'utf8');
+      return data;
     }
   });
 
 }).call(this);
+
+//# sourceMappingURL=json-yaml-generator.js.map

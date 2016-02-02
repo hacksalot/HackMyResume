@@ -22,3 +22,5 @@ Definition of the MarkdownGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=markdown-generator.js.map

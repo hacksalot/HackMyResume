@@ -5,37 +5,64 @@ Implementation of the 'create' verb for HackMyResume.
 ###
 
 
-MKDIRP = require('mkdirp')
-PATH = require('path')
-chalk = require('chalk')
-Verb = require('../verbs/verb')
-_ = require('underscore')
-HMSTATUS = require('../core/status-codes')
-HMEVENT = require('../core/event-codes')
+
+MKDIRP = require 'mkdirp'
+PATH = require 'path'
+chalk = require 'chalk'
+Verb = require '../verbs/verb'
+_ = require 'underscore'
+HMSTATUS = require '../core/status-codes'
+HMEVENT = require '../core/event-codes'
 
 
 
 CreateVerb = module.exports = Verb.extend
 
-  init: -> @_super 'new', create
+  init: -> @_super 'new', _create
 
 
 
-###*
-Create a new empty resume in either FRESH or JRS format.
-###
-create = ( src, dst, opts ) ->
+###* Create a new empty resume in either FRESH or JRS format. ###
+_create = ( src, dst, opts ) ->
 
   if !src || !src.length
-    throw { fluenterror: HMSTATUS.createNameMissing, quit: true }
+    @err HMSTATUS.createNameMissing, { quit: true }
+    return null
 
-  _.each( src, ( t ) ->
+  results = _.map src, ( t ) ->
+    return { } if opts.assert and @hasError()
+    r = _createOne.call @, t, opts
+    if r.fluenterror
+      r.quit = opts.assert
+      @err r.fluenterror, r
+    r
+  , @
+
+  if @hasError() and !opts.assert
+    @reject results
+  else if !@hasError()
+    @resolve results
+  results
+
+
+
+###* Create a single new resume ###
+_createOne = ( t, opts ) ->
+  try
+    ret = null
     safeFmt = opts.format.toUpperCase()
     @.stat HMEVENT.beforeCreate, { fmt: safeFmt, file: t }
     MKDIRP.sync PATH.dirname( t ) # Ensure dest folder exists;
     RezClass = require '../core/' + safeFmt.toLowerCase() + '-resume'
-    RezClass.default().save t
-    @.stat( HMEVENT.afterCreate, { fmt: safeFmt, file: t } )
-  , @)
-
-  return
+    newRez = RezClass.default()
+    newRez.save t
+    ret = newRez
+    return
+  catch
+    ret =
+      fluenterror: HMSTATUS.createError
+      inner: _error
+    return
+  finally
+    @.stat HMEVENT.afterCreate, fmt: safeFmt, file: t, isError: ret.fluenterror
+    return ret

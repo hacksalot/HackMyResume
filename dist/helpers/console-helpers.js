@@ -62,3 +62,5 @@ Generic template helper definitions for command-line output.
   };
 
 }).call(this);
+
+//# sourceMappingURL=console-helpers.js.map

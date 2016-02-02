@@ -6,13 +6,15 @@ Definition of the Verb class.
  */
 
 (function() {
-  var Class, EVENTS, HMEVENT, Verb;
+  var Class, EVENTS, HMEVENT, Promise, Verb;
 
   Class = require('../utils/class');
 
   EVENTS = require('events');
 
   HMEVENT = require('../core/event-codes');
+
+  Promise = require('pinkie-promise');
 
 
   /**
@@ -25,19 +27,23 @@ Definition of the Verb class.
     /** Constructor. Automatically called at creation. */
     init: function(moniker, workhorse) {
       this.moniker = moniker;
-      this.emitter = new EVENTS.EventEmitter();
       this.workhorse = workhorse;
+      this.emitter = new EVENTS.EventEmitter();
     },
 
     /** Invoke the command. */
     invoke: function() {
-      var ret;
+      var argsArray, that;
       this.stat(HMEVENT.begin, {
         cmd: this.moniker
       });
-      ret = this.workhorse.apply(this, arguments);
-      this.stat(HMEVENT.end);
-      return ret;
+      argsArray = Array.prototype.slice.call(arguments);
+      that = this;
+      return this.promise = new Promise(function(res, rej) {
+        that.resolve = res;
+        that.reject = rej;
+        that.workhorse.apply(that, argsArray);
+      });
     },
 
     /** Forward subscriptions to the event emitter. */
@@ -58,6 +64,10 @@ Definition of the Verb class.
       payload = payload || {};
       payload.sub = payload.fluenterror = errorCode;
       payload["throw"] = hot;
+      this.setError(errorCode, payload);
+      if (payload.quit) {
+        this.reject(payload);
+      }
       this.fire('error', payload);
       if (hot) {
         throw payload;
@@ -72,6 +82,9 @@ Definition of the Verb class.
       this.fire('status', payload);
       return true;
     },
+    hasError: function() {
+      return this.errorCode || this.errorObj;
+    },
 
     /** Associate error info with the invocation. */
     setError: function(code, obj) {
@@ -81,3 +94,5 @@ Definition of the Verb class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=verb.js.map

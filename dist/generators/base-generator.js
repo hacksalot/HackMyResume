@@ -31,3 +31,5 @@ Definition of the BaseGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=base-generator.js.map

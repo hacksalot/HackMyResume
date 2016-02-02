@@ -17,46 +17,60 @@ HMEVENT = require('../core/event-codes')
 
 PeekVerb = module.exports = Verb.extend
 
-  init: -> @_super 'peek', peek
+  init: -> @_super 'peek', _peek
 
 
 
 ###* Peek at a resume, resume section, or resume field. ###
-peek = ( src, dst, opts ) ->
+_peek = ( src, dst, opts ) ->
 
   if !src || !src.length
-    throw: fluenterror: HMSTATUS.resumeNotFound
+    @err HMSTATUS.resumeNotFound, { quit: true }
+    return null
 
   objPath = (dst && dst[0]) || ''
 
-  _.each src, ( t ) ->
-
-    # Fire the 'beforePeek' event 2nd, so we have error/warning/success
-    @.stat HMEVENT.beforePeek, { file: t, target: objPath }
-
-    # Load the input file JSON 1st
-    obj = safeLoadJSON t
-
-    # Fetch the requested object path (or the entire file)
-    tgt = null;
-    if !obj.ex
-      tgt = if objPath then __.get obj.json, objPath else obj.json;
-
-    # Fire the 'afterPeek' event with collected info
-    @.stat HMEVENT.afterPeek,
-      file: t
-      requested: objPath
-      target: tgt
-      error: obj.ex
-
-    # safeLoadJSON can only return a READ error or a PARSE error
-    if obj.ex
-      errCode = if obj.ex.operation == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
-      if errCode == HMSTATUS.readError
-        obj.ex.quiet = true
-      @setError errCode, obj.ex
-      @err errCode, obj.ex
-
+  results = _.map src, ( t ) ->
+    return { } if opts.assert and @hasError()
+    tgt = _peekOne.call @, t, objPath
+    if tgt.fluenterror
+      tgt.quit = opts.assert
+      @err tgt.fluenterror, tgt
   , @
 
-  return
+  if @hasError() and !opts.assert
+    @reject @errorCode
+  else if !@hasError()
+    @resolve results
+  results
+
+
+
+###* Peek at a single resume, resume section, or resume field. ###
+_peekOne = ( t, objPath ) ->
+
+  @.stat HMEVENT.beforePeek, { file: t, target: objPath }
+
+  # Load the input file JSON 1st
+  obj = safeLoadJSON t
+
+  # Fetch the requested object path (or the entire file)
+  tgt = null;
+  if !obj.ex
+    tgt = if objPath then __.get obj.json, objPath else obj.json;
+
+  # Fire the 'afterPeek' event with collected info
+  @.stat HMEVENT.afterPeek,
+    file: t
+    requested: objPath
+    target: tgt
+    error: obj.ex
+
+  ## safeLoadJSON can only return a READ error or a PARSE error
+  if obj.ex
+    errCode = if obj.ex.operation == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
+    if errCode == HMSTATUS.readError
+      obj.ex.quiet = true
+    return fluenterror: errCode, inner: obj.ex
+
+  tgt

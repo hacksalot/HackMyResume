@@ -6,7 +6,7 @@ Implementation of the 'build' verb for HackMyResume.
  */
 
 (function() {
-  var BuildVerb, FRESHTheme, FS, HMEVENT, HMSTATUS, JRSTheme, MD, MKDIRP, PATH, RConverter, RTYPES, ResumeFactory, Verb, _, _err, _fmts, _log, _opts, _rezObj, addFreebieFormats, build, expand, extend, loadTheme, parsePath, prep, single, verifyOutputs, verifyTheme;
+  var BuildVerb, FRESHTheme, FS, HMEVENT, HMSTATUS, JRSTheme, MD, MKDIRP, PATH, RConverter, RTYPES, ResumeFactory, Verb, _, _addFreebieFormats, _build, _err, _expand, _fmts, _loadTheme, _log, _opts, _prep, _rezObj, _single, _verifyOutputs, _verifyTheme, addFreebieFormats, build, expand, extend, loadTheme, parsePath, prep, single, verifyOutputs, verifyTheme;
 
   _ = require('underscore');
 
@@ -74,7 +74,7 @@ Implementation of the 'build' verb for HackMyResume.
 
     /** Create a new build verb. */
     init: function() {
-      return this._super('build', build);
+      return this._super('build', _build);
     }
   });
 
@@ -87,15 +87,15 @@ Implementation of the 'build' verb for HackMyResume.
   @param opts Generation options.
    */
 
-  build = function(src, dst, opts) {
-    var ex, inv, isFRESH, mixed, newEx, orgFormat, problemSheets, rez, sheetObjects, sheets, tFolder, targets, theme, toFormat;
+  _build = function(src, dst, opts) {
+    var inv, isFRESH, mixed, newEx, orgFormat, problemSheets, results, rez, sheetObjects, sheets, tFolder, targets, theme, toFormat;
     if (!src || !src.length) {
       this.err(HMSTATUS.resumeNotFound, {
         quit: true
       });
       return null;
     }
-    prep(src, dst, opts);
+    _prep(src, dst, opts);
     sheetObjects = ResumeFactory.load(src, {
       format: null,
       objectify: false,
@@ -120,14 +120,13 @@ Implementation of the 'build' verb for HackMyResume.
       theme: _opts.theme
     });
     try {
-      tFolder = verifyTheme.call(this, _opts.theme);
-      theme = _opts.themeObj = loadTheme(tFolder);
-      addFreebieFormats(theme);
+      tFolder = _verifyTheme.call(this, _opts.theme);
+      theme = _opts.themeObj = _loadTheme(tFolder);
+      _addFreebieFormats(theme);
     } catch (_error) {
-      ex = _error;
       newEx = {
         fluenterror: HMSTATUS.themeLoad,
-        inner: ex,
+        inner: _error,
         attempted: _opts.theme,
         quit: true
       };
@@ -137,7 +136,7 @@ Implementation of the 'build' verb for HackMyResume.
     this.stat(HMEVENT.afterTheme, {
       theme: theme
     });
-    inv = verifyOutputs.call(this, dst, theme);
+    inv = _verifyOutputs.call(this, dst, theme);
     if (inv && inv.length) {
       this.err(HMSTATUS.invalidFormat, {
         data: inv,
@@ -187,15 +186,28 @@ Implementation of the 'build' verb for HackMyResume.
       theme: theme
     });
     _rezObj = new RTYPES[toFormat]().parseJSON(rez);
-    targets = expand(dst, theme);
+    targets = _expand(dst, theme);
     _.each(targets, function(t) {
-      return t.final = single.call(this, t, theme, targets);
+      if (this.hasError() && opts.assert) {
+        return {};
+      }
+      t.final = _single.call(this, t, theme, targets);
+      if (t.final.fluenterror) {
+        t.final.quit = opts.assert;
+        this.err(t.final.fluenterror, t.final);
+      }
     }, this);
-    return {
+    results = {
       sheet: _rezObj,
       targets: targets,
       processed: targets
     };
+    if (this.hasError() && !opts.assert) {
+      this.reject(results);
+    } else if (!this.hasError()) {
+      this.resolve(results);
+    }
+    return results;
   };
 
 
@@ -203,7 +215,7 @@ Implementation of the 'build' verb for HackMyResume.
   Prepare for a BUILD run.
    */
 
-  prep = function(src, dst, opts) {
+  _prep = function(src, dst, opts) {
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
     _opts.css = opts.css;
@@ -226,7 +238,7 @@ Implementation of the 'build' verb for HackMyResume.
   @param theme A FRESHTheme or JRSTheme object.
    */
 
-  single = function(targInfo, theme, finished) {
+  _single = function(targInfo, theme, finished) {
     var e, ex, f, fName, fType, outFolder, ret, theFormat;
     ret = null;
     ex = null;
@@ -268,11 +280,12 @@ Implementation of the 'build' verb for HackMyResume.
     });
     if (ex) {
       if (ex.fluenterror) {
-        this.err(ex.fluenterror, ex);
+        ret = ex;
       } else {
-        this.err(HMSTATUS.generateError, {
+        ret = {
+          fluenterror: HMSTATUS.generateError,
           inner: ex
-        });
+        };
       }
     }
     return ret;
@@ -281,7 +294,7 @@ Implementation of the 'build' verb for HackMyResume.
 
   /** Ensure that user-specified outputs/targets are valid. */
 
-  verifyOutputs = function(targets, theme) {
+  _verifyOutputs = function(targets, theme) {
     this.stat(HMEVENT.verifyOutputs, {
       targets: targets,
       theme: theme
@@ -308,7 +321,7 @@ Implementation of the 'build' verb for HackMyResume.
   @param theTheme A FRESHTheme or JRSTheme object.
    */
 
-  addFreebieFormats = function(theTheme) {
+  _addFreebieFormats = function(theTheme) {
     theTheme.formats.json = theTheme.formats.json || {
       freebie: true,
       title: 'json',
@@ -347,7 +360,7 @@ Implementation of the 'build' verb for HackMyResume.
   @param theTheme A FRESHTheme or JRSTheme object.
    */
 
-  expand = function(dst, theTheme) {
+  _expand = function(dst, theTheme) {
     var destColl, targets;
     destColl = (dst && dst.length && dst) || [PATH.normalize('out/resume.all')];
     targets = [];
@@ -378,7 +391,7 @@ Implementation of the 'build' verb for HackMyResume.
   Verify the specified theme name/path.
    */
 
-  verifyTheme = function(themeNameOrPath) {
+  _verifyTheme = function(themeNameOrPath) {
     var exists, tFolder;
     tFolder = PATH.join(parsePath(require.resolve('fresh-themes')).dirname, '/themes/', themeNameOrPath);
     exists = require('path-exists').sync;
@@ -399,7 +412,7 @@ Implementation of the 'build' verb for HackMyResume.
   theme.
    */
 
-  loadTheme = function(tFolder) {
+  _loadTheme = function(tFolder) {
     var theTheme;
     theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ? new JRSTheme().open(tFolder) : new FRESHTheme().open(tFolder);
     _opts.themeObj = theTheme;
@@ -407,3 +420,5 @@ Implementation of the 'build' verb for HackMyResume.
   };
 
 }).call(this);
+
+//# sourceMappingURL=build.js.map

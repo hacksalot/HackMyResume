@@ -47,3 +47,5 @@ Section analysis for HackMyResume.
   };
 
 }).call(this);
+
+//# sourceMappingURL=totals-inspector.js.map

@@ -277,3 +277,5 @@ Definition of the FRESHTheme class.
   module.exports = FRESHTheme;
 
 }).call(this);
+
+//# sourceMappingURL=fresh-theme.js.map

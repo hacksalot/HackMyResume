@@ -22,3 +22,5 @@ Definition of the TextGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=text-generator.js.map

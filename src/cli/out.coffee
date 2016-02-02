@@ -50,8 +50,12 @@ OutputHandler = module.exports = Class.extend
         this.opts.debug &&
         L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() )
 
-      when HME.beforeCreate
-        L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
+      #when HME.beforeCreate
+        #L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
+        #break;
+
+      when HME.afterCreate
+        L( M2C( @msgs.beforeCreate.msg, if evt.isError then 'red' else 'green' ), evt.fmt, evt.file )
         break;
 
       when HME.beforeTheme

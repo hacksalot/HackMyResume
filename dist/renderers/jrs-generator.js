@@ -57,3 +57,5 @@ Definition of the JRSGenerator class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=jrs-generator.js.map

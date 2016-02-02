@@ -241,3 +241,5 @@ Definition of the TemplateGenerator class. TODO: Refactor
   };
 
 }).call(this);
+
+//# sourceMappingURL=template-generator.js.map

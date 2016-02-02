@@ -43,3 +43,5 @@ Definition of the JsonGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=json-generator.js.map

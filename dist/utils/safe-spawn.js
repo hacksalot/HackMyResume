@@ -42,3 +42,5 @@ exception
   };
 
 }).call(this);
+
+//# sourceMappingURL=safe-spawn.js.map

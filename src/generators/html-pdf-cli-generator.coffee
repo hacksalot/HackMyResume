@@ -24,7 +24,9 @@ If an engine isn't installed for a particular platform, error out gracefully.
 HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend
 
 
+
   init: () -> @_super 'pdf', 'html'
+
 
 
   ###* Generate the binary PDF. ###
@@ -38,8 +40,14 @@ HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend
       engines[ safe_eng ].call @, info.mk, info.outputFile, @onError
       return null # halt further processing
 
+
+
+  ### Low-level error callback for spawn(). May be called after HMR process
+  termination, so object references may not be valid here. That's okay; if
+  the references are invalid, the error was already logged. We could use
+  spawn-watch here but that causes issues on legacy Node.js. ###
   onError: (ex, param) ->
-    param.errHandler.err HMSTATUS.pdfGeneration, ex
+    param.errHandler?.err? HMSTATUS.pdfGeneration, ex
     return
 
 

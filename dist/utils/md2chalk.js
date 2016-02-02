@@ -26,3 +26,5 @@ Inline Markdown-to-Chalk conversion routines.
   };
 
 }).call(this);
+
+//# sourceMappingURL=md2chalk.js.map

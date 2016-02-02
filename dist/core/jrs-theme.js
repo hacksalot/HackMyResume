@@ -103,3 +103,5 @@ Definition of the JRSTheme class.
   module.exports = JRSTheme;
 
 }).call(this);
+
+//# sourceMappingURL=jrs-theme.js.map

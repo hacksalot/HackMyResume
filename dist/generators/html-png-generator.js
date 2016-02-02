@@ -62,3 +62,5 @@ Definition of the HtmlPngGenerator class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=html-png-generator.js.map

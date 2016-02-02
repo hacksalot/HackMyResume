@@ -59,3 +59,5 @@ Definition of the Markdown to WordProcessingML conversion routine.
   };
 
 }).call(this);
+
+//# sourceMappingURL=html-to-wpml.js.map

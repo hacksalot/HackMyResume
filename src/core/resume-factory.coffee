@@ -103,13 +103,7 @@ _parse = ( fileName, opts, eve ) ->
     return ret
   catch
     # Can be ENOENT, EACCES, SyntaxError, etc.
-    ex =
-      fluenterror: if rawData then HACKMYSTATUS.parseError else HACKMYSTATUS.readError
-      inner: _error
-      raw: rawData
-      file: fileName
-      shouldExit: false
-    opts.quit && (ex.quit = true)
-    eve && eve.err ex.fluenterror, ex
-    throw ex if opts.throw
-    ex
+    fluenterror: if rawData then HACKMYSTATUS.parseError else HACKMYSTATUS.readError
+    inner: _error
+    raw: rawData
+    file: fileName

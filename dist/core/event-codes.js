@@ -37,3 +37,5 @@ Event code definitions.
   };
 
 }).call(this);
+
+//# sourceMappingURL=event-codes.js.map

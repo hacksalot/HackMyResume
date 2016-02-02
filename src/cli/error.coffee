@@ -22,10 +22,8 @@ require 'string.prototype.startswith'
 
 
 
-###*
-Error handler for HackMyResume. All errors are handled here.
-@class ErrorHandler
-###
+###* Error handler for HackMyResume. All errors are handled here.
+@class ErrorHandler ###
 ErrorHandler = module.exports =
 
   init: ( debug, assert, silent ) ->
@@ -38,7 +36,7 @@ ErrorHandler = module.exports =
   err: ( ex, shouldExit ) ->
 
     # Short-circuit logging output if --silent is on
-    o = if this.silent then () -> else _defaultLog
+    o = if @silent then () -> else _defaultLog
 
     # Special case; can probably be removed.
     throw ex if ex.pass
@@ -51,7 +49,7 @@ ErrorHandler = module.exports =
 
       # Output the error message
       objError = assembleError.call @, ex
-      o( this[ 'format_' + objError.etype ]( objError.msg ))
+      o( @[ 'format_' + objError.etype ]( objError.msg ))
 
       # Output the stack (sometimes)
       if objError.withStack
@@ -59,20 +57,20 @@ ErrorHandler = module.exports =
         stack && o( chalk.gray( stack ) );
 
       # Quit if necessary
-      if ex.quit || objError.quit
+      if shouldExit
         if @debug
           o chalk.cyan('Exiting with error code ' + ex.fluenterror.toString())
-        if this.assert
+        if @assert
           ex.pass = true
           throw ex
         process.exit ex.fluenterror
 
     # Handle raw exceptions
     else
-      o( ex )
+      o ex
       stackTrace = ex.stack || (ex.inner && ex.inner.stack)
       if stackTrace && this.debug
-        o( M2C(ex.stack || ex.inner.stack, 'gray') )
+        o M2C(ex.stack || ex.inner.stack, 'gray')
 
 
 
@@ -212,6 +210,11 @@ assembleError = ( ex ) ->
         msg = printf( M2C( this.msgs.parseError.msg, 'red' ), ex.inner.line, ex.inner.col)
       else
         msg = ex
+      etype = 'error'
+
+    when HMSTATUS.createError
+      # inner.code could be EPERM, EACCES, etc
+      msg = printf M2C( this.msgs.createError.msg ), ex.inner.path
       etype = 'error'
 
   msg: msg              # The error message to display

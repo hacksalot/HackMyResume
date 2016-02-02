@@ -22,3 +22,5 @@ Definition of the LaTeXGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=latex-generator.js.map

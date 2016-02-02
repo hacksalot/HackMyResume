@@ -58,3 +58,5 @@ Definition of the UnderscoreGenerator class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=underscore-generator.js.map

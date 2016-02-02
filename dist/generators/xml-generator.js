@@ -22,3 +22,5 @@ Definition of the XMLGenerator class.
   });
 
 }).call(this);
+
+//# sourceMappingURL=xml-generator.js.map

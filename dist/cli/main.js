@@ -6,7 +6,7 @@ Definition of the `main` function.
  */
 
 (function() {
-  var Command, EXTEND, FS, HME, HMR, HMSTATUS, OUTPUT, PAD, PATH, PKG, StringUtils, _, _opts, _out, _title, chalk, execute, initOptions, initialize, loadOptions, logMsg, main, safeLoadJSON, splitSrcDest;
+  var Command, EXTEND, FS, HME, HMR, HMSTATUS, OUTPUT, PAD, PATH, PKG, StringUtils, _, _err, _exitCallback, _opts, _out, _title, chalk, execute, initOptions, initialize, loadOptions, logMsg, main, safeLoadJSON, splitSrcDest;
 
   HMR = require('../index');
 
@@ -42,6 +42,10 @@ Definition of the `main` function.
 
   _out = new OUTPUT(_opts);
 
+  _err = require('./error');
+
+  _exitCallback = null;
+
 
   /*
   A callable implementation of the HackMyResume CLI. Encapsulates the command
@@ -51,9 +55,9 @@ Definition of the `main` function.
   process.argv (in production) or custom parameters (in test).
    */
 
-  main = module.exports = function(rawArgs) {
+  main = module.exports = function(rawArgs, exitCallback) {
     var args, initInfo, program;
-    initInfo = initialize(rawArgs);
+    initInfo = initialize(rawArgs, exitCallback);
     args = initInfo.args;
     program = new Command('hackmyresume').version(PKG.version).description(chalk.yellow.bold('*** HackMyResume ***')).option('-s --silent', 'Run in silent mode').option('--no-color', 'Disable colors').option('--color', 'Enable colors').option('-d --debug', 'Enable diagnostics', false).option('-a --assert', 'Treat warnings as errors', false).option('-v --version', 'Show the version').allowUnknownOption();
     program.jsonArgs = initInfo.options;
@@ -92,8 +96,9 @@ Definition of the `main` function.
 
   /* Massage command-line args and setup Commander.js. */
 
-  initialize = function(ar) {
+  initialize = function(ar, exitCallback) {
     var o;
+    _exitCallback = exitCallback || process.exit;
     o = initOptions(ar);
     o.silent || logMsg(_title);
     if (o.debug) {
@@ -105,12 +110,13 @@ Definition of the `main` function.
       _out.log(chalk.cyan(PAD('  FRESCA:', 25, null, PAD.RIGHT)) + chalk.cyan.bold(PKG.dependencies.fresca));
       _out.log('');
     }
+    _err.init(o.debug, o.assert, o.silent);
     if (o.verb && !HMR.verbs[o.verb] && !HMR.alias[o.verb]) {
-      throw {
+      _err.err({
         fluenterror: HMSTATUS.invalidCommand,
         quit: true,
         attempted: o.orgVerb
-      };
+      }, true);
     }
     Command.prototype.missingArgument = function(name) {
       if (this.name() !== 'new') {
@@ -136,7 +142,7 @@ Definition of the `main` function.
 
   initOptions = function(ar) {
     oVerb;
-    var args, cleanArgs, inf, isDebug, isMono, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
+    var args, cleanArgs, inf, isAssert, isDebug, isMono, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
     verb = '';
     args = ar.slice();
     cleanArgs = args.slice(2);
@@ -177,6 +183,9 @@ Definition of the `main` function.
     isSilent = _.some(args, function(v) {
       return v === '-s' || v === '--silent';
     });
+    isAssert = _.some(args, function(v) {
+      return v === '-a' || v === '--assert';
+    });
     isMono = _.some(args, function(v) {
       return v === '--no-color';
     });
@@ -184,6 +193,7 @@ Definition of the `main` function.
       color: !isMono,
       debug: isDebug,
       silent: isSilent,
+      assert: isAssert,
       orgVerb: oVerb,
       verb: verb,
       json: oJSON,
@@ -195,24 +205,22 @@ Definition of the `main` function.
   /* Invoke a HackMyResume verb. */
 
   execute = function(src, dst, opts, log) {
-    var hand, v;
-    loadOptions.call(this, opts, this.parent.jsonArgs);
-    hand = require('./error');
-    hand.init(_opts.debug, _opts.assert, _opts.silent);
+    var onFail, prom, v;
     v = new HMR.verbs[this.name()]();
+    loadOptions.call(this, opts, this.parent.jsonArgs);
     _opts.errHandler = v;
     _out.init(_opts);
     v.on('hmr:status', function() {
       return _out["do"].apply(_out, arguments);
     });
     v.on('hmr:error', function() {
-      return hand.err.apply(hand, arguments);
+      return _err.err.apply(_err, arguments);
     });
-    v.invoke.call(v, src, dst, _opts, log);
-    if (v.errorCode) {
-      console.log('Exiting with error code ' + v.errorCode);
-      return process.exit(v.errorCode);
-    }
+    prom = v.invoke.call(v, src, dst, _opts, log);
+    onFail = function(err) {
+      _exitCallback(err.fluenterror ? err.fluenterror : err);
+    };
+    prom.then((function() {}), onFail);
   };
 
 
@@ -282,3 +290,5 @@ Definition of the `main` function.
   };
 
 }).call(this);
+
+//# sourceMappingURL=main.js.map

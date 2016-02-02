@@ -35,8 +35,7 @@ Error-handling routines for HackMyResume.
   require('string.prototype.startswith');
 
 
-  /**
-  Error handler for HackMyResume. All errors are handled here.
+  /** Error handler for HackMyResume. All errors are handled here.
   @class ErrorHandler
    */
 
@@ -62,7 +61,7 @@ Error-handling routines for HackMyResume.
           stack = ex.stack || (ex.inner && ex.inner.stack);
           stack && o(chalk.gray(stack));
         }
-        if (ex.quit || objError.quit) {
+        if (shouldExit) {
           if (this.debug) {
             o(chalk.cyan('Exiting with error code ' + ex.fluenterror.toString()));
           }
@@ -221,6 +220,10 @@ Error-handling routines for HackMyResume.
           msg = ex;
         }
         etype = 'error';
+        break;
+      case HMSTATUS.createError:
+        msg = printf(M2C(this.msgs.createError.msg), ex.inner.path);
+        etype = 'error';
     }
     return {
       msg: msg,
@@ -231,3 +234,5 @@ Error-handling routines for HackMyResume.
   };
 
 }).call(this);
+
+//# sourceMappingURL=error.js.map

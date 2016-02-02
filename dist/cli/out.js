@@ -60,8 +60,8 @@ Output routines for HackMyResume.
       switch (evt.sub) {
         case HME.begin:
           return this.opts.debug && L(M2C(this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase());
-        case HME.beforeCreate:
-          L(M2C(this.msgs.beforeCreate.msg, 'green'), evt.fmt, evt.file);
+        case HME.afterCreate:
+          L(M2C(this.msgs.beforeCreate.msg, evt.isError ? 'red' : 'green'), evt.fmt, evt.file);
           break;
         case HME.beforeTheme:
           return this.opts.debug && L(M2C(this.msgs.beforeTheme.msg, dbgStyle), evt.theme.toUpperCase());
@@ -155,3 +155,5 @@ Output routines for HackMyResume.
   });
 
 }).call(this);
+
+//# sourceMappingURL=out.js.map

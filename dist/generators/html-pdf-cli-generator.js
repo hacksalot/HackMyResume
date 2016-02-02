@@ -46,8 +46,19 @@ Definition of the HtmlPdfCLIGenerator class.
         return null;
       }
     },
+
+    /* Low-level error callback for spawn(). May be called after HMR process
+    termination, so object references may not be valid here. That's okay; if
+    the references are invalid, the error was already logged. We could use
+    spawn-watch here but that causes issues on legacy Node.js.
+     */
     onError: function(ex, param) {
-      param.errHandler.err(HMSTATUS.pdfGeneration, ex);
+      var ref;
+      if ((ref = param.errHandler) != null) {
+        if (typeof ref.err === "function") {
+          ref.err(HMSTATUS.pdfGeneration, ex);
+        }
+      }
     }
   });
 
@@ -86,3 +97,5 @@ Definition of the HtmlPdfCLIGenerator class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=html-pdf-cli-generator.js.map

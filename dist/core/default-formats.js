@@ -58,3 +58,5 @@ Event code definitions.
   ];
 
 }).call(this);
+
+//# sourceMappingURL=default-formats.js.map
