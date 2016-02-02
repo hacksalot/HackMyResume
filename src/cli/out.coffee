@@ -157,12 +157,20 @@ module.exports = class OutputHandler
 
       when HME.afterPeek
         sty = if evt.error then 'red' else ( if evt.target != undefined then 'green' else 'yellow' )
+
+        # "Peeking at 'someKey' in 'someFile'."
         if evt.requested
           L(M2C(this.msgs.beforePeek.msg[0], sty), evt.requested, evt.file)
         else
           L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file)
 
+        # If the key was present, print it
         if evt.target != undefined
           console.dir( evt.target, { depth: null, colors: true } )
+
+        # If the key was not present, but no error occurred, print it
         else if !evt.error
           L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
+
+        else if evt.error
+          L( chalk.red( evt.error.inner.inner ));

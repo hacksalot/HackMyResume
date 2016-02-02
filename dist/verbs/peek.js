@@ -51,10 +51,11 @@ Implementation of the 'peek' verb for HackMyResume.
         return {};
       }
       tgt = _peekOne.call(this, t, objPath);
-      if (tgt.fluenterror) {
+      if (tgt.error) {
         tgt.quit = opts.assert;
-        return this.err(tgt.fluenterror, tgt);
+        this.err(tgt.fluenterror, tgt);
       }
+      return tgt;
     }, this);
     if (this.hasError() && !opts.assert) {
       this.reject(this.errorCode);
@@ -68,7 +69,7 @@ Implementation of the 'peek' verb for HackMyResume.
   /** Peek at a single resume, resume section, or resume field. */
 
   _peekOne = function(t, objPath) {
-    var errCode, obj, tgt;
+    var errCode, obj, pkgError, tgt;
     this.stat(HMEVENT.beforePeek, {
       file: t,
       target: objPath
@@ -78,23 +79,27 @@ Implementation of the 'peek' verb for HackMyResume.
     if (!obj.ex) {
       tgt = objPath ? __.get(obj.json, objPath) : obj.json;
     }
-    this.stat(HMEVENT.afterPeek, {
-      file: t,
-      requested: objPath,
-      target: tgt,
-      error: obj.ex
-    });
+    pkgError = null;
     if (obj.ex) {
       errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
       if (errCode === HMSTATUS.readError) {
         obj.ex.quiet = true;
       }
-      return {
+      pkgError = {
         fluenterror: errCode,
         inner: obj.ex
       };
     }
-    return tgt;
+    this.stat(HMEVENT.afterPeek, {
+      file: t,
+      requested: objPath,
+      target: obj.ex ? void 0 : tgt,
+      error: pkgError
+    });
+    return {
+      val: tgt,
+      errpr: pkgError
+    };
   };
 
 }).call(this);

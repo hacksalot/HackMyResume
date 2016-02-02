@@ -33,9 +33,10 @@ _peek = ( src, dst, opts ) ->
   results = _.map src, ( t ) ->
     return { } if opts.assert and @hasError()
     tgt = _peekOne.call @, t, objPath
-    if tgt.fluenterror
+    if tgt.error
       tgt.quit = opts.assert
       @err tgt.fluenterror, tgt
+    tgt
   , @
 
   if @hasError() and !opts.assert
@@ -49,7 +50,7 @@ _peek = ( src, dst, opts ) ->
 ###* Peek at a single resume, resume section, or resume field. ###
 _peekOne = ( t, objPath ) ->
 
-  @.stat HMEVENT.beforePeek, { file: t, target: objPath }
+  @stat HMEVENT.beforePeek, { file: t, target: objPath }
 
   # Load the input file JSON 1st
   obj = safeLoadJSON t
@@ -59,18 +60,20 @@ _peekOne = ( t, objPath ) ->
   if !obj.ex
     tgt = if objPath then __.get obj.json, objPath else obj.json;
 
-  # Fire the 'afterPeek' event with collected info
-  @.stat HMEVENT.afterPeek,
-    file: t
-    requested: objPath
-    target: tgt
-    error: obj.ex
-
   ## safeLoadJSON can only return a READ error or a PARSE error
+  pkgError = null
   if obj.ex
     errCode = if obj.ex.operation == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
     if errCode == HMSTATUS.readError
       obj.ex.quiet = true
-    return fluenterror: errCode, inner: obj.ex
+    pkgError = fluenterror: errCode, inner: obj.ex
 
-  tgt
+
+  # Fire the 'afterPeek' event with collected info
+  @stat HMEVENT.afterPeek,
+    file: t
+    requested: objPath
+    target: if obj.ex then undefined else tgt
+    error: pkgError
+
+  val: tgt, errpr: pkgError

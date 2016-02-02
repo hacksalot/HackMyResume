@@ -154,6 +154,8 @@ Output routines for HackMyResume.
             });
           } else if (!evt.error) {
             return L(M2C(this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
+          } else if (evt.error) {
+            return L(chalk.red(evt.error.inner.inner));
           }
       }
     };
