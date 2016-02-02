@@ -13,9 +13,12 @@ Promise = require 'pinkie-promise'
 
 
 ###*
-An instantiation of a HackMyResume command.
+An abstract invokable verb.
+Provides base class functionality for verbs. Provide common services such as
+error handling, event management, and promise support.
 @class Verb
 ###
+
 module.exports = class Verb
 
 
@@ -39,8 +42,7 @@ module.exports = class Verb
 
 
   ###* Forward subscriptions to the event emitter. ###
-  on: ->
-    @emitter.on.apply @emitter, arguments
+  on: -> @emitter.on.apply @emitter, arguments
 
 
 
@@ -77,6 +79,7 @@ module.exports = class Verb
 
 
 
+  ###* Has an error occurred during this verb invocation? ###
   hasError: -> @errorCode || @errorObj
 
 
