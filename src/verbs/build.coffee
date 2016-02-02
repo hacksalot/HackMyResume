@@ -81,6 +81,10 @@ _build = ( src, dst, opts ) ->
   @stat HMEVENT.beforeTheme, { theme: _opts.theme }
   try
     tFolder = _verifyTheme.call @, _opts.theme
+    if tFolder.fluenterror
+      tFolder.quit = true
+      @err tFolder.fluenterror, tFolder
+      return
     theme = _opts.themeObj = _loadTheme tFolder
     _addFreebieFormats theme
   catch
@@ -328,7 +332,7 @@ _verifyTheme = ( themeNameOrPath ) ->
   if !exists( tFolder )
     tFolder = PATH.resolve themeNameOrPath
     if !exists tFolder
-      this.err HMSTATUS.themeNotFound, { data: _opts.theme }
+      return fluenterror: HMSTATUS.themeNotFound, data: _opts.theme
   tFolder
 
 

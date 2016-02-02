@@ -60,7 +60,6 @@ module.exports = class Verb
     payload.throw = hot
     @setError errorCode, payload
     if payload.quit
-      console.log payload
       @reject errorCode
     @fire 'error', payload
     if hot
