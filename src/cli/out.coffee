@@ -9,7 +9,6 @@ Output routines for HackMyResume.
 chalk = require('chalk')
 HME = require('../core/event-codes')
 _ = require('underscore')
-Class = require('../utils/class.js')
 M2C = require('../utils/md2chalk.js')
 PATH = require('path')
 LO = require('lodash')
@@ -22,11 +21,20 @@ pad = require('string-padding')
 dbgStyle = 'cyan';
 
 
-###* A stateful output module. All HMR console output handled here. ###
-OutputHandler = module.exports = Class.extend
 
-  init: ( opts ) ->
-    @opts = EXTEND( true, this.opts || { }, opts )
+###* A stateful output module. All HMR console output handled here. ###
+module.exports = class OutputHandler
+
+
+
+  constructor: ( opts ) ->
+    @init opts
+    return
+
+
+
+  init: (opts) ->
+    @opts = EXTEND( true, @opts || { }, opts )
     @msgs = YAML.load(PATH.join( __dirname, 'msg.yml' )).events
     return
 
@@ -37,6 +45,7 @@ OutputHandler = module.exports = Class.extend
     printf = require('printf')
     finished = printf.apply( printf, arguments )
     @opts.silent || console.log( finished )
+
 
 
   do: ( evt ) ->

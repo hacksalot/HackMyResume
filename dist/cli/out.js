@@ -6,15 +6,13 @@ Output routines for HackMyResume.
  */
 
 (function() {
-  var Class, EXTEND, FS, HANDLEBARS, HME, LO, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
+  var EXTEND, FS, HANDLEBARS, HME, LO, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
 
   chalk = require('chalk');
 
   HME = require('../core/event-codes');
 
   _ = require('underscore');
-
-  Class = require('../utils/class.js');
 
   M2C = require('../utils/md2chalk.js');
 
@@ -39,19 +37,26 @@ Output routines for HackMyResume.
 
   /** A stateful output module. All HMR console output handled here. */
 
-  OutputHandler = module.exports = Class.extend({
-    init: function(opts) {
+  module.exports = OutputHandler = (function() {
+    function OutputHandler(opts) {
+      this.init(opts);
+      return;
+    }
+
+    OutputHandler.prototype.init = function(opts) {
       this.opts = EXTEND(true, this.opts || {}, opts);
       this.msgs = YAML.load(PATH.join(__dirname, 'msg.yml')).events;
-    },
-    log: function(msg) {
+    };
+
+    OutputHandler.prototype.log = function(msg) {
       var finished;
       msg = msg || '';
       printf = require('printf');
       finished = printf.apply(printf, arguments);
       return this.opts.silent || console.log(finished);
-    },
-    "do": function(evt) {
+    };
+
+    OutputHandler.prototype["do"] = function(evt) {
       var L, WRAP, info, msg, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
       that = this;
       L = function() {
@@ -151,8 +156,11 @@ Output routines for HackMyResume.
             return L(M2C(this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
           }
       }
-    }
-  });
+    };
+
+    return OutputHandler;
+
+  })();
 
 }).call(this);
 
