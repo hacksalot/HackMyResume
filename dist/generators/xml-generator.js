@@ -6,20 +6,25 @@ Definition of the XMLGenerator class.
  */
 
 (function() {
-  var BaseGenerator, XMLGenerator;
+  var BaseGenerator, XMLGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   BaseGenerator = require('./base-generator');
 
 
-  /**
-  The XmlGenerator generates an XML resume via the TemplateGenerator.
-   */
+  /** The XmlGenerator generates an XML resume via the TemplateGenerator. */
 
-  XMLGenerator = module.exports = BaseGenerator.extend({
-    init: function() {
-      return this._super('xml');
+  module.exports = XMLGenerator = (function(superClass) {
+    extend(XMLGenerator, superClass);
+
+    function XMLGenerator() {
+      XMLGenerator.__super__.constructor.call(this, 'xml');
     }
-  });
+
+    return XMLGenerator;
+
+  })(BaseGenerator);
 
 }).call(this);
 

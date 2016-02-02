@@ -6,8 +6,7 @@ Definition of the XMLGenerator class.
 
 BaseGenerator = require './base-generator'
 
-###*
-The XmlGenerator generates an XML resume via the TemplateGenerator.
-###
-XMLGenerator = module.exports = BaseGenerator.extend
-  init: () -> @_super 'xml'
+###* The XmlGenerator generates an XML resume via the TemplateGenerator. ###
+module.exports = class XMLGenerator extends BaseGenerator
+
+  constructor: () -> super 'xml'

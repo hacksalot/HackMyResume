@@ -1,7 +1,7 @@
 ###*
 Definition of the HtmlPngGenerator class.
+@module generators/html-png-generator
 @license MIT. See LICENSE.MD for details.
-@module html-png-generator.js
 ###
 
 
@@ -17,9 +17,9 @@ PATH = require 'path'
 ###*
 An HTML-based PNG resume generator for HackMyResume.
 ###
-HtmlPngGenerator = module.exports = TemplateGenerator.extend
+module.exports = class HtmlPngGenerator extends TemplateGenerator
 
-  init: -> @_super 'png', 'html'
+  constructor: -> super 'png', 'html'
 
   invoke: ( rez, themeMarkup, cssInfo, opts ) ->
     # TODO: Not currently called or callable.

@@ -1,12 +1,14 @@
 
 /**
 Definition of the LaTeXGenerator class.
-@license MIT. See LICENSE.md for details.
 @module generators/latex-generator
+@license MIT. See LICENSE.md for details.
  */
 
 (function() {
-  var LaTeXGenerator, TemplateGenerator;
+  var LaTeXGenerator, TemplateGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
@@ -15,11 +17,16 @@ Definition of the LaTeXGenerator class.
   LaTeXGenerator generates a LaTeX resume via TemplateGenerator.
    */
 
-  LaTeXGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('latex', 'tex');
+  module.exports = LaTeXGenerator = (function(superClass) {
+    extend(LaTeXGenerator, superClass);
+
+    function LaTeXGenerator() {
+      LaTeXGenerator.__super__.constructor.call(this, 'latex', 'tex');
     }
-  });
+
+    return LaTeXGenerator;
+
+  })(TemplateGenerator);
 
 }).call(this);
 

@@ -1,12 +1,14 @@
 
 /**
 Definition of the HTMLGenerator class.
+@module generators/html-generator
 @license MIT. See LICENSE.md for details.
-@module html-generator.js
  */
 
 (function() {
-  var FS, HTML, HtmlGenerator, PATH, TemplateGenerator;
+  var FS, HTML, HtmlGenerator, PATH, TemplateGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
@@ -18,16 +20,20 @@ Definition of the HTMLGenerator class.
 
   require('string.prototype.endswith');
 
-  HtmlGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('html');
-    },
+  module.exports = HtmlGenerator = (function(superClass) {
+    extend(HtmlGenerator, superClass);
+
+    function HtmlGenerator() {
+      HtmlGenerator.__super__.constructor.call(this, 'html');
+    }
+
 
     /**
     Copy satellite CSS files to the destination and optionally pretty-print
     the HTML resume prior to saving.
      */
-    onBeforeSave: function(info) {
+
+    HtmlGenerator.prototype.onBeforeSave = function(info) {
       if (info.outputFile.endsWith('.css')) {
         return info.mk;
       }
@@ -36,8 +42,11 @@ Definition of the HTMLGenerator class.
       } else {
         return info.mk;
       }
-    }
-  });
+    };
+
+    return HtmlGenerator;
+
+  })(TemplateGenerator);
 
 }).call(this);
 

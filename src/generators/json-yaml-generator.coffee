@@ -1,6 +1,6 @@
 ###*
 Definition of the JsonYamlGenerator class.
-@module json-yaml-generator.js
+@module generators/json-yaml-generator
 @license MIT. See LICENSE.md for details.
 ###
 
@@ -18,9 +18,9 @@ JSON without a template, producing an equivalent YAML-formatted resume. See
 also YamlGenerator (yaml-generator.js).
 ###
 
-JsonYamlGenerator = module.exports = BaseGenerator.extend
+module.exports = class JsonYamlGenerator extends BaseGenerator
 
-  init: () -> @_super 'yml'
+  constructor: () -> super 'yml'
 
   invoke: ( rez, themeMarkup, cssInfo, opts ) ->
     YAML.stringify JSON.parse( rez.stringify() ), Infinity, 2

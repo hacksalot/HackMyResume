@@ -1,11 +1,12 @@
 ###
 Definition of the WordGenerator class.
-@license MIT. See LICENSE.md for details.
 @module generators/word-generator
+@license MIT. See LICENSE.md for details.
 ###
 
 
 TemplateGenerator = require './template-generator'
 
-WordGenerator = module.exports = TemplateGenerator.extend
-  init: () -> @_super 'doc', 'xml'
+module.exports = class WordGenerator extends TemplateGenerator
+
+  init: () -> super 'doc', 'xml'

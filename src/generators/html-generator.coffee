@@ -1,7 +1,7 @@
 ###*
 Definition of the HTMLGenerator class.
+@module generators/html-generator
 @license MIT. See LICENSE.md for details.
-@module html-generator.js
 ###
 
 
@@ -14,9 +14,9 @@ require 'string.prototype.endswith'
 
 
 
-HtmlGenerator = module.exports = TemplateGenerator.extend
+module.exports = class HtmlGenerator extends TemplateGenerator
 
-  init: -> @_super 'html'
+  constructor: -> super 'html'
 
   ###*
   Copy satellite CSS files to the destination and optionally pretty-print

@@ -6,7 +6,9 @@ Definition of the YAMLGenerator class.
  */
 
 (function() {
-  var TemplateGenerator, YAMLGenerator;
+  var TemplateGenerator, YAMLGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
@@ -15,11 +17,16 @@ Definition of the YAMLGenerator class.
   YamlGenerator generates a YAML-formatted resume via TemplateGenerator.
    */
 
-  YAMLGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('yml', 'yml');
+  module.exports = YAMLGenerator = (function(superClass) {
+    extend(YAMLGenerator, superClass);
+
+    function YAMLGenerator() {
+      YAMLGenerator.__super__.constructor.call(this, 'yml', 'yml');
     }
-  });
+
+    return YAMLGenerator;
+
+  })(TemplateGenerator);
 
 }).call(this);
 

@@ -1,20 +1,31 @@
 
 /*
 Definition of the WordGenerator class.
-@license MIT. See LICENSE.md for details.
 @module generators/word-generator
+@license MIT. See LICENSE.md for details.
  */
 
 (function() {
-  var TemplateGenerator, WordGenerator;
+  var TemplateGenerator, WordGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
-  WordGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('doc', 'xml');
+  module.exports = WordGenerator = (function(superClass) {
+    extend(WordGenerator, superClass);
+
+    function WordGenerator() {
+      return WordGenerator.__super__.constructor.apply(this, arguments);
     }
-  });
+
+    WordGenerator.prototype.init = function() {
+      return WordGenerator.__super__.init.call(this, 'doc', 'xml');
+    };
+
+    return WordGenerator;
+
+  })(TemplateGenerator);
 
 }).call(this);
 

@@ -1,6 +1,6 @@
 ###*
 Definition of the HtmlPdfCLIGenerator class.
-@module html-pdf-generator.js
+@module generators/html-pdf-generator.js
 @license MIT. See LICENSE.md for details.
 ###
 
@@ -21,11 +21,11 @@ wkhtmltopdf, and other PDF engines over a CLI (command-line interface).
 If an engine isn't installed for a particular platform, error out gracefully.
 ###
 
-HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend
+module.exports = class HtmlPdfCLIGenerator extends TemplateGenerator
 
 
 
-  init: () -> @_super 'pdf', 'html'
+  constructor: () -> super 'pdf', 'html'
 
 
 

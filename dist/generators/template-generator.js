@@ -1,12 +1,14 @@
 
 /**
 Definition of the TemplateGenerator class. TODO: Refactor
+@module generators/template-generator
 @license MIT. See LICENSE.md for details.
-@module template-generator.js
  */
 
 (function() {
-  var BaseGenerator, EXTEND, FRESHTheme, FS, JRSTheme, MD, MKDIRP, PATH, TemplateGenerator, XML, _, _defaultOpts, _reg, freeze, parsePath, unfreeze;
+  var BaseGenerator, EXTEND, FRESHTheme, FS, JRSTheme, MD, MKDIRP, PATH, TemplateGenerator, XML, _, _defaultOpts, _reg, freeze, parsePath, unfreeze,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   FS = require('fs-extra');
 
@@ -38,16 +40,21 @@ Definition of the TemplateGenerator class. TODO: Refactor
   @class TemplateGenerator
    */
 
-  TemplateGenerator = module.exports = BaseGenerator.extend({
+  module.exports = TemplateGenerator = (function(superClass) {
+    extend(TemplateGenerator, superClass);
+
 
     /** Constructor. Set the output format and template format for this
     generator. Will usually be called by a derived generator such as
     HTMLGenerator or MarkdownGenerator.
      */
-    init: function(outputFormat, templateFormat, cssFile) {
-      this._super(outputFormat);
+
+    function TemplateGenerator(outputFormat, templateFormat, cssFile) {
+      TemplateGenerator.__super__.constructor.call(this, outputFormat);
       this.tplFormat = templateFormat || outputFormat;
-    },
+      return;
+    }
+
 
     /** Generate a resume using string-based inputs and outputs without touching
     the filesystem.
@@ -57,7 +64,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
     @returns {Array} An array of objects representing the generated output
     files.
      */
-    invoke: function(rez, opts) {
+
+    TemplateGenerator.prototype.invoke = function(rez, opts) {
       var curFmt, results;
       opts = opts ? (this.opts = EXTEND(true, {}, _defaultOpts, opts)) : this.opts;
       curFmt = opts.themeObj.getFormat(this.format);
@@ -80,7 +88,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
       return {
         files: results
       };
-    },
+    };
+
 
     /** Generate a resume using file-based inputs and outputs. Requires access
     to the local filesystem.
@@ -89,7 +98,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
     @param f Full path to the output resume file to generate.
     @param opts Generator options.
      */
-    generate: function(rez, f, opts) {
+
+    TemplateGenerator.prototype.generate = function(rez, f, opts) {
       var curFmt, genInfo, outFolder;
       this.opts = EXTEND(true, {}, _defaultOpts, opts);
       genInfo = this.invoke(rez, null);
@@ -136,7 +146,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
         });
       }
       return genInfo;
-    },
+    };
+
 
     /** Perform a single resume resume transformation using string-based inputs
     and outputs without touching the local file system.
@@ -146,7 +157,8 @@ Definition of the TemplateGenerator class. TODO: Refactor
     @param cssInfo Needs to be refactored.
     @param opts Options and passthrough data.
      */
-    single: function(json, jst, format, opts, theme, curFmt) {
+
+    TemplateGenerator.prototype.single = function(json, jst, format, opts, theme, curFmt) {
       var eng, result;
       if (this.opts.freezeBreaks) {
         jst = freeze(jst);
@@ -157,13 +169,11 @@ Definition of the TemplateGenerator class. TODO: Refactor
         result = unfreeze(result);
       }
       return result;
-    }
-  });
+    };
 
+    return TemplateGenerator;
 
-  /** Export the TemplateGenerator function/ctor. */
-
-  module.exports = TemplateGenerator;
+  })(BaseGenerator);
 
 
   /** Freeze newlines for protection against errant JST parsers. */

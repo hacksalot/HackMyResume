@@ -11,5 +11,6 @@ TemplateGenerator = require './template-generator'
 YamlGenerator generates a YAML-formatted resume via TemplateGenerator.
 ###
 
-YAMLGenerator = module.exports = TemplateGenerator.extend
-  init: () -> @_super 'yml', 'yml'
+module.exports = class YAMLGenerator extends TemplateGenerator
+
+  constructor: () -> super 'yml', 'yml'

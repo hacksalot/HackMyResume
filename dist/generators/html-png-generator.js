@@ -1,12 +1,14 @@
 
 /**
 Definition of the HtmlPngGenerator class.
+@module generators/html-png-generator
 @license MIT. See LICENSE.MD for details.
-@module html-png-generator.js
  */
 
 (function() {
-  var FS, HTML, HtmlPngGenerator, PATH, SLASH, SPAWN, TemplateGenerator, phantom;
+  var FS, HTML, HtmlPngGenerator, PATH, SLASH, SPAWN, TemplateGenerator, phantom,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
@@ -25,12 +27,16 @@ Definition of the HtmlPngGenerator class.
   An HTML-based PNG resume generator for HackMyResume.
    */
 
-  HtmlPngGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('png', 'html');
-    },
-    invoke: function(rez, themeMarkup, cssInfo, opts) {},
-    generate: function(rez, f, opts) {
+  module.exports = HtmlPngGenerator = (function(superClass) {
+    extend(HtmlPngGenerator, superClass);
+
+    function HtmlPngGenerator() {
+      HtmlPngGenerator.__super__.constructor.call(this, 'png', 'html');
+    }
+
+    HtmlPngGenerator.prototype.invoke = function(rez, themeMarkup, cssInfo, opts) {};
+
+    HtmlPngGenerator.prototype.generate = function(rez, f, opts) {
       var htmlFile, htmlResults;
       htmlResults = opts.targets.filter(function(t) {
         return t.fmt.outFormat === 'html';
@@ -39,8 +45,11 @@ Definition of the HtmlPngGenerator class.
         return fl.info.ext === 'html';
       });
       phantom(htmlFile[0].data, f);
-    }
-  });
+    };
+
+    return HtmlPngGenerator;
+
+  })(TemplateGenerator);
 
 
   /**

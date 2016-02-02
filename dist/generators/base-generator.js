@@ -1,34 +1,39 @@
 
 /**
 Definition of the BaseGenerator class.
-@module base-generator.js
+@module generators/base-generator
 @license MIT. See LICENSE.md for details.
  */
 
+
+/**
+The BaseGenerator class is the root of the generator hierarchy. Functionality
+common to ALL generators lives here.
+ */
+
 (function() {
-  var BaseGenerator, Class;
+  var BaseGenerator;
 
-  Class = require('../utils/class');
-
-
-  /**
-  The BaseGenerator class is the root of the generator hierarchy. Functionality
-  common to ALL generators lives here.
-   */
-
-  BaseGenerator = module.exports = Class.extend({
+  module.exports = BaseGenerator = (function() {
 
     /** Base-class initialize. */
-    init: function(outputFormat) {
-      return this.format = outputFormat;
-    },
+    function BaseGenerator(format) {
+      this.format = format;
+    }
+
 
     /** Status codes. */
-    codes: require('../core/status-codes'),
+
+    BaseGenerator.prototype.codes = require('../core/status-codes');
+
 
     /** Generator options. */
-    opts: {}
-  });
+
+    BaseGenerator.prototype.opts = {};
+
+    return BaseGenerator;
+
+  })();
 
 }).call(this);
 

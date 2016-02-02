@@ -1,7 +1,7 @@
 ###*
 Definition of the TemplateGenerator class. TODO: Refactor
+@module generators/template-generator
 @license MIT. See LICENSE.md for details.
-@module template-generator.js
 ###
 
 
@@ -27,14 +27,14 @@ plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
 @class TemplateGenerator
 ###
 
-TemplateGenerator = module.exports = BaseGenerator.extend
+module.exports = class TemplateGenerator extends BaseGenerator
 
   ###* Constructor. Set the output format and template format for this
   generator. Will usually be called by a derived generator such as
   HTMLGenerator or MarkdownGenerator. ###
 
-  init: ( outputFormat, templateFormat, cssFile ) ->
-    @_super outputFormat
+  constructor: ( outputFormat, templateFormat, cssFile ) ->
+    super outputFormat
     @tplFormat = templateFormat || outputFormat
     return
 
@@ -146,11 +146,6 @@ TemplateGenerator = module.exports = BaseGenerator.extend
     if this.opts.freezeBreaks
       result = unfreeze result
     result
-
-
-
-###* Export the TemplateGenerator function/ctor. ###
-module.exports = TemplateGenerator
 
 
 

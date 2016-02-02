@@ -1,7 +1,7 @@
 ###*
 Definition of the TextGenerator class.
+@module generators/text-generator
 @license MIT. See LICENSE.md for details.
-@module text-generator.js
 ###
 
 TemplateGenerator = require './template-generator'
@@ -9,6 +9,6 @@ TemplateGenerator = require './template-generator'
 ###*
 The TextGenerator generates a plain-text resume via the TemplateGenerator.
 ###
-TextGenerator = module.exports = TemplateGenerator.extend
+module.exports = class TextGenerator extends TemplateGenerator
 
-  init: () -> @_super 'txt'
+  constructor: () -> super 'txt'

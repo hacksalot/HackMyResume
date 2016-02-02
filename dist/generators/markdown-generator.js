@@ -1,12 +1,14 @@
 
 /**
 Definition of the MarkdownGenerator class.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
-@module markdown-generator.js
+@module generators/markdown-generator
+@license MIT. See LICENSE.md for details.
  */
 
 (function() {
-  var MarkdownGenerator, TemplateGenerator;
+  var MarkdownGenerator, TemplateGenerator,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
@@ -15,11 +17,16 @@ Definition of the MarkdownGenerator class.
   MarkdownGenerator generates a Markdown-formatted resume via TemplateGenerator.
    */
 
-  MarkdownGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('md', 'txt');
+  module.exports = MarkdownGenerator = (function(superClass) {
+    extend(MarkdownGenerator, superClass);
+
+    function MarkdownGenerator() {
+      MarkdownGenerator.__super__.constructor.call(this, 'md', 'txt');
     }
-  });
+
+    return MarkdownGenerator;
+
+  })(TemplateGenerator);
 
 }).call(this);
 
