@@ -15,9 +15,9 @@ HMEVENT = require('../core/event-codes')
 
 
 
-PeekVerb = module.exports = Verb.extend
+module.exports = class PeekVerb extends Verb
 
-  init: -> @_super 'peek', _peek
+  constructor: -> super 'peek', _peek
 
 
 

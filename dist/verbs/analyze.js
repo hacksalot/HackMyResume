@@ -6,7 +6,9 @@ Implementation of the 'analyze' verb for HackMyResume.
  */
 
 (function() {
-  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _analyzeOne, _loadInspectors, chalk;
+  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _analyzeOne, _loadInspectors, chalk,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   MKDIRP = require('mkdirp');
 
@@ -27,11 +29,16 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   /** An invokable resume analysis command. */
 
-  AnalyzeVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('analyze', _analyze);
+  module.exports = AnalyzeVerb = (function(superClass) {
+    extend(AnalyzeVerb, superClass);
+
+    function AnalyzeVerb() {
+      AnalyzeVerb.__super__.constructor.call(this, 'analyze', _analyze);
     }
-  });
+
+    return AnalyzeVerb;
+
+  })(Verb);
 
 
   /** Private workhorse for the 'analyze' command. */

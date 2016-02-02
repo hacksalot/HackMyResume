@@ -17,9 +17,9 @@ chalk         = require('chalk')
 
 
 ###* An invokable resume analysis command. ###
-AnalyzeVerb = module.exports = Verb.extend
+module.exports = class AnalyzeVerb extends Verb
 
-  init: -> @_super 'analyze', _analyze
+  constructor: -> super 'analyze', _analyze
 
 
 

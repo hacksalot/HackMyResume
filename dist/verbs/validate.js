@@ -6,7 +6,9 @@ Implementation of the 'validate' verb for HackMyResume.
  */
 
 (function() {
-  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, _validate, _validateOne, chalk, safeLoadJSON;
+  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, _validate, _validateOne, chalk, safeLoadJSON,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   FS = require('fs');
 
@@ -29,11 +31,16 @@ Implementation of the 'validate' verb for HackMyResume.
 
   /** An invokable resume validation command. */
 
-  ValidateVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('validate', _validate);
+  module.exports = ValidateVerb = (function(superClass) {
+    extend(ValidateVerb, superClass);
+
+    function ValidateVerb() {
+      ValidateVerb.__super__.constructor.call(this, 'validate', _validate);
     }
-  });
+
+    return ValidateVerb;
+
+  })(Verb);
 
 
   /** Validate 1 to N resumes in FRESH or JSON Resume format. */

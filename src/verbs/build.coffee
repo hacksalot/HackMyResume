@@ -39,10 +39,10 @@ verifyTheme = null
 loadTheme = null
 
 ###* An invokable resume generation command. ###
-BuildVerb = module.exports = Verb.extend
+module.exports = class BuildVerb extends Verb
 
   ###* Create a new build verb. ###
-  init: () -> @_super 'build', _build
+  constructor: () -> super 'build', _build
 
 
 

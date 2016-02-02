@@ -6,7 +6,9 @@ Implementation of the 'build' verb for HackMyResume.
  */
 
 (function() {
-  var BuildVerb, FRESHTheme, FS, HMEVENT, HMSTATUS, JRSTheme, MD, MKDIRP, PATH, RConverter, RTYPES, ResumeFactory, Verb, _, _addFreebieFormats, _build, _err, _expand, _fmts, _loadTheme, _log, _opts, _prep, _rezObj, _single, _verifyOutputs, _verifyTheme, addFreebieFormats, build, expand, extend, loadTheme, parsePath, prep, single, verifyOutputs, verifyTheme;
+  var BuildVerb, FRESHTheme, FS, HMEVENT, HMSTATUS, JRSTheme, MD, MKDIRP, PATH, RConverter, RTYPES, ResumeFactory, Verb, _, _addFreebieFormats, _build, _err, _expand, _fmts, _loadTheme, _log, _opts, _prep, _rezObj, _single, _verifyOutputs, _verifyTheme, addFreebieFormats, build, expand, extend, loadTheme, parsePath, prep, single, verifyOutputs, verifyTheme,
+    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   _ = require('underscore');
 
@@ -70,13 +72,19 @@ Implementation of the 'build' verb for HackMyResume.
 
   /** An invokable resume generation command. */
 
-  BuildVerb = module.exports = Verb.extend({
+  module.exports = BuildVerb = (function(superClass) {
+    extend1(BuildVerb, superClass);
+
 
     /** Create a new build verb. */
-    init: function() {
-      return this._super('build', _build);
+
+    function BuildVerb() {
+      BuildVerb.__super__.constructor.call(this, 'build', _build);
     }
-  });
+
+    return BuildVerb;
+
+  })(Verb);
 
 
   /**

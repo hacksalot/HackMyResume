@@ -6,8 +6,6 @@ Definition of the Verb class.
 
 
 
-# Use J. Resig's nifty class implementation
-Class = require '../utils/class'
 EVENTS = require 'events'
 HMEVENT = require '../core/event-codes'
 Promise = require 'pinkie-promise'
@@ -18,14 +16,12 @@ Promise = require 'pinkie-promise'
 An instantiation of a HackMyResume command.
 @class Verb
 ###
-Verb = module.exports = Class.extend
+module.exports = class Verb
 
 
 
   ###* Constructor. Automatically called at creation. ###
-  init: ( moniker, workhorse ) ->
-    @moniker = moniker
-    @workhorse = workhorse
+  constructor: ( @moniker, @workhorse ) ->
     @emitter = new EVENTS.EventEmitter()
     return
 

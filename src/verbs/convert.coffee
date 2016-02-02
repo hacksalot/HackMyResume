@@ -15,9 +15,9 @@ HMEVENT = require('../core/event-codes');
 
 
 
-ConvertVerb = module.exports = Verb.extend
+module.exports = class ConvertVerb extends Verb
 
-  init: -> @_super 'convert', _convert
+  constructor: -> super 'convert', _convert
 
 
 

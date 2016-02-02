@@ -16,9 +16,9 @@ HMEVENT = require '../core/event-codes'
 
 
 
-CreateVerb = module.exports = Verb.extend
+module.exports = class CreateVerb extends Verb
 
-  init: -> @_super 'new', _create
+  constructor: -> super 'new', _create
 
 
 

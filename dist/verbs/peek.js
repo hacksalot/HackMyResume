@@ -6,7 +6,9 @@ Implementation of the 'peek' verb for HackMyResume.
  */
 
 (function() {
-  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, _peek, _peekOne, safeLoadJSON;
+  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, _peek, _peekOne, safeLoadJSON,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   Verb = require('../verbs/verb');
 
@@ -20,11 +22,16 @@ Implementation of the 'peek' verb for HackMyResume.
 
   HMEVENT = require('../core/event-codes');
 
-  PeekVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('peek', _peek);
+  module.exports = PeekVerb = (function(superClass) {
+    extend(PeekVerb, superClass);
+
+    function PeekVerb() {
+      PeekVerb.__super__.constructor.call(this, 'peek', _peek);
     }
-  });
+
+    return PeekVerb;
+
+  })(Verb);
 
 
   /** Peek at a resume, resume section, or resume field. */

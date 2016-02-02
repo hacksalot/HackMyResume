@@ -19,9 +19,9 @@ safeLoadJSON = require '../utils/safe-json-loader'
 
 
 ###* An invokable resume validation command. ###
-ValidateVerb = module.exports = Verb.extend
+module.exports = class ValidateVerb extends Verb
 
-  init: -> @_super 'validate', _validate
+  constructor: -> super 'validate', _validate
 
 
 

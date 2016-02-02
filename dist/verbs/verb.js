@@ -6,9 +6,7 @@ Definition of the Verb class.
  */
 
 (function() {
-  var Class, EVENTS, HMEVENT, Promise, Verb;
-
-  Class = require('../utils/class');
+  var EVENTS, HMEVENT, Promise, Verb;
 
   EVENTS = require('events');
 
@@ -22,17 +20,20 @@ Definition of the Verb class.
   @class Verb
    */
 
-  Verb = module.exports = Class.extend({
+  module.exports = Verb = (function() {
 
     /** Constructor. Automatically called at creation. */
-    init: function(moniker, workhorse) {
+    function Verb(moniker, workhorse) {
       this.moniker = moniker;
       this.workhorse = workhorse;
       this.emitter = new EVENTS.EventEmitter();
-    },
+      return;
+    }
+
 
     /** Invoke the command. */
-    invoke: function() {
+
+    Verb.prototype.invoke = function() {
       var argsArray, that;
       this.stat(HMEVENT.begin, {
         cmd: this.moniker
@@ -44,23 +45,29 @@ Definition of the Verb class.
         that.reject = rej;
         that.workhorse.apply(that, argsArray);
       });
-    },
+    };
+
 
     /** Forward subscriptions to the event emitter. */
-    on: function() {
+
+    Verb.prototype.on = function() {
       return this.emitter.on.apply(this.emitter, arguments);
-    },
+    };
+
 
     /** Fire an arbitrary event, scoped to "hmr:". */
-    fire: function(evtName, payload) {
+
+    Verb.prototype.fire = function(evtName, payload) {
       payload = payload || {};
       payload.cmd = this.moniker;
       this.emitter.emit('hmr:' + evtName, payload);
       return true;
-    },
+    };
+
 
     /** Handle an error condition. */
-    err: function(errorCode, payload, hot) {
+
+    Verb.prototype.err = function(errorCode, payload, hot) {
       payload = payload || {};
       payload.sub = payload.fluenterror = errorCode;
       payload["throw"] = hot;
@@ -74,25 +81,33 @@ Definition of the Verb class.
         throw payload;
       }
       return true;
-    },
+    };
+
 
     /** Fire the 'hmr:status' error event. */
-    stat: function(subEvent, payload) {
+
+    Verb.prototype.stat = function(subEvent, payload) {
       payload = payload || {};
       payload.sub = subEvent;
       this.fire('status', payload);
       return true;
-    },
-    hasError: function() {
+    };
+
+    Verb.prototype.hasError = function() {
       return this.errorCode || this.errorObj;
-    },
+    };
+
 
     /** Associate error info with the invocation. */
-    setError: function(code, obj) {
+
+    Verb.prototype.setError = function(code, obj) {
       this.errorCode = code;
       this.errorObj = obj;
-    }
-  });
+    };
+
+    return Verb;
+
+  })();
 
 }).call(this);
 
