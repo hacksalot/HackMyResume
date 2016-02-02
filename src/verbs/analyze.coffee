@@ -16,6 +16,7 @@ Verb          = require('../verbs/verb')
 chalk         = require('chalk')
 
 
+
 ###* An invokable resume analysis command. ###
 module.exports = class AnalyzeVerb extends Verb
 
@@ -67,6 +68,6 @@ _analyzeOne = ( resumeObject, nlzrs, opts ) ->
 
 
 _loadInspectors = ->
-    totals: require '../inspectors/totals-inspector'
-    coverage: require '../inspectors/gap-inspector'
-    keywords: require '../inspectors/keyword-inspector'
+  totals: require '../inspectors/totals-inspector'
+  coverage: require '../inspectors/gap-inspector'
+  keywords: require '../inspectors/keyword-inspector'
