@@ -10,6 +10,7 @@
 0|new test/sandbox/cli-test/new-empty-resume.fresh.json -f fresh
 3|analyze
 14|analyze doesnt-exist.json
+0|analyze node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json
 3|convert
 7|convert doesnt-exist.json
 3|validate

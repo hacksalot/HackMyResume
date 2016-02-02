@@ -8,52 +8,31 @@ CLI test routines for HackMyResume.
 var chai = require('chai')
   , should = chai.should()
   , expect = chai.expect
-  , HMRMAIN = require('../../dist/cli/main')
-  , CHALK = require('chalk')
   , FS = require('fs')
   , PATH = require('path')
-  , PKG = require('../../package.json')
-  , STRIPCOLOR = require('stripcolorcodes')
-  , _ = require('underscore')
-  , EXEC = require('child_process').execSync
+  , EXEC = require('child_process').exec
 
-
-
-var gather = '';
-var ConsoleLogOrg = console.log;
-var ProcessExitOrg = process.exit;
-var commandRetVal = 0;
-
-// TODO: use sinon
-// Replacement for process.exit()
-function MyProcessExit( retVal ) {
-  commandRetVal = retVal;
-}
-
-// TODO: use sinon
-// Replacement for console.log
-function MyConsoleLog() {
-  var tx = Array.prototype.slice.call(arguments).join(' ');
-  gather += STRIPCOLOR( tx );
-  ConsoleLogOrg.apply(this, arguments);
-}
 
 describe('Testing CLI interface', function () {
 
+  this.timeout(5000);
 
   // Run a test through the stub, gathering console.log output into "gather"
   // and testing against it.
   function run( args, expErr ) {
     var title = args;
-    it( 'Testing: "' + title + '"\n\n', function() {
+    it( 'Testing: "' + title + '"\n\n', function( done ) {
       try {
-        EXEC('hackmyresume ' + args);
-        commandRetVal = 0;
+        EXEC('hackmyresume ' + args, null, function(err,stdo,stde) {
+          var errCode = (err && err.code) || 0;
+          errCode.should.equal( parseInt(expErr, 10) );
+          done();
+        });
       }
       catch(ex) {
-        commandRetVal = ex.status;
+        ex.status.should.equal( parseInt(expErr, 10) );
+        done();
       }
-      commandRetVal.should.equal( parseInt(expErr, 10) );
     });
   }
 
@@ -67,7 +46,5 @@ describe('Testing CLI interface', function () {
       }
     }
   });
-
-  process.exit = ProcessExitOrg;
 
 });
