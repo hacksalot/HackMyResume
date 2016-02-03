@@ -100,3 +100,5 @@ errors:
     msg: The '**%s**' parameter was needed but not supplied.
   createError:
     msg: Failed to create **'%s'**.
+  exiting:
+    msg: Exiting with status code **%s**.

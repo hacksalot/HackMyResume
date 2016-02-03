@@ -16,12 +16,8 @@ Definition of the WordGenerator class.
     extend(WordGenerator, superClass);
 
     function WordGenerator() {
-      return WordGenerator.__super__.constructor.apply(this, arguments);
+      WordGenerator.__super__.constructor.call(this, 'doc', 'xml');
     }
-
-    WordGenerator.prototype.init = function() {
-      return WordGenerator.__super__.init.call(this, 'doc', 'xml');
-    };
 
     return WordGenerator;
 

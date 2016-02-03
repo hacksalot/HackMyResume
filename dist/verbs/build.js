@@ -201,11 +201,12 @@ Implementation of the 'build' verb for HackMyResume.
     _rezObj = new RTYPES[toFormat]().parseJSON(rez);
     targets = _expand(dst, theme);
     _.each(targets, function(t) {
+      var ref;
       if (this.hasError() && opts.assert) {
         return {};
       }
       t.final = _single.call(this, t, theme, targets);
-      if (t.final.fluenterror) {
+      if ((ref = t.final) != null ? ref.fluenterror : void 0) {
         t.final.quit = opts.assert;
         this.err(t.final.fluenterror, t.final);
       }
@@ -258,7 +259,7 @@ Implementation of the 'build' verb for HackMyResume.
     f = targInfo.file;
     try {
       if (!targInfo.fmt) {
-        return;
+        return {};
       }
       fType = targInfo.fmt.outFormat;
       fName = PATH.basename(f, '.' + fType);

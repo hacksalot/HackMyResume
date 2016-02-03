@@ -20,6 +20,8 @@ _ = require 'underscore'
 OUTPUT = require './out'
 PAD = require 'string-padding'
 Command = require('commander').Command
+M2C = require '../utils/md2chalk'
+printf = require 'printf'
 _opts = { }
 _title = chalk.white.bold('\n*** HackMyResume v' +PKG.version+ ' ***')
 _out = new OUTPUT( _opts )
@@ -251,14 +253,29 @@ execute = ( src, dst, opts, log ) ->
   v.on 'hmr:status', -> _out.do.apply _out, arguments
   v.on 'hmr:error', ->  _err.err.apply _err, arguments
 
-  # Invoke the verb! Returns a promise
+  # Invoke the verb using promise syntax
   prom = v.invoke.call v, src, dst, _opts, log
+  prom.then executeSuccess, executeFail
 
-  # Resolved or rejected?
-  onFail = (err) ->
-    _exitCallback( if err.fluenterror then err.fluenterror else err )
-    return
-  prom.then (->), onFail
+  return
+
+
+
+### Success handler for verb invocations. Calls process.exit by default ###
+executeSuccess = (obj) -> _exitCallback 0; return
+
+
+
+### Failure handler for verb invocations. Calls process.exit by default ###
+executeFail = (err) ->
+  finalErrorCode = -1
+  if err
+    finalErrorCode = if err.fluenterror then err.fluenterror else err
+    console.log err.stack
+  if _opts.debug
+    msgs = require('./msg').errors;
+    logMsg printf M2C( msgs.exiting.msg, 'cyan' ), finalErrorCode
+  _exitCallback finalErrorCode
   return
 
 

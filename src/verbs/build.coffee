@@ -139,7 +139,7 @@ _build = ( src, dst, opts ) ->
   _.each targets, (t) ->
     return { } if @hasError() and opts.assert
     t.final = _single.call @, t, theme, targets
-    if t.final.fluenterror
+    if t.final?.fluenterror
       t.final.quit = opts.assert
       @err t.final.fluenterror, t.final
     return
@@ -198,7 +198,7 @@ _single = ( targInfo, theme, finished ) ->
   try
 
     if !targInfo.fmt
-      return
+      return { }
     fType = targInfo.fmt.outFormat
     fName = PATH.basename f, '.' + fType
     theFormat = null

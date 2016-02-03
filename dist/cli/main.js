@@ -6,7 +6,7 @@ Definition of the `main` function.
  */
 
 (function() {
-  var Command, EXTEND, FS, HME, HMR, HMSTATUS, OUTPUT, PAD, PATH, PKG, StringUtils, _, _err, _exitCallback, _opts, _out, _title, chalk, execute, initOptions, initialize, loadOptions, logMsg, main, safeLoadJSON, splitSrcDest;
+  var Command, EXTEND, FS, HME, HMR, HMSTATUS, M2C, OUTPUT, PAD, PATH, PKG, StringUtils, _, _err, _exitCallback, _opts, _out, _title, chalk, execute, executeFail, executeSuccess, initOptions, initialize, loadOptions, logMsg, main, printf, safeLoadJSON, splitSrcDest;
 
   HMR = require('../index');
 
@@ -35,6 +35,10 @@ Definition of the `main` function.
   PAD = require('string-padding');
 
   Command = require('commander').Command;
+
+  M2C = require('../utils/md2chalk');
+
+  printf = require('printf');
 
   _opts = {};
 
@@ -202,7 +206,7 @@ Definition of the `main` function.
   /* Invoke a HackMyResume verb. */
 
   execute = function(src, dst, opts, log) {
-    var onFail, prom, v;
+    var prom, v;
     v = new HMR.verbs[this.name()]();
     loadOptions.call(this, opts, this.parent.jsonArgs);
     _opts.errHandler = v;
@@ -214,10 +218,31 @@ Definition of the `main` function.
       return _err.err.apply(_err, arguments);
     });
     prom = v.invoke.call(v, src, dst, _opts, log);
-    onFail = function(err) {
-      _exitCallback(err.fluenterror ? err.fluenterror : err);
-    };
-    prom.then((function() {}), onFail);
+    prom.then(executeSuccess, executeFail);
+  };
+
+
+  /* Success handler for verb invocations. Calls process.exit by default */
+
+  executeSuccess = function(obj) {
+    _exitCallback(0);
+  };
+
+
+  /* Failure handler for verb invocations. Calls process.exit by default */
+
+  executeFail = function(err) {
+    var finalErrorCode, msgs;
+    finalErrorCode = -1;
+    if (err) {
+      finalErrorCode = err.fluenterror ? err.fluenterror : err;
+      console.log(err.stack);
+    }
+    if (_opts.debug) {
+      msgs = require('./msg').errors;
+      logMsg(printf(M2C(msgs.exiting.msg, 'cyan'), finalErrorCode));
+    }
+    _exitCallback(finalErrorCode);
   };
 
 

@@ -9,4 +9,4 @@ TemplateGenerator = require './template-generator'
 
 module.exports = class WordGenerator extends TemplateGenerator
 
-  init: () -> super 'doc', 'xml'
+  constructor: () -> super 'doc', 'xml'
