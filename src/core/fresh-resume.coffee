@@ -29,6 +29,8 @@ object is an instantiation of that JSON decorated with utility methods.
 ###
 class FreshResume extends AbstractResume
 
+
+
   ###* Initialize the FreshResume from file. ###
   open: ( file, opts ) ->
     raw = FS.readFileSync file, 'utf8'
@@ -36,10 +38,13 @@ class FreshResume extends AbstractResume
     @imp.file = file
     ret
 
+
+
   ###* Initialize the the FreshResume from JSON string data. ###
   parse: ( stringData, opts ) ->
     @imp = @imp ? raw: stringData
     this.parseJSON JSON.parse( stringData ), opts
+
 
 
   ###*
@@ -92,6 +97,7 @@ class FreshResume extends AbstractResume
     @
 
 
+
   ###* Save the sheet to disk (for environments that have disk access). ###
   save: ( filename ) ->
     @imp.file = filename || @imp.file
@@ -111,7 +117,6 @@ class FreshResume extends AbstractResume
       newRep = CONVERTER.toJRS this
       FS.writeFileSync filename, JRSResume.stringify( newRep ), 'utf8'
     @
-
 
 
 
@@ -135,6 +140,7 @@ class FreshResume extends AbstractResume
   way.
   ###
   stringify: () -> FreshResume.stringify @
+
 
 
   ###*
@@ -232,10 +238,6 @@ class FreshResume extends AbstractResume
 
 
 
-
-
-
-
   ###* Add work experience to the sheet. ###
   add: ( moniker ) ->
     defSheet = FreshResume.default()
@@ -258,7 +260,6 @@ class FreshResume extends AbstractResume
 
 
 
-
   ###*
   Determine if the sheet includes a specific social profile (eg, GitHub).
   ###
@@ -268,11 +269,13 @@ class FreshResume extends AbstractResume
       p.network.trim().toLowerCase() == socialNetwork
 
 
+
   ###* Return the specified network profile. ###
   getProfile: ( socialNetwork ) ->
     socialNetwork = socialNetwork.trim().toLowerCase()
     @social && _.find @social, (sn) ->
       sn.network.trim().toLowerCase() == socialNetwork
+
 
 
   ###*
@@ -283,6 +286,7 @@ class FreshResume extends AbstractResume
     socialNetwork = socialNetwork.trim().toLowerCase()
     @social && _.filter @social, (sn) ->
       sn.network.trim().toLowerCase() == socialNetwork
+
 
 
   ###* Determine if the sheet includes a specific skill. ###
@@ -308,8 +312,10 @@ class FreshResume extends AbstractResume
     ret
 
 
+
   duration: (unit) ->
     super('employment.history', 'start', 'end', unit)
+
 
 
   ###*
@@ -340,11 +346,13 @@ class FreshResume extends AbstractResume
       else ( a.safe.date.isAfter(b.safe.date) && -1 ) || 0
 
 
+
 ###*
 Get the default (starter) sheet.
 ###
 FreshResume.default = () ->
   new FreshResume().parseJSON( require 'fresh-resume-starter' )
+
 
 
 ###*
@@ -358,6 +366,7 @@ FreshResume.stringify = ( obj ) ->
     return if _.some( exKeys, (val) -> key.trim() == val )
     then undefined else value
   JSON.stringify obj, replacer, 2
+
 
 
 ###*
@@ -400,6 +409,8 @@ _parseDates = () ->
 
 ###* Export the Sheet function/ctor. ###
 module.exports = FreshResume
+
+
 
 # Note 1: Adjust default date validation to allow YYYY and YYYY-MM formats
 # in addition to YYYY-MM-DD. The original regex:

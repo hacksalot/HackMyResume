@@ -34,6 +34,7 @@ class JRSResume extends AbstractResume
     ret
 
 
+
   ###* Initialize the the JSResume from string. ###
   parse: ( stringData, opts ) ->
     @imp = @imp ? raw: stringData
@@ -117,7 +118,6 @@ class JRSResume extends AbstractResume
 
 
 
-
   stringify: () -> JRSResume.stringify( @ )
 
 
@@ -154,7 +154,6 @@ class JRSResume extends AbstractResume
     delete this.interests
     delete this.skills
     delete this.basics.profiles
-
 
 
 
@@ -203,8 +202,10 @@ class JRSResume extends AbstractResume
     ret
 
 
+
   duration: (unit) ->
     super('work', 'startDate', 'endDate', unit)
+
 
 
   ###*
@@ -231,6 +232,7 @@ class JRSResume extends AbstractResume
       if ( a.safeReleaseDate.isBefore(b.safeReleaseDate) )
       then 1
       else ( a.safeReleaseDate.isAfter(b.safeReleaseDate) && -1 ) || 0
+
 
 
   dupe: () ->
@@ -308,6 +310,7 @@ JRSResume.stringify = ( obj ) ->
       ( val ) -> return key.trim() == val
     return if temp then undefined else value
   JSON.stringify obj, replacer, 2
+
 
 
 ###*
