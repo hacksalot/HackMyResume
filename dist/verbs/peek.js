@@ -52,8 +52,7 @@ Implementation of the 'peek' verb for HackMyResume.
       }
       tgt = _peekOne.call(this, t, objPath);
       if (tgt.error) {
-        tgt.quit = opts.assert;
-        this.err(tgt.fluenterror, tgt);
+        this.setError(tgt.error.fluenterror, tgt.error);
       }
       return tgt;
     }, this);
@@ -97,8 +96,8 @@ Implementation of the 'peek' verb for HackMyResume.
       error: pkgError
     });
     return {
-      val: tgt,
-      errpr: pkgError
+      val: obj.ex ? void 0 : tgt,
+      error: pkgError
     };
   };
 

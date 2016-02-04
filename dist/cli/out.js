@@ -147,7 +147,7 @@ Output routines for HackMyResume.
           } else {
             L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file);
           }
-          if (evt.target !== void 0) {
+          if (evt.target !== void 0 && !evt.error) {
             return console.dir(evt.target, {
               depth: null,
               colors: true

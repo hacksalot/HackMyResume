@@ -165,12 +165,12 @@ module.exports = class OutputHandler
           L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file)
 
         # If the key was present, print it
-        if evt.target != undefined
+        if evt.target != undefined and !evt.error
           console.dir( evt.target, { depth: null, colors: true } )
 
         # If the key was not present, but no error occurred, print it
         else if !evt.error
-          L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
+          L M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file
 
         else if evt.error
-          L( chalk.red( evt.error.inner.inner ));
+          L chalk.red( evt.error.inner.inner )

@@ -236,7 +236,6 @@ Definition of the `main` function.
     finalErrorCode = -1;
     if (err) {
       finalErrorCode = err.fluenterror ? err.fluenterror : err;
-      console.log(err.stack);
     }
     if (_opts.debug) {
       msgs = require('./msg').errors;

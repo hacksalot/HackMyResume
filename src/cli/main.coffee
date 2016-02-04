@@ -271,7 +271,6 @@ executeFail = (err) ->
   finalErrorCode = -1
   if err
     finalErrorCode = if err.fluenterror then err.fluenterror else err
-    console.log err.stack
   if _opts.debug
     msgs = require('./msg').errors;
     logMsg printf M2C( msgs.exiting.msg, 'cyan' ), finalErrorCode

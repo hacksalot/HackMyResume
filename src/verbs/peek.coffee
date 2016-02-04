@@ -31,11 +31,14 @@ _peek = ( src, dst, opts ) ->
   objPath = (dst && dst[0]) || ''
 
   results = _.map src, ( t ) ->
+
     return { } if opts.assert and @hasError()
+
     tgt = _peekOne.call @, t, objPath
     if tgt.error
-      tgt.quit = opts.assert
-      @err tgt.fluenterror, tgt
+      @setError tgt.error.fluenterror, tgt.error
+      #tgt.error.quit = opts.assert
+      #@err tgt.error.fluenterror, tgt.error
     tgt
   , @
 
@@ -56,9 +59,9 @@ _peekOne = ( t, objPath ) ->
   obj = safeLoadJSON t
 
   # Fetch the requested object path (or the entire file)
-  tgt = null;
+  tgt = null
   if !obj.ex
-    tgt = if objPath then __.get obj.json, objPath else obj.json;
+    tgt = if objPath then __.get obj.json, objPath else obj.json
 
   ## safeLoadJSON can only return a READ error or a PARSE error
   pkgError = null
@@ -68,7 +71,6 @@ _peekOne = ( t, objPath ) ->
       obj.ex.quiet = true
     pkgError = fluenterror: errCode, inner: obj.ex
 
-
   # Fire the 'afterPeek' event with collected info
   @stat HMEVENT.afterPeek,
     file: t
@@ -76,4 +78,5 @@ _peekOne = ( t, objPath ) ->
     target: if obj.ex then undefined else tgt
     error: pkgError
 
-  val: tgt, errpr: pkgError
+  val: if obj.ex then undefined else tgt
+  error: pkgError

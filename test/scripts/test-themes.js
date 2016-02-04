@@ -37,7 +37,15 @@ function genThemes( title, src, fmt ) {
           };
           try {
             var v = new HMR.verbs.build();
-            v.invoke( src, dst, opts );
+            var p = v.invoke( src, dst, opts );
+            p.then(
+              function(obj){
+
+              },
+              function(obj){
+                throw obj;
+              }
+            );
           }
           catch(ex) {
             console.error( ex );
