@@ -25,3 +25,5 @@ See: http://stackoverflow.com/a/32800728/4942583
   };
 
 }).call(this);
+
+//# sourceMappingURL=string.js.map

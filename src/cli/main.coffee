@@ -20,9 +20,13 @@ _ = require 'underscore'
 OUTPUT = require './out'
 PAD = require 'string-padding'
 Command = require('commander').Command
+M2C = require '../utils/md2chalk'
+printf = require 'printf'
 _opts = { }
 _title = chalk.white.bold('\n*** HackMyResume v' +PKG.version+ ' ***')
 _out = new OUTPUT( _opts )
+_err = require('./error')
+_exitCallback = null
 
 
 
@@ -33,9 +37,9 @@ line interface as a single method accepting a parameter array.
 @param rawArgs {Array} An array of command-line parameters. Will either be
 process.argv (in production) or custom parameters (in test).
 ###
-main = module.exports = (rawArgs) ->
+main = module.exports = ( rawArgs, exitCallback ) ->
 
-  initInfo = initialize( rawArgs )
+  initInfo = initialize( rawArgs, exitCallback )
   args = initInfo.args
 
   # Create the top-level (application) command...
@@ -129,10 +133,10 @@ main = module.exports = (rawArgs) ->
 
 
 ### Massage command-line args and setup Commander.js. ###
-initialize = ( ar ) ->
+initialize = ( ar, exitCallback ) ->
 
-  o = initOptions( ar );
-
+  _exitCallback = exitCallback || process.exit
+  o = initOptions ar
   o.silent || logMsg( _title )
 
   # Emit debug prelude if --debug was specified
@@ -147,14 +151,22 @@ initialize = ( ar ) ->
     #_out.log(chalk.cyan(PAD('  fresh-jrs-converter:',25, null, PAD.RIGHT)) + chalk.cyan.bold( PKG.dependencies['fresh-jrs-converter'] ))
     _out.log('')
 
+  _err.init o.debug, o.assert, o.silent
+
   # Handle invalid verbs here (a bit easier here than in commander.js)...
   if o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ]
-    throw { fluenterror: HMSTATUS.invalidCommand, quit: true, attempted: o.orgVerb }
+    _err.err fluenterror: HMSTATUS.invalidCommand, quit: true, attempted: o.orgVerb, true
 
   # Override the .missingArgument behavior
   Command.prototype.missingArgument = (name) ->
-    if this.name() != 'new'
-      throw { fluenterror: HMSTATUS.resumeNotFound, quit: true }
+    _err.err
+      fluenterror:
+        if this.name() != 'new'
+        then HMSTATUS.resumeNotFound
+        else HMSTATUS.createNameMissing
+      , true
+    return
+
 
   # Override the .helpInformation behavior
   Command.prototype.helpInformation = ->
@@ -205,23 +217,17 @@ initOptions = ( ar ) ->
             oJSON = inf.json
           # TODO: Error handling
 
-  # Grab the --debug flag
-  isDebug = _.some( args, (v) ->
-    return v == '-d' || v == '--debug'
-  )
-
-  # Grab the --silent flag
-  isSilent = _.some( args, (v) ->
-    return v == '-s' || v == '--silent'
-  )
-
-  # Grab the --no-color flag
+  # Grab the --debug flag, --silent, --assert and --no-color flags
+  isDebug = _.some args, (v) -> v == '-d' || v == '--debug'
+  isSilent = _.some args, (v) -> v == '-s' || v == '--silent'
+  isAssert = _.some args, (v) -> v == '-a' || v == '--assert'
   isMono = _.some args, (v) -> v == '--no-color'
 
   return {
     color: !isMono,
     debug: isDebug,
     silent: isSilent,
+    assert: isAssert,
     orgVerb: oVerb,
     verb: verb,
     json: oJSON,
@@ -233,19 +239,43 @@ initOptions = ( ar ) ->
 ### Invoke a HackMyResume verb. ###
 execute = ( src, dst, opts, log ) ->
 
-  loadOptions.call( this, opts, this.parent.jsonArgs )
-  hand = require( './error' )
-  hand.init( _opts.debug, _opts.assert, _opts.silent )
-  v = new HMR.verbs[ this.name() ]()
-  _opts.errHandler = v
-  _out.init( _opts )
-  v.on( 'hmr:status', -> _out.do.apply( _out, arguments ) )
-  v.on( 'hmr:error', ->  hand.err.apply( hand, arguments ) )
-  v.invoke.call( v, src, dst, _opts, log )
-  if v.errorCode
-    console.log 'Exiting with error code ' + v.errorCode
-    process.exit(v.errorCode)
+  # Create the verb
+  v = new HMR.verbs[ @name() ]()
 
+  # Initialize command-specific options
+  loadOptions.call( this, opts, this.parent.jsonArgs )
+
+  # Set up error/output handling
+  _opts.errHandler = v
+  _out.init _opts
+
+  # Hook up event notifications
+  v.on 'hmr:status', -> _out.do.apply _out, arguments
+  v.on 'hmr:error', ->  _err.err.apply _err, arguments
+
+  # Invoke the verb using promise syntax
+  prom = v.invoke.call v, src, dst, _opts, log
+  prom.then executeSuccess, executeFail
+
+  return
+
+
+
+### Success handler for verb invocations. Calls process.exit by default ###
+executeSuccess = (obj) -> _exitCallback 0; return
+
+
+
+### Failure handler for verb invocations. Calls process.exit by default ###
+executeFail = (err) ->
+  finalErrorCode = -1
+  if err
+    finalErrorCode = if err.fluenterror then err.fluenterror else err
+  if _opts.debug
+    msgs = require('./msg').errors;
+    logMsg printf M2C( msgs.exiting.msg, 'cyan' ), finalErrorCode
+  _exitCallback finalErrorCode
+  return
 
 
 

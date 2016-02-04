@@ -1,20 +1,18 @@
 ###*
 Definition of the JsonGenerator class.
-@license MIT. See LICENSE.md for details.
 @module generators/json-generator
+@license MIT. See LICENSE.md for details.
 ###
 
 BaseGenerator = require './base-generator'
 FS = require 'fs'
 _ = require 'underscore'
 
-###*
-The JsonGenerator generates a JSON resume directly.
-###
+###* The JsonGenerator generates a JSON resume directly. ###
 
-JsonGenerator = module.exports = BaseGenerator.extend
+module.exports = class JsonGenerator extends BaseGenerator
 
-  init: () -> @_super 'json'
+  constructor: () -> super 'json'
 
   keys: ['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
     'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',

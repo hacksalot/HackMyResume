@@ -83,7 +83,7 @@ Definition of the ResumeFactory class.
   };
 
   _parse = function(fileName, opts, eve) {
-    var ex, orgFormat, rawData, ret;
+    var orgFormat, rawData, ret;
     rawData = null;
     try {
       eve && eve.stat(HME.beforeRead, {
@@ -108,20 +108,15 @@ Definition of the ResumeFactory class.
       });
       return ret;
     } catch (_error) {
-      ex = {
+      return {
         fluenterror: rawData ? HACKMYSTATUS.parseError : HACKMYSTATUS.readError,
         inner: _error,
         raw: rawData,
-        file: fileName,
-        shouldExit: false
+        file: fileName
       };
-      opts.quit && (ex.quit = true);
-      eve && eve.err(ex.fluenterror, ex);
-      if (opts["throw"]) {
-        throw ex;
-      }
-      return ex;
     }
   };
 
 }).call(this);
+
+//# sourceMappingURL=resume-factory.js.map

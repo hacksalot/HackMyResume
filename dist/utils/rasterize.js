@@ -75,3 +75,5 @@
   }
 
 }).call(this);
+
+//# sourceMappingURL=rasterize.js.map

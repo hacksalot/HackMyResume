@@ -6,7 +6,9 @@ Implementation of the 'peek' verb for HackMyResume.
  */
 
 (function() {
-  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, peek, safeLoadJSON;
+  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, _peek, _peekOne, safeLoadJSON,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   Verb = require('../verbs/verb');
 
@@ -20,51 +22,85 @@ Implementation of the 'peek' verb for HackMyResume.
 
   HMEVENT = require('../core/event-codes');
 
-  PeekVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('peek', peek);
+  module.exports = PeekVerb = (function(superClass) {
+    extend(PeekVerb, superClass);
+
+    function PeekVerb() {
+      PeekVerb.__super__.constructor.call(this, 'peek', _peek);
     }
-  });
+
+    return PeekVerb;
+
+  })(Verb);
 
 
   /** Peek at a resume, resume section, or resume field. */
 
-  peek = function(src, dst, opts) {
-    var objPath;
+  _peek = function(src, dst, opts) {
+    var objPath, results;
     if (!src || !src.length) {
-      ({
-        "throw": {
-          fluenterror: HMSTATUS.resumeNotFound
-        }
+      this.err(HMSTATUS.resumeNotFound, {
+        quit: true
       });
+      return null;
     }
     objPath = (dst && dst[0]) || '';
-    _.each(src, function(t) {
-      var errCode, obj, tgt;
-      this.stat(HMEVENT.beforePeek, {
-        file: t,
-        target: objPath
-      });
-      obj = safeLoadJSON(t);
-      tgt = null;
-      if (!obj.ex) {
-        tgt = objPath ? __.get(obj.json, objPath) : obj.json;
+    results = _.map(src, function(t) {
+      var tgt;
+      if (opts.assert && this.hasError()) {
+        return {};
       }
-      this.stat(HMEVENT.afterPeek, {
-        file: t,
-        requested: objPath,
-        target: tgt,
-        error: obj.ex
-      });
-      if (obj.ex) {
-        errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
-        if (errCode === HMSTATUS.readError) {
-          obj.ex.quiet = true;
-        }
-        this.setError(errCode, obj.ex);
-        return this.err(errCode, obj.ex);
+      tgt = _peekOne.call(this, t, objPath);
+      if (tgt.error) {
+        this.setError(tgt.error.fluenterror, tgt.error);
       }
+      return tgt;
     }, this);
+    if (this.hasError() && !opts.assert) {
+      this.reject(this.errorCode);
+    } else if (!this.hasError()) {
+      this.resolve(results);
+    }
+    return results;
+  };
+
+
+  /** Peek at a single resume, resume section, or resume field. */
+
+  _peekOne = function(t, objPath) {
+    var errCode, obj, pkgError, tgt;
+    this.stat(HMEVENT.beforePeek, {
+      file: t,
+      target: objPath
+    });
+    obj = safeLoadJSON(t);
+    tgt = null;
+    if (!obj.ex) {
+      tgt = objPath ? __.get(obj.json, objPath) : obj.json;
+    }
+    pkgError = null;
+    if (obj.ex) {
+      errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
+      if (errCode === HMSTATUS.readError) {
+        obj.ex.quiet = true;
+      }
+      pkgError = {
+        fluenterror: errCode,
+        inner: obj.ex
+      };
+    }
+    this.stat(HMEVENT.afterPeek, {
+      file: t,
+      requested: objPath,
+      target: obj.ex ? void 0 : tgt,
+      error: pkgError
+    });
+    return {
+      val: obj.ex ? void 0 : tgt,
+      error: pkgError
+    };
   };
 
 }).call(this);
+
+//# sourceMappingURL=peek.js.map

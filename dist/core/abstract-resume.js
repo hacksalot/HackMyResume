@@ -69,3 +69,5 @@ Definition of the AbstractResume class.
   module.exports = AbstractResume;
 
 }).call(this);
+
+//# sourceMappingURL=abstract-resume.js.map

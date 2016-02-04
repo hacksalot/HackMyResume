@@ -27,3 +27,5 @@ Template helper definitions for Handlebars.
   };
 
 }).call(this);
+
+//# sourceMappingURL=handlebars-helpers.js.map

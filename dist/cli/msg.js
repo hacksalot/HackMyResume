@@ -15,3 +15,5 @@ Message-handling routines for HackMyResume.
   module.exports = YAML.load(PATH.join(__dirname, 'msg.yml'));
 
 }).call(this);
+
+//# sourceMappingURL=msg.js.map

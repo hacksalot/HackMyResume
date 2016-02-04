@@ -60,3 +60,5 @@ Object string transformation.
   };
 
 }).call(this);
+
+//# sourceMappingURL=string-transformer.js.map

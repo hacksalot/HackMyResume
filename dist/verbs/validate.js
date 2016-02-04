@@ -6,7 +6,9 @@ Implementation of the 'validate' verb for HackMyResume.
  */
 
 (function() {
-  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, chalk, safeLoadJSON, validate;
+  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, _validate, _validateOne, chalk, safeLoadJSON,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   FS = require('fs');
 
@@ -29,74 +31,101 @@ Implementation of the 'validate' verb for HackMyResume.
 
   /** An invokable resume validation command. */
 
-  ValidateVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('validate', validate);
+  module.exports = ValidateVerb = (function(superClass) {
+    extend(ValidateVerb, superClass);
+
+    function ValidateVerb() {
+      ValidateVerb.__super__.constructor.call(this, 'validate', _validate);
     }
-  });
+
+    return ValidateVerb;
+
+  })(Verb);
 
 
   /** Validate 1 to N resumes in FRESH or JSON Resume format. */
 
-  validate = function(sources, unused, opts) {
-    var schemas, validator;
+  _validate = function(sources, unused, opts) {
+    var results, schemas, validator;
     if (!sources || !sources.length) {
-      throw {
-        fluenterror: HMSTATUS.resumeNotFoundAlt,
+      this.err(HMSTATUS.resumeNotFoundAlt, {
         quit: true
-      };
+      });
+      return null;
     }
     validator = require('is-my-json-valid');
     schemas = {
       fresh: require('fresca'),
       jars: require('../core/resume.json')
     };
-    return _.map(sources, function(t) {
-      var errCode, errors, fmt, json, obj, ret;
-      ret = {
-        file: t,
-        isValid: false
-      };
-      obj = safeLoadJSON(t);
-      if (!obj.ex) {
-        json = obj.json;
-        fmt = json.basics ? 'jrs' : 'fresh';
-        errors = [];
-        try {
-          validate = validator(schemas[fmt], {
-            formats: {
-              date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
-            }
-          });
-          ret.isValid = validate(json);
-          if (!ret.isValid) {
-            errors = validate.errors;
-          }
-        } catch (_error) {
-          ret.ex = _error;
-        }
-      } else {
-        errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
-        if (errCode === HMSTATUS.readError) {
-          obj.ex.quiet = true;
-        }
-        this.setError(errCode, obj.ex);
-        this.err(errCode, obj.ex);
+    results = _.map(sources, function(t) {
+      var r;
+      if (this.hasError() && opts.assert) {
+        return {};
       }
-      this.stat(HMEVENT.afterValidate, {
-        file: t,
-        isValid: ret.isValid,
-        fmt: fmt != null ? fmt.replace('jars', 'JSON Resume') : void 0,
-        errors: errors
-      });
-      if (opts.assert && !ret.isValid) {
-        throw {
-          fluenterror: HMSTATUS.invalid,
-          shouldExit: true
-        };
+      r = _validateOne.call(this, t, validator, schemas);
+      if (r.fluenterror) {
+        r.quit = opts.assert;
+        this.err(r.fluenterror, r);
       }
-      return ret;
+      return r;
     }, this);
+    if (this.hasError() && !opts.assert) {
+      this.reject(this.errorCode);
+    } else if (!this.hasError()) {
+      this.resolve(results);
+    }
+    return results;
+  };
+
+  _validateOne = function(t, validator, schemas) {
+    var errCode, errors, fmt, json, obj, ret, validate;
+    ret = {
+      file: t,
+      isValid: false
+    };
+    obj = safeLoadJSON(t);
+    if (obj.ex) {
+      errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
+      if (errCode === HMSTATUS.readError) {
+        obj.ex.quiet = true;
+      }
+      return {
+        fluenterror: errCode,
+        inner: obj.ex
+      };
+    }
+    json = obj.json;
+    fmt = json.basics ? 'jrs' : 'fresh';
+    errors = [];
+    try {
+      validate = validator(schemas[fmt], {
+        formats: {
+          date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
+        }
+      });
+      ret.isValid = validate(json);
+      if (!ret.isValid) {
+        errors = validate.errors;
+      }
+    } catch (_error) {
+      ret.ex = _error;
+    }
+    this.stat(HMEVENT.afterValidate, {
+      file: t,
+      isValid: ret.isValid,
+      fmt: fmt != null ? fmt.replace('jars', 'JSON Resume') : void 0,
+      errors: errors
+    });
+    if (opts.assert && !ret.isValid) {
+      return {
+        fluenterror: HMSTATUS.invalid,
+        errors: errors
+      };
+    }
+    return ret;
   };
 
 }).call(this);
+
+//# sourceMappingURL=validate.js.map

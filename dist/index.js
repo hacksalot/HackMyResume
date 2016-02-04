@@ -47,3 +47,5 @@ API facade for HackMyCore.
   };
 
 }).call(this);
+
+//# sourceMappingURL=index.js.map

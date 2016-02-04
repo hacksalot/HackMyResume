@@ -6,26 +6,26 @@ Definition of the Verb class.
 
 
 
-# Use J. Resig's nifty class implementation
-Class = require '../utils/class'
 EVENTS = require 'events'
 HMEVENT = require '../core/event-codes'
+Promise = require 'pinkie-promise'
 
 
 
 ###*
-An instantiation of a HackMyResume command.
+An abstract invokable verb.
+Provides base class functionality for verbs. Provide common services such as
+error handling, event management, and promise support.
 @class Verb
 ###
-Verb = module.exports = Class.extend
+
+module.exports = class Verb
 
 
 
   ###* Constructor. Automatically called at creation. ###
-  init: ( moniker, workhorse ) ->
-    @moniker = moniker
+  constructor: ( @moniker, @workhorse ) ->
     @emitter = new EVENTS.EventEmitter()
-    @workhorse = workhorse
     return
 
 
@@ -33,15 +33,16 @@ Verb = module.exports = Class.extend
   ###* Invoke the command. ###
   invoke: ->
     @stat HMEVENT.begin, cmd: @moniker
-    ret = @workhorse.apply @, arguments
-    @stat HMEVENT.end
-    ret
+    argsArray = Array::slice.call arguments
+    that = @
+    @promise = new Promise (res, rej) ->
+      that.resolve = res; that.reject = rej
+      that.workhorse.apply that, argsArray; return
 
 
 
   ###* Forward subscriptions to the event emitter. ###
-  on: ->
-    @emitter.on.apply @emitter, arguments
+  on: -> @emitter.on.apply @emitter, arguments
 
 
 
@@ -59,7 +60,10 @@ Verb = module.exports = Class.extend
     payload = payload || { }
     payload.sub = payload.fluenterror = errorCode
     payload.throw = hot
-    this.fire 'error', payload
+    @setError errorCode, payload
+    if payload.quit
+      @reject errorCode
+    @fire 'error', payload
     if hot
       throw payload
     true
@@ -72,6 +76,11 @@ Verb = module.exports = Class.extend
     payload.sub = subEvent
     @fire 'status', payload
     true
+
+
+
+  ###* Has an error occurred during this verb invocation? ###
+  hasError: -> @errorCode || @errorObj
 
 
 

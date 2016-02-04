@@ -6,7 +6,9 @@ Implementation of the 'create' verb for HackMyResume.
  */
 
 (function() {
-  var CreateVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, Verb, _, chalk, create;
+  var CreateVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, Verb, _, _create, _createOne, chalk,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   MKDIRP = require('mkdirp');
 
@@ -22,26 +24,55 @@ Implementation of the 'create' verb for HackMyResume.
 
   HMEVENT = require('../core/event-codes');
 
-  CreateVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('new', create);
+  module.exports = CreateVerb = (function(superClass) {
+    extend(CreateVerb, superClass);
+
+    function CreateVerb() {
+      CreateVerb.__super__.constructor.call(this, 'new', _create);
     }
-  });
+
+    return CreateVerb;
+
+  })(Verb);
 
 
-  /**
-  Create a new empty resume in either FRESH or JRS format.
-   */
+  /** Create a new empty resume in either FRESH or JRS format. */
 
-  create = function(src, dst, opts) {
+  _create = function(src, dst, opts) {
+    var results;
     if (!src || !src.length) {
-      throw {
-        fluenterror: HMSTATUS.createNameMissing,
+      this.err(HMSTATUS.createNameMissing, {
         quit: true
-      };
+      });
+      return null;
     }
-    _.each(src, function(t) {
-      var RezClass, safeFmt;
+    results = _.map(src, function(t) {
+      var r;
+      if (opts.assert && this.hasError()) {
+        return {};
+      }
+      r = _createOne.call(this, t, opts);
+      if (r.fluenterror) {
+        r.quit = opts.assert;
+        this.err(r.fluenterror, r);
+      }
+      return r;
+    }, this);
+    if (this.hasError() && !opts.assert) {
+      this.reject(this.errorCode);
+    } else if (!this.hasError()) {
+      this.resolve(results);
+    }
+    return results;
+  };
+
+
+  /** Create a single new resume */
+
+  _createOne = function(t, opts) {
+    var RezClass, newRez, ret, safeFmt;
+    try {
+      ret = null;
       safeFmt = opts.format.toUpperCase();
       this.stat(HMEVENT.beforeCreate, {
         fmt: safeFmt,
@@ -49,12 +80,24 @@ Implementation of the 'create' verb for HackMyResume.
       });
       MKDIRP.sync(PATH.dirname(t));
       RezClass = require('../core/' + safeFmt.toLowerCase() + '-resume');
-      RezClass["default"]().save(t);
-      return this.stat(HMEVENT.afterCreate, {
+      newRez = RezClass["default"]();
+      newRez.save(t);
+      ret = newRez;
+    } catch (_error) {
+      ret = {
+        fluenterror: HMSTATUS.createError,
+        inner: _error
+      };
+    } finally {
+      this.stat(HMEVENT.afterCreate, {
         fmt: safeFmt,
-        file: t
+        file: t,
+        isError: ret.fluenterror
       });
-    }, this);
+      return ret;
+    }
   };
 
 }).call(this);
+
+//# sourceMappingURL=create.js.map

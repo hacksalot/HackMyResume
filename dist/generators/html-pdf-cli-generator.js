@@ -1,24 +1,26 @@
 
 /**
 Definition of the HtmlPdfCLIGenerator class.
-@module html-pdf-generator.js
+@module generators/html-pdf-generator.js
 @license MIT. See LICENSE.md for details.
  */
 
 (function() {
-  var FS, HTML, HtmlPdfCLIGenerator, PATH, SLASH, SPAWN, TemplateGenerator, engines;
+  var FS, HMSTATUS, HtmlPdfCLIGenerator, PATH, SLASH, TemplateGenerator, _, engines,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   TemplateGenerator = require('./template-generator');
 
   FS = require('fs-extra');
 
-  HTML = require('html');
-
   PATH = require('path');
 
-  SPAWN = require('../utils/safe-spawn');
-
   SLASH = require('slash');
+
+  _ = require('underscore');
+
+  HMSTATUS = require('../core/status-codes');
 
 
   /**
@@ -27,39 +29,49 @@ Definition of the HtmlPdfCLIGenerator class.
   If an engine isn't installed for a particular platform, error out gracefully.
    */
 
-  HtmlPdfCLIGenerator = module.exports = TemplateGenerator.extend({
-    init: function() {
-      return this._super('pdf', 'html');
-    },
+  module.exports = HtmlPdfCLIGenerator = (function(superClass) {
+    extend(HtmlPdfCLIGenerator, superClass);
+
+    function HtmlPdfCLIGenerator() {
+      HtmlPdfCLIGenerator.__super__.constructor.call(this, 'pdf', 'html');
+    }
+
 
     /** Generate the binary PDF. */
-    onBeforeSave: function(info) {
-      var ex, safe_eng;
-      try {
-        safe_eng = info.opts.pdf || 'wkhtmltopdf';
-        if (safe_eng !== 'none') {
-          engines[safe_eng].call(this, info.mk, info.outputFile);
-          return null;
-        }
-      } catch (_error) {
-        ex = _error;
-        if (ex.inner && ex.inner.code === 'ENOENT') {
-          throw {
-            fluenterror: this.codes.notOnPath,
-            inner: ex.inner,
-            engine: ex.cmd,
-            stack: ex.inner && ex.inner.stack
-          };
-        } else {
-          throw {
-            fluenterror: this.codes.pdfGeneration,
-            inner: ex,
-            stack: ex.stack
-          };
+
+    HtmlPdfCLIGenerator.prototype.onBeforeSave = function(info) {
+      var safe_eng;
+      safe_eng = info.opts.pdf || 'wkhtmltopdf';
+      if (safe_eng === 'phantom') {
+        safe_eng = 'phantomjs';
+      }
+      if (_.has(engines, safe_eng)) {
+        this.SPAWN = require('../utils/safe-spawn');
+        this.errHandler = info.opts.errHandler;
+        engines[safe_eng].call(this, info.mk, info.outputFile, this.onError);
+        return null;
+      }
+    };
+
+
+    /* Low-level error callback for spawn(). May be called after HMR process
+    termination, so object references may not be valid here. That's okay; if
+    the references are invalid, the error was already logged. We could use
+    spawn-watch here but that causes issues on legacy Node.js.
+     */
+
+    HtmlPdfCLIGenerator.prototype.onError = function(ex, param) {
+      var ref;
+      if ((ref = param.errHandler) != null) {
+        if (typeof ref.err === "function") {
+          ref.err(HMSTATUS.pdfGeneration, ex);
         }
       }
-    }
-  });
+    };
+
+    return HtmlPdfCLIGenerator;
+
+  })(TemplateGenerator);
 
   engines = {
 
@@ -70,11 +82,11 @@ Definition of the HtmlPdfCLIGenerator class.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease wkhtmltopdf rendering
      */
-    wkhtmltopdf: function(markup, fOut) {
-      var info, tempFile;
+    wkhtmltopdf: function(markup, fOut, on_error) {
+      var tempFile;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
-      return info = SPAWN('wkhtmltopdf', [tempFile, fOut]);
+      return this.SPAWN('wkhtmltopdf', [tempFile, fOut], false, on_error, this);
     },
 
     /**
@@ -84,15 +96,17 @@ Definition of the HtmlPdfCLIGenerator class.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease Phantom rendering
      */
-    phantom: function(markup, fOut) {
-      var destPath, info, scriptPath, sourcePath, tempFile;
+    phantomjs: function(markup, fOut, on_error) {
+      var destPath, scriptPath, sourcePath, tempFile;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
       scriptPath = SLASH(PATH.relative(process.cwd(), PATH.resolve(__dirname, '../utils/rasterize.js')));
       sourcePath = SLASH(PATH.relative(process.cwd(), tempFile));
       destPath = SLASH(PATH.relative(process.cwd(), fOut));
-      return info = SPAWN('phantomjs', [scriptPath, sourcePath, destPath]);
+      return this.SPAWN('phantomjs', [scriptPath, sourcePath, destPath], false, on_error, this);
     }
   };
 
 }).call(this);
+
+//# sourceMappingURL=html-pdf-cli-generator.js.map

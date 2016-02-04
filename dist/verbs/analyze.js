@@ -6,7 +6,9 @@ Implementation of the 'analyze' verb for HackMyResume.
  */
 
 (function() {
-  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _loadInspectors, analyze, chalk;
+  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _analyzeOne, _loadInspectors, chalk,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   MKDIRP = require('mkdirp');
 
@@ -24,46 +26,61 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   chalk = require('chalk');
 
-  AnalyzeVerb = module.exports = Verb.extend({
-    init: function() {
-      return this._super('analyze', analyze);
+
+  /** An invokable resume analysis command. */
+
+  module.exports = AnalyzeVerb = (function(superClass) {
+    extend(AnalyzeVerb, superClass);
+
+    function AnalyzeVerb() {
+      AnalyzeVerb.__super__.constructor.call(this, 'analyze', _analyze);
     }
-  });
+
+    return AnalyzeVerb;
+
+  })(Verb);
 
 
-  /**
-  Run the 'analyze' command.
-   */
+  /** Private workhorse for the 'analyze' command. */
 
-  analyze = function(sources, dst, opts) {
-    var nlzrs;
+  _analyze = function(sources, dst, opts) {
+    var nlzrs, results;
     if (!sources || !sources.length) {
-      throw {
-        fluenterror: HMSTATUS.resumeNotFound,
+      this.err(HMSTATUS.resumeNotFound, {
         quit: true
-      };
+      });
+      return null;
     }
     nlzrs = _loadInspectors();
-    return _.each(sources, function(src) {
-      var result;
-      result = ResumeFactory.loadOne(src, {
+    results = _.map(sources, function(src) {
+      var r;
+      r = ResumeFactory.loadOne(src, {
         format: 'FRESH',
         objectify: true
       }, this);
-      if (result.fluenterror) {
-        return this.setError(result.fluenterror, result);
+      if (opts.assert && this.hasError()) {
+        return {};
+      }
+      if (r.fluenterror) {
+        r.quit = opts.assert;
+        this.err(r.fluenterror, r);
+        return r;
       } else {
-        return _analyze.call(this, result, nlzrs, opts);
+        return _analyzeOne.call(this, r, nlzrs, opts);
       }
     }, this);
+    if (this.hasError() && !opts.assert) {
+      this.reject(this.errorCode);
+    } else if (!this.hasError()) {
+      this.resolve(results);
+    }
+    return results;
   };
 
 
-  /**
-  Analyze a single resume.
-   */
+  /** Analyze a single resume. */
 
-  _analyze = function(resumeObject, nlzrs, opts) {
+  _analyzeOne = function(resumeObject, nlzrs, opts) {
     var info, rez, safeFormat;
     rez = resumeObject.rez;
     safeFormat = rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH') ? 'FRESH' : 'JRS';
@@ -74,15 +91,11 @@ Implementation of the 'analyze' verb for HackMyResume.
     info = _.mapObject(nlzrs, function(val, key) {
       return val.run(rez);
     });
-    return this.stat(HMEVENT.afterAnalyze, {
+    this.stat(HMEVENT.afterAnalyze, {
       info: info
     });
+    return info;
   };
-
-
-  /**
-  Load inspectors.
-   */
 
   _loadInspectors = function() {
     return {
@@ -93,3 +106,5 @@ Implementation of the 'analyze' verb for HackMyResume.
   };
 
 }).call(this);
+
+//# sourceMappingURL=analyze.js.map

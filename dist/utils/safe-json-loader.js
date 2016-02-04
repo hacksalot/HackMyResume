@@ -30,3 +30,5 @@ Definition of the SafeJsonLoader class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=safe-json-loader.js.map

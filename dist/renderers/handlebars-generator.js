@@ -98,3 +98,5 @@ Definition of the HandlebarsGenerator class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=handlebars-generator.js.map

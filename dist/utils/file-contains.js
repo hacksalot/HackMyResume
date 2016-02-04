@@ -10,3 +10,5 @@ Definition of the SyntaxErrorEx class.
   };
 
 }).call(this);
+
+//# sourceMappingURL=file-contains.js.map

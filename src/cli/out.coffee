@@ -9,7 +9,6 @@ Output routines for HackMyResume.
 chalk = require('chalk')
 HME = require('../core/event-codes')
 _ = require('underscore')
-Class = require('../utils/class.js')
 M2C = require('../utils/md2chalk.js')
 PATH = require('path')
 LO = require('lodash')
@@ -22,11 +21,20 @@ pad = require('string-padding')
 dbgStyle = 'cyan';
 
 
-###* A stateful output module. All HMR console output handled here. ###
-OutputHandler = module.exports = Class.extend
 
-  init: ( opts ) ->
-    @opts = EXTEND( true, this.opts || { }, opts )
+###* A stateful output module. All HMR console output handled here. ###
+module.exports = class OutputHandler
+
+
+
+  constructor: ( opts ) ->
+    @init opts
+    return
+
+
+
+  init: (opts) ->
+    @opts = EXTEND( true, @opts || { }, opts )
     @msgs = YAML.load(PATH.join( __dirname, 'msg.yml' )).events
     return
 
@@ -37,6 +45,7 @@ OutputHandler = module.exports = Class.extend
     printf = require('printf')
     finished = printf.apply( printf, arguments )
     @opts.silent || console.log( finished )
+
 
 
   do: ( evt ) ->
@@ -50,8 +59,12 @@ OutputHandler = module.exports = Class.extend
         this.opts.debug &&
         L( M2C( this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase() )
 
-      when HME.beforeCreate
-        L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
+      #when HME.beforeCreate
+        #L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
+        #break;
+
+      when HME.afterCreate
+        L( M2C( @msgs.beforeCreate.msg, if evt.isError then 'red' else 'green' ), evt.fmt, evt.file )
         break;
 
       when HME.beforeTheme
@@ -144,12 +157,20 @@ OutputHandler = module.exports = Class.extend
 
       when HME.afterPeek
         sty = if evt.error then 'red' else ( if evt.target != undefined then 'green' else 'yellow' )
+
+        # "Peeking at 'someKey' in 'someFile'."
         if evt.requested
           L(M2C(this.msgs.beforePeek.msg[0], sty), evt.requested, evt.file)
         else
           L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file)
 
-        if evt.target != undefined
+        # If the key was present, print it
+        if evt.target != undefined and !evt.error
           console.dir( evt.target, { depth: null, colors: true } )
+
+        # If the key was not present, but no error occurred, print it
         else if !evt.error
-          L(M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file);
+          L M2C( this.msgs.afterPeek.msg, 'yellow'), evt.requested, evt.file
+
+        else if evt.error
+          L chalk.red( evt.error.inner.inner )

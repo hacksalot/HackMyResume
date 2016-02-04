@@ -517,3 +517,5 @@ Definition of the FRESHResume class.
   module.exports = FreshResume;
 
 }).call(this);
+
+//# sourceMappingURL=fresh-resume.js.map

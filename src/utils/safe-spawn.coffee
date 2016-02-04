@@ -4,7 +4,9 @@ Safe spawn utility for HackMyResume / FluentCV.
 @license MIT. See LICENSE.md for details.
 ###
 
-module.exports = ( cmd, args, isSync, callback ) ->
+###* Safely spawn a process synchronously or asynchronously without throwing an
+exception ###
+module.exports = ( cmd, args, isSync, callback, param ) ->
 
   try
 
@@ -12,17 +14,17 @@ module.exports = ( cmd, args, isSync, callback ) ->
     spawn = require('child_process')[ if isSync then 'spawnSync' else 'spawn'];
     info = spawn cmd, args
 
-    # Check for error depending on whether we're sync or async
+    # Check for error depending on whether we're sync or async TODO: Promises
     if !isSync
       info.on 'error', (err) ->
-        if callback? then callback err; return
-        else throw cmd: cmd, inner: err
+        callback?(err, param)
+        return
       return
     else
       if info.error
-        if callback? then callback err; return
-        else throw cmd: cmd, inner: info.error
+        callback?(info.error, param)
+        return cmd: cmd, inner: info.error
 
   catch
-    if callback? then callback _error
-    else throw _error
+    callback?(_error, param)
+    _error

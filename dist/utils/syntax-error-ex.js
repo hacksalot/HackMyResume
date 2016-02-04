@@ -37,3 +37,5 @@ See: http://stackoverflow.com/q/13323356
   module.exports = SyntaxErrorEx;
 
 }).call(this);
+
+//# sourceMappingURL=syntax-error-ex.js.map

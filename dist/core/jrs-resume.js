@@ -429,3 +429,5 @@ Definition of the JRSResume class.
   module.exports = JRSResume;
 
 }).call(this);
+
+//# sourceMappingURL=jrs-resume.js.map
