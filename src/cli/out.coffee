@@ -149,11 +149,12 @@ module.exports = class OutputHandler
             else this.msgs.afterValidate.msg[2] ),
           evt.file, evt.fmt
         );
-
         if evt.errors
-          _.each( evt.errors, (err,idx) ->
+          _.each evt.errors, (err,idx) ->
             L( chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' + err.message))
-          , @)
+            return
+          , @
+          return
 
       when HME.afterPeek
         sty = if evt.error then 'red' else ( if evt.target != undefined then 'green' else 'yellow' )

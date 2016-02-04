@@ -51,17 +51,6 @@ Definition of the FRESHResume class.
     }
 
 
-    /** Initialize the FreshResume from file. */
-
-    FreshResume.prototype.open = function(file, opts) {
-      var raw, ret;
-      raw = FS.readFileSync(file, 'utf8');
-      ret = this.parse(raw, opts);
-      this.imp.file = file;
-      return ret;
-    };
-
-
     /** Initialize the the FreshResume from JSON string data. */
 
     FreshResume.prototype.parse = function(stringData, opts) {
@@ -442,7 +431,7 @@ Definition of the FRESHResume class.
    */
 
   FreshResume["default"] = function() {
-    return new FreshResume().parseJSON(require('fresh-resume-starter'));
+    return new FreshResume().parseJSON(require('fresh-resume-starter').fresh);
   };
 
 

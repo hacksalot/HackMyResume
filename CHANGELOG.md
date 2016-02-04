@@ -1,5 +1,65 @@
 CHANGELOG
 =========
+## v1.7.4
+
+### Added
+
+- [Build instructions](https://github.com/hacksalot/HackMyResume/blob/master/BUILDING.md).
+
+### Changed
+
+- More precise date handling.
+
+### Fixed
+
+- Issue with incomplete PDF generation (#127).
+- Issue with building JSON Resume themes (#128).
+- Issue with generating `.json` output format by itself (#97).
+
+## v1.7.3
+
+### Fixed
+
+- Issue with generated PDFs being chopped off and displaying a mysterious sequence of numbers of unknown and possibly alien origin (#127).
+
+- Unsightly border on Modern:PDF.
+
+- Modern|Positive:PDF formats now correctly reference their PDF-specific CSS files.
+
+- `Incorrect helper use` warning in Positive:DOC.
+
+## v1.7.2
+
+### Changed
+
+- Interim release supporting FluentCV Desktop.
+
+### Internal
+
+- Moved [HackMyCore](https://github.com/hacksalot/HackMyCore) dependency to
+submodule.
+
+## v1.7.1
+
+### Changed
+
+- Caffeinate. CoffeeScript now used throughout
+[HackMyResume](https://github.com/hacksalot/HackMyResume) and
+[HackMyCore](https://github.com/hacksalot/HackMyCore); generated JavaScript
+lives in `/dist`.
+
+### Fixed
+
+- Issue with generating a single PDF with the `.pdf` extension (#99).
+
+## v1.7.0
+
+### Changed
+
+- [Internal] Relocated HMR processing code to the
+[HackMyCore](https://github.com/hacksalot/HackMyCore) project. Shouldn't affect
+normal use.
+
 ## v1.6.0
 
 ### Major Improvements

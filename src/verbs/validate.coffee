@@ -70,7 +70,7 @@ _validateOne = (t, validator, schemas) ->
 
   # Successfully read the resume. Now parse it as JSON.
   json = obj.json
-  fmt = if json.basics then 'jrs' else 'fresh'
+  fmt = if json.basics then 'jars' else 'fresh'
   errors = []
 
   try
@@ -78,6 +78,7 @@ _validateOne = (t, validator, schemas) ->
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
     };
     ret.isValid = validate json
+
     if !ret.isValid
       errors = validate.errors
   catch

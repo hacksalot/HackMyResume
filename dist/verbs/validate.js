@@ -96,7 +96,7 @@ Implementation of the 'validate' verb for HackMyResume.
       };
     }
     json = obj.json;
-    fmt = json.basics ? 'jrs' : 'fresh';
+    fmt = json.basics ? 'jars' : 'fresh';
     errors = [];
     try {
       validate = validator(schemas[fmt], {

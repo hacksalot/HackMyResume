@@ -43,7 +43,7 @@ Definition of the HandlebarsGenerator class.
         return template(data);
       } catch (_error) {
         throw {
-          fluenterror: template ? HMSTATUS.invokeTemplate : HMSTATUS.compileTemplate,
+          fluenterror: HMSTATUS[template ? 'invokeTemplate' : 'compileTemplate'],
           inner: _error
         };
       }

@@ -45,17 +45,6 @@ Definition of the JRSResume class.
     }
 
 
-    /** Initialize the JSResume from file. */
-
-    JRSResume.prototype.open = function(file, opts) {
-      var raw, ret;
-      raw = FS.readFileSync(file, 'utf8');
-      ret = this.parse(raw, opts);
-      this.imp.file = file;
-      return ret;
-    };
-
-
     /** Initialize the the JSResume from string. */
 
     JRSResume.prototype.parse = function(stringData, opts) {
@@ -364,7 +353,7 @@ Definition of the JRSResume class.
   /** Get the default (empty) sheet. */
 
   JRSResume["default"] = function() {
-    return new JRSResume().open(PATH.join(__dirname, 'empty-jrs.json'), 'Empty');
+    return new JRSResume().parseJSON(require('fresh-resume-starter').jrs);
   };
 
 

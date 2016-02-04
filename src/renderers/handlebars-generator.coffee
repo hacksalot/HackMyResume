@@ -33,7 +33,8 @@ HandlebarsGenerator = module.exports =
       return template data
     catch
       throw
-        fluenterror: if template then HMSTATUS.invokeTemplate else HMSTATUS.compileTemplate
+        fluenterror:
+          HMSTATUS[ if template then 'invokeTemplate' else 'compileTemplate' ]
         inner: _error
 
 

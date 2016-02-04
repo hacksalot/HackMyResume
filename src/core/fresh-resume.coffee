@@ -31,15 +31,6 @@ class FreshResume extends AbstractResume
 
 
 
-  ###* Initialize the FreshResume from file. ###
-  open: ( file, opts ) ->
-    raw = FS.readFileSync file, 'utf8'
-    ret = this.parse raw, opts
-    @imp.file = file
-    ret
-
-
-
   ###* Initialize the the FreshResume from JSON string data. ###
   parse: ( stringData, opts ) ->
     @imp = @imp ? raw: stringData
@@ -351,7 +342,7 @@ class FreshResume extends AbstractResume
 Get the default (starter) sheet.
 ###
 FreshResume.default = () ->
-  new FreshResume().parseJSON( require 'fresh-resume-starter' )
+  new FreshResume().parseJSON require('fresh-resume-starter').fresh
 
 
 

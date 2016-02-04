@@ -5,6 +5,7 @@ var chai = require('chai')
   , path = require('path')
   , _ = require('underscore')
 	, JRSResume = require('../../dist/core/jrs-resume')
+  , ResumeFactory = require('../../dist/core/resume-factory')
   , validator = require('is-my-json-valid');
 
 chai.config.includeStack = false;
@@ -20,8 +21,8 @@ function testResume( opts ) {
     it('should open without throwing an exception', function () {
       var that = this;
       function tryOpen() {
-        _sheet = new JRSResume().open(
-          path.normalize( path.join( __dirname, '/../resumes/jrs-0.0.0/' + opts.title + '.json' ) ) )
+        var res = ResumeFactory.loadOne( path.normalize( path.join( __dirname, '/../resumes/jrs-0.0.0/' + opts.title + '.json' ) ), { objectify: true } );
+        _sheet = res.rez;
       }
       tryOpen.should.not.Throw();
     });
@@ -44,8 +45,8 @@ function testResume( opts ) {
     });
 
     it('should not be modified after saving', function() {
-      var savedSheet = new JRSResume().open( 'test/sandbox/' + opts.title + '.json' );
-      _sheet.stringify().should.equal( savedSheet.stringify() );
+      var res = ResumeFactory.loadOne( 'test/sandbox/' + opts.title + '.json', { objectify: true } );
+      _sheet.stringify().should.equal( res.rez.stringify() );
     });
 
     it('should ' + (opts.isValid ? '' : 'NOT ') + 'validate against the JSON Resume schema', function() {

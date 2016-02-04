@@ -26,15 +26,6 @@ class JRSResume extends AbstractResume
 
 
 
-  ###* Initialize the JSResume from file. ###
-  open: ( file, opts ) ->
-    raw = FS.readFileSync file, 'utf8'
-    ret = this.parse raw, opts
-    @imp.file = file
-    ret
-
-
-
   ###* Initialize the the JSResume from string. ###
   parse: ( stringData, opts ) ->
     @imp = @imp ? raw: stringData
@@ -294,7 +285,7 @@ class JRSResume extends AbstractResume
 
 ###* Get the default (empty) sheet. ###
 JRSResume.default = () ->
-  new JRSResume().open PATH.join( __dirname, 'empty-jrs.json'), 'Empty'
+  new JRSResume().parseJSON require('fresh-resume-starter').jrs
 
 
 

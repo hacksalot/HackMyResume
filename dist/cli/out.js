@@ -135,8 +135,8 @@ Output routines for HackMyResume.
           style = evt.isValid ? 'green' : 'yellow';
           L(M2C(this.msgs.afterValidate.msg[0], 'white') + chalk[style].bold(evt.isValid ? this.msgs.afterValidate.msg[1] : this.msgs.afterValidate.msg[2]), evt.file, evt.fmt);
           if (evt.errors) {
-            return _.each(evt.errors, function(err, idx) {
-              return L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));
+            _.each(evt.errors, function(err, idx) {
+              L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));
             }, this);
           }
           break;
