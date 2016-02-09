@@ -37,7 +37,10 @@ GenericHelpers = module.exports =
       momentDate = moment datetime
       return momentDate.format(format) if momentDate.isValid()
 
-    datetime || (typeof fallback == 'string' ? fallback : (fallback == true ? 'Present' : null));
+    datetime ||
+      if typeof fallback == 'string'
+      then fallback
+      else (if fallback == true then 'Present' else null)
 
 
 
