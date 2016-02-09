@@ -17,10 +17,14 @@ LO = require 'lodash'
 PATH = require 'path'
 printf = require 'printf'
 _ = require 'underscore'
-unused = require '../utils/string';
+unused = require '../utils/string'
+
+
 
 ###* Generic template helper function definitions. ###
 GenericHelpers = module.exports =
+
+
 
   ###*
   Convert the input date to a specified format through Moment.js.
@@ -35,6 +39,8 @@ GenericHelpers = module.exports =
 
     datetime || (typeof fallback == 'string' ? fallback : (fallback == true ? 'Present' : null));
 
+
+
   ###*
   Given a resume sub-object with a start/end date, format a representation of
   the date range.
@@ -44,11 +50,15 @@ GenericHelpers = module.exports =
     return '' if !obj
     _fromTo obj.start, obj.end, fmt, sep, fallback, options
 
+
+
   ###*
   Format a from/to date range for display.
   @method toFrom
   ###
   fromTo: () -> _fromTo.apply this, arguments
+
+
 
   ###*
   Return a named color value as an RRGGBB string.
@@ -65,6 +75,8 @@ GenericHelpers = module.exports =
       if !(ret && ret.trim())
         return colorDefault
       ret
+
+
 
   ###*
   Return true if the section is present on the resume and has at least one
@@ -83,6 +95,8 @@ GenericHelpers = module.exports =
         if (obj.history && obj.history.length) || (obj.sets && obj.sets.length)
             ret = options.fn @
     ret
+
+
 
   ###*
   Emit the size of the specified named font.
@@ -131,6 +145,7 @@ GenericHelpers = module.exports =
         ret = ''
 
     ret
+
 
 
   ###*
@@ -184,6 +199,8 @@ GenericHelpers = module.exports =
         ret = '';
 
     return ret;
+
+
 
   ###*
   Emit a comma-delimited list of font names suitable associated with the
@@ -240,6 +257,8 @@ GenericHelpers = module.exports =
 
     return ret;
 
+
+
   ###*
   Capitalize the first letter of the word.
   @method section
@@ -247,6 +266,8 @@ GenericHelpers = module.exports =
   camelCase: (val) ->
     val = (val && val.trim()) || ''
     return if val then (val.charAt(0).toUpperCase() + val.slice(1)) else val
+
+
 
   ###*
   Return true if the context has the property or subpropery.
@@ -257,6 +278,8 @@ GenericHelpers = module.exports =
     if LO.get this.r, title
       return options.fn this
     return
+
+
 
   ###*
   Generic template helper function to display a user-overridable section
@@ -291,6 +314,8 @@ GenericHelpers = module.exports =
       this.opts.stitles[ sname.toLowerCase().trim() ] ) ||
       stitle;
 
+
+
   ###*
   Convert inline Markdown to inline WordProcessingML.
   @method wpml
@@ -304,6 +329,7 @@ GenericHelpers = module.exports =
     return txt
 
 
+
   ###*
   Emit a conditional link.
   @method link
@@ -311,12 +337,16 @@ GenericHelpers = module.exports =
   link: ( text, url ) ->
     return if url && url.trim() then ('<a href="' + url + '">' + text + '</a>') else text
 
+
+
   ###*
   Return the last word of the specified text.
   @method lastWord
   ###
   lastWord: ( txt ) ->
     return if txt && txt.trim() then _.last( txt.split(' ') ) else ''
+
+
 
   ###*
   Convert a skill level to an RGB color triplet. TODO: refactor
@@ -333,6 +363,8 @@ GenericHelpers = module.exports =
       [ '#FFFFFF', '#5CB85C', '#F1C40F', '#428BCA', '#C00000' ]
     return skillColors[idx]
 
+
+
   ###*
   Return an appropriate height. TODO: refactor
   @method lastWord
@@ -341,12 +373,16 @@ GenericHelpers = module.exports =
     idx = skillLevelToIndex lvl
     ['38.25', '30', '16', '8', '0'][idx]
 
+
+
   ###*
   Return all but the last word of the input text.
   @method initialWords
   ###
   initialWords: ( txt ) ->
     if txt && txt.trim() then _.initial( txt.split(' ') ).join(' ') else ''
+
+
 
   ###*
   Trim the protocol (http or https) from a URL/
@@ -355,12 +391,16 @@ GenericHelpers = module.exports =
   trimURL: ( url ) ->
     if url && url.trim() then url.trim().replace(/^https?:\/\//i, '') else ''
 
+
+
   ###*
   Convert text to lowercase.
   @method toLower
   ###
   toLower: ( txt ) ->
     if txt && txt.trim() then txt.toLowerCase() else ''
+
+
 
   ###*
   Convert text to lowercase.
@@ -369,6 +409,8 @@ GenericHelpers = module.exports =
   toUpper: ( txt ) ->
     if txt && txt.trim() then txt.toUpperCase() else ''
 
+
+
   ###*
   Return true if either value is truthy.
   @method either
@@ -376,6 +418,8 @@ GenericHelpers = module.exports =
   either: ( lhs, rhs, options ) ->
     if lhs || rhs
       return options.fn this
+
+
 
   ###*
   Conditional stylesheet link. Creates a link to the specified stylesheet with
@@ -413,6 +457,8 @@ GenericHelpers = module.exports =
     # it when Handlebars is the chosen engine, which is most of the time.
     ret
 
+
+
   ###*
   Perform a generic comparison.
   See: http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates
@@ -444,6 +490,8 @@ relies on kludging the running verb into. opts.
 ###
 _reportError = ( code, params ) ->
   GenericHelpers.opts.errHandler.err( code, params )
+
+
 
 ###*
 Format a from/to date range for display.
@@ -487,6 +535,8 @@ _fromTo = ( dateA, dateB, fmt, sep, fallback ) ->
     return dateFrom || dateTo
   return ''
 
+
+
 skillLevelToIndex = ( lvl ) ->
   idx = 0
   if String.is( lvl )
@@ -505,6 +555,7 @@ skillLevelToIndex = ( lvl ) ->
     idx = Math.min( lvl / 2, 4 )
     idx = Math.max( 0, idx )
   idx
+
 
 
 # Note [1] --------------------------------------------------------------------
