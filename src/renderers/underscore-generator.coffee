@@ -22,12 +22,13 @@ UnderscoreGenerator = module.exports =
   generateSimple: ( data, tpl ) ->
     try
       # Compile and run the Handlebars template.
-      tpl = _.template tpl
-      template data
+      t = _.template tpl
+      t data
     catch
+      #console.dir _error
       HMS = require '../core/status-codes'
       throw
-        fluenterror: HMS[if tpl then 'invokeTemplate' else 'compileTemplate']
+        fluenterror: HMS[if t then 'invokeTemplate' else 'compileTemplate']
         inner: _error
 
 
@@ -49,9 +50,9 @@ UnderscoreGenerator = module.exports =
       XML: require 'xml-escape'
       RAW: json
       cssInfo: cssInfo
-      #engine: this
+      #engine: @
       headFragment: opts.headFragment || ''
       opts: opts
 
-    registerHelpers theme, opts, cssInfo, ctx, this
+    registerHelpers theme, opts, cssInfo, ctx, @
     @generateSimple ctx, jst

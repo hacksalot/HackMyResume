@@ -29,6 +29,8 @@ plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
 
 module.exports = class TemplateGenerator extends BaseGenerator
 
+
+
   ###* Constructor. Set the output format and template format for this
   generator. Will usually be called by a derived generator such as
   HTMLGenerator or MarkdownGenerator. ###
@@ -60,17 +62,22 @@ module.exports = class TemplateGenerator extends BaseGenerator
     curFmt.files = _.sortBy curFmt.files, (fi) -> fi.ext != 'css'
 
     # Run the transformation!
-    results = curFmt.files.map( ( tplInfo, idx ) ->
-      trx = @.single rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt
-      if tplInfo.ext == 'css'
-        curFmt.files[idx].data = trx
-      else tplInfo.ext == 'html'
-        #tplInfo.css contains the CSS data loaded by theme
-        #tplInfo.cssPath contains the absolute path to the source CSS File
+    results = curFmt.files.map ( tplInfo, idx ) ->
+      if tplInfo.action == 'transform'
+        trx = @transform rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt
+        if tplInfo.ext == 'css'
+          curFmt.files[idx].data = trx
+        else tplInfo.ext == 'html'
+          #tplInfo.css contains the CSS data loaded by theme
+          #tplInfo.cssPath contains the absolute path to the source CSS File
+      else
+        # Images and non-transformable binary files
+      opts.onTransform? tplInfo
       return info: tplInfo, data: trx
-    , @)
+    , @
 
     files: results
+
 
 
   ###* Generate a resume using file-based inputs and outputs. Requires access
@@ -83,7 +90,7 @@ module.exports = class TemplateGenerator extends BaseGenerator
   generate: ( rez, f, opts ) ->
 
     # Prepare
-    this.opts = EXTEND( true, { }, _defaultOpts, opts );
+    @opts = EXTEND( true, { }, _defaultOpts, opts );
 
     # Call the string-based generation method to perform the generation.
     genInfo = this.invoke( rez, null )
@@ -93,41 +100,47 @@ module.exports = class TemplateGenerator extends BaseGenerator
     # Process individual files within this format. For example, the HTML
     # output format for a theme may have multiple HTML files, CSS files,
     # etc. Process them here.
-    genInfo.files.forEach(( file ) ->
+    genInfo.files.forEach ( file ) ->
 
       # Pre-processing
-      file.info.orgPath = file.info.orgPath || '' # <-- For JRS themes
+      file.info.orgPath = file.info.orgPath || ''
       thisFilePath = PATH.join( outFolder, file.info.orgPath )
-      if this.onBeforeSave
+
+      if file.info.action != 'copy' and @onBeforeSave
         file.data = this.onBeforeSave
           theme: opts.themeObj
-          outputFile: if file.info.major then f else thisFilePath
+          outputFile: thisFilePath #if file.info.major then f else thisFilePath
           mk: file.data
           opts: this.opts
         if !file.data
           return # PDF etc
 
       # Write the file
-      fileName = if file.info.major then f else thisFilePath
-      MKDIRP.sync PATH.dirname( fileName )
-      FS.writeFileSync fileName, file.data, { encoding: 'utf8', flags: 'w' }
+      opts.beforeWrite? thisFilePath
+
+      MKDIRP.sync PATH.dirname( thisFilePath )
+
+      #console.log( Object.keys(file.info) )
+      console.log file.info.path
+
+      if file.info.action != 'copy'
+        FS.writeFileSync thisFilePath, file.data, encoding: 'utf8', flags: 'w'
+      else
+        FS.copySync file.info.path, thisFilePath
+
+      opts.afterWrite? thisFilePath
 
       # Post-processing
       if @onAfterSave
-        @onAfterSave( outputFile: fileName, mk: file.data, opts: this.opts )
+        @onAfterSave outputFile: fileName, mk: file.data, opts: this.opts
 
-    , @)
+    , @
 
     # Some themes require a symlink structure. If so, create it.
-    if curFmt.symLinks
-      Object.keys( curFmt.symLinks ).forEach (loc) ->
-        absLoc = PATH.join outFolder, loc
-        absTarg = PATH.join PATH.dirname(absLoc), curFmt.symLinks[loc]
-        # 'file', 'dir', or 'junction' (Windows only)
-        type = parsePath( absLoc ).extname ? 'file' : 'junction'
-        FS.symlinkSync absTarg, absLoc, type
+    createSymLinks curFmt, outFolder
 
     genInfo
+
 
 
   ###* Perform a single resume resume transformation using string-based inputs
@@ -138,8 +151,8 @@ module.exports = class TemplateGenerator extends BaseGenerator
   @param cssInfo Needs to be refactored.
   @param opts Options and passthrough data. ###
 
-  single: ( json, jst, format, opts, theme, curFmt ) ->
-    if this.opts.freezeBreaks
+  transform: ( json, jst, format, opts, theme, curFmt ) ->
+    if @opts.freezeBreaks
       jst = freeze jst
     eng = require '../renderers/' + theme.engine  + '-generator'
     result = eng.generate json, jst, format, curFmt, opts, theme
@@ -147,6 +160,29 @@ module.exports = class TemplateGenerator extends BaseGenerator
       result = unfreeze result
     result
 
+
+
+createSymLinks = ( curFmt, outFolder ) ->
+  # Some themes require a symlink structure. If so, create it.
+  if curFmt.symLinks
+    Object.keys( curFmt.symLinks ).forEach (loc) ->
+      absLoc = PATH.join outFolder, loc
+      absTarg = PATH.join PATH.dirname(absLoc), curFmt.symLinks[loc]
+      # Set type to 'file', 'dir', or 'junction' (Windows only)
+      type = if parsePath( absLoc ).extname then 'file' else 'junction'
+
+      try
+        FS.symlinkSync absTarg, absLoc, type
+      catch
+        succeeded = false
+        if _error.code == 'EEXIST'
+          FS.unlinkSync absLoc
+          try
+            FS.symlinkSync absTarg, absLoc, type
+            succeeded = true
+        if !succeeded
+          throw ex
+    return
 
 
 ###* Freeze newlines for protection against errant JST parsers. ###
@@ -160,6 +196,7 @@ freeze = ( markup ) ->
 unfreeze = ( markup ) ->
   markup.replace _reg.regSymR, '\r'
   markup.replace _reg.regSymN, '\n'
+
 
 
 ###* Default template generator options. ###

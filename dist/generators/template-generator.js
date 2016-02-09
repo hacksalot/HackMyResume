@@ -6,7 +6,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
  */
 
 (function() {
-  var BaseGenerator, EXTEND, FRESHTheme, FS, JRSTheme, MD, MKDIRP, PATH, TemplateGenerator, XML, _, _defaultOpts, _reg, freeze, parsePath, unfreeze,
+  var BaseGenerator, EXTEND, FRESHTheme, FS, JRSTheme, MD, MKDIRP, PATH, TemplateGenerator, XML, _, _defaultOpts, _reg, createSymLinks, freeze, parsePath, unfreeze,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -74,11 +74,18 @@ Definition of the TemplateGenerator class. TODO: Refactor
       });
       results = curFmt.files.map(function(tplInfo, idx) {
         var trx;
-        trx = this.single(rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt);
-        if (tplInfo.ext === 'css') {
-          curFmt.files[idx].data = trx;
+        if (tplInfo.action === 'transform') {
+          trx = this.transform(rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt);
+          if (tplInfo.ext === 'css') {
+            curFmt.files[idx].data = trx;
+          } else {
+            tplInfo.ext === 'html';
+          }
         } else {
-          tplInfo.ext === 'html';
+
+        }
+        if (typeof opts.onTransform === "function") {
+          opts.onTransform(tplInfo);
         }
         return {
           info: tplInfo,
@@ -106,13 +113,13 @@ Definition of the TemplateGenerator class. TODO: Refactor
       outFolder = parsePath(f).dirname;
       curFmt = opts.themeObj.getFormat(this.format);
       genInfo.files.forEach(function(file) {
-        var fileName, thisFilePath;
+        var thisFilePath;
         file.info.orgPath = file.info.orgPath || '';
         thisFilePath = PATH.join(outFolder, file.info.orgPath);
-        if (this.onBeforeSave) {
+        if (file.info.action !== 'copy' && this.onBeforeSave) {
           file.data = this.onBeforeSave({
             theme: opts.themeObj,
-            outputFile: file.info.major ? f : thisFilePath,
+            outputFile: thisFilePath,
             mk: file.data,
             opts: this.opts
           });
@@ -120,12 +127,22 @@ Definition of the TemplateGenerator class. TODO: Refactor
             return;
           }
         }
-        fileName = file.info.major ? f : thisFilePath;
-        MKDIRP.sync(PATH.dirname(fileName));
-        FS.writeFileSync(fileName, file.data, {
-          encoding: 'utf8',
-          flags: 'w'
-        });
+        if (typeof opts.beforeWrite === "function") {
+          opts.beforeWrite(thisFilePath);
+        }
+        MKDIRP.sync(PATH.dirname(thisFilePath));
+        console.log(file.info.path);
+        if (file.info.action !== 'copy') {
+          FS.writeFileSync(thisFilePath, file.data, {
+            encoding: 'utf8',
+            flags: 'w'
+          });
+        } else {
+          FS.copySync(file.info.path, thisFilePath);
+        }
+        if (typeof opts.afterWrite === "function") {
+          opts.afterWrite(thisFilePath);
+        }
         if (this.onAfterSave) {
           return this.onAfterSave({
             outputFile: fileName,
@@ -134,17 +151,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
           });
         }
       }, this);
-      if (curFmt.symLinks) {
-        Object.keys(curFmt.symLinks).forEach(function(loc) {
-          var absLoc, absTarg, ref, type;
-          absLoc = PATH.join(outFolder, loc);
-          absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
-          type = (ref = parsePath(absLoc).extname) != null ? ref : {
-            'file': 'junction'
-          };
-          return FS.symlinkSync(absTarg, absLoc, type);
-        });
-      }
+      createSymLinks(curFmt, outFolder);
       return genInfo;
     };
 
@@ -158,7 +165,7 @@ Definition of the TemplateGenerator class. TODO: Refactor
     @param opts Options and passthrough data.
      */
 
-    TemplateGenerator.prototype.single = function(json, jst, format, opts, theme, curFmt) {
+    TemplateGenerator.prototype.transform = function(json, jst, format, opts, theme, curFmt) {
       var eng, result;
       if (this.opts.freezeBreaks) {
         jst = freeze(jst);
@@ -174,6 +181,32 @@ Definition of the TemplateGenerator class. TODO: Refactor
     return TemplateGenerator;
 
   })(BaseGenerator);
+
+  createSymLinks = function(curFmt, outFolder) {
+    if (curFmt.symLinks) {
+      Object.keys(curFmt.symLinks).forEach(function(loc) {
+        var absLoc, absTarg, succeeded, type;
+        absLoc = PATH.join(outFolder, loc);
+        absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
+        type = parsePath(absLoc).extname ? 'file' : 'junction';
+        try {
+          return FS.symlinkSync(absTarg, absLoc, type);
+        } catch (_error) {
+          succeeded = false;
+          if (_error.code === 'EEXIST') {
+            FS.unlinkSync(absLoc);
+            try {
+              FS.symlinkSync(absTarg, absLoc, type);
+              succeeded = true;
+            } catch (_error) {}
+          }
+          if (!succeeded) {
+            throw ex;
+          }
+        }
+      });
+    }
+  };
 
 
   /** Freeze newlines for protection against errant JST parsers. */

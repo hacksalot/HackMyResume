@@ -59,7 +59,7 @@ _build = ( src, dst, opts ) ->
     @err HMSTATUS.resumeNotFound, quit: true
     return null
 
-  _prep src, dst, opts
+  _prep.call @, src, dst, opts
 
   # Load input resumes as JSON...
   sheetObjects = ResumeFactory.load src,
@@ -175,6 +175,16 @@ _prep = ( src, dst, opts ) ->
   _opts.noTips = opts.noTips
   _opts.debug = opts.debug
   _opts.sort = opts.sort
+  that = @
+
+  # Set up callbacks for internal generators
+  _opts.onTransform = (info) ->
+    that.stat HMEVENT.afterTransform, info; return
+  _opts.beforeWrite = (info) ->
+    that.stat HMEVENT.beforeWrite, info; return
+  _opts.afterWrite = (info) ->
+    that.stat HMEVENT.afterWrite, info; return
+
 
   # If two or more files are passed to the GENERATE command and the TO
   # keyword is omitted, the last file specifies the output file.
@@ -203,7 +213,7 @@ _single = ( targInfo, theme, finished ) ->
     fName = PATH.basename f, '.' + fType
     theFormat = null
 
-    @.stat HMEVENT.beforeGenerate,
+    @stat HMEVENT.beforeGenerate,
       fmt: targInfo.fmt.outFormat
       file: PATH.relative(process.cwd(), f)
 

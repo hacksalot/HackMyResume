@@ -6,13 +6,11 @@ Definition of the UnderscoreGenerator class.
  */
 
 (function() {
-  var HMSTATUS, UnderscoreGenerator, _, registerHelpers;
+  var UnderscoreGenerator, _, registerHelpers;
 
   _ = require('underscore');
 
   registerHelpers = require('../helpers/underscore-helpers');
-
-  HMSTATUS = require('../core/status-codes');
 
 
   /**
@@ -22,13 +20,14 @@ Definition of the UnderscoreGenerator class.
 
   UnderscoreGenerator = module.exports = {
     generateSimple: function(data, tpl) {
-      var template;
+      var HMS, t;
       try {
-        template = _.template(tpl);
-        return template(data);
+        t = _.template(tpl);
+        return t(data);
       } catch (_error) {
+        HMS = require('../core/status-codes');
         throw {
-          fluenterror: template ? HMSTATUS.invokeTemplate : HMSTATUS.compileTemplate,
+          fluenterror: HMS[t ? 'invokeTemplate' : 'compileTemplate'],
           inner: _error
         };
       }

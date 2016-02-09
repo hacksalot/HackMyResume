@@ -1,7 +1,7 @@
 
 /**
 Template helper definitions for Underscore.
-@license MIT. Copyright (c) 2016 hacksalot (https://github.com/hacksalot)
+@license MIT. See LICENSE.md for details.
 @module handlebars-helpers.js
  */
 
@@ -26,7 +26,7 @@ Template helper definitions for Underscore.
     helpers.cssInfo = cssInfo;
     helpers.engine = eng;
     ctx.h = helpers;
-    return _.each(helpers, function(hVal, hKey) {
+    _.each(helpers, function(hVal, hKey) {
       if (_.isFunction(hVal)) {
         return _.bind(hVal, ctx);
       }

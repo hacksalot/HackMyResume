@@ -33,7 +33,10 @@ Event code definitions.
     beforeInlineConvert: 22,
     afterInlineConvert: 23,
     beforeValidate: 24,
-    afterValidate: 25
+    afterValidate: 25,
+    beforeWrite: 26,
+    afterWrite: 27,
+    applyTheme: 28
   };
 
 }).call(this);

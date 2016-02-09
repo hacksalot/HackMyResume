@@ -6,7 +6,7 @@ Definition of the FRESHTheme class.
  */
 
 (function() {
-  var EXTEND, FRESHTheme, FS, HMSTATUS, PATH, READFILES, _, friendlyName, loadExplicit, loadImplicit, loadSafeJson, moment, parsePath, pathExists, validator;
+  var EXTEND, FRESHTheme, FS, HMSTATUS, PATH, READFILES, _, _load, friendlyName, loadSafeJson, moment, parsePath, pathExists, validator;
 
   FS = require('fs');
 
@@ -71,12 +71,7 @@ Definition of the FRESHTheme class.
           return formatsHash[key] = cached[th].getFormat(key);
         });
       }
-      if (!!this.formats) {
-        formatsHash = loadExplicit.call(this, formatsHash);
-        this.explicit = true;
-      } else {
-        formatsHash = loadImplicit.call(this, formatsHash);
-      }
+      formatsHash = _load.call(this, formatsHash);
       this.formats = formatsHash;
       this.name = parsePath(this.folder).name;
       return this;
@@ -105,33 +100,51 @@ Definition of the FRESHTheme class.
   Refactor duplicated code with loadExplicit.
    */
 
-  loadImplicit = function(formatsHash) {
-    var fmts, major, that, tplFolder;
+  _load = function(formatsHash) {
+    var copyOnly, fmts, major, that, tplFolder;
     that = this;
     major = false;
     tplFolder = PATH.join(this.folder, 'src');
+    copyOnly = ['.ttf', '.otf', '.png', '.jpg', '.jpeg', '.pdf'];
     fmts = READFILES(tplFolder).map(function(absPath) {
-      var idx, isMajor, obj, outFmt, pathInfo, portion, reg, res;
+      var absPathSafe, act, idx, isMajor, obj, outFmt, pathInfo, portion, ref, ref1, reg, res;
       pathInfo = parsePath(absPath);
+      absPathSafe = absPath.trim().toLowerCase();
       outFmt = '';
       isMajor = false;
-      portion = pathInfo.dirname.replace(tplFolder, '');
-      if (portion && portion.trim()) {
-        if (portion[1] === '_') {
-          return;
+      if (that.formats) {
+        outFmt = _.find(Object.keys(that.formats), function(fmtKey) {
+          var fmtVal;
+          fmtVal = that.formats[fmtKey];
+          return _.some(fmtVal.transform, function(fpath) {
+            var absPathB;
+            absPathB = PATH.join(that.folder, fpath).trim().toLowerCase();
+            return absPathB === absPathSafe;
+          });
+        });
+        if (outFmt) {
+          isMajor = true;
         }
-        reg = /^(?:\/|\\)(html|latex|doc|pdf|png|partials)(?:\/|\\)?/ig;
-        res = reg.exec(portion);
-        if (res) {
-          if (res[1] !== 'partials') {
-            outFmt = res[1];
-          } else {
-            that.partials = that.partials || [];
-            that.partials.push({
-              name: pathInfo.name,
-              path: absPath
-            });
-            return null;
+      }
+      if (!outFmt) {
+        portion = pathInfo.dirname.replace(tplFolder, '');
+        if (portion && portion.trim()) {
+          if (portion[1] === '_') {
+            return;
+          }
+          reg = /^(?:\/|\\)(html|latex|doc|pdf|png|partials)(?:\/|\\)?/ig;
+          res = reg.exec(portion);
+          if (res) {
+            if (res[1] !== 'partials') {
+              outFmt = res[1];
+            } else {
+              that.partials = that.partials || [];
+              that.partials.push({
+                name: pathInfo.name,
+                path: absPath
+              });
+              return null;
+            }
           }
         }
       }
@@ -140,12 +153,16 @@ Definition of the FRESHTheme class.
         outFmt = idx === -1 ? pathInfo.name : pathInfo.name.substr(idx + 1);
         isMajor = true;
       }
+      act = _.contains(copyOnly, pathInfo.extname) ? 'copy' : 'transform';
       formatsHash[outFmt] = formatsHash[outFmt] || {
         outFormat: outFmt,
         files: []
       };
+      if ((ref = that.formats) != null ? (ref1 = ref[outFmt]) != null ? ref1.symLinks : void 0 : void 0) {
+        formatsHash[outFmt].symLinks = that.formats[outFmt].symLinks;
+      }
       obj = {
-        action: 'transform',
+        action: act,
         path: absPath,
         major: isMajor,
         orgPath: PATH.relative(tplFolder, absPath),
@@ -178,81 +195,6 @@ Definition of the FRESHTheme class.
           };
         }
       }
-    });
-    return formatsHash;
-  };
-
-
-  /*
-  Load the theme explicitly, by following the 'formats' hash
-  in the theme's JSON settings file.
-   */
-
-  loadExplicit = function(formatsHash) {
-    var act, fmts, that, tplFolder;
-    tplFolder = PATH.join(this.folder, 'src');
-    act = null;
-    that = this;
-    fmts = READFILES(tplFolder).map(function(absPath) {
-      var absPathSafe, idx, obj, outFmt, pathInfo, portion, reg, res;
-      act = null;
-      pathInfo = parsePath(absPath);
-      absPathSafe = absPath.trim().toLowerCase();
-      outFmt = _.find(Object.keys(that.formats), function(fmtKey) {
-        var fmtVal;
-        fmtVal = that.formats[fmtKey];
-        return _.some(fmtVal.transform, function(fpath) {
-          var absPathB;
-          absPathB = PATH.join(that.folder, fpath).trim().toLowerCase();
-          return absPathB === absPathSafe;
-        });
-      });
-      if (outFmt) {
-        act = 'transform';
-      }
-      if (!outFmt) {
-        portion = pathInfo.dirname.replace(tplFolder, '');
-        if (portion && portion.trim()) {
-          reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig;
-          res = reg.exec(portion);
-          res && (outFmt = res[1]);
-        }
-      }
-      if (!outFmt) {
-        idx = pathInfo.name.lastIndexOf('-');
-        outFmt = idx === -1 ? pathInfo.name : pathInfo.name.substr(idx + 1);
-      }
-      formatsHash[outFmt] = formatsHash[outFmt] || {
-        outFormat: outFmt,
-        files: [],
-        symLinks: that.formats[outFmt].symLinks
-      };
-      obj = {
-        action: act,
-        orgPath: PATH.relative(that.folder, absPath),
-        path: absPath,
-        ext: pathInfo.extname.slice(1),
-        title: friendlyName(outFmt),
-        pre: outFmt,
-        data: FS.readFileSync(absPath, 'utf8'),
-        css: null
-      };
-      formatsHash[outFmt].files.push(obj);
-      return obj;
-    });
-    this.cssFiles = fmts.filter(function(fmt) {
-      return fmt.ext === 'css';
-    });
-    this.cssFiles.forEach(function(cssf) {
-      var idx;
-      idx = _.findIndex(fmts, function(fmt) {
-        return fmt.pre === cssf.pre && fmt.ext === 'html';
-      });
-      fmts[idx].css = cssf.data;
-      return fmts[idx].cssPath = cssf.path;
-    });
-    fmts = fmts.filter(function(fmt) {
-      return fmt.ext !== 'css';
     });
     return formatsHash;
   };

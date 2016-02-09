@@ -103,7 +103,7 @@ Implementation of the 'build' verb for HackMyResume.
       });
       return null;
     }
-    _prep(src, dst, opts);
+    _prep.call(this, src, dst, opts);
     sheetObjects = ResumeFactory.load(src, {
       format: null,
       objectify: false,
@@ -230,6 +230,7 @@ Implementation of the 'build' verb for HackMyResume.
    */
 
   _prep = function(src, dst, opts) {
+    var that;
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
     _opts.css = opts.css;
@@ -241,6 +242,16 @@ Implementation of the 'build' verb for HackMyResume.
     _opts.noTips = opts.noTips;
     _opts.debug = opts.debug;
     _opts.sort = opts.sort;
+    that = this;
+    _opts.onTransform = function(info) {
+      that.stat(HMEVENT.afterTransform, info);
+    };
+    _opts.beforeWrite = function(info) {
+      that.stat(HMEVENT.beforeWrite, info);
+    };
+    _opts.afterWrite = function(info) {
+      that.stat(HMEVENT.afterWrite, info);
+    };
     (src.length > 1 && (!dst || !dst.length)) && dst.push(src.pop());
   };
 

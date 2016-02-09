@@ -33,3 +33,6 @@ module.exports =
   afterInlineConvert: 23
   beforeValidate:   24
   afterValidate:    25
+  beforeWrite:      26
+  afterWrite:       27
+  applyTheme:       28
