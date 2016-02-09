@@ -8,7 +8,7 @@ Definition of the UnderscoreGenerator class.
 
 _ = require 'underscore'
 registerHelpers = require '../helpers/underscore-helpers'
-HMSTATUS = require '../core/status-codes'
+
 
 
 ###*
@@ -17,22 +17,27 @@ Perform template-based resume generation using Underscore.js.
 ###
 UnderscoreGenerator = module.exports =
 
+
+
   generateSimple: ( data, tpl ) ->
     try
       # Compile and run the Handlebars template.
-      template = _.template( tpl );
-      return template( data );
+      tpl = _.template tpl
+      template data
     catch
+      HMS = require '../core/status-codes'
       throw
-        fluenterror: if template then HMSTATUS.invokeTemplate else HMSTATUS.compileTemplate,
+        fluenterror: HMS[if tpl then 'invokeTemplate' else 'compileTemplate']
         inner: _error
+
+
 
   generate: ( json, jst, format, cssInfo, opts, theme ) ->
 
     # Tweak underscore's default template delimeters
     delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
     if opts.themeObj && opts.themeObj.delimeters
-      delims = _.mapObject delims, (val,key) -> new RegExp( val, "ig")
+      delims = _.mapObject delims, (val,key) -> new RegExp val, "ig"
     _.templateSettings = delims;
 
     # Strip {# comments #}
