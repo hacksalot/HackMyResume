@@ -33,6 +33,7 @@ API facade for HackMyCore.
     JRSResume: require('./core/jrs-resume'),
     FRESHTheme: require('./core/fresh-theme'),
     JRSTheme: require('./core/jrs-theme'),
+    ResumeFactory: require('./core/resume-factory'),
     FluentDate: require('./core/fluent-date'),
     HtmlGenerator: require('./generators/html-generator'),
     TextGenerator: require('./generators/text-generator'),
