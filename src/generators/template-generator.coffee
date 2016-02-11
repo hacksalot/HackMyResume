@@ -64,7 +64,7 @@ module.exports = class TemplateGenerator extends BaseGenerator
     # Run the transformation!
     results = curFmt.files.map ( tplInfo, idx ) ->
       if tplInfo.action == 'transform'
-        trx = @transform rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt
+        trx = @transform rez, tplInfo.data, @format, opts, opts.themeObj, curFmt
         if tplInfo.ext == 'css'
           curFmt.files[idx].data = trx
         else tplInfo.ext == 'html'
@@ -109,19 +109,16 @@ module.exports = class TemplateGenerator extends BaseGenerator
       if file.info.action != 'copy' and @onBeforeSave
         file.data = this.onBeforeSave
           theme: opts.themeObj
-          outputFile: thisFilePath #if file.info.major then f else thisFilePath
+          outputFile: thisFilePath
           mk: file.data
           opts: this.opts
         if !file.data
-          return # PDF etc
+          return
 
       # Write the file
       opts.beforeWrite? thisFilePath
 
       MKDIRP.sync PATH.dirname( thisFilePath )
-
-      #console.log( Object.keys(file.info) )
-      console.log file.info.path
 
       if file.info.action != 'copy'
         FS.writeFileSync thisFilePath, file.data, encoding: 'utf8', flags: 'w'

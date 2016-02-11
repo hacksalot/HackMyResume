@@ -239,10 +239,7 @@ _single = ( targInfo, theme, finished ) ->
       ret = theFormat.gen.generate _rezObj, f, _opts
 
   catch e
-    # Catch any errors caused by generating this file and don't let them
-    # propagate -- typically we want to continue processing other formats
-    # even if this format failed.
-    ex = e;
+    ex = e
 
   this.stat HMEVENT.afterGenerate,
     fmt: targInfo.fmt.outFormat,

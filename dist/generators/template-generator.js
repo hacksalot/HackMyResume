@@ -131,7 +131,6 @@ Definition of the TemplateGenerator class. TODO: Refactor
           opts.beforeWrite(thisFilePath);
         }
         MKDIRP.sync(PATH.dirname(thisFilePath));
-        console.log(file.info.path);
         if (file.info.action !== 'copy') {
           FS.writeFileSync(thisFilePath, file.data, {
             encoding: 'utf8',

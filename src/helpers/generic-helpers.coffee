@@ -27,15 +27,18 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Convert the input date to a specified format through Moment.js.
-  If date is invalid, will return the time provided by the user,
-  or default to the fallback param or 'Present' if that is set to true
-  @method formatDate
+  Display a formatted date with optional fallback text.
+  Convert the input date to the specified format through Moment.js. If date is
+  valid, return the formatted date string. If date is null, undefined, or other
+  falsy value, return the value of the 'fallback' parameter, if specified, or
+  null if no fallback was specified. If date is invalid, but not null/undefined/
+  falsy, return it as-is.
   ###
-  formatDate: (datetime, format, fallback) ->
-    if moment
-      momentDate = moment datetime
-      return momentDate.format(format) if momentDate.isValid()
+  formatDate: (datetime, dtFormat, fallback) ->
+
+    dtFormat ?= 'YYYY-MM'
+    momentDate = moment datetime
+    return momentDate.format(dtFormat) if momentDate.isValid()
 
     datetime ||
       if typeof fallback == 'string'
@@ -82,8 +85,8 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Return true if the section is present on the resume and has at least one
-  element.
+  Block-level helper. Emit the enclosed content if the resume has a section with
+  the specified name. Otherwise, emit an empty string ''.
   @method section
   ###
   section: ( title, options ) ->
@@ -273,7 +276,7 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Return true if the context has the property or subpropery.
+  Emit the enclosed content if the resume has the named property or subproperty.
   @method has
   ###
   has: ( title, options ) ->
@@ -319,10 +322,7 @@ GenericHelpers = module.exports =
 
 
 
-  ###*
-  Convert inline Markdown to inline WordProcessingML.
-  @method wpml
-  ###
+  ###* Convert inline Markdown to inline WordProcessingML. ###
   wpml: ( txt, inline ) ->
     return '' if !txt
     inline = (inline && !inline.hash) || false

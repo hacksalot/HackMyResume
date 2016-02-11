@@ -20,32 +20,26 @@ READFILES = require 'recursive-readdir-sync'
 
 
 
-###
-The FRESHTheme class is a representation of a FRESH theme
-asset. See also: JRSTheme.
-@class FRESHTheme
-###
+### A representation of a FRESH theme asset.
+@class FRESHTheme ###
 class FRESHTheme
 
 
 
-
-  ###
-  Open and parse the specified theme.
-  ###
+  ### Open and parse the specified theme. ###
   open: ( themeFolder ) ->
 
     this.folder = themeFolder;
 
     # Open the [theme-name].json file; should have the same name as folder
-    pathInfo = parsePath( themeFolder )
+    pathInfo = parsePath themeFolder
 
     # Set up a formats hash for the theme
     formatsHash = { }
 
     # Load the theme
-    themeFile = PATH.join( themeFolder, 'theme.json' )
-    themeInfo = loadSafeJson( themeFile )
+    themeFile = PATH.join themeFolder, 'theme.json'
+    themeInfo = loadSafeJson themeFile
     if themeInfo.ex
       throw
         fluenterror:
@@ -87,15 +81,11 @@ class FRESHTheme
 
 
 
-### Load the theme implicitly, by scanning the theme folder for files. TODO:
-Refactor duplicated code with loadExplicit. ###
+### Load and parse theme source files. ###
 _load = (formatsHash) ->
 
-  # Set up a hash of formats supported by this theme.
   that = @
   major = false
-
-  # Establish the base theme folder
   tplFolder = PATH.join @folder, 'src'
 
   copyOnly = ['.ttf','.otf', '.png','.jpg','.jpeg','.pdf']
@@ -104,71 +94,8 @@ _load = (formatsHash) ->
   # containing info for each file. While we're doing that, also build up
   # the formatsHash object.
   fmts = READFILES(tplFolder).map (absPath) ->
-
-    pathInfo = parsePath absPath
-    absPathSafe = absPath.trim().toLowerCase()
-    outFmt = ''
-    isMajor = false
-
-    # If this file is mentioned in the theme's JSON file under "transforms"
-    if that.formats
-      outFmt = _.find Object.keys( that.formats ), ( fmtKey ) ->
-          fmtVal = that.formats[ fmtKey ]
-          _.some fmtVal.transform, (fpath) ->
-            absPathB = PATH.join( that.folder, fpath ).trim().toLowerCase()
-            absPathB == absPathSafe
-      isMajor = true if outFmt
-
-    if !outFmt
-      # If this file lives in a specific format folder within the theme,
-      # such as "/latex" or "/html", then that format is the output format
-      # for all files within the folder.
-      portion = pathInfo.dirname.replace tplFolder,''
-      if portion && portion.trim()
-        return if portion[1] == '_'
-        reg = /^(?:\/|\\)(html|latex|doc|pdf|png|partials)(?:\/|\\)?/ig
-        res = reg.exec( portion )
-        if res
-          if res[1] != 'partials'
-            outFmt = res[1]
-          else
-            that.partials = that.partials || []
-            that.partials.push( { name: pathInfo.name, path: absPath } )
-            return null
-
-    # Otherwise, the output format is inferred from the filename, as in
-    # compact-[outputformat].[extension], for ex, compact-pdf.html.
-    if !outFmt
-      idx = pathInfo.name.lastIndexOf '-'
-      outFmt = if idx == -1 then pathInfo.name else pathInfo.name.substr( idx + 1 )
-      isMajor = true
-
-    act = if _.contains copyOnly, pathInfo.extname then 'copy' else 'transform'
-
-    # We should have a valid output format now.
-    formatsHash[ outFmt ] = formatsHash[outFmt] || {
-      outFormat: outFmt,
-      files: []
-    }
-    if that.formats?[ outFmt ]?.symLinks
-      formatsHash[ outFmt ].symLinks = that.formats[ outFmt ].symLinks
-
-    # Create the file representation object.
-    obj =
-      action: act
-      path: absPath
-      major: isMajor
-      orgPath: PATH.relative tplFolder, absPath
-      ext: pathInfo.extname.slice 1
-      title: friendlyName outFmt
-      pre: outFmt
-      # outFormat: outFmt || pathInfo.name,
-      data: FS.readFileSync absPath, 'utf8'
-      css: null
-
-    # Add this file to the list of files for this format type.
-    formatsHash[ outFmt ].files.push( obj )
-    obj
+    _loadOne.call @, absPath, formatsHash, tplFolder
+  , @
 
   # Now, get all the CSS files...
   @cssFiles = fmts.filter (fmt) -> fmt and (fmt.ext == 'css')
@@ -192,101 +119,86 @@ _load = (formatsHash) ->
 
 
 
-# ###
-# Load the theme explicitly, by following the 'formats' hash
-# in the theme's JSON settings file.
-# ###
-# loadExplicit = (formatsHash) ->
-#
-#   # Housekeeping
-#   tplFolder = PATH.join this.folder, 'src'
-#   act = null
-#   that = this
-#
-#   # Iterate over all files in the theme folder, producing an array, fmts,
-#   # containing info for each file. While we're doing that, also build up
-#   # the formatsHash object.
-#   fmts = READFILES( tplFolder ).map (absPath) ->
-#
-#     act = null
-#
-#     pathInfo = parsePath absPath
-#     absPathSafe = absPath.trim().toLowerCase()
-#
-#     # If this file is mentioned in the theme's JSON file under "transforms"
-#     outFmt = _.find Object.keys( that.formats ), ( fmtKey ) ->
-#         fmtVal = that.formats[ fmtKey ]
-#         _.some fmtVal.transform, (fpath) ->
-#           absPathB = PATH.join( that.folder, fpath ).trim().toLowerCase()
-#           absPathB == absPathSafe
-#
-#     act = 'transform' if outFmt
-#
-#     # If this file lives in a specific format folder within the theme,
-#     # such as "/latex" or "/html", then that format is the output format
-#     # for all files within the folder.
-#     if !outFmt
-#       portion = pathInfo.dirname.replace tplFolder,''
-#       if portion && portion.trim()
-#         reg = /^(?:\/|\\)(html|latex|doc|pdf)(?:\/|\\)?/ig
-#         res = reg.exec portion
-#         res && (outFmt = res[1])
-#
-#     # Otherwise, the output format is inferred from the filename, as in
-#     # compact-[outputformat].[extension], for ex, compact-pdf.html.
-#     if !outFmt
-#       idx = pathInfo.name.lastIndexOf '-'
-#       outFmt = if (idx == -1) then pathInfo.name else pathInfo.name.substr(idx + 1)
-#
-#     # We should have a valid output format now.
-#     formatsHash[ outFmt ] =
-#       formatsHash[ outFmt ] || {
-#         outFormat: outFmt,
-#         files: [],
-#         symLinks: that.formats[ outFmt ].symLinks
-#       };
-#
-#     # Create the file representation object.
-#     obj =
-#       action: act
-#       orgPath: PATH.relative(that.folder, absPath)
-#       path: absPath
-#       ext: pathInfo.extname.slice(1)
-#       title: friendlyName( outFmt )
-#       pre: outFmt
-#       # outFormat: outFmt || pathInfo.name,
-#       data: FS.readFileSync( absPath, 'utf8' )
-#       css: null
-#
-#     # Add this file to the list of files for this format type.
-#     formatsHash[ outFmt ].files.push( obj )
-#     obj
-#
-#   # Now, get all the CSS files...
-#   @cssFiles = fmts.filter ( fmt ) -> fmt.ext == 'css'
-#
-#   # For each CSS file, get its corresponding HTML file
-#   @cssFiles.forEach ( cssf ) ->
-#     # For each CSS file, get its corresponding HTML file
-#     idx = _.findIndex fmts, ( fmt ) ->
-#       fmt.pre == cssf.pre && fmt.ext == 'html'
-#     fmts[ idx ].css = cssf.data
-#     fmts[ idx ].cssPath = cssf.path
-#
-#   # Remove CSS files from the formats array
-#   fmts = fmts.filter ( fmt) -> fmt.ext != 'css'
-#   formatsHash
+### Load a single theme file. ###
+_loadOne = ( absPath, formatsHash, tplFolder ) ->
+
+  pathInfo = parsePath absPath
+  absPathSafe = absPath.trim().toLowerCase()
+  outFmt = ''
+  shouldTransform = false
+
+  # If this is an "explicit" theme, all files of importance are specified in
+  # the "transform" section of the theme.json file.
+  if @explicit
+
+    outFmt = _.find Object.keys( @formats ), ( fmtKey ) ->
+      fmtVal = @formats[ fmtKey ]
+      _.some fmtVal.transform, (fpath) ->
+        absPathB = PATH.join( @folder, fpath ).trim().toLowerCase()
+        absPathB == absPathSafe
+      , @
+    , @
+    act = 'transform' if outFmt
+
+  if !outFmt
+    # If this file lives in a specific format folder within the theme,
+    # such as "/latex" or "/html", then that format is the implicit output
+    # format for all files within the folder
+    portion = pathInfo.dirname.replace tplFolder,''
+    if portion && portion.trim()
+      return if portion[1] == '_'
+      reg = /^(?:\/|\\)(html|latex|doc|pdf|png|partials)(?:\/|\\)?/ig
+      res = reg.exec( portion )
+      if res
+        if res[1] != 'partials'
+          outFmt = res[1]
+          act = 'transform' if !@explicit
+        else
+          @partials = @partials || []
+          @partials.push( { name: pathInfo.name, path: absPath } )
+          return null
+
+  # Otherwise, the output format is inferred from the filename, as in
+  # compact-[outputformat].[extension], for ex, compact-pdf.html
+  if !outFmt
+    idx = pathInfo.name.lastIndexOf '-'
+    outFmt = if idx == -1 then pathInfo.name else pathInfo.name.substr idx+1
+    act = 'transform' if !@explicit
+
+  # Make sure we have a valid formatsHash
+  formatsHash[ outFmt ] = formatsHash[outFmt] || {
+    outFormat: outFmt,
+    files: []
+  }
+
+  # Move symlink descriptions from theme.json to the format
+  if @formats?[ outFmt ]?.symLinks
+    formatsHash[ outFmt ].symLinks = @formats[ outFmt ].symLinks
+
+  # Create the file representation object
+  obj =
+    action: act
+    path: absPath
+    orgPath: PATH.relative tplFolder, absPath
+    ext: pathInfo.extname.slice 1
+    title: friendlyName outFmt
+    pre: outFmt
+    # outFormat: outFmt || pathInfo.name,
+    data: FS.readFileSync absPath, 'utf8'
+    css: null
+
+  # Add this file to the list of files for this format type.
+  formatsHash[ outFmt ].files.push( obj )
+  obj
 
 
 
-###
-Return a more friendly name for certain formats.
-TODO: Refactor
-###
+### Return a more friendly name for certain formats. ###
 friendlyName = ( val ) ->
-  val = val.trim().toLowerCase()
+  val = (val && val.trim().toLowerCase()) || ''
   friendly = { yml: 'yaml', md: 'markdown', txt: 'text' }
   friendly[val] || val
+
 
 
 module.exports = FRESHTheme
