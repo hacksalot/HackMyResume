@@ -1,6 +1,10 @@
 /**
+Test routines for HackMyResume dates, times, and datetimes.
 @module test-dates.js
+@license MIT. See LICENSE.md for details.
 */
+
+
 
 var chai = require('chai')
   , expect = chai.expect
@@ -12,7 +16,11 @@ var chai = require('chai')
   , validator = require('is-my-json-valid')
   , EXTEND = require('extend');
 
+
+
 chai.config.includeStack = true;
+
+
 
 var gig = {
   employer: 'E1'
@@ -27,6 +35,8 @@ var r = {
     history: [ null ]
   }
 };
+
+
 
 var tests = [
   // single job, concrete start, no end
@@ -58,9 +68,13 @@ var tests = [
 
 ];
 
+
+
 tests.forEach(function(t){
    _.initial( t ).forEach(function(t){ t.employer = 'E1' });
 })
+
+
 
 describe('Testing DATES', function () {
 

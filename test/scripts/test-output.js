@@ -1,6 +1,7 @@
 /**
-CLI test routines for HackMyResume.
-@module test-cli.js
+Output test routines for HackMyResume. Make sure our outputs are consistent.
+@module test-output.js
+@license MIT. See LICENSE.md for details.
 */
 
 

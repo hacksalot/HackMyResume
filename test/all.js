@@ -7,6 +7,6 @@ require('./scripts/test-cli');
 require('./scripts/test-fresh-sheet');
 require('./scripts/test-jrs-sheet');
 require('./scripts/test-themes');
-require('./scripts/test-api');
+require('./scripts/test-verbs');
 require('./scripts/test-output');
 require('./scripts/test-dates');

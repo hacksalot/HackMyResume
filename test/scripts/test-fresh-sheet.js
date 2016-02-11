@@ -1,3 +1,10 @@
+/**
+Test routines for the FRESHResume class.
+@module test-jrs-sheet.js
+@license MIT. See LICENSE.md for details.
+*/
+
+
 
 var chai = require('chai')
   , expect = chai.expect
@@ -8,7 +15,11 @@ var chai = require('chai')
   , ResumeFactory = require('../../dist/core/resume-factory')
   , validator = require('is-my-json-valid');
 
+
+
 chai.config.includeStack = false;
+
+
 
 function testResume(opts) {
 

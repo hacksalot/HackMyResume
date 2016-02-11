@@ -1,5 +1,8 @@
 /**
-@module test-api.js
+High-level API test routines for HackMyResume. Test HackMyResume verbs such
+as build, new, peek, etc., by creating and invoking a Verb object.
+@module test-verbs.js
+@license MIT. See LICENSE.md for details.
 */
 
 var chai = require('chai')
@@ -172,7 +175,8 @@ describe('Testing API interface', function () {
         shouldSucceed = false;
       }
 
-      it( 'The ' + verb.toUpperCase() + ' command should ' + (shouldSucceed ? ' NOT THROW' : ' THROW') + msg, function () {
+      it( 'The ' + verb.toUpperCase() + ' command should ' +
+          (shouldSucceed ? ' NOT THROW' : ' THROW') + msg, function () {
 
         function runIt() {
           try {

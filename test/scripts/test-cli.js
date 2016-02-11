@@ -1,6 +1,8 @@
 /**
-CLI test routines for HackMyResume.
+CLI test routines for HackMyResume. Test the HackMyResume command-line interface
+by spawning HMR directly and observing the return code and std output.
 @module test-cli.js
+@license MIT. See LICENSE.md for details.
 */
 
 
@@ -13,12 +15,11 @@ var chai = require('chai')
   , EXEC = require('child_process').exec
 
 
+
 describe('Testing CLI interface', function () {
 
   this.timeout(5000);
 
-  // Run a test through the stub, gathering console.log output into "gather"
-  // and testing against it.
   function run( args, expErr ) {
     var title = args;
     it( 'Testing: "' + title + '"\n\n', function( done ) {
@@ -36,7 +37,8 @@ describe('Testing CLI interface', function () {
     });
   }
 
-  var lines = FS.readFileSync( PATH.join( __dirname, './test-hmr.txt'), 'utf8').split('\n');
+  var testFile = PATH.join( __dirname, './test-hmr.txt');
+  var lines = FS.readFileSync( testFile, 'utf8').split('\n');
   lines.forEach(function(l){
     if( l && l.trim() ) {
       if(l[0] !== '#') {

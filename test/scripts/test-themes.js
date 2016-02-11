@@ -1,3 +1,11 @@
+/**
+Theme test routines for HackMyResume. Test all preinstalled HackMyResume themes
+along with a handful of JSON Resume themes for good measure. Uses the HMR verb
+interface.
+@module test-themes.js
+@license MIT. See LICENSE.md for details.
+*/
+
 
 var chai = require('chai')
   , expect = chai.expect
