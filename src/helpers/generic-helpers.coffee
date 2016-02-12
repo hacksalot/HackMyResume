@@ -487,6 +487,21 @@ GenericHelpers = module.exports =
 
 
 
+  pad: (stringOrArray, padAmount, unused ) ->
+    stringOrArray = stringOrArray || ''
+    padAmount = padAmount || 0
+    ret = ''
+    PAD = require 'string-padding'
+    if !String.is stringOrArray
+      ret = stringOrArray
+        .map (line) -> PAD line, line.length + Math.abs(padAmount), null, if padAmount < 0 then PAD.LEFT else PAD.RIGHT
+        .join '\n'
+    else
+      ret = PAD stringOrArray, stringOrArray.length + Math.abs(padAmount), null, if padAmount < 0 then PAD.LEFT else PAD.RIGHT
+    ret
+
+
+
 ###*
 Report an error to the outside world without throwing an exception. Currently
 relies on kludging the running verb into. opts.

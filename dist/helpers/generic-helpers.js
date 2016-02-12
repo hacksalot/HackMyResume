@@ -522,6 +522,21 @@ Generic template helper definitions for HackMyResume / FluentCV.
       } else {
         return options.inverse(this);
       }
+    },
+    pad: function(stringOrArray, padAmount, unused) {
+      var PAD, ret;
+      stringOrArray = stringOrArray || '';
+      padAmount = padAmount || 0;
+      ret = '';
+      PAD = require('string-padding');
+      if (!String.is(stringOrArray)) {
+        ret = stringOrArray.map(function(line) {
+          return PAD(line, line.length + Math.abs(padAmount), null, padAmount < 0 ? PAD.LEFT : PAD.RIGHT);
+        }).join('\n');
+      } else {
+        ret = PAD(stringOrArray, stringOrArray.length + Math.abs(padAmount), null, padAmount < 0 ? PAD.LEFT : PAD.RIGHT);
+      }
+      return ret;
     }
   };
 
