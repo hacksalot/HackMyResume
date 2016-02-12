@@ -131,11 +131,11 @@ Definition of the FRESHTheme class.
   /* Load a single theme file. */
 
   _loadOne = function(absPath, formatsHash, tplFolder) {
-    var absPathSafe, act, idx, obj, outFmt, pathInfo, portion, ref, ref1, reg, res, shouldTransform;
+    var absPathSafe, act, idx, obj, outFmt, pathInfo, portion, ref, ref1, reg, res;
     pathInfo = parsePath(absPath);
     absPathSafe = absPath.trim().toLowerCase();
     outFmt = '';
-    shouldTransform = false;
+    act = 'copy';
     if (this.explicit) {
       outFmt = _.find(Object.keys(this.formats), function(fmtKey) {
         var fmtVal;

@@ -125,7 +125,7 @@ _loadOne = ( absPath, formatsHash, tplFolder ) ->
   pathInfo = parsePath absPath
   absPathSafe = absPath.trim().toLowerCase()
   outFmt = ''
-  shouldTransform = false
+  act = 'copy'
 
   # If this is an "explicit" theme, all files of importance are specified in
   # the "transform" section of the theme.json file.
