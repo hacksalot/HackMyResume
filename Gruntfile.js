@@ -70,7 +70,8 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         laxcomma: true,
-        expr: true
+        expr: true,
+        eqnull: true
       },
       all: ['Gruntfile.js', 'dist/cli/**/*.js', 'test/*.js']
     }
