@@ -484,7 +484,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     compare: function(lvalue, rvalue, options) {
       var operator, operators, result;
       if (arguments.length < 3) {
-        throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+        throw new Error("Template helper 'compare' needs 2 parameters");
       }
       operator = options.hash.operator || "==";
       operators = {
@@ -514,7 +514,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
         }
       };
       if (!operators[operator]) {
-        throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
+        throw new Error("Helper 'compare' doesn't know the operator " + operator);
       }
       result = operators[operator](lvalue, rvalue);
       if (result) {

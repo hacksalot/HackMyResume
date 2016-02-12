@@ -469,7 +469,7 @@ GenericHelpers = module.exports =
   ###
   compare: (lvalue, rvalue, options) ->
     if arguments.length < 3
-      throw new Error("Handlerbars Helper 'compare' needs 2 parameters")
+      throw new Error "Template helper 'compare' needs 2 parameters"
     operator = options.hash.operator || "=="
     operators =
         '==':       (l,r) -> l == r
@@ -481,7 +481,7 @@ GenericHelpers = module.exports =
         '>=':       (l,r) -> l >= r
         'typeof':   (l,r) -> typeof l == r
     if !operators[operator]
-      throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator)
+      throw new Error("Helper 'compare' doesn't know the operator "+operator)
     result = operators[operator]( lvalue, rvalue )
     return if result then options.fn(this) else options.inverse(this)
 
