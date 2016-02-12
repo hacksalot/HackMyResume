@@ -18,17 +18,31 @@ See: http://stackoverflow.com/q/13323356
 (function() {
   var SyntaxErrorEx;
 
-  SyntaxErrorEx = function(ex, rawData) {
-    var JSONLint, colNum, lineNum, lint;
-    lineNum = null;
-    colNum = null;
-    JSONLint = require('json-lint');
-    lint = JSONLint(rawData, {
-      comments: false
-    });
-    this.line = lint.error ? lint.line : '???';
-    return this.col = lint.error ? lint.character : '???';
-  };
+  SyntaxErrorEx = (function() {
+    function SyntaxErrorEx(ex, rawData) {
+      var JSONLint, colNum, lineNum, lint, ref;
+      lineNum = null;
+      colNum = null;
+      JSONLint = require('json-lint');
+      lint = JSONLint(rawData, {
+        comments: false
+      });
+      if (lint.error) {
+        ref = [lint.line, lint.character], this.line = ref[0], this.col = ref[1];
+      }
+      if (!lint.error) {
+        JSONLint = require('jsonlint');
+        try {
+          JSONLint.parse(rawData);
+        } catch (_error) {
+          this.line = (/on line (\d+)/.exec(_error))[1];
+        }
+      }
+    }
+
+    return SyntaxErrorEx;
+
+  })();
 
   SyntaxErrorEx.is = function(ex) {
     return ex instanceof SyntaxError;

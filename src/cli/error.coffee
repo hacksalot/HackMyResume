@@ -202,12 +202,17 @@ assembleError = ( ex ) ->
       etype = 'custom'
 
     when HMSTATUS.parseError
-      if SyntaxErrorEx.is( ex.inner )
+      if SyntaxErrorEx.is ex.inner
         console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
         se = new SyntaxErrorEx ex, ex.raw
-        msg = printf M2C( this.msgs.parseError.msg, 'red' ), se.line, se.col
-      else if ex.inner && ex.inner.line != undefined && ex.inner.col != undefined
-        msg = printf( M2C( this.msgs.parseError.msg, 'red' ), ex.inner.line, ex.inner.col)
+        if se.line? and se.col?
+          msg = printf M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col
+        else if se.line?
+          msg = printf M2C( this.msgs.parseError.msg[1], 'red' ), se.line
+        else
+          msg = M2C @msgs.parseError.msg[2], 'red'
+      else if ex.inner && ex.inner.line? && ex.inner.col?
+        msg = printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col)
       else
         msg = ex
       etype = 'error'

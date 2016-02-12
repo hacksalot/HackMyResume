@@ -81,7 +81,10 @@ errors:
   readError:
     msg: Reading **???** resume: **%s**
   parseError:
-    msg: Invalid or corrupt JSON on line %s column %s.
+    msg:
+      - Invalid or corrupt JSON on line %s column %s.
+      - Invalid or corrupt JSON on line %s.
+      - Invalid or corrupt JSON.
   invalidHelperUse:
     msg: "**Warning**: Incorrect use of the **%s** theme helper."
   fileSaveError:
