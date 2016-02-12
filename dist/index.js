@@ -6,14 +6,10 @@ External API surface for HackMyResume.
  */
 
 
-/**
-API facade for HackMyCore.
- */
+/** API facade for HackMyResume. */
 
 (function() {
-  var HackMyCore;
-
-  HackMyCore = module.exports = {
+  module.exports = {
     verbs: {
       build: require('./verbs/build'),
       analyze: require('./verbs/analyze'),

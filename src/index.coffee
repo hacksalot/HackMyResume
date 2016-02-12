@@ -6,11 +6,9 @@ External API surface for HackMyResume.
 
 
 
-###*
-API facade for HackMyCore.
-###
+###* API facade for HackMyResume. ###
 
-HackMyCore = module.exports =
+module.exports =
 
   verbs:
     build:              require './verbs/build'
