@@ -215,17 +215,18 @@ _single = ( targInfo, theme, finished ) ->
 
     @stat HMEVENT.beforeGenerate,
       fmt: targInfo.fmt.outFormat
-      file: PATH.relative(process.cwd(), f)
+      file: PATH.relative process.cwd(), f
 
-    _opts.targets = finished;
+    _opts.targets = finished
 
     # If targInfo.fmt.files exists, this format is backed by a document.
     # Fluent/FRESH themes are handled here.
     if targInfo.fmt.files && targInfo.fmt.files.length
-      theFormat = _fmts.filter(
-        (fmt) -> return fmt.name == targInfo.fmt.outFormat )[0];
-      MKDIRP.sync( PATH.dirname( f ) ); # Ensure dest folder exists;
-      ret = theFormat.gen.generate( _rezObj, f, _opts );
+      theFormat = _fmts.filter( (fmt) ->
+        return fmt.name == targInfo.fmt.outFormat
+      )[0];
+      MKDIRP.sync PATH.dirname( f )
+      ret = theFormat.gen.generate _rezObj, f, _opts
 
     # Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
     # gets "for free".
@@ -242,8 +243,8 @@ _single = ( targInfo, theme, finished ) ->
     ex = e
 
   this.stat HMEVENT.afterGenerate,
-    fmt: targInfo.fmt.outFormat,
-    file: PATH.relative( process.cwd(), f ),
+    fmt: targInfo.fmt.outFormat
+    file: PATH.relative process.cwd(), f
     error: ex
 
   if ex

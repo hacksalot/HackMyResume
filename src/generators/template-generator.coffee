@@ -90,12 +90,12 @@ module.exports = class TemplateGenerator extends BaseGenerator
   generate: ( rez, f, opts ) ->
 
     # Prepare
-    @opts = EXTEND( true, { }, _defaultOpts, opts );
+    @opts = EXTEND true, { }, _defaultOpts, opts
 
-    # Call the string-based generation method to perform the generation.
-    genInfo = this.invoke( rez, null )
+    # Call the string-based generation method
+    genInfo = @invoke rez, null
     outFolder = parsePath( f ).dirname
-    curFmt = opts.themeObj.getFormat( this.format )
+    curFmt = opts.themeObj.getFormat @format
 
     # Process individual files within this format. For example, the HTML
     # output format for a theme may have multiple HTML files, CSS files,
