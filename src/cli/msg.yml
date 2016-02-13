@@ -43,6 +43,8 @@ events:
       - "VALID!"
       - "INVALID"
       - "BROKEN"
+      - "MISSING"
+      - "UNKNOWN"
   beforePeek:
     msg:
       - Peeking at **%s** in **%s**

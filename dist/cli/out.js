@@ -57,7 +57,7 @@ Output routines for HackMyResume.
     };
 
     OutputHandler.prototype["do"] = function(evt) {
-      var L, WRAP, info, msg, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
+      var L, WRAP, adj, info, msg, msgs, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
       that = this;
       L = function() {
         return that.log.apply(that, arguments);
@@ -132,8 +132,28 @@ Output routines for HackMyResume.
         case HME.afterInlineConvert:
           return L(M2C(this.msgs.afterInlineConvert.msg, 'gray', 'white.dim'), evt.file, evt.fmt);
         case HME.afterValidate:
-          style = evt.isValid ? 'green' : 'yellow';
-          L(M2C(this.msgs.afterValidate.msg[0], 'white') + chalk[style].bold(evt.isValid ? this.msgs.afterValidate.msg[1] : this.msgs.afterValidate.msg[2]), evt.file, evt.fmt);
+          style = 'red';
+          adj = '';
+          msgs = this.msgs.afterValidate.msg;
+          switch (evt.status) {
+            case 'valid':
+              style = 'green';
+              adj = msgs[1];
+              break;
+            case 'invalid':
+              style = 'yellow';
+              adj = msgs[2];
+              break;
+            case 'broken':
+              style = 'red';
+              adj = msgs[3];
+              break;
+            case 'missing':
+              style = 'red';
+              adj = msgs[4];
+          }
+          evt.fmt = evt.fmt.toUpperCase();
+          L(M2C(msgs[0], 'white') + chalk[style].bold(adj), evt.file, evt.fmt);
           if (evt.errors) {
             _.each(evt.errors, function(err, idx) {
               L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));

@@ -63,9 +63,8 @@ Implementation of the 'validate' verb for HackMyResume.
       if (this.hasError() && opts.assert) {
         return {};
       }
-      r = _validateOne.call(this, t, validator, schemas);
+      r = _validateOne.call(this, t, validator, schemas, opts);
       if (r.fluenterror) {
-        r.quit = opts.assert;
         this.err(r.fluenterror, r);
       }
       return r;
@@ -78,33 +77,42 @@ Implementation of the 'validate' verb for HackMyResume.
     return results;
   };
 
-  _validateOne = function(t, validator, schemas) {
-    var errCode, errors, fmt, json, obj, ret, validate;
+  _validateOne = function(t, validator, schemas, opts) {
+    var errCode, errors, fmt, obj, ret, validate;
     ret = {
       file: t,
-      isValid: false
+      isValid: false,
+      status: 'unknown'
     };
-    obj = safeLoadJSON(t);
-    if (obj.ex) {
-      errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
-      if (errCode === HMSTATUS.readError) {
-        obj.ex.quiet = true;
-      }
-      return {
-        fluenterror: errCode,
-        inner: obj.ex
-      };
-    }
-    json = obj.json;
-    fmt = json.basics ? 'jars' : 'fresh';
-    errors = [];
+    fmt = '------';
     try {
+      obj = safeLoadJSON(t);
+      if (obj.ex) {
+        if (obj.ex.operation === 'parse') {
+          errCode = HMSTATUS.parseError;
+          ret.status = 'broken';
+        } else {
+          errCode = HMSTATUS.readError;
+          ret.status = 'missing';
+        }
+        throw {
+          fluenterror: errCode,
+          inner: obj.ex.inner
+        };
+      }
+      if (obj.json.basics) {
+        fmt = 'jars';
+      } else {
+        fmt = 'fresh';
+      }
+      errors = [];
       validate = validator(schemas[fmt], {
         formats: {
           date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
         }
       });
-      ret.isValid = validate(json);
+      ret.isValid = validate(obj.json);
+      ret.status = ret.isValid ? 'valid' : 'invalid';
       if (!ret.isValid) {
         errors = validate.errors;
       }
@@ -113,8 +121,8 @@ Implementation of the 'validate' verb for HackMyResume.
     }
     this.stat(HMEVENT.afterValidate, {
       file: t,
-      isValid: ret.isValid,
-      fmt: fmt != null ? fmt.replace('jars', 'JSON Resume') : void 0,
+      status: ret.status,
+      fmt: fmt.replace('jars', 'JSON Resume'),
       errors: errors
     });
     if (opts.assert && !ret.isValid) {

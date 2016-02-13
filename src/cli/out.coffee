@@ -140,21 +140,25 @@ module.exports = class OutputHandler
           evt.file, evt.fmt );
 
       when HME.afterValidate
-        style = if evt.isValid then 'green' else 'yellow'
-        L(
-          M2C( this.msgs.afterValidate.msg[0], 'white' ) +
-          chalk[style].bold(
-            if evt.isValid
-            then this.msgs.afterValidate.msg[1]
-            else this.msgs.afterValidate.msg[2] ),
-          evt.file, evt.fmt
-        );
+        style = 'red'
+        adj = ''
+        msgs = @msgs.afterValidate.msg;
+        switch evt.status
+          when 'valid' then style = 'green'; adj = msgs[1]
+          when 'invalid' then style = 'yellow'; adj = msgs[2]
+          when 'broken' then style = 'red'; adj = msgs[3]
+          when 'missing' then style = 'red'; adj = msgs[4]
+        evt.fmt = evt.fmt.toUpperCase()
+        L(M2C( msgs[0], 'white' ) + chalk[style].bold(adj), evt.file, evt.fmt)
+
         if evt.errors
           _.each evt.errors, (err,idx) ->
-            L( chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.','resume.').toUpperCase() + ' ' + err.message))
+            L( chalk.yellow.bold('--> ') +
+               chalk.yellow(err.field.replace('data.','resume.').toUpperCase() +
+               ' ' + err.message))
             return
           , @
-          return
+        return
 
       when HME.afterPeek
         sty = if evt.error then 'red' else ( if evt.target != undefined then 'green' else 'yellow' )
