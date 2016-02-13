@@ -25,7 +25,7 @@ module.exports = class ValidateVerb extends Verb
 
 
 
-###* Validate 1 to N resumes in FRESH or JSON Resume format. ###
+# Validate 1 to N resumes in FRESH or JSON Resume format.
 _validate = (sources, unused, opts)  ->
 
   if !sources || !sources.length
@@ -40,9 +40,8 @@ _validate = (sources, unused, opts)  ->
   # Validate input resumes. Return a { file: <f>, isValid: <v>} object for
   # each resume  valid, invalid, or broken.
   results = _.map sources, (t)  ->
-    return { } if @hasError() and opts.assert
     r = _validateOne.call @, t, validator, schemas, opts
-    @err r.fluenterror, r if r.fluenterror
+    @err r.error.fluenterror, r.error if r.error
     r
   , @
 
@@ -53,44 +52,48 @@ _validate = (sources, unused, opts)  ->
   results
 
 
+###*
+Validate a single resume.
+@returns {
+  file: <fileName>,
+  isValid: <validFlag>,
+  status: <validationStatus>,
+  violations: <validationErrors>,
+  schema: <schemaType>,
+  error: <errorObject>
+}
+###
 _validateOne = (t, validator, schemas, opts) ->
 
-  ret = file: t, isValid: false, status: 'unknown'
-  fmt = '------'
+  ret = file: t, isValid: false, status: 'unknown', schema: '-----'
 
   try
 
-    # Load the input file JSON 1st
+    # Read and parse the resume JSON
     obj = safeLoadJSON t
-    if obj.ex # safeLoadJSON can only return a READ error or a PARSE error
+
+    if obj.ex
       if obj.ex.operation == 'parse'
         errCode = HMSTATUS.parseError
         ret.status = 'broken'
       else
         errCode = HMSTATUS.readError
         ret.status = 'missing'
-      throw fluenterror: errCode, inner: obj.ex.inner
+      ret.error = fluenterror: errCode, inner: obj.ex.inner, quiet: errCode == HMSTATUS.readError
 
-    # Successfully read the resume. Now parse it as JSON.
-    if obj.json.basics then fmt = 'jars' else fmt = 'fresh'
-    errors = []
-    validate = validator schemas[ fmt ], # Note [1]
-      formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+    else
+      # Set up a FRESH or JSON Resume validator
+      if obj.json.basics then ret.schema = 'jars' else ret.schema = 'fresh'
+      validate = validator schemas[ ret.schema ], # Note [1]
+        formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+      # Validate the resume against the schema
+      ret.isValid = validate obj.json
+      ret.status = if ret.isValid then 'valid' else 'invalid'
+      ret.violations = validate.errors if !ret.isValid
 
-    ret.isValid = validate obj.json
-    ret.status = if ret.isValid then 'valid' else 'invalid'
-    if !ret.isValid
-      errors = validate.errors
   catch
-    ret.ex = _error
+    ret.error = _error
 
-  @stat HMEVENT.afterValidate,
-    file: t
-    status: ret.status
-    fmt: fmt.replace 'jars', 'JSON Resume'
-    errors: errors
-
-  if opts.assert and !ret.isValid
-    return fluenterror: HMSTATUS.invalid, errors: errors
-
+  ret.schema = ret.schema.replace 'jars', 'JSON Resume'
+  @stat HMEVENT.afterValidate, ret
   ret

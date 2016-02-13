@@ -274,6 +274,7 @@ executeFail = (err) ->
   if _opts.debug
     msgs = require('./msg').errors;
     logMsg printf M2C( msgs.exiting.msg, 'cyan' ), finalErrorCode
+    logMsg err.stack if err.stack
   _exitCallback finalErrorCode
   return
 

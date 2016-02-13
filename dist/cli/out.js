@@ -152,10 +152,10 @@ Output routines for HackMyResume.
               style = 'red';
               adj = msgs[4];
           }
-          evt.fmt = evt.fmt.toUpperCase();
-          L(M2C(msgs[0], 'white') + chalk[style].bold(adj), evt.file, evt.fmt);
-          if (evt.errors) {
-            _.each(evt.errors, function(err, idx) {
+          evt.schema = evt.schema.toUpperCase();
+          L(M2C(msgs[0], 'white') + chalk[style].bold(adj), evt.file, evt.schema);
+          if (evt.violations) {
+            _.each(evt.violations, function(err, idx) {
               L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));
             }, this);
           }

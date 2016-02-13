@@ -148,11 +148,11 @@ module.exports = class OutputHandler
           when 'invalid' then style = 'yellow'; adj = msgs[2]
           when 'broken' then style = 'red'; adj = msgs[3]
           when 'missing' then style = 'red'; adj = msgs[4]
-        evt.fmt = evt.fmt.toUpperCase()
-        L(M2C( msgs[0], 'white' ) + chalk[style].bold(adj), evt.file, evt.fmt)
+        evt.schema = evt.schema.toUpperCase()
+        L(M2C( msgs[0], 'white' ) + chalk[style].bold(adj), evt.file, evt.schema)
 
-        if evt.errors
-          _.each evt.errors, (err,idx) ->
+        if evt.violations
+          _.each evt.violations, (err,idx) ->
             L( chalk.yellow.bold('--> ') +
                chalk.yellow(err.field.replace('data.','resume.').toUpperCase() +
                ' ' + err.message))

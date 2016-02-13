@@ -240,6 +240,9 @@ Definition of the `main` function.
     if (_opts.debug) {
       msgs = require('./msg').errors;
       logMsg(printf(M2C(msgs.exiting.msg, 'cyan'), finalErrorCode));
+      if (err.stack) {
+        logMsg(err.stack);
+      }
     }
     _exitCallback(finalErrorCode);
   };
