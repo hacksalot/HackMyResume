@@ -115,13 +115,14 @@ Definition of the TemplateGenerator class. TODO: Refactor
       genInfo.files.forEach(function(file) {
         var thisFilePath;
         file.info.orgPath = file.info.orgPath || '';
-        thisFilePath = PATH.join(outFolder, file.info.orgPath);
+        thisFilePath = file.info.primary ? f : PATH.join(outFolder, file.info.orgPath);
         if (file.info.action !== 'copy' && this.onBeforeSave) {
           file.data = this.onBeforeSave({
             theme: opts.themeObj,
             outputFile: thisFilePath,
             mk: file.data,
-            opts: this.opts
+            opts: this.opts,
+            ext: file.info.ext
           });
           if (!file.data) {
             return;

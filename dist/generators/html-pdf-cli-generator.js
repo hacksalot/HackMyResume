@@ -6,7 +6,7 @@ Definition of the HtmlPdfCLIGenerator class.
  */
 
 (function() {
-  var FS, HMSTATUS, HtmlPdfCLIGenerator, PATH, SLASH, TemplateGenerator, _, engines,
+  var FS, HMSTATUS, HtmlPdfCLIGenerator, PATH, SLASH, SPAWN, TemplateGenerator, _, engines,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -21,6 +21,8 @@ Definition of the HtmlPdfCLIGenerator class.
   _ = require('underscore');
 
   HMSTATUS = require('../core/status-codes');
+
+  SPAWN = require('../utils/safe-spawn');
 
 
   /**
@@ -41,12 +43,14 @@ Definition of the HtmlPdfCLIGenerator class.
 
     HtmlPdfCLIGenerator.prototype.onBeforeSave = function(info) {
       var safe_eng;
+      if (info.ext !== 'html') {
+        return info.mk;
+      }
       safe_eng = info.opts.pdf || 'wkhtmltopdf';
       if (safe_eng === 'phantom') {
         safe_eng = 'phantomjs';
       }
       if (_.has(engines, safe_eng)) {
-        this.SPAWN = require('../utils/safe-spawn');
         this.errHandler = info.opts.errHandler;
         engines[safe_eng].call(this, info.mk, info.outputFile, this.onError);
         return null;
@@ -86,7 +90,7 @@ Definition of the HtmlPdfCLIGenerator class.
       var tempFile;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
-      return this.SPAWN('wkhtmltopdf', [tempFile, fOut], false, on_error, this);
+      SPAWN('wkhtmltopdf', [tempFile, fOut], false, on_error, this);
     },
 
     /**
@@ -100,10 +104,11 @@ Definition of the HtmlPdfCLIGenerator class.
       var destPath, scriptPath, sourcePath, tempFile;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
-      scriptPath = SLASH(PATH.relative(process.cwd(), PATH.resolve(__dirname, '../utils/rasterize.js')));
+      scriptPath = PATH.relative(process.cwd(), PATH.resolve(__dirname, '../utils/rasterize.js'));
+      scriptPath = SLASH(scriptPath);
       sourcePath = SLASH(PATH.relative(process.cwd(), tempFile));
       destPath = SLASH(PATH.relative(process.cwd(), fOut));
-      return this.SPAWN('phantomjs', [scriptPath, sourcePath, destPath], false, on_error, this);
+      SPAWN('phantomjs', [scriptPath, sourcePath, destPath], false, on_error, this);
     }
   };
 

@@ -131,11 +131,12 @@ Definition of the FRESHTheme class.
   /* Load a single theme file. */
 
   _loadOne = function(absPath, formatsHash, tplFolder) {
-    var absPathSafe, act, idx, obj, outFmt, pathInfo, portion, ref, ref1, reg, res;
+    var absPathSafe, act, defFormats, idx, isPrimary, obj, outFmt, pathInfo, portion, ref, ref1, reg, res;
     pathInfo = parsePath(absPath);
     absPathSafe = absPath.trim().toLowerCase();
     outFmt = '';
     act = 'copy';
+    isPrimary = false;
     if (this.explicit) {
       outFmt = _.find(Object.keys(this.formats), function(fmtKey) {
         var fmtVal;
@@ -181,6 +182,10 @@ Definition of the FRESHTheme class.
       if (!this.explicit) {
         act = 'transform';
       }
+      defFormats = require('./default-formats');
+      isPrimary = _.some(defFormats, function(form) {
+        return form.name === outFmt && pathInfo.extname !== '.css';
+      });
     }
     formatsHash[outFmt] = formatsHash[outFmt] || {
       outFormat: outFmt,
@@ -191,6 +196,7 @@ Definition of the FRESHTheme class.
     }
     obj = {
       action: act,
+      primary: isPrimary,
       path: absPath,
       orgPath: PATH.relative(tplFolder, absPath),
       ext: pathInfo.extname.slice(1),

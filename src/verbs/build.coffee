@@ -154,6 +154,7 @@ _build = ( src, dst, opts ) ->
     @reject results
   else if !@hasError()
     @resolve results
+
   results
 
 
@@ -258,12 +259,10 @@ _single = ( targInfo, theme, finished ) ->
 
 ###* Ensure that user-specified outputs/targets are valid. ###
 _verifyOutputs = ( targets, theme ) ->
-  @stat HMEVENT.verifyOutputs, { targets: targets, theme: theme }
+  @stat HMEVENT.verifyOutputs, targets: targets, theme: theme
   _.reject targets.map( ( t ) ->
     pathInfo = parsePath t
-    {
-      format: pathInfo.extname.substr(1)
-    }),
+    format: pathInfo.extname.substr(1) ),
     (t) -> t.format == 'all' || theme.hasFormat( t.format )
 
 

@@ -29,7 +29,7 @@ class FRESHTheme
   ### Open and parse the specified theme. ###
   open: ( themeFolder ) ->
 
-    this.folder = themeFolder;
+    @folder = themeFolder
 
     # Open the [theme-name].json file; should have the same name as folder
     pathInfo = parsePath themeFolder
@@ -126,6 +126,7 @@ _loadOne = ( absPath, formatsHash, tplFolder ) ->
   absPathSafe = absPath.trim().toLowerCase()
   outFmt = ''
   act = 'copy'
+  isPrimary = false
 
   # If this is an "explicit" theme, all files of importance are specified in
   # the "transform" section of the theme.json file.
@@ -164,6 +165,9 @@ _loadOne = ( absPath, formatsHash, tplFolder ) ->
     idx = pathInfo.name.lastIndexOf '-'
     outFmt = if idx == -1 then pathInfo.name else pathInfo.name.substr idx+1
     act = 'transform' if !@explicit
+    defFormats = require './default-formats'
+    isPrimary = _.some defFormats, (form) ->
+      form.name == outFmt and pathInfo.extname != '.css'
 
   # Make sure we have a valid formatsHash
   formatsHash[ outFmt ] = formatsHash[outFmt] || {
@@ -178,6 +182,7 @@ _loadOne = ( absPath, formatsHash, tplFolder ) ->
   # Create the file representation object
   obj =
     action: act
+    primary: isPrimary
     path: absPath
     orgPath: PATH.relative tplFolder, absPath
     ext: pathInfo.extname.slice 1

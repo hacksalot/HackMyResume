@@ -9,9 +9,8 @@ exception ###
 module.exports = ( cmd, args, isSync, callback, param ) ->
 
   try
-
     # .spawnSync not available on earlier Node.js, so default to .spawn
-    spawn = require('child_process')[ if isSync then 'spawnSync' else 'spawn'];
+    spawn = require('child_process')[ if isSync then 'spawnSync' else 'spawn']
     info = spawn cmd, args
 
     # Check for error depending on whether we're sync or async TODO: Promises

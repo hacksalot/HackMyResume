@@ -12,7 +12,7 @@ PATH = require 'path'
 SLASH = require 'slash'
 _ = require 'underscore'
 HMSTATUS = require '../core/status-codes'
-
+SPAWN = require '../utils/safe-spawn'
 
 
 ###*
@@ -31,11 +31,10 @@ module.exports = class HtmlPdfCLIGenerator extends TemplateGenerator
 
   ###* Generate the binary PDF. ###
   onBeforeSave: ( info ) ->
-    safe_eng = info.opts.pdf || 'wkhtmltopdf';
-    if safe_eng == 'phantom'
-      safe_eng = 'phantomjs'
+    return info.mk if info.ext != 'html'
+    safe_eng = info.opts.pdf || 'wkhtmltopdf'
+    safe_eng = 'phantomjs' if safe_eng == 'phantom'
     if _.has engines, safe_eng
-      @SPAWN = require '../utils/safe-spawn'
       @errHandler = info.opts.errHandler
       engines[ safe_eng ].call @, info.mk, info.outputFile, @onError
       return null # halt further processing
@@ -68,7 +67,8 @@ engines =
     # Save the markup to a temporary file
     tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'
-    @SPAWN 'wkhtmltopdf', [ tempFile, fOut ], false, on_error, @
+    SPAWN 'wkhtmltopdf', [ tempFile, fOut ], false, on_error, @
+    return
 
 
 
@@ -80,12 +80,12 @@ engines =
   TODO: Local web server to ease Phantom rendering
   ###
   phantomjs: ( markup, fOut, on_error ) ->
-
     # Save the markup to a temporary file
-    tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
+    tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'
-    scriptPath = SLASH( PATH.relative( process.cwd(),
-      PATH.resolve( __dirname, '../utils/rasterize.js' ) ) );
-    sourcePath = SLASH( PATH.relative( process.cwd(), tempFile) );
-    destPath = SLASH( PATH.relative( process.cwd(), fOut) );
-    @SPAWN 'phantomjs', [ scriptPath, sourcePath, destPath ], false, on_error, @
+    scriptPath = PATH.relative process.cwd(), PATH.resolve( __dirname, '../utils/rasterize.js' )
+    scriptPath = SLASH scriptPath
+    sourcePath = SLASH PATH.relative( process.cwd(), tempFile)
+    destPath = SLASH PATH.relative( process.cwd(), fOut)
+    SPAWN 'phantomjs', [ scriptPath, sourcePath, destPath ], false, on_error, @
+    return

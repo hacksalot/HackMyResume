@@ -224,9 +224,7 @@ Definition of the `main` function.
 
   /* Success handler for verb invocations. Calls process.exit by default */
 
-  executeSuccess = function(obj) {
-    _exitCallback(0);
-  };
+  executeSuccess = function(obj) {};
 
 
   /* Failure handler for verb invocations. Calls process.exit by default */

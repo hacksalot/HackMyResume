@@ -54,8 +54,8 @@ module.exports = class TemplateGenerator extends BaseGenerator
 
     opts =
       if opts
-      then (this.opts = EXTEND( true, { }, _defaultOpts, opts ))
-      else this.opts
+      then (@opts = EXTEND( true, { }, _defaultOpts, opts ))
+      else @opts
 
     # Sort such that CSS files are processed before others
     curFmt = opts.themeObj.getFormat( this.format )
@@ -102,29 +102,33 @@ module.exports = class TemplateGenerator extends BaseGenerator
     # etc. Process them here.
     genInfo.files.forEach ( file ) ->
 
+      # console.dir _.omit(file.info,'cssData','data','css' )
+
       # Pre-processing
       file.info.orgPath = file.info.orgPath || ''
-      thisFilePath = PATH.join( outFolder, file.info.orgPath )
+      thisFilePath =
+        if file.info.primary
+        then f
+        else PATH.join outFolder, file.info.orgPath
 
       if file.info.action != 'copy' and @onBeforeSave
         file.data = this.onBeforeSave
           theme: opts.themeObj
           outputFile: thisFilePath
           mk: file.data
-          opts: this.opts
+          opts: @opts,
+          ext: file.info.ext
         if !file.data
           return
 
       # Write the file
       opts.beforeWrite? thisFilePath
-
       MKDIRP.sync PATH.dirname( thisFilePath )
 
       if file.info.action != 'copy'
         FS.writeFileSync thisFilePath, file.data, encoding: 'utf8', flags: 'w'
       else
         FS.copySync file.info.path, thisFilePath
-
       opts.afterWrite? thisFilePath
 
       # Post-processing

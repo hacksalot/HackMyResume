@@ -128,7 +128,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
   program.parse( args )
 
   if !program.args.length
-    throw { fluenterror: 4 }
+    throw fluenterror: 4
 
 
 
@@ -256,13 +256,14 @@ execute = ( src, dst, opts, log ) ->
   # Invoke the verb using promise syntax
   prom = v.invoke.call v, src, dst, _opts, log
   prom.then executeSuccess, executeFail
-
   return
 
 
 
 ### Success handler for verb invocations. Calls process.exit by default ###
-executeSuccess = (obj) -> _exitCallback 0; return
+executeSuccess = (obj) ->
+  # Can't call _exitCallback here (process.exit) when PDF is running in BK
+  #_exitCallback 0; return
 
 
 
