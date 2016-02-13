@@ -230,6 +230,10 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.createError:
         msg = printf(M2C(this.msgs.createError.msg), ex.inner.path);
         etype = 'error';
+        break;
+      case HMSTATUS.validateError:
+        msg = printf(M2C(this.msgs.validateError.msg), ex.inner.toString());
+        etype = 'error';
     }
     return {
       msg: msg,

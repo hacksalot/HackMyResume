@@ -44,7 +44,7 @@ events:
       - "INVALID"
       - "BROKEN"
       - "MISSING"
-      - "UNKNOWN"
+      - "ERROR"
   beforePeek:
     msg:
       - Peeking at **%s** in **%s**
@@ -107,3 +107,5 @@ errors:
     msg: Failed to create **'%s'**.
   exiting:
     msg: Exiting with status code **%s**.
+  validateError:
+    msg: "An error occurred during validation:\n%s"

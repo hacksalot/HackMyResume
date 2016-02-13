@@ -151,8 +151,12 @@ Output routines for HackMyResume.
             case 'missing':
               style = 'red';
               adj = msgs[4];
+              break;
+            case 'unknown':
+              style = 'red';
+              adj = msgs[5];
           }
-          evt.schema = evt.schema.toUpperCase();
+          evt.schema = evt.schema.replace('jars', 'JSON Resume').toUpperCase();
           L(M2C(msgs[0], 'white') + chalk[style].bold(adj), evt.file, evt.schema);
           if (evt.violations) {
             _.each(evt.violations, function(err, idx) {

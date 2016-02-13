@@ -94,20 +94,7 @@ Implementation of the 'validate' verb for HackMyResume.
     };
     try {
       obj = safeLoadJSON(t);
-      if (obj.ex) {
-        if (obj.ex.operation === 'parse') {
-          errCode = HMSTATUS.parseError;
-          ret.status = 'broken';
-        } else {
-          errCode = HMSTATUS.readError;
-          ret.status = 'missing';
-        }
-        ret.error = {
-          fluenterror: errCode,
-          inner: obj.ex.inner,
-          quiet: errCode === HMSTATUS.readError
-        };
-      } else {
+      if (!obj.ex) {
         if (obj.json.basics) {
           ret.schema = 'jars';
         } else {
@@ -123,11 +110,26 @@ Implementation of the 'validate' verb for HackMyResume.
         if (!ret.isValid) {
           ret.violations = validate.errors;
         }
+      } else {
+        if (obj.ex.operation === 'parse') {
+          errCode = HMSTATUS.parseError;
+          ret.status = 'broken';
+        } else {
+          errCode = HMSTATUS.readError;
+          ret.status = 'missing';
+        }
+        ret.error = {
+          fluenterror: errCode,
+          inner: obj.ex.inner,
+          quiet: errCode === HMSTATUS.readError
+        };
       }
     } catch (_error) {
-      ret.error = _error;
+      ret.error = {
+        fluenterror: HMSTATUS.validateError,
+        inner: _error
+      };
     }
-    ret.schema = ret.schema.replace('jars', 'JSON Resume');
     this.stat(HMEVENT.afterValidate, ret);
     return ret;
   };

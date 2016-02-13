@@ -21,6 +21,8 @@ safeLoadJSON = require '../utils/safe-json-loader'
 ###* An invokable resume validation command. ###
 module.exports = class ValidateVerb extends Verb
 
+
+
   constructor: -> super 'validate', _validate
 
 
@@ -37,8 +39,6 @@ _validate = (sources, unused, opts)  ->
     fresh: require 'fresca'
     jars: require '../core/resume.json'
 
-  # Validate input resumes. Return a { file: <f>, isValid: <v>} object for
-  # each resume  valid, invalid, or broken.
   results = _.map sources, (t)  ->
     r = _validateOne.call @, t, validator, schemas, opts
     @err r.error.fluenterror, r.error if r.error
@@ -69,31 +69,34 @@ _validateOne = (t, validator, schemas, opts) ->
 
   try
 
-    # Read and parse the resume JSON
+    # Read and parse the resume JSON. Won't throw.
     obj = safeLoadJSON t
 
-    if obj.ex
+    # If success, validate the resume against the schema
+    if !obj.ex
+      if obj.json.basics then ret.schema = 'jars' else ret.schema = 'fresh'
+      validate = validator schemas[ ret.schema ], # Note [1]
+        formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
+      ret.isValid = validate obj.json
+      ret.status = if ret.isValid then 'valid' else 'invalid'
+      ret.violations = validate.errors if !ret.isValid
+
+    # If failure, package JSON read/parse errors
+    else
       if obj.ex.operation == 'parse'
         errCode = HMSTATUS.parseError
         ret.status = 'broken'
       else
         errCode = HMSTATUS.readError
         ret.status = 'missing'
-      ret.error = fluenterror: errCode, inner: obj.ex.inner, quiet: errCode == HMSTATUS.readError
-
-    else
-      # Set up a FRESH or JSON Resume validator
-      if obj.json.basics then ret.schema = 'jars' else ret.schema = 'fresh'
-      validate = validator schemas[ ret.schema ], # Note [1]
-        formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }
-      # Validate the resume against the schema
-      ret.isValid = validate obj.json
-      ret.status = if ret.isValid then 'valid' else 'invalid'
-      ret.violations = validate.errors if !ret.isValid
+      ret.error =
+        fluenterror: errCode,
+        inner: obj.ex.inner,
+        quiet: errCode == HMSTATUS.readError
 
   catch
-    ret.error = _error
+    # Package any unexpected exceptions
+    ret.error = fluenterror: HMSTATUS.validateError, inner: _error
 
-  ret.schema = ret.schema.replace 'jars', 'JSON Resume'
   @stat HMEVENT.afterValidate, ret
   ret

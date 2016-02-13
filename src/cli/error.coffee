@@ -222,6 +222,10 @@ assembleError = ( ex ) ->
       msg = printf M2C( this.msgs.createError.msg ), ex.inner.path
       etype = 'error'
 
+    when HMSTATUS.validateError
+      msg = printf M2C( @msgs.validateError.msg ), ex.inner.toString()
+      etype = 'error'
+
   msg: msg              # The error message to display
   withStack: withStack  # Whether to include the stack
   quit: quit

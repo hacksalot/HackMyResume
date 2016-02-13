@@ -32,3 +32,4 @@ module.exports =
   invalidParamCount: 23
   missingParam: 24
   createError: 25
+  validateError: 26

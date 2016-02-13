@@ -148,7 +148,8 @@ module.exports = class OutputHandler
           when 'invalid' then style = 'yellow'; adj = msgs[2]
           when 'broken' then style = 'red'; adj = msgs[3]
           when 'missing' then style = 'red'; adj = msgs[4]
-        evt.schema = evt.schema.toUpperCase()
+          when 'unknown' then style = 'red'; adj = msgs[5]
+        evt.schema = evt.schema.replace('jars','JSON Resume').toUpperCase()
         L(M2C( msgs[0], 'white' ) + chalk[style].bold(adj), evt.file, evt.schema)
 
         if evt.violations
