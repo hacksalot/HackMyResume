@@ -1,0 +1,477 @@
+name: 'Jane Q. Fullstacker'
+meta:
+  format: FRESH@0.4.0
+  version: 0.3.0
+info:
+  label: 'Senior Developer'
+  characterClass: Programmer
+  brief: '**Imaginary full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.'
+  image: jane_doe.png
+  quote: 'Be the change you want to see in the world.'
+contact:
+  website: 'http://janef.me/blog'
+  phone: 1-650-999-7777
+  email: jdoe@onecoolstartup.io
+  other:
+    -
+      label: 'Home Phone'
+      flavor: phone
+      value: 1-650-999-4321
+    -
+      label: 'Work Phone'
+      flavor: phone
+      value: 1-650-777-1234
+    -
+      label: 'Personal Email'
+      flavor: email
+      value: jane@janef.me
+location:
+  address: "Jane Fullstacker\n123 Somewhere Rd.\nMountain View, CA 94035"
+  city: 'Mountain View'
+  region: CA
+  code: '94035'
+  country: US
+projects:
+  -
+    title: HackMyResume
+    category: FOSS
+    role: contributor
+    url: 'http://please.hackmyresume.com'
+    start: 2015-09
+    repo: 'https://github.com/hacksalot/hackmyresume'
+    description: 'A resume authoring and analysis tool for OS X, Linux, and Windows.'
+    summary: 'Exemplar user for HackMyResume and FluentCV!'
+    keywords:
+      - JavaScript
+      - Node.js
+      - cross-platform
+      - JSON
+    media:
+      -
+        category: download
+        url: 'https://www.npmjs.com/package/hackmyresume'
+  -
+    title: 'Augmented Android'
+    category: commercial
+    role: co-creator
+    url: 'http://project.website.com'
+    repo: 'http://repo.website.com'
+    description: 'An augmented reality app for Android.'
+    start: 2012-02
+    end: 2014-01
+    summary: 'Performed flagship product conceptualization and development.'
+    keywords:
+      - Android
+      - Java
+      - Xamarin
+  -
+    title: Blog
+    category: personal
+    role: creator
+    url: 'http://myblog.jane.com/blog'
+    description: 'My programming blog. Powered by Jekyll.'
+    summary: 'Conceptualization, design, development, and deployment.'
+    keywords:
+      - Jekyll
+      - Ruby
+      - 'HTML 5'
+      - JavaScript
+      - HTTP
+      - LAMP
+social:
+  -
+    label: GitHub
+    network: GitHub
+    user: janef-was-here
+    url: 'https://github.com/janef-was-here'
+  -
+    label: Twitter
+    network: Twitter
+    user: janef-was-here
+    url: 'https://twitter.com/janef-was-here'
+employment:
+  summary: '7+ years industry IT and software development experience.'
+  history:
+    -
+      employer: 'One Cool Startup'
+      url: 'https://onecool.io/does-not-exist'
+      position: 'Head Code Ninja'
+      summary: 'Development team manager for [OneCoolApp](https://en.wikipedia.org/wiki/Vaporware) and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.'
+      start: 2013-09
+      current: true
+      keywords:
+        - Agile
+        - PM
+        - 'Amazon Web Services'
+        - AWS
+      highlights:
+        - 'Managed a 5-person development team'
+        - 'Accomplishment 2'
+        - Etc.
+    -
+      employer: 'Veridian Dynamics'
+      url: 'https://en.wikipedia.org/wiki/Better_Off_Ted#Plot'
+      position: 'Principal Developer'
+      summary: 'Developer on numerous projects culminating in technical lead role for the [Jabberwocky project](http://betteroffted.wikia.com/wiki/Jabberwocky) and promotion to principal developer.'
+      start: 2011-07
+      end: 2013-08
+      keywords:
+        - C++
+        - C
+        - Linux
+      highlights:
+        - 'Managed a 5-person development team'
+        - 'Accomplishment 2'
+        - Etc.
+    -
+      employer: 'Stark Industries'
+      position: 'IT Administrator'
+      summary: 'Junior programmer with heavy code responsibilities. Promoted to intermediate role after 6 months.'
+      start: 2008-10
+      end: 2011-06
+      keywords:
+        - Novell
+        - 'Active Directory'
+        - Linux
+        - Windows
+      highlights:
+        - 'Promoted to intermediate developer after 6 months'
+        - 'Accomplishment 2'
+        - Etc.
+    -
+      employer: 'Dunder Mifflin'
+      position: Intern
+      summary: 'Performed IT administration and deployments for Dunder Mifflin.'
+      start: 2008-06
+      end: 2008-09
+      keywords:
+        - Novell
+        - 'Active Directory'
+        - Linux
+        - Windows
+      highlights:
+        - 'Supervised roll-out of Dunder Mifflin Infinity website.'
+        - 'Performed mission-critical system backups and '
+        - Etc.
+education:
+  summary: ""
+  level: degree
+  degree: BSCS
+  history:
+    -
+      institution: 'Cornell University'
+      title: BSCS
+      url: 'https://www.cornell.edu/'
+      start: 2005-09
+      end: 2008-05
+      grade: '3.5'
+      summary: 'A multiline summary of the education.'
+      curriculum:
+        - 'Course 1'
+        - 'Course 2'
+        - 'Course 2'
+    -
+      institution: 'Medfield College'
+      url: 'https://en.wikipedia.org/wiki/Medfield_College'
+      start: 2003-09
+      end: 2005-06
+      grade: '3.2'
+      summary: 'A multiline summary of the education.'
+      curriculum:
+        - 'Course 1'
+        - 'Course 2'
+        - 'Course 2'
+affiliation:
+  summary: 'Member of numerous collegiate and professional groups and organizations.'
+  history:
+    -
+      role: Member
+      organization: IEEE
+      url: 'https://www.ieee.org/index.html'
+      start: 2013-06
+      summary: 'Member in good standing since 2013-06.'
+    -
+      role: Member
+      organization: 'Apple Developer Network'
+      url: 'https://developer.apple.com/'
+      summary: 'Member of the [Apple Developer program](https://developer.apple.com/) since 2008.'
+    -
+      role: Subscriber
+      organization: MSDN
+      url: 'https://msdn.microsoft.com'
+      start: '2010'
+      summary: 'Super-Ultra-gold level Ultimate Access MSDN subscriber package with subscription toaster and XBox ping pong racket.'
+    -
+      role: Coordinator
+      organization: 'Campus Coder''s Meetup'
+      start: 2003-02
+      end: 2004-04
+      summary: 'Host of a monthly **campus-wide meetup for CS students**. Code, coffee, and crullers!'
+service:
+  summary: 'Active US Army Reserve member and Technology for Tots technical consultant and volunteer coordinator.'
+  history:
+    -
+      flavor: volunteer
+      position: 'Technical Consultant'
+      organization: 'Technology for Tots'
+      url: 'http://technology-for-tots.org'
+      start: 2003-11
+      end: 2005-06
+      summary: 'Summary of this volunteer stint.'
+      highlights:
+        - 'Accomplishment 1'
+        - 'Accomplishment 2'
+        - etc
+    -
+      flavor: military
+      position: NCO
+      organization: 'US Army Reserves'
+      url: 'http://www.usar.army.mil/'
+      start: 1999-11
+      end: 2003-06
+      summary: 'Summary of this military stint.'
+      highlights:
+        - 'Accomplishment 1'
+        - 'Accomplishment 2'
+        - etc
+skills:
+  sets:
+    -
+      name: Web
+      level: advanced
+      skills:
+        - JavaScript
+        - 'HTML 5'
+        - CSS
+        - LAMP
+        - MVC
+        - REST
+    -
+      name: JavaScript
+      level: master
+      skills:
+        - Node.js
+        - Angular.js
+        - jQuery
+        - Bootstrap
+        - React.js
+        - Backbone.js
+    -
+      name: Database
+      level: intermediate
+      skills:
+        - MySQL
+        - PostgreSQL
+        - NoSQL
+        - ORM
+        - Hibernate
+    -
+      name: Cloud
+      level: intermediate
+      skills:
+        - AWS
+        - EC2
+        - RDS
+        - S3
+        - Azure
+        - Dropbox
+    -
+      name: Project
+      level: beginner
+      skills:
+        - Agile
+        - TFS
+        - 'Unified Process'
+        - 'MS Project'
+  list:
+    -
+      name: C++
+      id: '1'
+      summary: 'Optional summary of your experience with the skill.'
+      level: '9'
+      years: 7
+      proof: 'http://myblog.com/interesting-cplusplus-post'
+    -
+      name: Ruby
+      id: '2'
+      summary: 'Optional summary of your experience with the skill.'
+      level: '9'
+      years: 7
+      proof: 'http://myblog.com/interesting-cplusplus-post'
+    -
+      name: Xcode
+      summary: 'Xcode 6 development.'
+      level: '5'
+      years: '3'
+    -
+      name: Linux
+      summary: 'Optional summary of your experience with the skill.'
+      level: advanced
+      years: 4+
+    -
+      name: Agile
+      summary: 'Optional summary of your experience with the skill.'
+      level: B+
+      years: 2
+samples:
+  -
+    title: Asteroids
+    summary: 'A browser-based space shooter built on Three.js.'
+    url: 'http://janef.me/asteroids'
+    date: 2014-09
+  -
+    title: Rememberpedia
+    summary: 'A website to help you remember things.'
+    url: 'https://rememberpedia.com'
+    date: 2015-07
+writing:
+  -
+    title: 'Building User Interfaces with Electron and Atom'
+    flavor: article
+    date: '2011'
+    publisher:
+      name: 'Code Project'
+      url: 'http://codeproject.com'
+    url: 'http://codeproject.com/build-ui-electron-atom.aspx'
+  -
+    title: 'Jane Fullstacker''s Blog'
+    flavor: blog
+    date: '2011'
+    publisher:
+      name: self
+      url: 'http://janef.me'
+    url: 'http://janef.me'
+  -
+    title: 'Teach Yourself GORFF in 21 Days'
+    flavor: book
+    date: '2008'
+    publisher:
+      name: Amazon
+      url: 'https://www.amazon.com'
+    url: 'http://url.to.publication.com/blah'
+    author:
+      - 'Jane Fullstacker'
+      - 'John Smith'
+    summary: 'A primer on the programming language of GORFF, whose for loops are coterminous with all of time and space.'
+reading:
+  -
+    title: 'Code Complete'
+    flavor: book
+    url: 'http://www.cc2e.com/Default.aspx'
+    author: 'Steve McConnell'
+  -
+    title: r/programming
+    flavor: website
+    url: 'https://www.reddit.com/r/programming/'
+  -
+    title: 'Hacker News / YCombinator'
+    flavor: website
+    url: 'https://news.ycombinator.com/'
+  -
+    title: 'Coding Horror'
+    flavor: blog
+    url: 'http://www.codinghorror.com'
+    author: 'Jeff Atwood'
+speaking:
+  -
+    title: 'Data Warehousing Evolved: DARMA 2.0'
+    role: Speaker
+    event: 'OPENSTART 2013 Developer''s Conference'
+    location: 'Portland, OR'
+    date: '2012'
+    highlights:
+      - 'Won ''Best Presentation on an Emerging Technical Field'' prize.'
+recognition:
+  -
+    flavor: award
+    from: Google
+    title: 'Honorable Mention'
+    event: 'Summer of Code'
+    date: '2012'
+  -
+    flavor: honor
+    from: 'Cornell University'
+    title: 'Summa cum laude'
+    event: graduation
+    date: '2012'
+references:
+  -
+    name: 'John Davidson'
+    flavor: professional
+    private: true
+    contact:
+      -
+        label: Mobile
+        flavor: phone
+        value: 9-(999)-999-9999
+      -
+        label: 'Work email'
+        flavor: email
+        value: jdavidson@veridiandynamics.com
+testimonials:
+  -
+    name: 'John Davidson'
+    flavor: professional
+    quote: 'Jane is awesome! I''d hire her again in a heartbeat.'
+    private: true
+  -
+    name: 'Elias Fullstacker'
+    flavor: technical
+    quote: 'I worked with Jane on Jabberwocky and can vouch for her awesome technical capabilities and attention to detail. Insta-hire.'
+  -
+    name: 'Dana Nevins'
+    flavor: personal
+    quote: 'I''ve known Jane personally and professionally for almost ten years. She is one in a million.'
+languages:
+  -
+    language: English
+    level: Native
+  -
+    language: Spanish
+    level: Moderate
+    years: 10
+extracurricular:
+  -
+    title: 'Bay Area Crew Club'
+    activity: ""
+    location: 'San Francisco, CA'
+    start: 2014-05
+  -
+    title: 'Organizer / Manager'
+    activity: 'JavaScript Game Development Meetup'
+    location: 'Austin, TX'
+    start: 2011-03
+    end: 2014-01
+    highlights:
+      - 'Monthly speaker on creative JavaScript development.'
+      - 'Founded group and oversaw growth to 500+ members.'
+governance:
+  -
+    flavor: board
+    role: Member
+    organization: 'The Mommies Network'
+    url: 'http://themommiesnetwork.org'
+    start: 2008-02
+    end: 2010-01
+    summary: 'Since 2008 I''ve been a full-time member of the board of directors for TMN.'
+  -
+    flavor: committee
+    role: 'Academic Contributor'
+    organization: 'Khronos Group'
+    url: 'https://www.khronos.org'
+    start: 2015-01
+    highlights:
+      - 'Participated in GORFF standardization process (Draft 2).'
+interests:
+  -
+    name: reading
+    summary: 'Jane is a fan of mystery novels and courtroom dramas including Agatha Christie and John Grisham.'
+    keywords:
+      - mystery
+      - 'Agatha Christie'
+      - 'John Grisham'
+  -
+    name: hiking
+    summary: 'Jane enjoys hiking, light mountain climbing, and has four summits under her belt!'
+  -
+    name: yoga

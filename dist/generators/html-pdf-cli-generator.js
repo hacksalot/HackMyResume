@@ -43,7 +43,7 @@ Definition of the HtmlPdfCLIGenerator class.
 
     HtmlPdfCLIGenerator.prototype.onBeforeSave = function(info) {
       var safe_eng;
-      if (info.ext !== 'html') {
+      if (info.ext !== 'html' && info.ext !== 'pdf') {
         return info.mk;
       }
       safe_eng = info.opts.pdf || 'wkhtmltopdf';

@@ -51,7 +51,7 @@ class JRSTheme
           files: [{
             action: 'transform',
             render: this.render,
-            major: true,
+            primary: true,
             ext: 'html',
             css: null
           }]
@@ -60,7 +60,7 @@ class JRSTheme
           files: [{
             action: 'transform',
             render: this.render,
-            major: true,
+            primary: true,
             ext: 'pdf',
             css: null
           }]

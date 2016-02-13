@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <title>Jane Q. Fullstacker</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic'
+        rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <style>
+            * {
+              box-sizing: border-box;
+            }
+            
+            main {
+              display: block;
+            }
+            
+            body {
+              font-family: 'Helvetica Neue', 'Helvetica', 'Segoe UI', 'Calibri', 'sans-serif';
+              font-size: 15px;
+              color: #333;
+              line-height: 1.42857143;
+              background-color: #F0F0F0;
+              margin: 0;
+              padding: 0;
+            }
+            
+            /* Typical page borders are awkward when rendered to PDF. */
+            body.pdf {
+              background-color: #FFFFFF;
+            }
+            
+            /* Adobe or wkhtmltopdf has issues with the <main> tag, so we use <div> for
+            the PDF case, <main> for the HTML case, and style both via an ID. */
+            #main {
+              background-color: #FFF;
+              margin: 10px;
+              padding: 10px;
+              border: 1px solid #E6E6E6;
+            }
+            
+            body.pdf > #main {
+              border: none;
+            }
+            
+            #container > header {
+              padding-top: 6em;
+              padding-bottom: 1em;
+            }
+            
+            body.pdf #container > header {
+              padding: 0;
+            }
+            
+            #main > #container > section {
+              margin-left: 5em;
+              position: relative;
+              display: block;
+            }
+            
+            span.fa
+            {
+              position: absolute;
+              top: 4px;
+              left: -50px;
+              font-size: 30px;
+              color: #BFC1C3;
+            }
+            
+            hr {
+              margin-top: 20px;
+              margin-bottom: 20px;
+              border: 0;
+              border-top: 1px solid #EEE;
+            }
+            
+            .tenure, .keywords {
+              font-size: 75%;
+            }
+            
+            h1 {
+              margin: 0;
+              font-size: 46px;
+            }
+            
+            h2 {
+              font-size: 24px;
+              color: #BFC1C3;
+              text-transform: uppercase;
+              font-weight: normal;
+            }
+            
+            h3 {
+              margin-bottom: 0;
+              font-size: 18px;
+            }
+            
+            a, a:visited {
+              color: #428BCA;
+              text-decoration: none;
+              font-weight: bold;
+            }
+            
+            a:hover {
+              text-decoration: underline;
+            }
+            
+            .defunct {
+              color: #989898;
+              font-weight: bold;
+            }
+            
+            #summary > p > strong {
+              font-size: 1.25em;
+            }
+            
+            
+            .label-keyword {
+              display: inline-block;
+              background: #7eb0db;
+              color: white;
+              font-size: 0.9em;
+              padding: 5px;
+              border: 1px solid #357ebd;
+              border-radius: 5px;
+              margin-top: 2px;
+            }
+            
+            .card-skills {
+                position: relative;
+            }
+            .card-nested {
+                min-height: 0;
+                margin-bottom: 10px;
+                border-width: 1px 0 0 0;
+            }
+            .card {
+                background: #FFF;
+                border-radius: 3px;
+                padding: 10px;
+            }
+            
+            .skill-level {
+              border-radius: 3px;
+              position: absolute;
+              top: 10px;
+              bottom: 10px;
+              left: 0;
+              width: 10px;
+              box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+            }
+            .skill-level .skill-progress {
+              position: absolute;
+              border-radius: 3px;
+              bottom: 0;
+              width: 100%;
+              -webkit-transition: height 1s ease;
+            }
+            .skill-level .skill-progress.beginner {
+              height: 50%;
+              background: #e74c3c;
+            }
+            .skill-level .skill-progress.intermediate {
+              height: 70%;
+              background: #f1c40f;
+            }
+            .skill-level .skill-progress.advanced {
+              height: 80%;
+              background: #428bca;
+            }
+            .skill-level .skill-progress.master {
+              height: 95%;
+              background: #5cb85c;
+            }
+            .skill-info {
+              margin-left: 10px;
+            }
+            @media (max-width: 480px) {
+              .skill-info {
+                margin-left: 20px;
+              }
+            }
+            
+            .list-unstyled {
+              padding-left: 0;
+              list-style: none;
+            }
+            
+            .card-skills {
+              position: relative;
+            }
+            
+            .space-top {
+                margin-top: 10px;
+            }
+            
+            #container {
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            
+            #elevator-pitch {
+              text-align: center;
+              font-size: 24px;
+              color: #BFC1C3;
+              text-transform: uppercase;
+              font-weight: normal;
+            }
+            
+            .res-label {
+              font-style: italic;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <main id="main">
+            <div id="container">
+                <header>
+                     <h1>Jane Q. Fullstacker</h1>
+
+                    <div id="contact"></div>
+                </header>
+                <hr>
+                <section id="summary">
+                    <header> <span class="fa fa-lg fa-info"></span> 
+                         <h2>info</h2>
+
+                    </header> <strong>Imaginary full-stack software developer with 6+ years industry experience</strong> specializing
+                    in scalable cloud architectures for this, that, and the other. A native
+                    of southern CA, Jane enjoys hiking, mystery novels, and the company of
+                    Rufus, her two-year-old beagle.</section>
+                <hr>
+                <section id="skills">
+                    <header>
+                         <h2>Skills</h2>
+
+                    </header> <span class="fa fa-lg fa-code"></span>
+
+                    <ul class="list-unstyled">
+                        <li class="card card-nested card-skills">
+                            <div class="skill-level" rel="tooltip" title="advanced" data-placement="left">
+                                <div class="skill-progress advanced"></div>
+                            </div>
+                            <div class="skill-info"> <strong>Web</strong>
+
+                                <div class="space-top labels"> <span class="label label-keyword">JavaScript</span>
+ <span class="label label-keyword">HTML 5</span>
+
+                                    <span
+                                    class="label label-keyword">CSS</span> <span class="label label-keyword">LAMP</span>
+ <span class="label label-keyword">MVC</span>
+
+                                        <span
+                                        class="label label-keyword">REST</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="card card-nested card-skills">
+                            <div class="skill-level" rel="tooltip" title="master" data-placement="left">
+                                <div class="skill-progress master"></div>
+                            </div>
+                            <div class="skill-info"> <strong>JavaScript</strong>
+
+                                <div class="space-top labels"> <span class="label label-keyword">Node.js</span>
+ <span class="label label-keyword">Angular.js</span>
+
+                                    <span
+                                    class="label label-keyword">jQuery</span> <span class="label label-keyword">Bootstrap</span>
+ <span class="label label-keyword">React.js</span>
+
+                                        <span
+                                        class="label label-keyword">Backbone.js</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="card card-nested card-skills">
+                            <div class="skill-level" rel="tooltip" title="intermediate" data-placement="left">
+                                <div class="skill-progress intermediate"></div>
+                            </div>
+                            <div class="skill-info"> <strong>Database</strong>
+
+                                <div class="space-top labels"> <span class="label label-keyword">MySQL</span>
+ <span class="label label-keyword">PostgreSQL</span>
+
+                                    <span
+                                    class="label label-keyword">NoSQL</span> <span class="label label-keyword">ORM</span>
+ <span class="label label-keyword">Hibernate</span>
+
+                                </div>
+                            </div>
+                        </li>
+                        <li class="card card-nested card-skills">
+                            <div class="skill-level" rel="tooltip" title="intermediate" data-placement="left">
+                                <div class="skill-progress intermediate"></div>
+                            </div>
+                            <div class="skill-info"> <strong>Cloud</strong>
+
+                                <div class="space-top labels"> <span class="label label-keyword">AWS</span>
+ <span class="label label-keyword">EC2</span>
+
+                                    <span
+                                    class="label label-keyword">RDS</span> <span class="label label-keyword">S3</span>
+ <span class="label label-keyword">Azure</span>
+
+                                        <span
+                                        class="label label-keyword">Dropbox</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="card card-nested card-skills">
+                            <div class="skill-level" rel="tooltip" title="beginner" data-placement="left">
+                                <div class="skill-progress beginner"></div>
+                            </div>
+                            <div class="skill-info"> <strong>Project</strong>
+
+                                <div class="space-top labels"> <span class="label label-keyword">Agile</span>
+ <span class="label label-keyword">TFS</span>
+
+                                    <span
+                                    class="label label-keyword">Unified Process</span> <span class="label label-keyword">MS Project</span>
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+                <hr>
+                <section id="employment">
+                    <header> <span class="fa fa-lg fa-building"></span> 
+                         <h2>employment</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>Head Code Ninja</em>,
+    <a href="https://onecool.io/does-not-exist">One Cool Startup</a>
+    </h3>
+ <span class="tenure">2013-09 — Current</span>
+| <span class="keywords">Agile PM Amazon Web Services AWS </span>
+
+                        <p>
+                            <p>Development team manager for <a href="https://en.wikipedia.org/wiki/Vaporware">OneCoolApp</a> and
+                                OneCoolWebsite, a free social network tiddlywink generator and lifestyle
+                                portal with over 200,000 users.</p>
+                        </p>
+                        <ul>
+                            <li>Managed a 5-person development team</li>
+                            <li>Accomplishment 2</li>
+                            <li>Etc.</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3><em>Principal Developer</em>,
+    <a href="https://en.wikipedia.org/wiki/Better_Off_Ted#Plot">Veridian Dynamics</a>
+    </h3>
+ <span class="tenure">2011-07 — 2013-08</span>
+| <span class="keywords">C++ C Linux </span>
+
+                        <p>
+                            <p>Developer on numerous projects culminating in technical lead role for
+                                the <a href="http://betteroffted.wikia.com/wiki/Jabberwocky">Jabberwocky project</a> and
+                                promotion to principal developer.</p>
+                        </p>
+                        <ul>
+                            <li>Managed a 5-person development team</li>
+                            <li>Accomplishment 2</li>
+                            <li>Etc.</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3><em>IT Administrator</em>,
+    Stark Industries
+    </h3>
+ <span class="tenure">2008-10 — 2011-06</span>
+| <span class="keywords">Novell Active Directory Linux Windows </span>
+
+                        <p>
+                            <p>Junior programmer with heavy code responsibilities. Promoted to intermediate
+                                role after 6 months.</p>
+                        </p>
+                        <ul>
+                            <li>Promoted to intermediate developer after 6 months</li>
+                            <li>Accomplishment 2</li>
+                            <li>Etc.</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3><em>Intern</em>,
+    Dunder Mifflin
+    </h3>
+ <span class="tenure">2008-06 — 2008-09</span>
+| <span class="keywords">Novell Active Directory Linux Windows </span>
+
+                        <p>
+                            <p>Performed IT administration and deployments for Dunder Mifflin.</p>
+                        </p>
+                        <ul>
+                            <li>Supervised roll-out of Dunder Mifflin Infinity website.</li>
+                            <li>Performed mission-critical system backups and</li>
+                            <li>Etc.</li>
+                        </ul>
+                    </div>
+                </section>
+                <hr>
+                <section id="projects">
+                    <header> <span class="fa fa-lg fa-star"></span> 
+                         <h2>projects</h2>
+
+                    </header>
+                    <div>
+                        
+<h3><em>Contributor</em>,
+<a href="http://please.hackmyresume.com">HackMyResume</a>
+</h3>
+
+<span class="tenure">2015-09 — Current</span>
+| <span class="keywords">JavaScript Node.js cross-platform JSON </span>
+
+                        <p>Exemplar user for HackMyResume and FluentCV!</p>
+                    </div>
+                    <div>
+                        
+<h3><em>Co-creator</em>,
+<a href="http://project.website.com">Augmented Android</a>
+</h3>
+
+<span class="tenure">2012-02 — 2014-01</span>
+| <span class="keywords">Android Java Xamarin </span>
+
+                        <p>Performed flagship product conceptualization and development.</p>
+                    </div>
+                    <div>
+                        
+<h3><em>Creator</em>,
+<a href="http://myblog.jane.com/blog">Blog</a>
+</h3>
+
+<span class="keywords">Jekyll Ruby HTML 5 JavaScript HTTP LAMP </span>
+
+                        <p>Conceptualization, design, development, and deployment.</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="education">
+                    <header> <span class="fa fa-lg fa-mortar-board"></span> 
+                         <h2>education</h2>
+
+                    </header>
+                    <div>
+                        
+<h3><em>BSCS</em>,
+<a href="https://www.cornell.edu/">Cornell University</a>
+</h3>
+
+<span class="tenure">2005-09 — 2008-05</span>
+| <span class="keywords">Course 1 Course 2 Course 2 </span>
+
+                        <p>A multiline summary of the education.</p>
+                    </div>
+                    <div>
+                        
+<h3>
+<a href="https://en.wikipedia.org/wiki/Medfield_College">Medfield College</a>
+</h3>
+
+<span class="tenure">2003-09 — 2005-06</span>
+| <span class="keywords">Course 1 Course 2 Course 2 </span>
+
+                        <p>A multiline summary of the education.</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="governance">
+                    <header> <span class="fa fa-lg fa-balance-scale"></span> 
+                         <h2>governance</h2>
+
+                    </header>
+                    <div>
+                        
+<h3><em>Member</em>,
+<a href="http://themommiesnetwork.org">The Mommies Network</a>
+</h3>
+
+<span class="tenure">2008-02 — 2010-01</span>
+
+                        <p>Since 2008 I&#39;ve been a full-time member of the board of directors
+                            for TMN.</p>
+                    </div>
+                    <div>
+                        
+<h3><em>Academic Contributor</em>,
+<a href="https://www.khronos.org">Khronos Group</a>
+</h3>
+
+<span class="tenure">2015-01 — Current</span>
+
+                        <ul>
+                            <li>Participated in GORFF standardization process (Draft 2).</li>
+                        </ul>
+                    </div>
+                </section>
+                <hr>
+                <section id="service">
+                    <header> <span class="fa fa-lg fa-child"></span> 
+                         <h2>service</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>Technical Consultant</em>,
+      <a href="http://technology-for-tots.org">Technology for Tots</a>
+    </h3>
+ <span class="tenure">2003-11 — 2005-06</span>
+
+                        <p>
+                            <p>Summary of this volunteer stint.</p>
+                        </p>
+                        <ul>
+                            <li>Accomplishment 1</li>
+                            <li>Accomplishment 2</li>
+                            <li>etc</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3><em>NCO</em>,
+      <a href="http://www.usar.army.mil/">US Army Reserves</a>
+    </h3>
+ <span class="tenure">1999-11 — 2003-06</span>
+
+                        <p>
+                            <p>Summary of this military stint.</p>
+                        </p>
+                        <ul>
+                            <li>Accomplishment 1</li>
+                            <li>Accomplishment 2</li>
+                            <li>etc</li>
+                        </ul>
+                    </div>
+                </section>
+                <hr>
+                <section id="affiliation">
+                    <header> <span class="fa fa-lg fa-share-alt"></span> 
+                         <h2>affiliation</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>Member</em>,
+        <a href="https://www.ieee.org/index.html">IEEE</a>
+        </h3>
+ <span class="tenure">2013-06 — Current</span>
+
+                        <p>Member in good standing since 2013-06.</p>
+                    </div>
+                    <div>
+                         <h3><em>Member</em>,
+        <a href="https://developer.apple.com/">Apple Developer Network</a>
+        </h3>
+ <span class="tenure">??? — Current</span>
+
+                        <p>Member of the <a href="https://developer.apple.com/">Apple Developer program</a> since
+                            2008.</p>
+                    </div>
+                    <div>
+                         <h3><em>Subscriber</em>,
+        <a href="https://msdn.microsoft.com">MSDN</a>
+        </h3>
+ <span class="tenure">2010-01 — Current</span>
+
+                        <p>Super-Ultra-gold level Ultimate Access MSDN subscriber package with subscription
+                            toaster and XBox ping pong racket.</p>
+                    </div>
+                    <div>
+                         <h3><em>Coordinator</em>,
+        Campus Coder&#39;s Meetup
+        </h3>
+ <span class="tenure">2003-02 — 2004-04</span>
+
+                        <p>Host of a monthly <strong>campus-wide meetup for CS students</strong>.
+                            Code, coffee, and crullers!</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="samples">
+                    <header> <span class="fa fa-lg fa-share"></span> 
+                         <h2>samples</h2>
+
+                    </header>
+                    <div>
+                         <h3>
+    <a href="http://janef.me/asteroids">Asteroids</a>
+    </h3>
+ <span class="tenure">2014-09</span>
+
+                        <p>A browser-based space shooter built on Three.js.</p>
+                    </div>
+                    <div>
+                         <h3>
+    <a href="https://rememberpedia.com">Rememberpedia</a>
+    </h3>
+ <span class="tenure">2015-07</span>
+
+                        <p>A website to help you remember things.</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="writing">
+                    <header> <span class="fa fa-lg fa-pencil"></span> 
+                         <h2>writing</h2>
+
+                    </header>
+                    <div>
+                         <h3><em><a href="http://codeproject.com/build-ui-electron-atom.aspx">Building User Interfaces with Electron and Atom</a></em>,
+      Code Project</h3>
+ <span class="tenure">2011</span>
+
+                    </div>
+                    <div>
+                         <h3><em><a href="http://janef.me">Jane Fullstacker&#39;s Blog</a></em>,
+      self</h3>
+ <span class="tenure">2011</span>
+
+                    </div>
+                    <div>
+                         <h3><em><a href="http://url.to.publication.com/blah">Teach Yourself GORFF in 21 Days</a></em>,
+      Amazon</h3>
+ <span class="tenure">2008</span>
+
+                        <p>A primer on the programming language of GORFF, whose for loops are coterminous
+                            with all of time and space.</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="reading">
+                    <header> <span class="fa fa-lg fa-book"></span> 
+                         <h2>reading</h2>
+
+                    </header>
+                    <div>
+                         <h3><em><a href="http://www.cc2e.com/Default.aspx">Code Complete</a></em>, Steve McConnell</h3>
+ <span class="tenure">2016</span>
+
+                    </div>
+                    <div>
+                         <h3><em><a href="https://www.reddit.com/r/programming/">r/programming</a></em></h3>
+ <span class="tenure">2016</span>
+
+                    </div>
+                    <div>
+                         <h3><em><a href="https://news.ycombinator.com/">Hacker News / YCombinator</a></em></h3>
+ <span class="tenure">2016</span>
+
+                    </div>
+                    <div>
+                         <h3><em><a href="http://www.codinghorror.com">Coding Horror</a></em>, Jeff Atwood</h3>
+ <span class="tenure">2016</span>
+
+                    </div>
+                </section>
+                <hr>
+                <section id="recognition">
+                    <header> <span class="fa fa-lg fa-trophy"></span> 
+                         <h2>recognition</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>Honorable Mention</em>, Google</h3>
+ <span class="tenure">2012</span>
+
+                    </div>
+                    <div>
+                         <h3><em>Summa cum laude</em>, Cornell University</h3>
+ <span class="tenure">2012</span>
+
+                    </div>
+                </section>
+                <hr>
+                <section id="speaking">
+                    <header> <span class="fa fa-lg fa-users"></span> 
+                         <h2>speaking</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>Data Warehousing Evolved: DARMA 2.0</em>, OPENSTART 2013 Developer&#39;s Conference</h3>
+ <span class="tenure">2012</span>
+
+                        <ul>
+                            <li>Won &#39;Best Presentation on an Emerging Technical Field&#39; prize.</li>
+                        </ul>
+                    </div>
+                </section>
+                <hr>
+                <section id="testimonials">
+                    <header> <span class="fa fa-lg fa-quote-left"></span> 
+                         <h2>testimonials</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>John Davidson</em></h3>
+
+                        <p>Jane is awesome! I&#39;d hire her again in a heartbeat.</p>
+                    </div>
+                    <div>
+                         <h3><em>Elias Fullstacker</em></h3>
+
+                        <p>I worked with Jane on Jabberwocky and can vouch for her awesome technical
+                            capabilities and attention to detail. Insta-hire.</p>
+                    </div>
+                    <div>
+                         <h3><em>Dana Nevins</em></h3>
+
+                        <p>I&#39;ve known Jane personally and professionally for almost ten years.
+                            She is one in a million.</p>
+                    </div>
+                </section>
+                <hr>
+                <section id="references">
+                    <header> <span class="fa fa-lg fa-thumbs-o-up"></span> 
+                         <h2>references</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>John Davidson</em></h3>
+
+                    </div>
+                </section>
+                <hr>
+                <section id="interests">
+                    <header> <span class="fa fa-lg fa-bicycle"></span> 
+                         <h2>interests</h2>
+
+                    </header>
+                    <div>
+                         <h3><em>reading</em></h3>
+ <span class="tenure">2016</span>
+
+                        <p>Jane is a fan of mystery novels and courtroom dramas including Agatha
+                            Christie and John Grisham.</p>
+                    </div>
+                    <div>
+                         <h3><em>hiking</em></h3>
+ <span class="tenure">2016</span>
+
+                        <p>Jane enjoys hiking, light mountain climbing, and has four summits under
+                            her belt!</p>
+                    </div>
+                    <div>
+                         <h3><em>yoga</em></h3>
+ <span class="tenure">2016</span>
+
+                    </div>
+                </section>
+            </div>
+        </main>
+    </body>
+
+</html>

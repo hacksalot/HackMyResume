@@ -18,7 +18,7 @@ var chai = require('chai')
 
 describe('Testing CLI interface', function () {
 
-  this.timeout(10000);
+  this.timeout(20000);
 
   function run( args, expErr ) {
     var title = args;

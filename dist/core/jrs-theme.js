@@ -49,7 +49,7 @@ Definition of the JRSTheme class.
               {
                 action: 'transform',
                 render: this.render,
-                major: true,
+                primary: true,
                 ext: 'html',
                 css: null
               }
@@ -61,7 +61,7 @@ Definition of the JRSTheme class.
               {
                 action: 'transform',
                 render: this.render,
-                major: true,
+                primary: true,
                 ext: 'pdf',
                 css: null
               }

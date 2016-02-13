@@ -232,7 +232,6 @@ _single = ( targInfo, theme, finished ) ->
     # Otherwise this is an ad-hoc format (JSON, YML, or PNG) that every theme
     # gets "for free".
     else
-
       theFormat = _fmts.filter( (fmt) ->
         return fmt.name == targInfo.fmt.outFormat
       )[0];

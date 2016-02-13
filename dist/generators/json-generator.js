@@ -6,7 +6,7 @@ Definition of the JsonGenerator class.
  */
 
 (function() {
-  var BaseGenerator, FS, JsonGenerator, _,
+  var BaseGenerator, FJCV, FS, JsonGenerator, _,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -16,8 +16,10 @@ Definition of the JsonGenerator class.
 
   _ = require('underscore');
 
+  FJCV = require('fresh-jrs-converter');
 
-  /** The JsonGenerator generates a JSON resume directly. */
+
+  /** The JsonGenerator generates a FRESH or JRS resume as an output. */
 
   module.exports = JsonGenerator = (function(superClass) {
     extend(JsonGenerator, superClass);
@@ -26,20 +28,10 @@ Definition of the JsonGenerator class.
       JsonGenerator.__super__.constructor.call(this, 'json');
     }
 
-    JsonGenerator.prototype.keys = ['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index', 'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result', 'isModified', 'htmlPreview', 'safe'];
-
     JsonGenerator.prototype.invoke = function(rez) {
-      var replacer;
-      replacer = function(key, value) {
-        if (_.some(this.keys, function(val) {
-          return key.trim() === val;
-        })) {
-          return void 0;
-        } else {
-          return value;
-        }
-      };
-      return JSON.stringify(rez, replacer, 2);
+      var altRez;
+      altRez = FJCV['to' + (rez.format() === 'FRESH' ? 'JRS' : 'FRESH')](rez);
+      return altRez = FJCV.toSTRING(altRez);
     };
 
     JsonGenerator.prototype.generate = function(rez, f) {

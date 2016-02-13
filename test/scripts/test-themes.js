@@ -18,7 +18,8 @@ var chai = require('chai')
   , READFILES = require('recursive-readdir-sync')
   , fileContains = require('../../dist/utils/file-contains')
   , FS = require('fs')
-  , CHALK = require('chalk');
+  , CHALK = require('chalk')
+  , DIRCOMP = require('dir-compare');
 
 chai.config.includeStack = true;
 
@@ -91,12 +92,26 @@ function folderContains( needle, haystack ) {
   });
 }
 
+function foldersMatch( a, b ) {
+  var ret;
+  ret = DIRCOMP.compareSync(a, b, {compareSize: true, skipSubdirs: true});
+  if( !ret.same ) return false;
+  ret = DIRCOMP.compareSync(a, b, {compareContent: true, skipSubdirs: true});
+  return ret.differences === 1;
+}
+
 genThemes( 'jane-q-fullstacker', ['node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json'], 'FRESH' );
 genThemes( 'johnny-trouble', ['node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json'], 'FRESH' );
 genThemes( 'richard-hendriks', ['test/resumes/jrs-0.0.0/richard-hendriks.json'], 'JRS' );
 
 describe('Verifying generated theme files...', function() {
+
   it('Generated files should not contain ICE.', function() {
     expect( folderContains('@@@@', '../sandbox') ).to.be.false;
   });
+
+  it('Generated files should match exemplars...', function() {
+    expect( foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern', 'test/expected/modern' ) ).to.be.true;
+  });
+
 });

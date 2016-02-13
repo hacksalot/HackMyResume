@@ -36,7 +36,7 @@ Definition of the JRSResume class.
    */
 
   JRSResume = (function(superClass) {
-    var clear, format;
+    var clear;
 
     extend1(JRSResume, superClass);
 
@@ -135,7 +135,7 @@ Definition of the JRSResume class.
 
     /** Return the resume format. */
 
-    format = function() {
+    JRSResume.prototype.format = function() {
       return 'JRS';
     };
 

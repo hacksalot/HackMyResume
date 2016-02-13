@@ -105,7 +105,7 @@ class JRSResume extends AbstractResume
 
 
   ###* Return the resume format. ###
-  format = () -> 'JRS'
+  format: () -> 'JRS'
 
 
 

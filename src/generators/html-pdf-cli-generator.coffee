@@ -31,7 +31,8 @@ module.exports = class HtmlPdfCLIGenerator extends TemplateGenerator
 
   ###* Generate the binary PDF. ###
   onBeforeSave: ( info ) ->
-    return info.mk if info.ext != 'html'
+    #console.dir _.omit( info, 'mk' ), depth: null, colors: true
+    return info.mk if info.ext != 'html' and info.ext != 'pdf'
     safe_eng = info.opts.pdf || 'wkhtmltopdf'
     safe_eng = 'phantomjs' if safe_eng == 'phantom'
     if _.has engines, safe_eng

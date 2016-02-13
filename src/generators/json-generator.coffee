@@ -7,27 +7,19 @@ Definition of the JsonGenerator class.
 BaseGenerator = require './base-generator'
 FS = require 'fs'
 _ = require 'underscore'
+FJCV = require 'fresh-jrs-converter'
 
-###* The JsonGenerator generates a JSON resume directly. ###
+###* The JsonGenerator generates a FRESH or JRS resume as an output. ###
 
 module.exports = class JsonGenerator extends BaseGenerator
 
   constructor: () -> super 'json'
 
-  keys: ['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index',
-    'safeStartDate', 'safeEndDate', 'safeDate', 'safeReleaseDate', 'result',
-    'isModified', 'htmlPreview', 'safe' ]
-
   invoke: ( rez ) ->
-
-    # TODO: merge with FCVD
-    replacer = ( key,value ) -> # Exclude these keys from stringification
-      if (_.some @keys, (val) -> key.trim() == val)
-        return undefined
-      else
-        value
-    JSON.stringify rez, replacer, 2
+    altRez = FJCV[ 'to' + if rez.format() == 'FRESH' then 'JRS' else 'FRESH' ] rez
+    altRez = FJCV.toSTRING( altRez )
+    #altRez.stringify()
 
   generate: ( rez, f ) ->
-    FS.writeFileSync( f, this.invoke(rez), 'utf8' )
+    FS.writeFileSync f, @invoke(rez), 'utf8'
     return

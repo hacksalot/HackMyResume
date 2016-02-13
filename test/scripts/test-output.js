@@ -41,7 +41,7 @@ function MyConsoleLog() {
 
 describe('Testing Ouput interface', function () {
 
-
+  this.timeout(20000);
 
   // HackMyResume CLI stub. Handle a single HMR invocation.
   function HackMyResumeOutputStub( args ) {
