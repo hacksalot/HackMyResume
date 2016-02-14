@@ -8,8 +8,8 @@ Definition of the UnderscoreGenerator class.
 
 _ = require 'underscore'
 registerHelpers = require '../helpers/underscore-helpers'
-
-
+require '../utils/string'
+escapeLaTeX = require 'escape-latex'
 
 ###*
 Perform template-based resume generation using Underscore.js.
@@ -41,11 +41,23 @@ UnderscoreGenerator = module.exports =
       delims = _.mapObject delims, (val,key) -> new RegExp val, "ig"
     _.templateSettings = delims;
 
-    # Strip {# comments #}
-    jst = jst.replace delims.comment, ''
+    # Massage resume strings / text
+    r = null
+    switch format
+      when 'html' then r = json.markdownify()
+      when 'pdf' then r = json.markdownify()
+      when 'png' then r = json.markdownify()
+      when 'latex'
+        traverse = require 'traverse'
+        r = traverse(json).map (x) ->
+          if @isLeaf && String.is @node
+            return escapeLaTeX @node
+          @node
+      else r = json
 
+    # Set up the context
     ctx =
-      r: if format == 'html' || format == 'pdf' || format == 'png' then json.markdownify() else json
+      r: r
       filt: opts.filters
       XML: require 'xml-escape'
       RAW: json
@@ -54,5 +66,8 @@ UnderscoreGenerator = module.exports =
       headFragment: opts.headFragment || ''
       opts: opts
 
+    # Link to our helpers
     registerHelpers theme, opts, cssInfo, ctx, @
+
+    # Generate!
     @generateSimple ctx, jst

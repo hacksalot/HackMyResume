@@ -6,11 +6,15 @@ Definition of the UnderscoreGenerator class.
  */
 
 (function() {
-  var UnderscoreGenerator, _, registerHelpers;
+  var UnderscoreGenerator, _, escapeLaTeX, registerHelpers;
 
   _ = require('underscore');
 
   registerHelpers = require('../helpers/underscore-helpers');
+
+  require('../utils/string');
+
+  escapeLaTeX = require('escape-latex');
 
 
   /**
@@ -33,7 +37,7 @@ Definition of the UnderscoreGenerator class.
       }
     },
     generate: function(json, jst, format, cssInfo, opts, theme) {
-      var ctx, delims;
+      var ctx, delims, r, traverse;
       delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
       if (opts.themeObj && opts.themeObj.delimeters) {
         delims = _.mapObject(delims, function(val, key) {
@@ -41,9 +45,31 @@ Definition of the UnderscoreGenerator class.
         });
       }
       _.templateSettings = delims;
-      jst = jst.replace(delims.comment, '');
+      r = null;
+      switch (format) {
+        case 'html':
+          r = json.markdownify();
+          break;
+        case 'pdf':
+          r = json.markdownify();
+          break;
+        case 'png':
+          r = json.markdownify();
+          break;
+        case 'latex':
+          traverse = require('traverse');
+          r = traverse(json).map(function(x) {
+            if (this.isLeaf && String.is(this.node)) {
+              return escapeLaTeX(this.node);
+            }
+            return this.node;
+          });
+          break;
+        default:
+          r = json;
+      }
       ctx = {
-        r: format === 'html' || format === 'pdf' || format === 'png' ? json.markdownify() : json,
+        r: r,
         filt: opts.filters,
         XML: require('xml-escape'),
         RAW: json,
