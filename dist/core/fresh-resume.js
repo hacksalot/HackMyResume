@@ -77,11 +77,20 @@ Definition of the FRESHResume class.
      */
 
     FreshResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, ref1, scrubbed, that;
+      var ignoreList, ref, scrubbed, that, traverse;
       that = this;
-      ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
+      traverse = require('traverse');
+      ignoreList = [];
+      scrubbed = traverse(rep).map(function(x) {
+        if (!this.isLeaf && this.node.ignore) {
+          if (this.node.ignore === true || this.node.ignore === 'true') {
+            ignoreList.push(this.node);
+            return this.remove();
+          }
+        }
+      });
       extend(true, this, scrubbed);
-      if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
+      if (!((ref = this.imp) != null ? ref.processed : void 0)) {
         opts = opts || {};
         if (opts.imp === void 0 || opts.imp) {
           this.imp = this.imp || {};

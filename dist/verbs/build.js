@@ -109,8 +109,7 @@ Implementation of the 'build' verb for HackMyResume.
       objectify: false,
       quit: true,
       inner: {
-        sort: _opts.sort,
-        "private": _opts["private"]
+        sort: _opts.sort
       }
     }, this);
     problemSheets = _.filter(sheetObjects, function(so) {
@@ -199,9 +198,7 @@ Implementation of the 'build' verb for HackMyResume.
       r: rez,
       theme: theme
     });
-    _rezObj = new RTYPES[toFormat]().parseJSON(rez, {
-      "private": _opts["private"]
-    });
+    _rezObj = new RTYPES[toFormat]().parseJSON(rez);
     targets = _expand(dst, theme);
     _.each(targets, function(t) {
       var ref;
@@ -236,7 +233,6 @@ Implementation of the 'build' verb for HackMyResume.
     var that;
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
-    _opts["private"] = opts["private"] === true;
     _opts.css = opts.css;
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;
