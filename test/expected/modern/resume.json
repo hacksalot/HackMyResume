@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jane Q. Fullstacker",
     "label": "Senior Developer",
-    "summary": "**Imaginary full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.",
+    "summary": "**Imaginary full-stack software developer with 6+ years industry experience** specializing in cloud-driven web applications and middleware. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two year old beagle.",
     "website": "http://janef.me/blog",
     "phone": "1-650-999-7777",
     "email": "jdoe@onecoolstartup.io",
@@ -29,11 +29,11 @@
   },
   "work": [
     {
-      "company": "One Cool Startup",
-      "website": "https://onecool.io/does-not-exist",
+      "company": "Area 52",
+      "website": "https://area52.io/does-not-exist",
       "position": "Head Code Ninja",
       "startDate": "2013-09",
-      "summary": "Development team manager for [OneCoolApp](https://en.wikipedia.org/wiki/Vaporware) and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.",
+      "summary": "Development team manager for [**Quantum Diorama**](https://en.wikipedia.org/wiki/Vaporware), a distributed molecular modeling and analysis suite for Linux and OS X.",
       "highlights": [
         "Managed a 5-person development team",
         "Accomplishment 2",
@@ -156,6 +156,8 @@
       "keywords": [
         "Agile",
         "TFS",
+        "JIRA",
+        "GitHub",
         "Unified Process",
         "MS Project"
       ]

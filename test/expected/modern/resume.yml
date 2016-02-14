@@ -1,11 +1,11 @@
 name: 'Jane Q. Fullstacker'
 meta:
-  format: FRESH@0.4.0
-  version: 0.3.0
+  format: FRESH@0.6.0
+  version: 0.4.0
 info:
   label: 'Senior Developer'
   characterClass: Programmer
-  brief: '**Imaginary full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.'
+  brief: '**Imaginary full-stack software developer with 6+ years industry experience** specializing in cloud-driven web applications and middleware. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two year old beagle.'
   image: jane_doe.png
   quote: 'Be the change you want to see in the world.'
 contact:
@@ -93,17 +93,22 @@ employment:
   summary: '7+ years industry IT and software development experience.'
   history:
     -
-      employer: 'One Cool Startup'
-      url: 'https://onecool.io/does-not-exist'
+      employer: 'Area 52'
+      url: 'https://area52.io/does-not-exist'
       position: 'Head Code Ninja'
-      summary: 'Development team manager for [OneCoolApp](https://en.wikipedia.org/wiki/Vaporware) and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.'
+      summary: 'Development team manager for [**Quantum Diorama**](https://en.wikipedia.org/wiki/Vaporware), a distributed molecular modeling and analysis suite for Linux and OS X.'
       start: 2013-09
-      current: true
       keywords:
         - Agile
         - PM
-        - 'Amazon Web Services'
-        - AWS
+        - C
+        - C++
+        - R
+        - OpenGL
+        - Boost
+        - MySQL
+        - PostgreSQL
+        - JIRA
       highlights:
         - 'Managed a 5-person development team'
         - 'Accomplishment 2'
@@ -119,6 +124,8 @@ employment:
         - C++
         - C
         - Linux
+        - R
+        - Clojure
       highlights:
         - 'Managed a 5-person development team'
         - 'Accomplishment 2'
@@ -172,6 +179,7 @@ education:
         - 'Course 2'
     -
       institution: 'Medfield College'
+      title: ""
       url: 'https://en.wikipedia.org/wiki/Medfield_College'
       start: 2003-09
       end: 2005-06
@@ -281,6 +289,8 @@ skills:
       skills:
         - Agile
         - TFS
+        - JIRA
+        - GitHub
         - 'Unified Process'
         - 'MS Project'
   list:
@@ -355,23 +365,28 @@ writing:
     summary: 'A primer on the programming language of GORFF, whose for loops are coterminous with all of time and space.'
 reading:
   -
-    title: 'Code Complete'
-    flavor: book
-    url: 'http://www.cc2e.com/Default.aspx'
-    author: 'Steve McConnell'
-  -
     title: r/programming
     flavor: website
     url: 'https://www.reddit.com/r/programming/'
+    summary: 'Daily reader and longtime lurker.'
   -
     title: 'Hacker News / YCombinator'
     flavor: website
     url: 'https://news.ycombinator.com/'
+    summary: 'Daily reader and longtime lurker.'
   -
     title: 'Coding Horror'
     flavor: blog
     url: 'http://www.codinghorror.com'
     author: 'Jeff Atwood'
+    summary: 'Reader since 2007; member of the StackOverflow Beta.'
+  -
+    title: 'Code Complete'
+    flavor: book
+    url: 'http://www.cc2e.com/Default.aspx'
+    author: 'Steve McConnell'
+    date: 2014-09
+    summary: 'My ''desert-island'' software construction manual.'
 speaking:
   -
     title: 'Data Warehousing Evolved: DARMA 2.0'

@@ -4,7 +4,7 @@ Tel: 1-650-999-7777
 Web: http://janef.me/blog
 ================================================================================
 
-**Imaginary full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.
+**Imaginary full-stack software developer with 6+ years industry experience** specializing in cloud-driven web applications and middleware. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two year old beagle.
 
 SKILLS -------------------------------------------------------------------------
 
@@ -12,12 +12,12 @@ SKILLS -------------------------------------------------------------------------
 - JavaScript: Node.js Angular.js jQuery Bootstrap React.js Backbone.js 
 - Database: MySQL PostgreSQL NoSQL ORM Hibernate 
 - Cloud: AWS EC2 RDS S3 Azure Dropbox 
-- Project: Agile TFS Unified Process MS Project 
+- Project: Agile TFS JIRA GitHub Unified Process MS Project 
 
 EMPLOYMENT ---------------------------------------------------------------------
 
-Head Code Ninja, One Cool Startup (2013-09 — Current)
-Development team manager for [OneCoolApp](https://en.wikipedia.org/wiki/Vaporware) and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.
+Head Code Ninja, Area 52 (2013-09 — Present)
+Development team manager for [**Quantum Diorama**](https://en.wikipedia.org/wiki/Vaporware), a distributed molecular modeling and analysis suite for Linux and OS X.
 - Managed a 5-person development team
 - Accomplishment 2
 - Etc.
@@ -43,7 +43,7 @@ Performed IT administration and deployments for Dunder Mifflin.
 
 PROJECTS -----------------------------------------------------------------------
 
-HackMyResume, contributor (2015-09 — Current)
+HackMyResume, contributor (2015-09 — Present)
 A resume authoring and analysis tool for OS X, Linux, and Windows.
 Exemplar user for HackMyResume and FluentCV!
 
@@ -51,7 +51,7 @@ Augmented Android, co-creator (2012-02 — 2014-01)
 An augmented reality app for Android.
 Performed flagship product conceptualization and development.
 
-Blog, creator (??? — Current)
+Blog, creator (??? — Present)
 My programming blog. Powered by Jekyll.
 Conceptualization, design, development, and deployment.
 
@@ -77,13 +77,13 @@ A multiline summary of the education.
 
 AFFILIATION --------------------------------------------------------------------
 
-Member, IEEE (2013-06 — Current)
+Member, IEEE (2013-06 — Present)
 Member in good standing since 2013-06.
 
-Member, Apple Developer Network (??? — Current)
+Member, Apple Developer Network (??? — Present)
 Member of the [Apple Developer program](https://developer.apple.com/) since 2008.
 
-Subscriber, MSDN (2010-01 — Current)
+Subscriber, MSDN (2010-01 — Present)
 Super-Ultra-gold level Ultimate Access MSDN subscriber package with subscription toaster and XBox ping pong racket.
 
 Coordinator, Campus Coder's Meetup (2003-02 — 2004-04)
@@ -103,27 +103,32 @@ A website to help you remember things.
 
 WRITING ------------------------------------------------------------------------
 
-Building User Interfaces with Electron and Atom
+Building User Interfaces with Electron and Atom (2011-01)
 
-Jane Fullstacker's Blog
+Jane Fullstacker's Blog (2011-01)
 
-Teach Yourself GORFF in 21 Days
+Teach Yourself GORFF in 21 Days (2008-01)
 A primer on the programming language of GORFF, whose for loops are coterminous with all of time and space.
 
 
 READING ------------------------------------------------------------------------
 
-"Code Complete", Steve McConnell
-http://www.cc2e.com/Default.aspx
-
 "r/programming"
 https://www.reddit.com/r/programming/
+Daily reader and longtime lurker.
 
 "Hacker News / YCombinator"
 https://news.ycombinator.com/
+Daily reader and longtime lurker.
 
 "Coding Horror", Jeff Atwood
 http://www.codinghorror.com
+Reader since 2007; member of the StackOverflow Beta.
+
+"Code Complete", Steve McConnell
+http://www.cc2e.com/Default.aspx
+My 'desert-island' software construction manual.
+2014-09
 
 
 SERVICE ------------------------------------------------------------------------
@@ -143,9 +148,9 @@ Summary of this military stint.
 
 RECOGNITION --------------------------------------------------------------------
 
-Honorable Mention, Google
+Honorable Mention, Google (Jan 2012)
 
-Summa cum laude, Cornell University
+Summa cum laude, Cornell University (Jan 2012)
 
 
 REFERENCES ---------------------------------------------------------------------

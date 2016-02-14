@@ -27,34 +27,70 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Display a formatted date with optional fallback text.
+  Emit a formatted string representing the specified datetime.
   Convert the input date to the specified format through Moment.js. If date is
   valid, return the formatted date string. If date is null, undefined, or other
   falsy value, return the value of the 'fallback' parameter, if specified, or
   null if no fallback was specified. If date is invalid, but not null/undefined/
   falsy, return it as-is.
+  @param {string|Moment} datetime A date value.
+  @param {string} [dtFormat='YYYY-MM'] The desired datetime format. Must be a
+  Moment.js-compatible datetime format.
+  @param {string|Moment} fallback A fallback value to use if the specified date
+  is null, undefined, or falsy.
   ###
   formatDate: (datetime, dtFormat, fallback) ->
 
+    datetime ?= undefined
     dtFormat ?= 'YYYY-MM'
-    momentDate = moment datetime
-    return momentDate.format(dtFormat) if momentDate.isValid()
 
+    # If a Moment.js object was passed in, just call format on it
+    if datetime and moment.isMoment datetime
+      return datetime.format dtFormat
+
+    if String.is datetime
+      # If a string was passed in, convert to Moment using the 2-paramter
+      # constructor with an explicit format string.
+      momentDate = moment datetime, dtFormat
+      return momentDate.format(dtFormat) if momentDate.isValid()
+
+      # If that didn't work, try again with the single-parameter constructor
+      # but this may throw a deprecation warning
+      momentDate = moment datetime
+      return momentDate.format(dtFormat) if momentDate.isValid()
+
+    # We weren't able to format the provided datetime. Now do one of three
+    # things.
+    #   1. If datetime is non-null/non-falsy, return it. For this helper,
+    # string date values that we can't parse are assumed to be display dates.
+    #   2. If datetime IS null or falsy, use the value from the fallback.
+    #   3. If the fallback value is specifically 'true', emit 'Present'.
     datetime ||
       if typeof fallback == 'string'
       then fallback
-      else (if fallback == true then 'Present' else null)
+      else (if fallback == true then 'Present' else '')
 
 
 
-  ###* Display a formatted date. ###
+  ###*
+  Emit a formatted string representing the specified datetime.
+  @param {string} dateValue A raw date value from the FRESH or JRS resume.
+  @param {string} [dateFormat='YYYY-MM'] The desired datetime format. Must be
+  compatible with Moment.js datetime formats.
+  @param {string} [dateDefault=null] The default date value to use if the dateValue
+  parameter is null, undefined, or falsy.
+  ###
   date: (dateValue, dateFormat, dateDefault) ->
-    dateDefault = 'Current' if arguments.length < 4 or !dateDefault or !String.is dateDefault
-    dateFormat = 'YYYY-MM' if arguments.length < 3 or !dateFormat or !String.is dateFormat
+
+    dateDefault = 'Current' if !dateDefault or !String.is dateDefault
+    dateFormat = 'YYYY-MM' if !dateFormat or !String.is dateFormat
+    dateValue = null if !dateValue or !String.is dateValue
     return dateDefault if !dateValue
-    reserved = ['current', 'present', 'now'];
+
+    reserved = ['current', 'present', 'now']
     dateValueSafe = dateValue.trim().toLowerCase();
     return dateValue if _.contains reserved, dateValueSafe
+
     dateValueMoment = moment dateValue, dateFormat
     return dateValueMoment.format dateFormat if dateValueMoment.isValid()
     dateValue
@@ -64,11 +100,10 @@ GenericHelpers = module.exports =
   ###*
   Given a resume sub-object with a start/end date, format a representation of
   the date range.
-  @method dateRange
   ###
-  dateRange: ( obj, fmt, sep, fallback, options ) ->
+  dateRange: ( obj, fmt, sep, fallback ) ->
     return '' if !obj
-    _fromTo obj.start, obj.end, fmt, sep, fallback, options
+    _fromTo obj.start, obj.end, fmt, sep, fallback
 
 
 
@@ -95,26 +130,6 @@ GenericHelpers = module.exports =
       if !(ret && ret.trim())
         return colorDefault
       ret
-
-
-
-  ###*
-  Block-level helper. Emit the enclosed content if the resume has a section with
-  the specified name. Otherwise, emit an empty string ''.
-  @method section
-  ###
-  section: ( title, options ) ->
-    title = title.trim().toLowerCase()
-    obj = LO.get this.r, title
-    ret = ''
-    if obj
-      if _.isArray obj
-        if obj.length
-          ret = options.fn @
-      else if _.isObject obj
-        if (obj.history && obj.history.length) || (obj.sets && obj.sets.length)
-            ret = options.fn @
-    ret
 
 
 
@@ -280,7 +295,7 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Capitalize the first letter of the word.
+  Capitalize the first letter of the word. TODO: Rename
   @method section
   ###
   camelCase: (val) ->
@@ -290,21 +305,8 @@ GenericHelpers = module.exports =
 
 
   ###*
-  Emit the enclosed content if the resume has the named property or subproperty.
-  @method has
-  ###
-  has: ( title, options ) ->
-    title = title && title.trim().toLowerCase()
-    if LO.get this.r, title
-      return options.fn this
-    return
-
-
-
-  ###*
-  Generic template helper function to display a user-overridable section
-  title for a FRESH resume theme. Use this in lieue of hard-coding section
-  titles.
+  Display a user-overridable section title for a FRESH resume theme. Use this in
+  lieue of hard-coding section titles.
 
   Usage:
 
@@ -414,8 +416,7 @@ GenericHelpers = module.exports =
   Convert text to lowercase.
   @method toLower
   ###
-  toLower: ( txt ) ->
-    if txt && txt.trim() then txt.toLowerCase() else ''
+  toLower: ( txt ) -> if txt && txt.trim() then txt.toLowerCase() else ''
 
 
 
@@ -423,18 +424,7 @@ GenericHelpers = module.exports =
   Convert text to lowercase.
   @method toLower
   ###
-  toUpper: ( txt ) ->
-    if txt && txt.trim() then txt.toUpperCase() else ''
-
-
-
-  ###*
-  Return true if either value is truthy.
-  @method either
-  ###
-  either: ( lhs, rhs, options ) ->
-    if lhs || rhs
-      return options.fn this
+  toUpper: ( txt ) -> if txt && txt.trim() then txt.toUpperCase() else ''
 
 
 

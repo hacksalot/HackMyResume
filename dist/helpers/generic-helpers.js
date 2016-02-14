@@ -38,33 +38,60 @@ Generic template helper definitions for HackMyResume / FluentCV.
   GenericHelpers = module.exports = {
 
     /**
-    Display a formatted date with optional fallback text.
+    Emit a formatted string representing the specified datetime.
     Convert the input date to the specified format through Moment.js. If date is
     valid, return the formatted date string. If date is null, undefined, or other
     falsy value, return the value of the 'fallback' parameter, if specified, or
     null if no fallback was specified. If date is invalid, but not null/undefined/
     falsy, return it as-is.
+    @param {string|Moment} datetime A date value.
+    @param {string} [dtFormat='YYYY-MM'] The desired datetime format. Must be a
+    Moment.js-compatible datetime format.
+    @param {string|Moment} fallback A fallback value to use if the specified date
+    is null, undefined, or falsy.
      */
     formatDate: function(datetime, dtFormat, fallback) {
       var momentDate;
+      if (datetime == null) {
+        datetime = void 0;
+      }
       if (dtFormat == null) {
         dtFormat = 'YYYY-MM';
       }
-      momentDate = moment(datetime);
-      if (momentDate.isValid()) {
-        return momentDate.format(dtFormat);
+      if (datetime && moment.isMoment(datetime)) {
+        return datetime.format(dtFormat);
       }
-      return datetime || (typeof fallback === 'string' ? fallback : (fallback === true ? 'Present' : null));
+      if (String.is(datetime)) {
+        momentDate = moment(datetime, dtFormat);
+        if (momentDate.isValid()) {
+          return momentDate.format(dtFormat);
+        }
+        momentDate = moment(datetime);
+        if (momentDate.isValid()) {
+          return momentDate.format(dtFormat);
+        }
+      }
+      return datetime || (typeof fallback === 'string' ? fallback : (fallback === true ? 'Present' : ''));
     },
 
-    /** Display a formatted date. */
+    /**
+    Emit a formatted string representing the specified datetime.
+    @param {string} dateValue A raw date value from the FRESH or JRS resume.
+    @param {string} [dateFormat='YYYY-MM'] The desired datetime format. Must be
+    compatible with Moment.js datetime formats.
+    @param {string} [dateDefault=null] The default date value to use if the dateValue
+    parameter is null, undefined, or falsy.
+     */
     date: function(dateValue, dateFormat, dateDefault) {
       var dateValueMoment, dateValueSafe, reserved;
-      if (arguments.length < 4 || !dateDefault || !String.is(dateDefault)) {
+      if (!dateDefault || !String.is(dateDefault)) {
         dateDefault = 'Current';
       }
-      if (arguments.length < 3 || !dateFormat || !String.is(dateFormat)) {
+      if (!dateFormat || !String.is(dateFormat)) {
         dateFormat = 'YYYY-MM';
+      }
+      if (!dateValue || !String.is(dateValue)) {
+        dateValue = null;
       }
       if (!dateValue) {
         return dateDefault;
@@ -84,13 +111,12 @@ Generic template helper definitions for HackMyResume / FluentCV.
     /**
     Given a resume sub-object with a start/end date, format a representation of
     the date range.
-    @method dateRange
      */
-    dateRange: function(obj, fmt, sep, fallback, options) {
+    dateRange: function(obj, fmt, sep, fallback) {
       if (!obj) {
         return '';
       }
-      return _fromTo(obj.start, obj.end, fmt, sep, fallback, options);
+      return _fromTo(obj.start, obj.end, fmt, sep, fallback);
     },
 
     /**
@@ -123,30 +149,6 @@ Generic template helper definitions for HackMyResume / FluentCV.
         }
         return ret;
       }
-    },
-
-    /**
-    Block-level helper. Emit the enclosed content if the resume has a section with
-    the specified name. Otherwise, emit an empty string ''.
-    @method section
-     */
-    section: function(title, options) {
-      var obj, ret;
-      title = title.trim().toLowerCase();
-      obj = LO.get(this.r, title);
-      ret = '';
-      if (obj) {
-        if (_.isArray(obj)) {
-          if (obj.length) {
-            ret = options.fn(this);
-          }
-        } else if (_.isObject(obj)) {
-          if ((obj.history && obj.history.length) || (obj.sets && obj.sets.length)) {
-            ret = options.fn(this);
-          }
-        }
-      }
-      return ret;
     },
 
     /**
@@ -306,7 +308,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Capitalize the first letter of the word.
+    Capitalize the first letter of the word. TODO: Rename
     @method section
      */
     camelCase: function(val) {
@@ -319,20 +321,8 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
-    Emit the enclosed content if the resume has the named property or subproperty.
-    @method has
-     */
-    has: function(title, options) {
-      title = title && title.trim().toLowerCase();
-      if (LO.get(this.r, title)) {
-        return options.fn(this);
-      }
-    },
-
-    /**
-    Generic template helper function to display a user-overridable section
-    title for a FRESH resume theme. Use this in lieue of hard-coding section
-    titles.
+    Display a user-overridable section title for a FRESH resume theme. Use this in
+    lieue of hard-coding section titles.
     
     Usage:
     
@@ -461,16 +451,6 @@ Generic template helper definitions for HackMyResume / FluentCV.
         return txt.toUpperCase();
       } else {
         return '';
-      }
-    },
-
-    /**
-    Return true if either value is truthy.
-    @method either
-     */
-    either: function(lhs, rhs, options) {
-      if (lhs || rhs) {
-        return options.fn(this);
       }
     },
 

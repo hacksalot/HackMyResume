@@ -4,7 +4,7 @@ Email: jdoe@onecoolstartup.io
 Tel: 1-650-999-7777
 Web: http://janef.me/blog
 
-**Imaginary full-stack software developer with 6+ years industry experience** specializing in scalable cloud architectures for this, that, and the other. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two-year-old beagle.
+**Imaginary full-stack software developer with 6+ years industry experience** specializing in cloud-driven web applications and middleware. A native of southern CA, Jane enjoys hiking, mystery novels, and the company of Rufus, her two year old beagle.
 
 ## SKILLS
 
@@ -12,13 +12,13 @@ Web: http://janef.me/blog
   - JavaScript: Node.js Angular.js jQuery Bootstrap React.js Backbone.js 
   - Database: MySQL PostgreSQL NoSQL ORM Hibernate 
   - Cloud: AWS EC2 RDS S3 Azure Dropbox 
-  - Project: Agile TFS Unified Process MS Project 
+  - Project: Agile TFS JIRA GitHub Unified Process MS Project 
 
 ## EMPLOYMENT
 
-### *Head Code Ninja*, [One Cool Startup](https://onecool.io/does-not-exist) (2013-09 — 2016-02)
+### *Head Code Ninja*, [Area 52](https://area52.io/does-not-exist) (2013-09 — Present)
 
-Development team manager for [OneCoolApp](https://en.wikipedia.org/wiki/Vaporware) and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.
+Development team manager for [**Quantum Diorama**](https://en.wikipedia.org/wiki/Vaporware), a distributed molecular modeling and analysis suite for Linux and OS X.
   - Managed a 5-person development team
   - Accomplishment 2
   - Etc.
@@ -47,7 +47,7 @@ Performed IT administration and deployments for Dunder Mifflin.
 
 ## PROJECTS
 
-### *Contributor*, [HackMyResume](http://please.hackmyresume.com) (2015-09 — 2016-02)
+### *Contributor*, [HackMyResume](http://please.hackmyresume.com) (2015-09 — Present)
 
 A resume authoring and analysis tool for OS X, Linux, and Windows.
 Exemplar user for HackMyResume and FluentCV!
@@ -57,7 +57,7 @@ Exemplar user for HackMyResume and FluentCV!
 An augmented reality app for Android.
 Performed flagship product conceptualization and development.
 
-### *Creator*, [Blog](http://myblog.jane.com/blog) (2016-02 — 2016-02)
+### *Creator*, [Blog](http://myblog.jane.com/blog) (??? — Present)
 
 My programming blog. Powered by Jekyll.
 Conceptualization, design, development, and deployment.
@@ -90,15 +90,15 @@ A multiline summary of the education.
 
 ## AFFILIATION
 
-### *Member*, [IEEE](https://www.ieee.org/index.html) (2013-06 — Current)
+### *Member*, [IEEE](https://www.ieee.org/index.html) (2013-06 — Present)
 
 Member in good standing since 2013-06.
 
-### *Member*, [Apple Developer Network](https://developer.apple.com/) (??? — Current)
+### *Member*, [Apple Developer Network](https://developer.apple.com/) (??? — Present)
 
 Member of the [Apple Developer program](https://developer.apple.com/) since 2008.
 
-### *Subscriber*, [MSDN](https://msdn.microsoft.com) (2010-01 — Current)
+### *Subscriber*, [MSDN](https://msdn.microsoft.com) (2010-01 — Present)
 
 Super-Ultra-gold level Ultimate Access MSDN subscriber package with subscription toaster and XBox ping pong racket.
 
@@ -135,13 +135,17 @@ A primer on the programming language of GORFF, whose for loops are coterminous w
 
 ## READING
 
-### [*Code Complete*](http://www.cc2e.com/Default.aspx), Steve McConnell
-
 ### [*r/programming*](https://www.reddit.com/r/programming/)
+Daily reader and longtime lurker.
 
 ### [*Hacker News / YCombinator*](https://news.ycombinator.com/)
+Daily reader and longtime lurker.
 
 ### [*Coding Horror*](http://www.codinghorror.com), Jeff Atwood
+Reader since 2007; member of the StackOverflow Beta.
+
+### [*Code Complete*](http://www.cc2e.com/Default.aspx), Steve McConnell
+My 'desert-island' software construction manual.
 
 
 ## SERVICE
@@ -163,9 +167,9 @@ Summary of this military stint.
 
 ## RECOGNITION
 
-### Honorable Mention, Google
+### Honorable Mention, Google (Jan 2012)
 
-### Summa cum laude, Cornell University
+### Summa cum laude, Cornell University (Jan 2012)
 
 
 ## SPEAKING

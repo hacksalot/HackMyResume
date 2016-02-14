@@ -869,7 +869,7 @@
               <w:caps/>
               <w:spacing w:val="22"/>
             </w:rPr>
-            <w:t>Agile  TFS  Unified Process  MS Project</w:t>
+            <w:t>Agile  TFS  JIRA  GitHub  Unified Process  MS Project</w:t>
           </w:r>
         </w:p>
       </w:tc>
@@ -938,12 +938,12 @@
       <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
         <w:t>Head Code Ninja, </w:t>
       </w:r>
-      <w:hlink w:dest="https://onecool.io/does-not-exist">
+      <w:hlink w:dest="https://area52.io/does-not-exist">
         <w:r wsp:rsidR="009452CA" wsp:rsidRPr="00606071">
           <w:rPr>
             <w:rStyle w:val="Hyperlink"/>
           </w:rPr>
-          <w:t>One Cool Startup</w:t>
+          <w:t>Area 52</w:t>
         </w:r>
       </w:hlink>
       <w:r wsp:rsidR="00EA0B64">
@@ -953,7 +953,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>Sep 2013 — Current</w:t>
+        <w:t>Sep 2013 — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -962,7 +962,7 @@
           <w:sz-cs w:val="20"/>
         </w:rPr>
       </w:pPr>
-      <w:r><w:rPr></w:rPr><w:t>Development team manager for </w:t></w:r><w:hlink w:dest="https://en.wikipedia.org/wiki/Vaporware"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>OneCoolApp</w:t></w:r></w:hlink><w:r><w:rPr></w:rPr><w:t> and OneCoolWebsite, a free social network tiddlywink generator and lifestyle portal with over 200,000 users.</w:t></w:r>
+      <w:r><w:rPr></w:rPr><w:t>Development team manager for </w:t></w:r><w:hlink w:dest="https://en.wikipedia.org/wiki/Vaporware"><w:r><w:rPr><w:b/><w:rStyle w:val="Hyperlink"/></w:rPr><w:t>Quantum Diorama</w:t></w:r></w:hlink><w:r><w:rPr></w:rPr><w:t>, a distributed molecular modeling and analysis suite for Linux and OS X.</w:t></w:r>
     </w:p>
 
     <w:p wsp:rsidR="00C146CA" wsp:rsidRDefault="009452CA" wsp:rsidP="00C146CA">
@@ -1323,7 +1323,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>2015-09 — Current</w:t>
+        <w:t>2015-09 — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -1407,7 +1407,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>??? — Current</w:t>
+        <w:t>??? — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -1524,7 +1524,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>2015-01 — Current</w:t>
+        <w:t>2015-01 — Present</w:t>
       </w:r>
     </w:p>
 
@@ -1894,7 +1894,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>Jun 2013 — Current</w:t>
+        <w:t>Jun 2013 — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -1936,7 +1936,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>??? — Current</w:t>
+        <w:t>??? — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -1978,7 +1978,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>Jan 2010 — Current</w:t>
+        <w:t>Jan 2010 — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
@@ -2194,33 +2194,6 @@
           <w:tab w:val="right" w:pos="9360"/>
         </w:tabs> -->
       </w:pPr>
-      <w:hlink w:dest="http://www.cc2e.com/Default.aspx">
-        <w:r wsp:rsidR="009452CA" wsp:rsidRPr="00606071">
-          <w:rPr>
-            <w:rStyle w:val="Hyperlink"/>
-          </w:rPr>
-          <w:t>Code Complete</w:t>
-        </w:r>
-      </w:hlink>
-      <!-- <w:r wsp:rsidR="00EA0B64">
-        <w:tab/>
-      </w:r> -->
-      <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
-        <w:t>, Steve McConnell</w:t>
-      </w:r>
-    </w:p>
-
-
-  </wx:sub-section>
-
-  <wx:sub-section>
-    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA" wsp:rsidRDefault="00606071" wsp:rsidP="00E578D4">
-      <w:pPr>
-        <w:pStyle w:val="Heading2"/>
-        <!-- <w:tabs>
-          <w:tab w:val="right" w:pos="9360"/>
-        </w:tabs> -->
-      </w:pPr>
       <w:hlink w:dest="https://www.reddit.com/r/programming/">
         <w:r wsp:rsidR="009452CA" wsp:rsidRPr="00606071">
           <w:rPr>
@@ -2232,6 +2205,14 @@
       <!-- <w:r wsp:rsidR="00EA0B64">
         <w:tab/>
       </w:r> -->
+    </w:p>
+    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
+      <w:pPr>
+        <w:rPr>
+          <w:sz-cs w:val="20"/>
+        </w:rPr>
+      </w:pPr>
+      <w:r><w:rPr></w:rPr><w:t>Daily reader and longtime lurker.</w:t></w:r>
     </w:p>
 
 
@@ -2256,6 +2237,14 @@
       <!-- <w:r wsp:rsidR="00EA0B64">
         <w:tab/>
       </w:r> -->
+    </w:p>
+    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
+      <w:pPr>
+        <w:rPr>
+          <w:sz-cs w:val="20"/>
+        </w:rPr>
+      </w:pPr>
+      <w:r><w:rPr></w:rPr><w:t>Daily reader and longtime lurker.</w:t></w:r>
     </w:p>
 
 
@@ -2283,6 +2272,49 @@
       <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
         <w:t>, Jeff Atwood</w:t>
       </w:r>
+    </w:p>
+    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
+      <w:pPr>
+        <w:rPr>
+          <w:sz-cs w:val="20"/>
+        </w:rPr>
+      </w:pPr>
+      <w:r><w:rPr></w:rPr><w:t>Reader since 2007; member of the StackOverflow Beta.</w:t></w:r>
+    </w:p>
+
+
+  </wx:sub-section>
+
+  <wx:sub-section>
+    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA" wsp:rsidRDefault="00606071" wsp:rsidP="00E578D4">
+      <w:pPr>
+        <w:pStyle w:val="Heading2"/>
+        <!-- <w:tabs>
+          <w:tab w:val="right" w:pos="9360"/>
+        </w:tabs> -->
+      </w:pPr>
+      <w:hlink w:dest="http://www.cc2e.com/Default.aspx">
+        <w:r wsp:rsidR="009452CA" wsp:rsidRPr="00606071">
+          <w:rPr>
+            <w:rStyle w:val="Hyperlink"/>
+          </w:rPr>
+          <w:t>Code Complete</w:t>
+        </w:r>
+      </w:hlink>
+      <!-- <w:r wsp:rsidR="00EA0B64">
+        <w:tab/>
+      </w:r> -->
+      <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
+        <w:t>, Steve McConnell</w:t>
+      </w:r>
+    </w:p>
+    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
+      <w:pPr>
+        <w:rPr>
+          <w:sz-cs w:val="20"/>
+        </w:rPr>
+      </w:pPr>
+      <w:r><w:rPr></w:rPr><w:t>My &apos;desert-island&apos; software construction manual.</w:t></w:r>
     </w:p>
 
 
@@ -2584,7 +2616,7 @@
         <w:rPr>
           <w:rStyle w:val="FromTo"/>
         </w:rPr>
-        <w:t>Feb 2016 — Feb 2016</w:t>
+        <w:t>??? — Present</w:t>
       </w:r>
     </w:p>
     <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">

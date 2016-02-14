@@ -1,18 +1,20 @@
 
 /**
 Template helper definitions for Handlebars.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+@license MIT. See LICENSE.md for details.
 @module handlebars-helpers.js
  */
 
 (function() {
-  var HANDLEBARS, _, helpers;
+  var HANDLEBARS, _, blockHelpers, helpers;
 
   HANDLEBARS = require('handlebars');
 
   _ = require('underscore');
 
   helpers = require('./generic-helpers');
+
+  blockHelpers = require('./block-helpers');
 
 
   /**
@@ -21,9 +23,24 @@ Template helper definitions for Handlebars.
    */
 
   module.exports = function(theme, opts) {
+    var wrappedHelpers;
     helpers.theme = theme;
     helpers.opts = opts;
-    return HANDLEBARS.registerHelper(helpers);
+    helpers.type = 'handlebars';
+    wrappedHelpers = _.mapObject(helpers, function(hVal, hKey) {
+      if (_.isFunction(hVal)) {
+        _.wrap(hVal, function(func) {
+          var args;
+          args = Array.prototype.slice.call(arguments);
+          args.shift();
+          args.pop();
+          return func.apply(this, args);
+        });
+      }
+      return hVal;
+    }, this);
+    HANDLEBARS.registerHelper(wrappedHelpers);
+    HANDLEBARS.registerHelper(blockHelpers);
   };
 
 }).call(this);
