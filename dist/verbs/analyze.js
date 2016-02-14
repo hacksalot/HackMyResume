@@ -58,7 +58,7 @@ Implementation of the 'analyze' verb for HackMyResume.
         format: 'FRESH',
         objectify: true,
         inner: {
-          "private": opts["private"]
+          "private": opts["private"] === true
         }
       }, this);
       if (opts.assert && this.hasError()) {
