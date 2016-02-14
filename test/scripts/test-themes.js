@@ -27,6 +27,7 @@ function genThemes( title, src, fmt ) {
 
   describe('Testing themes against ' + title.toUpperCase() + ' resume ' + '(' + fmt + ')' , function () {
 
+    this.timeout(30000);
     var _sheet;
 
     function genTheme( fmt, src, themeName, themeLoc, testTitle ) {
