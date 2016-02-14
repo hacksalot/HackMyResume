@@ -76,7 +76,7 @@ Definition of the `main` function.
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);
     });
-    program.command('analyze')["arguments"]('<sources...>').description('Analyze one or more resumes.').action(function(sources) {
+    program.command('analyze')["arguments"]('<sources...>').option('--private', 'Include resume fields marked as private', false).description('Analyze one or more resumes.').action(function(sources) {
       execute.call(this, sources, [], this.opts(), logMsg);
     });
     program.command('peek')["arguments"]('<sources...>').description('Peek at a resume field or section').action(function(sources, sectionOrField) {
@@ -84,7 +84,7 @@ Definition of the `main` function.
       dst = sources && sources.length > 1 ? [sources.pop()] : [];
       execute.call(this, sources, dst, this.opts(), logMsg);
     });
-    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).description('Generate resume to multiple formats').action(function(sources, targets, options) {
+    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).option('--private', 'Include resume fields marked as private', false).description('Generate resume to multiple formats').action(function(sources, targets, options) {
       var x;
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);

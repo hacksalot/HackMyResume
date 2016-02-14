@@ -33,7 +33,7 @@ _analyze = ( sources, dst, opts ) ->
 
   nlzrs = _loadInspectors()
   results = _.map sources, (src) ->
-    r = ResumeFactory.loadOne src, format: 'FRESH', objectify: true, @
+    r = ResumeFactory.loadOne src, format: 'FRESH', objectify: true, inner: { private: opts.private }, @
     return { } if opts.assert and @hasError()
 
     if r.fluenterror

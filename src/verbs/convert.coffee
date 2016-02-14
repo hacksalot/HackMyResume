@@ -61,7 +61,7 @@ _convert = ( srcs, dst, opts ) ->
 ###* Private workhorse method. Convert a single resume. ###
 _convertOne = (src, dst, idx) ->
   # Load the resume
-  rinfo = ResumeFactory.loadOne src, format: null, objectify: true
+  rinfo = ResumeFactory.loadOne src, format: null, objectify: true, inner: { private: true }
 
   # If a load error occurs, report it and move on to the next file (if any)
   if rinfo.fluenterror
