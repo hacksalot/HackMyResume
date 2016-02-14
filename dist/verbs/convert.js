@@ -94,7 +94,7 @@ Implementation of the 'convert' verb for HackMyResume.
       format: null,
       objectify: true,
       inner: {
-        "private": true
+        "private": false
       }
     });
     if (rinfo.fluenterror) {
