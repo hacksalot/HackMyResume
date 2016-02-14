@@ -166,7 +166,6 @@ _build = ( src, dst, opts ) ->
 Prepare for a BUILD run.
 ###
 _prep = ( src, dst, opts ) ->
-
   # Cherry-pick options //_opts = extend( true, _opts, opts );
   _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
   _opts.prettify = opts.prettify is true

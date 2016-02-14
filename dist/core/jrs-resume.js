@@ -71,25 +71,12 @@ Definition of the JRSResume class.
      */
 
     JRSResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, scrubbed, that, traverse;
+      var ignoreList, privateList, ref, ref1, scrubbed, that;
       opts = opts || {};
       that = this;
-      traverse = require('traverse');
-      ignoreList = [];
-      privateList = [];
-      scrubbed = traverse(rep).map(function(x) {
-        if (!this.isLeaf) {
-          if (this.node.ignore === true || this.node.ignore === 'true') {
-            ignoreList.push(this.node);
-            return this.remove();
-          } else if ((this.node["private"] === true || this.node["private"] === 'true') && !(opts != null ? opts["private"] : void 0)) {
-            privateList.push(this.node);
-            return this.remove();
-          }
-        }
-      });
+      ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
       extend(true, this, scrubbed);
-      if (!((ref = this.imp) != null ? ref.processed : void 0)) {
+      if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
         opts = opts || {};
         if (opts.imp === void 0 || opts.imp) {
           this.imp = this.imp || {};

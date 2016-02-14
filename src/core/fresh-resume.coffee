@@ -55,18 +55,7 @@ class FreshResume extends AbstractResume
 
     # Ignore any element with the 'ignore: true' or 'private: true' designator.
     that = @
-    traverse = require 'traverse'
-    ignoreList = []
-    privateList = []
-
-    scrubbed = traverse( rep ).map ( x ) ->
-      if !@isLeaf
-        if @node.ignore == true || @node.ignore == 'true'
-          ignoreList.push this.node
-          @remove()
-        else if (@node.private == true || @node.private == 'true') && !opts?.private
-          privateList.push @node
-          @remove()
+    { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
 
     # Now apply the resume representation onto this object
     extend( true, @, scrubbed );

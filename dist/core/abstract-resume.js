@@ -62,6 +62,41 @@ Definition of the AbstractResume class.
       return lastDate.diff(firstDate, unit);
     };
 
+
+    /**
+    Removes ignored or private fields from a resume object
+    @returns an object with the following structure:
+    {
+      scrubbed: the processed resume object
+      ignoreList: an array of ignored nodes that were removed
+      privateList: an array of private nodes that were removed
+    }
+     */
+
+    AbstractResume.prototype.scrubResume = function(rep, opts) {
+      var ignoreList, includePrivates, privateList, scrubbed, traverse;
+      traverse = require('traverse');
+      ignoreList = [];
+      privateList = [];
+      includePrivates = (opts != null ? opts["private"] : void 0) == null ? true : opts != null ? opts["private"] : void 0;
+      scrubbed = traverse(rep).map(function(x) {
+        if (!this.isLeaf) {
+          if (this.node.ignore === true || this.node.ignore === 'true') {
+            ignoreList.push(this.node);
+            return this.remove();
+          } else if ((this.node["private"] === true || this.node["private"] === 'true') && !includePrivates) {
+            privateList.push(this.node);
+            return this.remove();
+          }
+        }
+      });
+      return {
+        scrubbed: scrubbed,
+        ingoreList: ignoreList,
+        privateList: privateList
+      };
+    };
+
     return AbstractResume;
 
   })();
