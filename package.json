@@ -86,7 +86,7 @@
   "devDependencies": {
     "chai": "*",
     "dir-compare": "0.0.2",
-    "fresh-test-resumes": "^0.6.0",
+    "fresh-test-resumes": "^0.7.0",
     "grunt": "*",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.7.0",
