@@ -57,6 +57,30 @@ Generic template helper definitions for HackMyResume / FluentCV.
       return datetime || (typeof fallback === 'string' ? fallback : (fallback === true ? 'Present' : null));
     },
 
+    /** Display a formatted date. */
+    date: function(dateValue, dateFormat, dateDefault) {
+      var dateValueMoment, dateValueSafe, reserved;
+      if (arguments.length < 4 || !dateDefault || !String.is(dateDefault)) {
+        dateDefault = 'Current';
+      }
+      if (arguments.length < 3 || !dateFormat || !String.is(dateFormat)) {
+        dateFormat = 'YYYY-MM';
+      }
+      if (!dateValue) {
+        return dateDefault;
+      }
+      reserved = ['current', 'present', 'now'];
+      dateValueSafe = dateValue.trim().toLowerCase();
+      if (_.contains(reserved, dateValueSafe)) {
+        return dateValue;
+      }
+      dateValueMoment = moment(dateValue, dateFormat);
+      if (dateValueMoment.isValid()) {
+        return dateValueMoment.format(dateFormat);
+      }
+      return dateValue;
+    },
+
     /**
     Given a resume sub-object with a start/end date, format a representation of
     the date range.
@@ -580,7 +604,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
       dateFrom = dateTemp.format(fmt);
     }
     if (_.contains(reserved, dateBTrim)) {
-      dateTo = fallback || 'Current';
+      dateTo = fallback || 'Present';
     } else {
       dateTemp = FluentDate.fmt(dateB);
       dateTo = dateTemp.format(fmt);

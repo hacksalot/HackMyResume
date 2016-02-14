@@ -47,6 +47,20 @@ GenericHelpers = module.exports =
 
 
 
+  ###* Display a formatted date. ###
+  date: (dateValue, dateFormat, dateDefault) ->
+    dateDefault = 'Current' if arguments.length < 4 or !dateDefault or !String.is dateDefault
+    dateFormat = 'YYYY-MM' if arguments.length < 3 or !dateFormat or !String.is dateFormat
+    return dateDefault if !dateValue
+    reserved = ['current', 'present', 'now'];
+    dateValueSafe = dateValue.trim().toLowerCase();
+    return dateValue if _.contains reserved, dateValueSafe
+    dateValueMoment = moment dateValue, dateFormat
+    return dateValueMoment.format dateFormat if dateValueMoment.isValid()
+    dateValue
+
+
+
   ###*
   Given a resume sub-object with a start/end date, format a representation of
   the date range.
@@ -542,7 +556,7 @@ _fromTo = ( dateA, dateB, fmt, sep, fallback ) ->
     dateFrom = dateTemp.format( fmt )
 
   if _.contains( reserved, dateBTrim )
-    dateTo = fallback || 'Current'
+    dateTo = fallback || 'Present'
   else
     dateTemp = FluentDate.fmt( dateB )
     dateTo = dateTemp.format( fmt )
