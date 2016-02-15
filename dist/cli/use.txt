@@ -19,6 +19,7 @@ Available options:
   --format -f   The format (FRESH or JSON Resume) to use.
   --debug -d    Emit extended debugging info.
   --assert -a   Treat resume validation warnings as errors.
+  --private     Include resume fields marked as private
   --no-colors   Disable terminal colors.
   --tips        Display theme messages and tips.
   --help -h     Display help documentation.

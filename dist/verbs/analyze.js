@@ -56,7 +56,10 @@ Implementation of the 'analyze' verb for HackMyResume.
       var r;
       r = ResumeFactory.loadOne(src, {
         format: 'FRESH',
-        objectify: true
+        objectify: true,
+        inner: {
+          "private": opts["private"] === true
+        }
       }, this);
       if (opts.assert && this.hasError()) {
         return {};
