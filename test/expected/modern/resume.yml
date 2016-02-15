@@ -409,30 +409,13 @@ recognition:
     title: 'Summa cum laude'
     event: graduation
     date: '2012'
-references:
-  -
-    name: 'John Davidson'
-    flavor: professional
-    private: true
-    contact:
-      -
-        label: Mobile
-        flavor: phone
-        value: 9-(999)-999-9999
-      -
-        label: 'Work email'
-        flavor: email
-        value: jdavidson@veridiandynamics.com
+references: []
 testimonials:
   -
     name: 'John Davidson'
     flavor: professional
     quote: 'Jane is awesome! I''d hire her again in a heartbeat.'
     private: true
-  -
-    name: 'Elias Fullstacker'
-    flavor: technical
-    quote: 'I worked with Jane on Jabberwocky and can vouch for her awesome technical capabilities and attention to detail. Insta-hire.'
   -
     name: 'Dana Nevins'
     flavor: personal

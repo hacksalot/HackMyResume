@@ -180,12 +180,6 @@ Summary of this military stint.
   - Won 'Best Presentation on an Emerging Technical Field' prize.
 
 
-## REFERENCES
-
-### *John Davidson*
-Mobile: 9-(999)-999-9999
-Work email: jdavidson@veridiandynamics.com
-
 
 ## INTERESTS
 

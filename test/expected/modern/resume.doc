@@ -2572,66 +2572,7 @@
   </wx:sub-section>
 </wx:sub-section>
 
-      <wx:sub-section>
-
-<wx:pBdrGroup>
-  <wx:borders>
-    <wx:top wx:val="solid" wx:bdrwidth="15" wx:space="1" wx:color="EEEEEE"/>
-  </wx:borders>
-  <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA" wsp:rsidRDefault="00693C5A" wsp:rsidP="00C146CA">
-    <w:pPr>
-      <w:pStyle w:val="Heading1"/>
-      <w:ind w:left="-720"/>      
-    </w:pPr>
-    <w:r>
-      <w:pict>
-        <w:binData w:name="wordml://03000016.png" xml:space="preserve">iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAArlJREFUeNrsl91T2kAQwEMIIYQQPhoDWlBaYDogOD7UGTu2//9THS3WMopQNUoIUSEkIcZ8NJcp0I44ggTIQ+7lcpvM3i+7e7t7PtM0ITcNGHLZ8IA8IA/IA/KAPCAPyAPygFw2EKcUGXz9tHknGAiORTYyWTqBvk2Pz5meWmgcHt8KY00+fC3/uZiEV+Wy7mUb0Pgj6WQsFvBBkCl3GjVuZTHU42TdmnCqkP9U3v1SSQetlX7fulkRkNYRHq3JT0Rxe02mSECkqQNjJUDGtSTbYRNL/ZUQqH1WVEVYAZDWrrF9yxIwEU2NQkpWwIRi5NKBhPr3c+7JMk84m8sOdT2wom7zROHl5iHtvvqLAdEToAuVzaE1DIbhn4CQjKNitwd+Gg3jOLJwIOWievIAjEO+L5ZSIz0a2xE08PDEN6r86Gt/iN4qlNLkolym3Z4c3kggdMLrpdy/27Q4cVKm1Qdco3p0ITuRqbW7+vEZI+kTXgViO3vlxGtWNuR242edGZiQP1o+qFBzWkht/p5IgwSpaWjAHngyv70GcpQuctzcMSQr6jNZKL1b/EjiM/gbR5BFHnsYnYnG8lqzL4IZIxJu6IeUxtG1nTwjVBpxAxC2SYXs+EAwGHIDkBWpU++zFCDhjJXs8kvEXQFk3A3sYkvQHxBXAMEhvw1iGM66DPb53oSvce0+SGXBUMxJoCC9/+3gayYyMxNbq/d0UIOpTcJJIFVi+B4vyLbZDbUrarMdG5zO4c60Hzhm3bAGkCldnVaHsgHz44gB5SxCr6eyG0n0ZTViRwL+CgSJ6fjnq/bjQhtOxCg6GSUJcgynivzlea0lWbbE3m3vb8cdAnrBhQrbvmqxXP/xdd8FEjt7pQQCLRTof7I21xUVWX+uyk/E06ViZuoO1qmr9LgXE2TVHLYEM7TSo/FHgAEAC/8S0Mwjye0AAAAASUVORK5CYII=</w:binData>
-        <v:shape id="_x0000_i1026" type="#_x0000_t75" style="width:31.5pt;height:31.5pt">
-          <v:imagedata src="wordml://03000016.png" o:title="fa-bicycle"/>
-        </v:shape>
-      </w:pict>
-    </w:r>
-    <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
-      <w:t>REFERENCES</w:t>
-    </w:r>
-  </w:p>
-</wx:pBdrGroup>
-
-
-  <wx:sub-section>
-    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA" wsp:rsidRDefault="00606071" wsp:rsidP="00E578D4">
-      <w:pPr>
-        <w:pStyle w:val="Heading2"/>
-        <w:tabs>
-          <w:tab w:val="right" w:pos="9360"/>
-        </w:tabs>
-      </w:pPr>
-      <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
-        <w:t>John Davidson</w:t>
-      </w:r>
-      <w:r wsp:rsidR="00EA0B64">
-        <w:tab/>
-      </w:r>
-      <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
-        <w:rPr>
-          <w:rStyle w:val="FromTo"/>
-        </w:rPr>
-        <w:t>??? — Present</w:t>
-      </w:r>
-    </w:p>
-    <w:p wsp:rsidR="00C146CA" wsp:rsidRPr="000A3AF0" wsp:rsidRDefault="00C146CA" wsp:rsidP="00C146CA">
-      <w:pPr>
-        <w:rPr>
-          <w:sz-cs w:val="20"/>
-        </w:rPr>
-      </w:pPr>
       
-    </w:p>
-  </wx:sub-section>
-
-
-</wx:sub-section>
-
 
 
       <w:sectPr wsp:rsidR="00B43FDC" wsp:rsidRPr="000A3AF0" wsp:rsidSect="001B7422">
