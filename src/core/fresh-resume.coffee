@@ -53,15 +53,9 @@ class FreshResume extends AbstractResume
   ###
   parseJSON: ( rep, opts ) ->
 
-    # Ignore any element with the 'ignore: true' designator.
+    # Ignore any element with the 'ignore: true' or 'private: true' designator.
     that = @
-    traverse = require 'traverse'
-    ignoreList = []
-    scrubbed = traverse( rep ).map ( x ) ->
-      if !@isLeaf && @node.ignore
-        if @node.ignore == true || this.node.ignore == 'true'
-          ignoreList.push this.node
-          @remove()
+    { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
 
     # Now apply the resume representation onto this object
     extend( true, @, scrubbed );

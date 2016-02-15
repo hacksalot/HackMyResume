@@ -91,6 +91,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
   program
     .command('analyze')
     .arguments('<sources...>')
+    .option('--private', 'Include resume fields marked as private', false)
     .description('Analyze one or more resumes.')
     .action(( sources ) ->
       execute.call( this, sources, [], this.opts(), logMsg)
@@ -118,6 +119,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
     .option('-p --pdf <engine>', 'PDF generation engine')
     .option('--no-sort', 'Sort resume sections by date', false)
     .option('--tips', 'Display theme tips and warnings.', false)
+    .option('--private', 'Include resume fields marked as private', false)
     .description('Generate resume to multiple formats')
     .action(( sources, targets, options ) ->
       x = splitSrcDest.call( this );

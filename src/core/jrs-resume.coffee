@@ -48,16 +48,9 @@ class JRSResume extends AbstractResume
   ###
   parseJSON: ( rep, opts ) ->
     opts = opts || { };
-
-    # Ignore any element with the 'ignore: true' designator.
+    # Ignore any element with the 'ignore: true' or 'private: true' designator.
     that = this
-    traverse = require 'traverse'
-    ignoreList = []
-    scrubbed = traverse( rep ).map ( x ) ->
-      if !@isLeaf && @node.ignore
-        if  @node.ignore == true || this.node.ignore == 'true'
-          ignoreList.push @node
-          @remove()
+    { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
 
     # Extend resume properties onto ourself.
     extend true, this, scrubbed

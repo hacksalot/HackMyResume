@@ -50,4 +50,32 @@ class AbstractResume
     lastDate = _.last( new_e )[1];
     lastDate.diff firstDate, unit
 
+  ###*
+  Removes ignored or private fields from a resume object
+  @returns an object with the following structure:
+  {
+    scrubbed: the processed resume object
+    ignoreList: an array of ignored nodes that were removed
+    privateList: an array of private nodes that were removed
+  }
+  ###
+  scrubResume: (rep, opts) ->
+    traverse = require 'traverse'
+    ignoreList = []
+    privateList = []
+    includePrivates = if not opts?.private? then true else opts?.private
+
+    scrubbed = traverse( rep ).map ( x ) ->
+      if !@isLeaf
+        if @node.ignore == true || @node.ignore == 'true'
+          ignoreList.push @node
+          @remove()
+        else if (@node.private == true || @node.private == 'true') && !includePrivates
+          privateList.push @node
+          @remove()
+
+    scrubbed: scrubbed
+    ingoreList: ignoreList
+    privateList: privateList
+
 module.exports = AbstractResume

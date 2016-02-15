@@ -63,7 +63,10 @@ _build = ( src, dst, opts ) ->
 
   # Load input resumes as JSON...
   sheetObjects = ResumeFactory.load src,
-    format: null, objectify: false, quit: true, inner: { sort: _opts.sort }
+    format: null, objectify: false, quit: true, inner: {
+      sort: _opts.sort
+      private: _opts.private
+    }
   , @
 
   # Explicit check for any resume loading errors...
@@ -130,7 +133,7 @@ _build = ( src, dst, opts ) ->
   @stat HMEVENT.applyTheme, r: rez, theme: theme
 
   # Load the resume into a FRESHResume or JRSResume object
-  _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez );
+  _rezObj = new (RTYPES[ toFormat ])().parseJSON( rez, private: _opts.private );
 
   # Expand output resumes...
   targets = _expand dst, theme
@@ -163,10 +166,10 @@ _build = ( src, dst, opts ) ->
 Prepare for a BUILD run.
 ###
 _prep = ( src, dst, opts ) ->
-
   # Cherry-pick options //_opts = extend( true, _opts, opts );
   _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
   _opts.prettify = opts.prettify is true
+  _opts.private = opts.private is true
   _opts.css = opts.css
   _opts.pdf = opts.pdf
   _opts.wrap = opts.wrap || 60
