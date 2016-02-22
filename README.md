@@ -320,7 +320,7 @@ PDF engine you have installed through the engine's command-line interface (CLI).
 Currently that means one or both of...
 
 - [wkhtmltopdf][3]
-- [Phantom.js][3]
+- [Phantom.js][2]
 
 ..with support for other engines planned in the future. But for now, **one or
 both of these engines must be installed and accessible on your PATH in order to
