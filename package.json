@@ -102,7 +102,6 @@
     "jsonresume-theme-modern": "0.0.18",
     "jsonresume-theme-sceptile": "^1.0.5",
     "mocha": "*",
-    "resample": "fluentdesk/resample",
     "stripcolorcodes": "^0.1.0"
   }
 }
