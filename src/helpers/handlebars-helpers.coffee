@@ -9,6 +9,7 @@ HANDLEBARS = require 'handlebars'
 _ = require 'underscore'
 helpers = require './generic-helpers'
 blockHelpers = require './block-helpers'
+stringHelpers = require './string-helpers'
 
 ###*
 Register useful Handlebars helpers.
@@ -30,7 +31,8 @@ module.exports = ( theme, opts ) ->
         func.apply @, args
     hVal
   , @
-  
+
   HANDLEBARS.registerHelper wrappedHelpers
   HANDLEBARS.registerHelper blockHelpers
+  HANDLEBARS.registerHelper stringHelpers
   return

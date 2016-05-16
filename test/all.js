@@ -10,3 +10,4 @@ require('./scripts/test-themes');
 require('./scripts/test-verbs');
 require('./scripts/test-output');
 require('./scripts/test-dates');
+require('./scripts/test-hbs-helpers');
