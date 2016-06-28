@@ -184,7 +184,7 @@ Assuming you've got a JSON-formatted resume handy, generating resumes in
 different formats and combinations is easy. Just run:
 
 ```bash
-hackmyresume BUILD <INPUTS> <OUTPUTS> [-t theme].
+hackmyresume BUILD <INPUTS> TO <OUTPUTS> [-t theme].
 ```
 
 Where `<INPUTS>` is one or more .json resume files, separated by spaces;
