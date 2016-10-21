@@ -68,7 +68,7 @@ engines =
     # Save the markup to a temporary file
     tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'
-    SPAWN 'wkhtmltopdf', [ tempFile, fOut ], false, on_error, @
+    SPAWN 'wkhtmltopdf', [ '--margin-top', '10', '--margin-bottom', '10', tempFile, fOut ], false, on_error, @
     return
 
 
