@@ -56,7 +56,7 @@
     "extend": "^3.0.0",
     "fresca": "~0.6.0",
     "fresh-jrs-converter": "^0.2.2",
-    "fresh-resume-starter": "^0.2.2",
+    "fresh-resume-starter": "^0.3.0",
     "fresh-themes": "^0.15.1-beta",
     "fs-extra": "^0.26.4",
     "handlebars": "^4.0.5",
