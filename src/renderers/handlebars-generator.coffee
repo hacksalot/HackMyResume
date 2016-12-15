@@ -29,7 +29,8 @@ HandlebarsGenerator = module.exports =
 
     try
       # Compile and run the Handlebars template.
-      template = HANDLEBARS.compile tpl, {strict: false, assumeObjects: false}
+      template = HANDLEBARS.compile tpl, {
+        strict: false, assumeObjects: false, noEscape: true}
       return template data
     catch
       throw
