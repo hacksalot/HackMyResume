@@ -52,7 +52,7 @@ Definition of the HtmlPdfCLIGenerator class.
       }
       if (_.has(engines, safe_eng)) {
         this.errHandler = info.opts.errHandler;
-        engines[safe_eng].call(this, info.mk, info.outputFile, this.onError);
+        engines[safe_eng].call(this, info.mk, info.outputFile, info.opts, this.onError);
         return null;
       }
     };
@@ -86,11 +86,19 @@ Definition of the HtmlPdfCLIGenerator class.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease wkhtmltopdf rendering
      */
-    wkhtmltopdf: function(markup, fOut, on_error) {
-      var tempFile;
+    wkhtmltopdf: function(markup, fOut, opts, on_error) {
+      var tempFile, wkhtmltopdf_args, wkhtmltopdf_options;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
-      SPAWN('wkhtmltopdf', [tempFile, fOut], false, on_error, this);
+      wkhtmltopdf_options = _.extend({
+        'margin-bottom': '10mm',
+        'margin-top': '10mm'
+      }, opts.wkhtmltopdf);
+      wkhtmltopdf_options = _.flatten(_.map(wkhtmltopdf_options, function(v, k) {
+        return ['--' + k, v];
+      }));
+      wkhtmltopdf_args = wkhtmltopdf_options.concat([tempFile, fOut]);
+      SPAWN('wkhtmltopdf', wkhtmltopdf_args, false, on_error, this);
     },
 
     /**
@@ -100,7 +108,7 @@ Definition of the HtmlPdfCLIGenerator class.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease Phantom rendering
      */
-    phantomjs: function(markup, fOut, on_error) {
+    phantomjs: function(markup, fOut, opts, on_error) {
       var destPath, scriptPath, sourcePath, tempFile;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');

@@ -37,7 +37,7 @@ module.exports = class HtmlPdfCLIGenerator extends TemplateGenerator
     safe_eng = 'phantomjs' if safe_eng == 'phantom'
     if _.has engines, safe_eng
       @errHandler = info.opts.errHandler
-      engines[ safe_eng ].call @, info.mk, info.outputFile, @onError
+      engines[ safe_eng ].call @, info.mk, info.outputFile, info.opts, @onError
       return null # halt further processing
 
 
@@ -64,11 +64,20 @@ engines =
   TODO: If HTML generation has run, reuse that output
   TODO: Local web server to ease wkhtmltopdf rendering
   ###
-  wkhtmltopdf: (markup, fOut, on_error) ->
+  wkhtmltopdf: (markup, fOut, opts, on_error) ->
     # Save the markup to a temporary file
     tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'
-    SPAWN 'wkhtmltopdf', [ tempFile, fOut ], false, on_error, @
+
+    # Prepare wkhtmltopdf arguments.
+    wkhtmltopdf_options = _.extend(
+      {'margin-bottom': '10mm', 'margin-top': '10mm'}, opts.wkhtmltopdf)
+    wkhtmltopdf_options = _.flatten(_.map(wkhtmltopdf_options, (v, k)->
+      return ['--' + k, v]
+    ))
+    wkhtmltopdf_args = wkhtmltopdf_options.concat [ tempFile, fOut  ]
+
+    SPAWN 'wkhtmltopdf', wkhtmltopdf_args , false, on_error, @
     return
 
 
@@ -80,7 +89,7 @@ engines =
   TODO: If HTML generation has run, reuse that output
   TODO: Local web server to ease Phantom rendering
   ###
-  phantomjs: ( markup, fOut, on_error ) ->
+  phantomjs: ( markup, fOut, opts, on_error ) ->
     # Save the markup to a temporary file
     tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
     FS.writeFileSync tempFile, markup, 'utf8'

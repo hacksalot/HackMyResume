@@ -176,6 +176,7 @@ _prep = ( src, dst, opts ) ->
   _opts.noTips = opts.noTips
   _opts.debug = opts.debug
   _opts.sort = opts.sort
+  _opts.wkhtmltopdf = opts.wkhtmltopdf
   that = @
 
   # Set up callbacks for internal generators

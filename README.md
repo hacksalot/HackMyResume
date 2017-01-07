@@ -490,6 +490,10 @@ The options file can contain any documented HackMyResume option, including
   "sectionTitles": {
     "employment": "Work"
   }
+  // Change wkhtmltopdf margins
+  "wkhtmltopdf": {
+    "margin-top": "20mm"
+  }
 }
 ```
 
