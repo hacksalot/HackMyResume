@@ -117,6 +117,19 @@ Definition of the HtmlPdfCLIGenerator class.
       sourcePath = SLASH(PATH.relative(process.cwd(), tempFile));
       destPath = SLASH(PATH.relative(process.cwd(), fOut));
       SPAWN('phantomjs', [scriptPath, sourcePath, destPath], false, on_error, this);
+    },
+
+    /**
+    Generate a PDF from HTML using WeasyPrint's CLI interface.
+    Spawns a child process with `weasyprint <source> <target>`. Weasy Print
+    must be installed and path-accessible.
+    TODO: If HTML generation has run, reuse that output
+     */
+    weasyprint: function(markup, fOut, opts, on_error) {
+      var tempFile;
+      tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
+      FS.writeFileSync(tempFile, markup, 'utf8');
+      SPAWN('weasyprint', [tempFile, fOut], false, on_error, this);
     }
   };
 

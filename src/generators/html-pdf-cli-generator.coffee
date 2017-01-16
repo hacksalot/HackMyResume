@@ -99,3 +99,17 @@ engines =
     destPath = SLASH PATH.relative( process.cwd(), fOut)
     SPAWN 'phantomjs', [ scriptPath, sourcePath, destPath ], false, on_error, @
     return
+
+  ###*
+  Generate a PDF from HTML using WeasyPrint's CLI interface.
+  Spawns a child process with `weasyprint <source> <target>`. Weasy Print
+  must be installed and path-accessible.
+  TODO: If HTML generation has run, reuse that output
+  ###
+  weasyprint: ( markup, fOut, opts, on_error ) ->
+    # Save the markup to a temporary file
+    tempFile = fOut.replace /\.pdf$/i, '.pdf.html'
+    FS.writeFileSync tempFile, markup, 'utf8'
+
+    SPAWN 'weasyprint', [tempFile, fOut], false, on_error, @
+    return

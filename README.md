@@ -62,9 +62,9 @@ Alternately, install the latest bleeding-edge version (updated daily):
 HackMyResume tries not to impose a specific PDF engine requirement on
 the user, but will instead work with whatever PDF engines you have installed.
 
-Currently, HackMyResume's PDF generation requires either [Phantom.js][2] or
-[wkhtmltopdf][3] to be installed on your system and the `phantomjs` and/or
-`wkhtmltopdf` binaries to be accessible on your PATH. This is an optional
+Currently, HackMyResume's PDF generation requires either [Phantom.js][2],
+[wkhtmltopdf][3], or [WeasyPrint][11] to be installed on your system and the
+corresponding binary to be accessible on your PATH. This is an optional
 requirement for users who care about PDF formats. If you don't care about PDF
 formats, skip this step.
 
@@ -320,7 +320,8 @@ PDF engine you have installed through the engine's command-line interface (CLI).
 Currently that means one or both of...
 
 - [wkhtmltopdf][3]
-- [Phantom.js][3]
+- [Phantom.js][2]
+- [WeasyPrint][11]
 
 ..with support for other engines planned in the future. But for now, **one or
 both of these engines must be installed and accessible on your PATH in order to
@@ -330,6 +331,7 @@ invoke either of these tools directly from your shell or terminal without error:
 ```bash
 wkhtmltopdf input.html output.pdf
 phantomjs script.js input.html output.pdf
+weasyprint input.html output.pdf
 ```
 
 Assuming you've installed one or both of these engines on your system, you can
@@ -339,6 +341,7 @@ tell HackMyResume which flavor of PDF generation to use via the `--pdf` option
 ```bash
 hackmyresume BUILD resume.json TO out.all --pdf phantom
 hackmyresume BUILD resume.json TO out.all --pdf wkhtmltopdf
+hackmyresume BUILD resume.json TO out.all --pdf weasyprint
 hackmyresume BUILD resume.json TO out.all --pdf none
 ```
 
@@ -558,6 +561,7 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [8]: https://youtu.be/N9wsjroVlu8
 [9]: https://api.jquery.com/jquery.extend/
 [10]: https://github.com/beautify-web/js-beautify
+[11]: http://weasyprint.org/
 [fresh]: https://github.com/fluentdesk/FRESH
 [fresca]: https://github.com/fluentdesk/FRESCA
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
