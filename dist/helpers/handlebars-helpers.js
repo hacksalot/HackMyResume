@@ -23,7 +23,7 @@ Template helper definitions for Handlebars.
    */
 
   module.exports = function(theme, opts) {
-    var wrappedHelpers;
+    var i, len, ref, themeHelpers, wrappedHelpers;
     helpers.theme = theme;
     helpers.opts = opts;
     helpers.type = 'handlebars';
@@ -41,6 +41,11 @@ Template helper definitions for Handlebars.
     }, this);
     HANDLEBARS.registerHelper(wrappedHelpers);
     HANDLEBARS.registerHelper(blockHelpers);
+    ref = theme.jsFiles;
+    for (i = 0, len = ref.length; i < len; i++) {
+      themeHelpers = ref[i];
+      HANDLEBARS.registerHelper(require(themeHelpers));
+    }
   };
 
 }).call(this);

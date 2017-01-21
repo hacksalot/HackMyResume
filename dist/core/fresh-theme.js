@@ -95,7 +95,7 @@ Definition of the FRESHTheme class.
   /* Load and parse theme source files. */
 
   _load = function(formatsHash) {
-    var copyOnly, fmts, major, that, tplFolder;
+    var copyOnly, fmts, jsFiles, major, that, tplFolder;
     that = this;
     major = false;
     tplFolder = PATH.join(this.folder, 'src');
@@ -123,6 +123,12 @@ Definition of the FRESHTheme class.
           };
         }
       }
+    });
+    jsFiles = fmts.filter(function(fmt) {
+      return fmt && (fmt.ext === 'js');
+    });
+    this.jsFiles = jsFiles.map(function(jsf) {
+      return jsf['path'];
     });
     return formatsHash;
   };
