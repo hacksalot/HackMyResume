@@ -482,11 +482,9 @@ hackmyresume BUILD resume.json -o path/to/options.json
 The options file can contain any documented HackMyResume option, including
 `theme`, `silent`, `debug`, `pdf`, `css`, and other settings.
 
-```javascript
+```json
 {
-  // Set the default theme to "compact"
   "theme": "compact",
-  // Change the "employment" section title text to "Work"
   "sectionTitles": {
     "employment": "Work"
   }
