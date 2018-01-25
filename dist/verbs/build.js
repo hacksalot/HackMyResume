@@ -242,6 +242,7 @@ Implementation of the 'build' verb for HackMyResume.
     _opts.noTips = opts.noTips;
     _opts.debug = opts.debug;
     _opts.sort = opts.sort;
+    _opts.wkhtmltopdf = opts.wkhtmltopdf;
     that = this;
     _opts.onTransform = function(info) {
       that.stat(HMEVENT.afterTransform, info);
