@@ -1308,7 +1308,7 @@
       <w:r wsp:rsidR="00C146CA" wsp:rsidRPr="00C146CA">
         <w:t>contributor, </w:t>
       </w:r>
-      <w:hlink w:dest="http://please.hackmyresume.com">
+      <w:hlink w:dest="https://fluentdesk.com/hackmyresume">
         <w:r wsp:rsidR="009452CA" wsp:rsidRPr="00606071">
           <w:rPr>
             <w:rStyle w:val="Hyperlink"/>

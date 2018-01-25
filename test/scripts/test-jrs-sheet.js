@@ -75,7 +75,7 @@ function testResume( opts ) {
 
 var sects = [ 'basics', 'work', 'volunteer', 'skills', 'education', 'publications', 'awards', 'references' ];
 
-testResume({ title: 'jane-q-fullstacker', duration: 7, sections: sects });
+testResume({ title: 'jane-q-fullstacker', duration: 9, sections: sects });
 testResume({ title: 'jane-incomplete', duration: 0, sections: _.without(sects, 'awards', 'work') });
 testResume({ title: 'richard-hendriks', duration: 1, sections: sects });
 testResume({ title: 'empty', duration: 0, sections: [], isValid: false });

@@ -73,14 +73,14 @@ function testResume(opts) {
 }
 
 var sects = [ 'info', 'employment', 'service', 'skills', 'education', 'writing', 'recognition', 'references' ];
-testResume({ title: 'jane-q-fullstacker', path: 'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json', duration: 7, sections: sects });
-testResume({ title: 'johnny-trouble-resume', path: 'node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json', duration: 4, sections: sects });
+testResume({ title: 'jane-q-fullstacker', path: 'node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json', duration: 9, sections: sects });
+testResume({ title: 'johnny-trouble-resume', path: 'node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json', duration: 6, sections: sects });
 
 sects = [ 'info', 'contact', 'location' ];
 testResume({ title: 'jane-q-fullstacker A', path: 'node_modules/fresh-test-resumes/src/fresh/override/jane-partial-a.json', duration: 0, sections: sects });
 
 sects = [ 'projects', 'social', 'employment', 'education', 'affiliation' ];
-testResume({ title: 'jane-q-fullstacker B', path: 'node_modules/fresh-test-resumes/src/fresh/override/jane-partial-b.json', duration: 7, sections: sects });
+testResume({ title: 'jane-q-fullstacker B', path: 'node_modules/fresh-test-resumes/src/fresh/override/jane-partial-b.json', duration: 9, sections: sects });
 
 sects = [ 'service', 'skills', 'samples', 'writing', 'reading', 'speaking', 'recognition', 'references', 'testimonials', 'languages', 'interests', 'extracurricular', 'governance' ];
 testResume({ title: 'jane-q-fullstacker C', path: 'node_modules/fresh-test-resumes/src/fresh/override/jane-partial-c.json', duration: 0, sections: sects });

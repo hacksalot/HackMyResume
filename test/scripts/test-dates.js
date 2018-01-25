@@ -40,9 +40,9 @@ var r = {
 
 var tests = [
   // single job, concrete start, no end
-  [ { start: '2010-01-01' } , { val: 6, unit: 'year' } ],
-  [ { start: '2010-01' } , { val: 6, unit: 'year' } ],
-  [ { start: '2010' } , { val: 6, unit: 'year' } ],
+  [ { start: '2010-01-01' } , { val: 8, unit: 'year' } ],
+  [ { start: '2010-01' } , { val: 8, unit: 'year' } ],
+  [ { start: '2010' } , { val: 8, unit: 'year' } ],
 
   // single job, concrete start, concrete end
   [ { start: '2010-01-01', end: '2015-01-01' } , { val: 5, unit: 'year' } ],
@@ -61,10 +61,10 @@ var tests = [
   [ { start: undefined, end: undefined } , { val: 0, unit: 'year' } ],
 
   // two jobs (concrete start + end) -> ( concrete start )
-  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01' }, { val: 16, unit: 'year' } ],
-  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: '' }, { val: 16, unit: 'year' } ],
-  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: null }, { val: 16, unit: 'year' } ],
-  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: 'current' }, { val: 16, unit: 'year' } ]
+  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01' }, { val: 18, unit: 'year' } ],
+  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: '' }, { val: 18, unit: 'year' } ],
+  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: null }, { val: 18, unit: 'year' } ],
+  [ { start: '2000-01', end: '2013-01' }, { start: '2013-01', end: 'current' }, { val: 18, unit: 'year' } ]
 
 ];
 
