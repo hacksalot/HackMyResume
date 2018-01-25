@@ -33,7 +33,7 @@ HackMyResume is currently maintained by [hacksalot][ha] with assistance from
 or internal inquiries to:
 
 ```
-admin@hackmyresume.com
+admin@fluentdesk.com
 ```
 
 You can reach hacksalot directly at:
