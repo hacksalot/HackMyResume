@@ -589,7 +589,9 @@ Generic template helper definitions for HackMyResume / FluentCV.
       dateTemp = FluentDate.fmt(dateB);
       dateTo = dateTemp.format(fmt);
     }
-    if (dateFrom && dateTo) {
+    if (dateFrom === dateTo) {
+      return dateFrom;
+    } else if (dateFrom && dateTo) {
       return dateFrom + sep + dateTo;
     } else if (dateFrom || dateTo) {
       return dateFrom || dateTo;
