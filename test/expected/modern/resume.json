@@ -266,5 +266,53 @@
       "level": "Moderate",
       "years": 10
     }
+  ],
+  "projects": [
+    {
+      "name": "HackMyResume",
+      "description": "A resume authoring and analysis tool for OS X, Linux, and Windows.",
+      "keywords": [
+        "JavaScript",
+        "Node.js",
+        "cross-platform",
+        "JSON"
+      ],
+      "startDate": "2015-09",
+      "url": "https://fluentdesk.com/hackmyresume",
+      "roles": [
+        "contributor"
+      ]
+    },
+    {
+      "name": "Augmented Android",
+      "description": "An augmented reality app for Android.",
+      "keywords": [
+        "Android",
+        "Java",
+        "Xamarin"
+      ],
+      "startDate": "2012-02",
+      "endDate": "2014-01",
+      "url": "http://project.website.com",
+      "roles": [
+        "co-creator"
+      ]
+    },
+    {
+      "name": "Blog",
+      "description": "My programming blog. Powered by Jekyll.",
+      "keywords": [
+        "Jekyll",
+        "Ruby",
+        "HTML 5",
+        "JavaScript",
+        "HTTP",
+        "LAMP"
+      ],
+      "url": "http://myblog.jane.com/blog",
+      "roles": [
+        "creator"
+      ]
+    }
   ]
 }
