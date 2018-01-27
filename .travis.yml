@@ -7,6 +7,7 @@ before_install:
   - sudo cp -R ./* /usr/bin/
   - wkhtmltopdf -V
 language: node_js
+script: test/all.js
 node_js:
   - "4.0"
   - "4"
