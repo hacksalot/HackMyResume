@@ -30,7 +30,9 @@ module.exports = ( theme, opts ) ->
         func.apply @, args
     hVal
   , @
-  
+
   HANDLEBARS.registerHelper wrappedHelpers
   HANDLEBARS.registerHelper blockHelpers
+  for themeHelpers in theme.jsFiles
+    HANDLEBARS.registerHelper require themeHelpers
   return
