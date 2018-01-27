@@ -9,6 +9,7 @@ install:
   - tar xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
   - cd ./wkhtmltox/bin/
   - sudo cp -R ./* /usr/bin/
+  - cd ../../../
 language: node_js
 node_js:
   - "4.0"
