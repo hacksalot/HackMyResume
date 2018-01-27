@@ -73,9 +73,9 @@ function genThemes( title, src, fmt ) {
     // Build the resume for each theme
     //genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
-    //genTheme(fmt, src, 'modern');
+    genTheme(fmt, src, 'modern');
     //genTheme(fmt, src, 'underscore');
-    genTheme(fmt, src, 'awesome');
+    //genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
     genTheme(fmt, src, 'jsonresume-theme-boilerplate',
       'node_modules/jsonresume-theme-boilerplate' );
