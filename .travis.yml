@@ -2,7 +2,7 @@ sudo: required
 before_install:
   - sudo apt-get install libxrender1
 install:
-  - npm install && npm link
+  - npm install && npm link && mkdir tmp
   - wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O tmp/wk.tar.xz
   - tar -xf tmp/wk.tar.xz -C ./tmp
   - sudo cp -R ./tmp/wkhtmltox/bin/* /usr/bin/
