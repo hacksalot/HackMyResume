@@ -3,6 +3,8 @@ before_install:
   - wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
   - sudo dpkg -i wkhtmltox-0.12.4_linux-generic-amd64.tar.xz || echo "That is okay that there are errors in the command"
   - sudo apt-get -f -y install
+  - ls -l
+  - wkhtmltopdf -V
 language: node_js
 node_js:
   - "4.0"

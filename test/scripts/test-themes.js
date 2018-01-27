@@ -55,6 +55,10 @@ function genThemes( title, src, fmt ) {
 
         // Run the command!
         var v = new HackMyResume.verbs.build();
+        v.on('hmr:error', function(ex) {
+          console.log('Error thrown');
+          assert(false);
+        });
         var p = v.invoke( src, dst, opts );
 
         // Let Mocha sort out the promise result
@@ -69,7 +73,7 @@ function genThemes( title, src, fmt ) {
     // Build the resume for each theme
     //genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
-    genTheme(fmt, src, 'modern');
+    //genTheme(fmt, src, 'modern');
     //genTheme(fmt, src, 'underscore');
     genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
