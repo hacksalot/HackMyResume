@@ -131,14 +131,14 @@ genThemes(
 describe('Verifying generated theme files...', function() {
 
   it('Generated files should not contain ICE.', function() {
-    expect( folderContains('@@@@', '../sandbox') ).to.be.false;
+    var q = folderContains('@@@@', '../sandbox');
+    q.should.equal(false);
   });
 
   it('Generated files should match exemplars...', function() {
-    expect(
-      foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
-        'test/expected/modern' )
-    ).to.be.true;
+    var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
+        'test/expected/modern' );
+    q.should.equal(true);
   });
 
 });
