@@ -170,6 +170,7 @@ _prep = ( src, dst, opts ) ->
   _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
   _opts.prettify = opts.prettify is true
   _opts.private = opts.private is true
+  _opts.noescape = opts.noescape is true
   _opts.css = opts.css
   _opts.pdf = opts.pdf
   _opts.wrap = opts.wrap || 60

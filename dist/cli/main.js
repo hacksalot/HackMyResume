@@ -87,7 +87,7 @@ Definition of the `main` function.
       dst = sources && sources.length > 1 ? [sources.pop()] : [];
       execute.call(this, sources, dst, this.opts(), logMsg);
     });
-    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).option('--private', 'Include resume fields marked as private', false).description('Generate resume to multiple formats').action(function(sources, targets, options) {
+    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).option('--private', 'Include resume fields marked as private', false).option('--no-escape', "Turn off encoding in Handlebars themes.", false).description('Generate resume to multiple formats').action(function(sources, targets, options) {
       var x;
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);
@@ -163,7 +163,7 @@ Definition of the `main` function.
 
   initOptions = function(ar) {
     oVerb;
-    var args, cleanArgs, inf, isAssert, isDebug, isMono, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
+    var args, cleanArgs, inf, isAssert, isDebug, isMono, isNoEscape, isSilent, oJSON, oVerb, optStr, optsIdx, verb, vidx;
     verb = '';
     args = ar.slice();
     cleanArgs = args.slice(2);
@@ -212,11 +212,15 @@ Definition of the `main` function.
     isMono = _.some(args, function(v) {
       return v === '--no-color';
     });
+    isNoEscape = _.some(args, function(v) {
+      return v === '--no-escape';
+    });
     return {
       color: !isMono,
       debug: isDebug,
       silent: isSilent,
       assert: isAssert,
+      noescape: isNoEscape,
       orgVerb: oVerb,
       verb: verb,
       json: oJSON,

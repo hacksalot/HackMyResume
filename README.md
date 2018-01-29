@@ -539,6 +539,15 @@ hackmyresume BUILD resume.json -d
 hackmyresume ANALYZE resume.json --debug
 ```
 
+### Disable Encoding
+
+Use the `--no-escape` option to disable encoding in Handlebars themes. Note:
+this option has no effect for non-Handlebars themes.
+
+```bash
+hackmyresume BUILD resume.json --no-escape
+```
+
 ## Contributing
 
 HackMyResume is a community-driven free and open source project under the MIT

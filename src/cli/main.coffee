@@ -123,6 +123,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
     .option('--no-sort', 'Sort resume sections by date', false)
     .option('--tips', 'Display theme tips and warnings.', false)
     .option('--private', 'Include resume fields marked as private', false)
+    .option('--no-escape', "Turn off encoding in Handlebars themes.", false)
     .description('Generate resume to multiple formats')
     .action(( sources, targets, options ) ->
       x = splitSrcDest.call( this );
@@ -238,12 +239,14 @@ initOptions = ( ar ) ->
   isSilent = _.some args, (v) -> v == '-s' || v == '--silent'
   isAssert = _.some args, (v) -> v == '-a' || v == '--assert'
   isMono = _.some args, (v) -> v == '--no-color'
+  isNoEscape = _.some args, (v) -> v == '--no-escape'
 
   return {
     color: !isMono,
     debug: isDebug,
     silent: isSilent,
     assert: isAssert,
+    noescape: isNoEscape,
     orgVerb: oVerb,
     verb: verb,
     json: oJSON,

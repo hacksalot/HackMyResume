@@ -237,6 +237,7 @@ Implementation of the 'build' verb for HackMyResume.
     _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
     _opts.prettify = opts.prettify === true;
     _opts["private"] = opts["private"] === true;
+    _opts.noescape = opts.noescape === true;
     _opts.css = opts.css;
     _opts.pdf = opts.pdf;
     _opts.wrap = opts.wrap || 60;

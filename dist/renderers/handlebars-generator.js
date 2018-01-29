@@ -34,12 +34,13 @@ Definition of the HandlebarsGenerator class.
 
   HandlebarsGenerator = module.exports = {
     generateSimple: function(data, tpl) {
-      var template;
+      var noesc, template;
       try {
+        noesc = data.opts.noescape || false;
         template = HANDLEBARS.compile(tpl, {
           strict: false,
           assumeObjects: false,
-          noEscape: true
+          noEscape: noesc
         });
         return template(data);
       } catch (_error) {
