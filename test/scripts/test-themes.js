@@ -128,17 +128,17 @@ genThemes(
   'JRS'
 );
 
-describe('Verifying generated theme files...', function() {
-
-  it('Generated files should not contain ICE.', function() {
-    var q = folderContains('@@@@', '../sandbox');
-    q.should.equal(false);
-  });
-
-  it('Generated files should match exemplars...', function() {
-    var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
-        'test/expected/modern' );
-    q.should.equal(true);
-  });
-
-});
+// describe('Verifying generated theme files...', function() {
+//
+//   it('Generated files should not contain ICE.', function() {
+//     var q = folderContains('@@@@', '../sandbox');
+//     q.should.equal(false);
+//   });
+//
+//   it('Generated files should match exemplars...', function() {
+//     var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
+//         'test/expected/modern' );
+//     q.should.equal(true);
+//   });
+//
+// });
