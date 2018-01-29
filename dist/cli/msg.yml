@@ -109,3 +109,9 @@ errors:
     msg: Exiting with status code **%s**.
   validateError:
     msg: "An error occurred during validation:\n%s"
+  invalidOptionsFile:
+    msg:
+      - "The specified options file is invalid:\n"
+      - "\nMake sure the options file contains valid JSON."
+  optionsFileNotFound:
+    msg: "The specified options file is missing or inaccessible."

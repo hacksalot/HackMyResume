@@ -234,6 +234,30 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.validateError:
         msg = printf(M2C(this.msgs.validateError.msg), ex.inner.toString());
         etype = 'error';
+        break;
+      case HMSTATUS.invalidOptionsFile:
+        msg = M2C(this.msgs.invalidOptionsFile.msg[0]);
+        if (SyntaxErrorEx.is(ex.inner)) {
+          console.error(printf(M2C(this.msgs.readError.msg, 'red'), ex.file));
+          se = new SyntaxErrorEx(ex, ex.raw);
+          if ((se.line != null) && (se.col != null)) {
+            msg += printf(M2C(this.msgs.parseError.msg[0], 'red'), se.line, se.col);
+          } else if (se.line != null) {
+            msg += printf(M2C(this.msgs.parseError.msg[1], 'red'), se.line);
+          } else {
+            msg += M2C(this.msgs.parseError.msg[2], 'red');
+          }
+        } else if (ex.inner && (ex.inner.line != null) && (ex.inner.col != null)) {
+          msg += printf(M2C(this.msgs.parseError.msg[0], 'red'), ex.inner.line, ex.inner.col);
+        } else {
+          msg += ex;
+        }
+        msg += this.msgs.invalidOptionsFile.msg[1];
+        etype = 'error';
+        break;
+      case HMSTATUS.optionsFileNotFound:
+        msg = M2C(this.msgs.optionsFileNotFound.msg);
+        etype = 'error';
     }
     return {
       msg: msg,

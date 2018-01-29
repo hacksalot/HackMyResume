@@ -226,6 +226,28 @@ assembleError = ( ex ) ->
       msg = printf M2C( @msgs.validateError.msg ), ex.inner.toString()
       etype = 'error'
 
+    when HMSTATUS.invalidOptionsFile
+      msg = M2C @msgs.invalidOptionsFile.msg[0]
+      if SyntaxErrorEx.is ex.inner
+        console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
+        se = new SyntaxErrorEx ex, ex.raw
+        if se.line? and se.col?
+          msg += printf M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col
+        else if se.line?
+          msg += printf M2C( this.msgs.parseError.msg[1], 'red' ), se.line
+        else
+          msg += M2C @msgs.parseError.msg[2], 'red'
+      else if ex.inner && ex.inner.line? && ex.inner.col?
+        msg += printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col)
+      else
+        msg += ex
+      msg += @msgs.invalidOptionsFile.msg[1]
+      etype = 'error'
+
+    when HMSTATUS.optionsFileNotFound
+      msg = M2C( @msgs.optionsFileNotFound.msg )
+      etype = 'error'
+
   msg: msg              # The error message to display
   withStack: withStack  # Whether to include the stack
   quit: quit

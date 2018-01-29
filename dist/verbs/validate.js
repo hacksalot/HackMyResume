@@ -111,7 +111,7 @@ Implementation of the 'validate' verb for HackMyResume.
           ret.violations = validate.errors;
         }
       } else {
-        if (obj.ex.operation === 'parse') {
+        if (obj.ex.op === 'parse') {
           errCode = HMSTATUS.parseError;
           ret.status = 'broken';
         } else {

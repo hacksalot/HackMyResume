@@ -30,6 +30,7 @@ class SyntaxErrorEx
         @line = (/on line (\d+)/.exec _error)[1]
 
 
-
+# Return true if the supplied parameter is a JavaScript SyntaxError
 SyntaxErrorEx.is = ( ex ) -> ex instanceof SyntaxError
+
 module.exports = SyntaxErrorEx;

@@ -83,7 +83,7 @@ _validateOne = (t, validator, schemas, opts) ->
 
     # If failure, package JSON read/parse errors
     else
-      if obj.ex.operation == 'parse'
+      if obj.ex.op == 'parse'
         errCode = HMSTATUS.parseError
         ret.status = 'broken'
       else

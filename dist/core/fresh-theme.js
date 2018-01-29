@@ -50,7 +50,7 @@ Definition of the FRESHTheme class.
       themeInfo = loadSafeJson(themeFile);
       if (themeInfo.ex) {
         throw {
-          fluenterror: themeInfo.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError,
+          fluenterror: themeInfo.ex.op === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError,
           inner: themeInfo.ex.inner
         };
       }

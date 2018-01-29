@@ -21,7 +21,7 @@ Definition of the SafeJsonLoader class.
     } catch (_error) {
       retRaw = ret.raw && ret.raw.trim();
       ret.ex = {
-        operation: retRaw ? 'parse' : 'read',
+        op: retRaw ? 'parse' : 'read',
         inner: SyntaxErrorEx.is(_error) ? new SyntaxErrorEx(_error, retRaw) : _error,
         file: file
       };

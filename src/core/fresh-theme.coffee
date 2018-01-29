@@ -43,7 +43,7 @@ class FRESHTheme
     if themeInfo.ex
       throw
         fluenterror:
-          if themeInfo.ex.operation == 'parse'
+          if themeInfo.ex.op == 'parse'
           then HMSTATUS.parseError
           else HMSTATUS.readError
       inner: themeInfo.ex.inner

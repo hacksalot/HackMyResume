@@ -80,7 +80,7 @@ Implementation of the 'peek' verb for HackMyResume.
     }
     pkgError = null;
     if (obj.ex) {
-      errCode = obj.ex.operation === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
+      errCode = obj.ex.op === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
       if (errCode === HMSTATUS.readError) {
         obj.ex.quiet = true;
       }

@@ -143,9 +143,36 @@ describe('Testing Ouput interface', function () {
         'to',
         'test/sandbox/temp/janeq-3.all',
         '--options',
-        "test/hmr-options.json",
+        "test/scripts/hmr-options.json",
         "-t",
         "modern"
       ],
       [ 'Applying MODERN theme'] );
+
+  run('HMR should detect a missing or inaccessible options file',
+      [
+        'build',
+        'doesntmatter.json',
+        'to',
+        'dontcare.all',
+        '--options',
+        "test/scripts/hmr-options-nonexistent.json",
+        "-t",
+        "modern"
+      ],
+      [ 'The specified options file is missing or inaccessible'] );
+
+  run('HMR should detect an invalid or malformed options file',
+      [
+        'build',
+        'doesntmatter.json',
+        'to',
+        'dontcare.all',
+        '--options',
+        "test/scripts/hmr-options-broken.json",
+        "-t",
+        "modern"
+      ],
+      [ 'The specified options file is invalid'] );
+
 });

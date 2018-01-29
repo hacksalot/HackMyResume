@@ -40,6 +40,9 @@ process.argv (in production) or custom parameters (in test).
 main = module.exports = ( rawArgs, exitCallback ) ->
 
   initInfo = initialize( rawArgs, exitCallback )
+  if initInfo is null
+    return
+
   args = initInfo.args
 
   # Create the top-level (application) command...
@@ -139,6 +142,16 @@ initialize = ( ar, exitCallback ) ->
 
   _exitCallback = exitCallback || process.exit
   o = initOptions ar
+  if o.ex
+    _err.init false, true, false
+    if( o.ex.op == 'parse' )
+      _err.err
+        fluenterror: if o.ex.op == 'parse' then HMSTATUS.invalidOptionsFile else HMSTATUS.optionsFileNotFound,
+        inner: o.ex.inner,
+        quit: true
+    else
+      _err.err fluenterror: HMSTATUS.optionsFileNotFound, inner: o.ex.inner, quit: true
+    return null
   o.silent || logMsg( _title )
 
   # Emit debug prelude if --debug was specified
@@ -168,7 +181,6 @@ initialize = ( ar, exitCallback ) ->
         else HMSTATUS.createNameMissing
       , true
     return
-
 
   # Override the .helpInformation behavior
   Command.prototype.helpInformation = ->
@@ -210,6 +222,7 @@ initOptions = ( ar ) ->
       if optStr && (optStr = optStr.trim())
         #var myJSON = JSON.parse(optStr);
         if( optStr[0] == '{')
+          # TODO: remove use of evil(). - hacksalot
           ### jshint ignore:start ###
           oJSON = eval('(' + optStr + ')') # jshint ignore:line <-- no worky
           ### jshint ignore:end ###
@@ -217,7 +230,8 @@ initOptions = ( ar ) ->
           inf = safeLoadJSON( optStr )
           if( !inf.ex )
             oJSON = inf.json
-          # TODO: Error handling
+          else
+            return inf
 
   # Grab the --debug flag, --silent, --assert and --no-color flags
   isDebug = _.some args, (v) -> v == '-d' || v == '--debug'

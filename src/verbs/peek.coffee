@@ -66,7 +66,7 @@ _peekOne = ( t, objPath ) ->
   ## safeLoadJSON can only return a READ error or a PARSE error
   pkgError = null
   if obj.ex
-    errCode = if obj.ex.operation == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
+    errCode = if obj.ex.op == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
     if errCode == HMSTATUS.readError
       obj.ex.quiet = true
     pkgError = fluenterror: errCode, inner: obj.ex

@@ -17,7 +17,7 @@ module.exports = ( file ) ->
     # We'll return HMSTATUS.readError or HMSTATUS.parseError.
     retRaw = ret.raw && ret.raw.trim()
     ret.ex =
-      operation: if retRaw then 'parse' else 'read'
+      op: if retRaw then 'parse' else 'read'
       inner:
         if SyntaxErrorEx.is( _error )
         then (new SyntaxErrorEx( _error, retRaw ))

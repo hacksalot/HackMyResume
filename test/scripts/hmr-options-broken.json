@@ -1,0 +1,10 @@
+{
+  // Set the default theme to "compact"
+  //"theme": "node_modules/jsonresume-theme-elegant",
+  //"theme": "jsonresume-theme-elegant",
+  "theme": "elegant",
+  // Change the "employment" section title text to "Work"
+  "sectionTitles": {
+    "employment": "Work"
+  }
+}

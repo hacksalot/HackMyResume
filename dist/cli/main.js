@@ -62,6 +62,9 @@ Definition of the `main` function.
   main = module.exports = function(rawArgs, exitCallback) {
     var args, initInfo, program;
     initInfo = initialize(rawArgs, exitCallback);
+    if (initInfo === null) {
+      return;
+    }
     args = initInfo.args;
     program = new Command('hackmyresume').version(PKG.version).description(chalk.yellow.bold('*** HackMyResume ***')).option('-s --silent', 'Run in silent mode').option('--no-color', 'Disable colors').option('--color', 'Enable colors').option('-d --debug', 'Enable diagnostics', false).option('-a --assert', 'Treat warnings as errors', false).option('-v --version', 'Show the version').allowUnknownOption();
     program.jsonArgs = initInfo.options;
@@ -104,6 +107,23 @@ Definition of the `main` function.
     var o;
     _exitCallback = exitCallback || process.exit;
     o = initOptions(ar);
+    if (o.ex) {
+      _err.init(false, true, false);
+      if (o.ex.op === 'parse') {
+        _err.err({
+          fluenterror: o.ex.op === 'parse' ? HMSTATUS.invalidOptionsFile : HMSTATUS.optionsFileNotFound,
+          inner: o.ex.inner,
+          quit: true
+        });
+      } else {
+        _err.err({
+          fluenterror: HMSTATUS.optionsFileNotFound,
+          inner: o.ex.inner,
+          quit: true
+        });
+      }
+      return null;
+    }
     o.silent || logMsg(_title);
     if (o.debug) {
       _out.log(chalk.cyan('The -d or --debug switch was specified. DEBUG mode engaged.'));
@@ -173,6 +193,8 @@ Definition of the `main` function.
             inf = safeLoadJSON(optStr);
             if (!inf.ex) {
               oJSON = inf.json;
+            } else {
+              return inf;
             }
           }
         }
