@@ -115,8 +115,12 @@ _load = (formatsHash) ->
         # Found a CSS file without an HTML file in a theme that inherits
         # from another theme. This is the override CSS file.
         that.overrides = { file: cssf.path, data: cssf.data }
-  formatsHash
 
+  # Now, save all the javascript file paths to a theme property.
+  jsFiles = fmts.filter (fmt) -> fmt and (fmt.ext == 'js')
+  @.jsFiles = jsFiles.map (jsf) -> jsf['path']
+
+  formatsHash
 
 
 ### Load a single theme file. ###
