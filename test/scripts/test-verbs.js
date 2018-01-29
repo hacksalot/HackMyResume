@@ -6,8 +6,7 @@ as build, new, peek, etc., by creating and invoking a Verb object.
 */
 
 var chai = require('chai')
-  , expect = chai.expect
-  , should = chai.should()
+  , chaiAsPromised = require("chai-as-promised")
   , path = require('path')
   , _ = require('underscore')
 	, FRESHResume = require('../../dist/core/fresh-resume')
@@ -15,6 +14,11 @@ var chai = require('chai')
   , validator = require('is-my-json-valid')
   , EXTEND = require('extend');
 
+// Initialize Chai As Promised
+chai.use(chaiAsPromised);
+expect = chai.expect;
+assert = chai.assert;
+should = chai.should();
 chai.config.includeStack = false;
 
 var _sheet;
@@ -35,6 +39,8 @@ var opts2 = {
 var sb = 'test/sandbox/';
 var ft = 'node_modules/fresh-test-resumes/src/fresh/';
 
+// Assemble an array of tests, taking the form of parameters we'll pass to
+// each of the defined HackMyResume verbs.
 var tests = [
 
   [ 'new',
@@ -66,7 +72,7 @@ var tests = [
     ' (multiple JRS resumes)'
   ],
 
-  [ 'new',
+  [ '!new',
     [],
     [],
     opts,
@@ -151,11 +157,13 @@ var tests = [
         'references', 'testimonials', 'languages', 'interests',
         'extracurricular', 'governance'
       ];
-      return Object.keys( _.pick( r, expected ) ).length === expected.length;
+
+      Object.keys( _.pick( r, expected ) ).length
+        .should.equal( expected.length );
     }
   ],
 
-  [ 'build',
+  [ '!build',
     [ ft + 'jane-fullstacker.json'],
     [ sb + 'shouldnt-exist.pdf' ],
     EXTEND(true, {}, opts, { theme: 'awesome' }),
@@ -164,55 +172,45 @@ var tests = [
 
 ];
 
+// Set up the main test suite for the API interface
 describe('Testing API interface', function () {
 
-    function run( verb, src, dst, opts, msg, fnTest ) {
+  this.timeout(5000);
 
-      msg = msg || '.';
-      var shouldSucceed = true;
-      if( verb[0] === '!' ) {
-        verb = verb.substr(1);
-        shouldSucceed = false;
-      }
+  function run( verb, src, dst, opts, msg, fnTest ) {
 
-      it( 'The ' + verb.toUpperCase() + ' command should ' +
-          (shouldSucceed ? ' NOT THROW' : ' THROW') + msg, function () {
-
-        function runIt() {
-          try {
-            var v = new FCMD.verbs[verb]();
-            v.on('hmr:error', function(ex) { throw ex; });
-            var prom = v.invoke( src, dst, opts );
-            prom.then(
-              function( obj ) {
-                if( fnTest )
-                  if( !fnTest( obj ) )
-                    throw "Test: Unexpected API result.";
-              },
-              function( error ) {
-                throw error;
-              }
-            );
-
-          }
-          catch(ex) {
-            console.error(ex);
-            if( ex.stack || (ex.inner && ex.inner.stack))
-              console.error( ex.stack || ex.inner.stack );
-            throw ex;
-          }
-        }
-
-        if( shouldSucceed )
-          runIt.should.not.Throw();
-        else
-          runIt.should.Throw();
-      });
-
+    msg = msg || '.';
+    var shouldSucceed = true;
+    if( verb[0] === '!' ) {
+      verb = verb.substr(1);
+      shouldSucceed = false;
     }
 
-    tests.forEach( function(a) {
-      run.apply( /* The players of */ null, a );
+    it( 'The ' + verb.toUpperCase() + ' command should ' +
+        (shouldSucceed ? ' SUCCEED' : ' FAIL') + msg, function (done) {
+
+      var v = new FCMD.verbs[verb]();
+      v.on('hmr:error', function(ex) {
+        assert(false);
+      });
+      var prom = v.invoke( src, dst, opts );
+      var fulfillMethod = shouldSucceed ? 'fulfilled' : 'rejected';
+
+      if( fnTest ) {
+        prom.should.be[ fulfillMethod ].then( function( obj ) {
+          fnTest(obj.sheet);
+        }).should.notify(done);
+      }
+      else {
+        prom.should.be[fulfillMethod].notify(done);
+      }
+
     });
+
+  }
+
+  tests.forEach( function(a) {
+    run.apply( /* The players of */ null, a );
+  });
 
 });

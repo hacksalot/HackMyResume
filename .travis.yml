@@ -1,3 +1,19 @@
+sudo: required
+before_install:
+  # Prevents a shared object .so error when running wkhtmltopdf on certain
+  # platforms (e.g., vanilla Ubuntu 16.04 LTS). Not necessary on current Travis.
+  # - sudo apt-get install libxrender1
+install:
+  # Install & link HackMyResume
+  - npm install && npm link
+  # Download and extract the latest wkhtmltopdf binaries
+  - mkdir tmp && wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O tmp/wk.tar.xz
+  - tar -xf tmp/wk.tar.xz -C ./tmp
+  # Copy wkhtmltopdf binaries to /usr/bin (also makes them path-accessible)
+  - sudo cp -R ./tmp/wkhtmltox/bin/* /usr/bin/
+  # Now you can invoke "wkhtmltopdf" and "wkhtmltoimage" safely in tests.
+  - wkhtmltopdf -V
+  - wkhtmltoimage -V
 language: node_js
 node_js:
   - "4.0"
