@@ -128,7 +128,7 @@ Output routines for HackMyResume.
           output = template(info);
           return this.log(chalk.cyan(output));
         case HME.beforeConvert:
-          return L(M2C(this.msgs.beforeConvert.msg, 'green'), evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt);
+          return L(M2C(this.msgs.beforeConvert.msg, evt.error ? 'red' : 'green'), evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt);
         case HME.afterInlineConvert:
           return L(M2C(this.msgs.afterInlineConvert.msg, 'gray', 'white.dim'), evt.file, evt.fmt);
         case HME.afterValidate:

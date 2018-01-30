@@ -6,14 +6,15 @@ Definition of the ResumeFactory class.
 
 
 
-FS              = require('fs')
-HACKMYSTATUS    = require('./status-codes')
-HME             = require('./event-codes')
-ResumeConverter = require('fresh-jrs-converter')
-chalk           = require('chalk')
-SyntaxErrorEx   = require('../utils/syntax-error-ex')
-_               = require('underscore')
-require('string.prototype.startswith')
+FS              = require 'fs'
+HMS    = require './status-codes'
+HME             = require './event-codes'
+ResumeConverter = require 'fresh-jrs-converter'
+chalk           = require 'chalk'
+SyntaxErrorEx   = require '../utils/syntax-error-ex'
+_               = require 'underscore'
+resumeDetect    = require '../utils/resume-detector'
+require 'string.prototype.startswith'
 
 
 
@@ -62,20 +63,23 @@ ResumeFactory = module.exports =
 
     # Determine the resume format: FRESH or JRS
     json = info.json
-    isFRESH = json.meta && json.meta.format && json.meta.format.startsWith('FRESH@');
-    orgFormat = if isFRESH then 'fresh' else 'jrs'
+    orgFormat = resumeDetect json
+    if orgFormat == 'unk'
+      info.fluenterror = HMS.unknownSchema
+      return info
 
     # Convert between formats if necessary
     if toFormat and ( orgFormat != toFormat )
-      json = ResumeConverter[ 'to' + toFormat.toUpperCase() ]( json )
+      json = ResumeConverter[ 'to' + toFormat.toUpperCase() ] json
 
     # Objectify the resume, that is, convert it from JSON to a FRESHResume
     # or JRSResume object.
     rez = null
     if objectify
-      ResumeClass = require('../core/' + (toFormat || orgFormat) + '-resume');
-      rez = new ResumeClass().parseJSON( json, opts.inner );
-      rez.i().file = src;
+      reqLib = '../core/' + (toFormat || orgFormat) + '-resume'
+      ResumeClass = require reqLib
+      rez = new ResumeClass().parseJSON( json, opts.inner )
+      rez.i().file = src
 
     file: src
     json: info.json
@@ -103,7 +107,7 @@ _parse = ( fileName, opts, eve ) ->
     return ret
   catch
     # Can be ENOENT, EACCES, SyntaxError, etc.
-    fluenterror: if rawData then HACKMYSTATUS.parseError else HACKMYSTATUS.readError
+    fluenterror: if rawData then HMS.parseError else HMS.readError
     inner: _error
     raw: rawData
     file: fileName

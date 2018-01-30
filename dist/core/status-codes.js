@@ -35,7 +35,8 @@ Status codes for HackMyResume.
     createError: 25,
     validateError: 26,
     invalidOptionsFile: 27,
-    optionsFileNotFound: 28
+    optionsFileNotFound: 28,
+    unknownSchema: 29
   };
 
 }).call(this);

@@ -257,9 +257,16 @@ Definition of the `main` function.
 
   executeFail = function(err) {
     var finalErrorCode, msgs;
+    console.dir(err);
     finalErrorCode = -1;
     if (err) {
-      finalErrorCode = err.fluenterror ? err.fluenterror : err;
+      if (err.fluenterror) {
+        finalErrorCode = err.fluenterror;
+      } else if (err.length) {
+        finalErrorCode = err[0].fluenterror;
+      } else {
+        finalErrorCode = err;
+      }
     }
     if (_opts.debug) {
       msgs = require('./msg').errors;

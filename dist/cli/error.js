@@ -258,6 +258,10 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.optionsFileNotFound:
         msg = M2C(this.msgs.optionsFileNotFound.msg);
         etype = 'error';
+        break;
+      case HMSTATUS.unknownSchema:
+        msg = M2C(this.msgs.unknownSchema.msg[0]);
+        etype = 'error';
     }
     return {
       msg: msg,

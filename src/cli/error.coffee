@@ -248,6 +248,11 @@ assembleError = ( ex ) ->
       msg = M2C( @msgs.optionsFileNotFound.msg )
       etype = 'error'
 
+    when HMSTATUS.unknownSchema
+      msg = M2C( @msgs.unknownSchema.msg[0] )
+      #msg += "\n" + M2C( @msgs.unknownSchema.msg[1], 'yellow' )
+      etype = 'error'
+
   msg: msg              # The error message to display
   withStack: withStack  # Whether to include the stack
   quit: quit

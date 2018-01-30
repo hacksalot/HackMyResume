@@ -35,3 +35,4 @@ module.exports =
   validateError: 26
   invalidOptionsFile: 27
   optionsFileNotFound: 28
+  unknownSchema: 29

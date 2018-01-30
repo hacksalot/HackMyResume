@@ -262,7 +262,7 @@ execute = ( src, dst, opts, log ) ->
   v = new HMR.verbs[ @name() ]()
 
   # Initialize command-specific options
-  loadOptions.call( this, opts, this.parent.jsonArgs )
+  loadOptions.call this, opts, this.parent.jsonArgs
 
   # Set up error/output handling
   _opts.errHandler = v
@@ -288,9 +288,15 @@ executeSuccess = (obj) ->
 
 ### Failure handler for verb invocations. Calls process.exit by default ###
 executeFail = (err) ->
+  console.dir err
   finalErrorCode = -1
   if err
-    finalErrorCode = if err.fluenterror then err.fluenterror else err
+    if err.fluenterror
+      finalErrorCode = err.fluenterror
+    else if err.length
+      finalErrorCode = err[0].fluenterror
+    else
+      finalErrorCode = err
   if _opts.debug
     msgs = require('./msg').errors;
     logMsg printf M2C( msgs.exiting.msg, 'cyan' ), finalErrorCode

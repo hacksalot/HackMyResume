@@ -131,7 +131,7 @@ module.exports = class OutputHandler
         @log( chalk.cyan(output) )
 
       when HME.beforeConvert
-        L( M2C( this.msgs.beforeConvert.msg, 'green' ),
+        L( M2C( this.msgs.beforeConvert.msg, if evt.error then 'red' else 'green' ),
           evt.srcFile, evt.srcFmt, evt.dstFile, evt.dstFmt
         );
 

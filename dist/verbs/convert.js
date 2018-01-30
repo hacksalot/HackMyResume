@@ -65,11 +65,12 @@ Implementation of the 'convert' verb for HackMyResume.
         quit: true
       });
     }
+    if (this.hasError()) {
+      this.reject(this.errorCode);
+      return null;
+    }
     results = _.map(srcs, function(src, idx) {
       var r;
-      if (opts.assert && this.hasError()) {
-        return {};
-      }
       r = _convertOne.call(this, src, dst, idx);
       if (r.fluenterror) {
         r.quit = opts.assert;
@@ -89,16 +90,31 @@ Implementation of the 'convert' verb for HackMyResume.
   /** Private workhorse method. Convert a single resume. */
 
   _convertOne = function(src, dst, idx) {
-    var rinfo, s, srcFmt, targetFormat;
+    var rez, rinfo, srcFmt, targetFormat;
     rinfo = ResumeFactory.loadOne(src, {
       format: null,
       objectify: true
     });
     if (rinfo.fluenterror) {
+      this.stat(HMEVENT.beforeConvert, {
+        srcFile: src,
+        srcFmt: '???',
+        dstFile: dst[idx],
+        dstFmt: '???',
+        error: true
+      });
       return rinfo;
     }
-    s = rinfo.rez;
-    srcFmt = ((s.basics && s.basics.imp) || s.imp).orgFormat === 'JRS' ? 'JRS' : 'FRESH';
+    rez = rinfo.rez;
+    srcFmt = '';
+    if (rez.meta && rez.meta.format) {
+      srcFmt = 'FRESH';
+    } else if (rez.basics) {
+      srcFmt = 'JRS';
+    } else {
+      rinfo.fluenterror = HMSTATUS.unknownSchema;
+      return rinfo;
+    }
     targetFormat = srcFmt === 'JRS' ? 'FRESH' : 'JRS';
     this.stat(HMEVENT.beforeConvert, {
       srcFile: rinfo.file,
@@ -106,8 +122,8 @@ Implementation of the 'convert' verb for HackMyResume.
       dstFile: dst[idx],
       dstFmt: targetFormat
     });
-    s.saveAs(dst[idx], targetFormat);
-    return s;
+    rez.saveAs(dst[idx], targetFormat);
+    return rez;
   };
 
 }).call(this);

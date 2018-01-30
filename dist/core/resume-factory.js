@@ -6,11 +6,11 @@ Definition of the ResumeFactory class.
  */
 
 (function() {
-  var FS, HACKMYSTATUS, HME, ResumeConverter, ResumeFactory, SyntaxErrorEx, _, _parse, chalk;
+  var FS, HME, HMS, ResumeConverter, ResumeFactory, SyntaxErrorEx, _, _parse, chalk, resumeDetect;
 
   FS = require('fs');
 
-  HACKMYSTATUS = require('./status-codes');
+  HMS = require('./status-codes');
 
   HME = require('./event-codes');
 
@@ -21,6 +21,8 @@ Definition of the ResumeFactory class.
   SyntaxErrorEx = require('../utils/syntax-error-ex');
 
   _ = require('underscore');
+
+  resumeDetect = require('../utils/resume-detector');
 
   require('string.prototype.startswith');
 
@@ -54,7 +56,7 @@ Definition of the ResumeFactory class.
 
     /** Load a single resume from disk. */
     loadOne: function(src, opts, emitter) {
-      var ResumeClass, info, isFRESH, json, objectify, orgFormat, rez, toFormat;
+      var ResumeClass, info, json, objectify, orgFormat, reqLib, rez, toFormat;
       toFormat = opts.format;
       objectify = opts.objectify;
       toFormat && (toFormat = toFormat.toLowerCase().trim());
@@ -63,14 +65,18 @@ Definition of the ResumeFactory class.
         return info;
       }
       json = info.json;
-      isFRESH = json.meta && json.meta.format && json.meta.format.startsWith('FRESH@');
-      orgFormat = isFRESH ? 'fresh' : 'jrs';
+      orgFormat = resumeDetect(json);
+      if (orgFormat === 'unk') {
+        info.fluenterror = HMS.unknownSchema;
+        return info;
+      }
       if (toFormat && (orgFormat !== toFormat)) {
         json = ResumeConverter['to' + toFormat.toUpperCase()](json);
       }
       rez = null;
       if (objectify) {
-        ResumeClass = require('../core/' + (toFormat || orgFormat) + '-resume');
+        reqLib = '../core/' + (toFormat || orgFormat) + '-resume';
+        ResumeClass = require(reqLib);
         rez = new ResumeClass().parseJSON(json, opts.inner);
         rez.i().file = src;
       }
@@ -109,7 +115,7 @@ Definition of the ResumeFactory class.
       return ret;
     } catch (_error) {
       return {
-        fluenterror: rawData ? HACKMYSTATUS.parseError : HACKMYSTATUS.readError,
+        fluenterror: rawData ? HMS.parseError : HMS.readError,
         inner: _error,
         raw: rawData,
         file: fileName

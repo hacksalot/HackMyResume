@@ -13,6 +13,10 @@
 0|analyze node_modules/fresh-test-resumes/src/fresh/johnny-trouble.json
 3|convert
 7|convert doesnt-exist.json
+14|convert from.json to.json
+7|convert z1.json z2.json z3.json
+7|convert z1.json z2.json z3.json z4.json
+14|convert z1.json z2.json to z3.json z4.json
 3|validate
 14|validate doesnt-exist.json
 0|validate node_modules/fresh-test-resumes/src/fresh/jane-fullstacker.json

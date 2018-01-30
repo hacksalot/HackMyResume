@@ -32,12 +32,20 @@ module.exports = class Verb
 
   ###* Invoke the command. ###
   invoke: ->
+
+    # Sent the 'begin' notification for this verb
     @stat HMEVENT.begin, cmd: @moniker
+
+    # Prepare command arguments
     argsArray = Array::slice.call arguments
+
+    # Create a promise for this verb instance
     that = @
     @promise = new Promise (res, rej) ->
-      that.resolve = res; that.reject = rej
-      that.workhorse.apply that, argsArray; return
+      that.resolve = res
+      that.reject = rej
+      that.workhorse.apply that, argsArray
+      return
 
 
 
