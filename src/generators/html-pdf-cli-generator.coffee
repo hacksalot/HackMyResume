@@ -70,14 +70,11 @@ engines =
     FS.writeFileSync tempFile, markup, 'utf8'
 
     # Prepare wkhtmltopdf arguments.
-    wkhtmltopdf_options = _.extend(
-      {'margin-bottom': '10mm', 'margin-top': '10mm'}, opts.wkhtmltopdf)
-    wkhtmltopdf_options = _.flatten(_.map(wkhtmltopdf_options, (v, k)->
-      return ['--' + k, v]
-    ))
-    wkhtmltopdf_args = wkhtmltopdf_options.concat [ tempFile, fOut  ]
+    wkopts = _.extend 'margin-top': '10mm', 'margin-bottom': '10mm', opts.wkhtmltopdf
+    wkopts = _.flatten _.map wkopts, (v, k) -> ['--' + k, v]
+    wkargs = wkopts.concat [ tempFile, fOut  ]
 
-    SPAWN 'wkhtmltopdf', wkhtmltopdf_args , false, on_error, @
+    SPAWN 'wkhtmltopdf', wkargs , false, on_error, @
     return
 
 

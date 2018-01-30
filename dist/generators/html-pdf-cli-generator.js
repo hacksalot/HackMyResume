@@ -87,18 +87,18 @@ Definition of the HtmlPdfCLIGenerator class.
     TODO: Local web server to ease wkhtmltopdf rendering
      */
     wkhtmltopdf: function(markup, fOut, opts, on_error) {
-      var tempFile, wkhtmltopdf_args, wkhtmltopdf_options;
+      var tempFile, wkargs, wkopts;
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
-      wkhtmltopdf_options = _.extend({
-        'margin-bottom': '10mm',
-        'margin-top': '10mm'
+      wkopts = _.extend({
+        'margin-top': '10mm',
+        'margin-bottom': '10mm'
       }, opts.wkhtmltopdf);
-      wkhtmltopdf_options = _.flatten(_.map(wkhtmltopdf_options, function(v, k) {
+      wkopts = _.flatten(_.map(wkopts, function(v, k) {
         return ['--' + k, v];
       }));
-      wkhtmltopdf_args = wkhtmltopdf_options.concat([tempFile, fOut]);
-      SPAWN('wkhtmltopdf', wkhtmltopdf_args, false, on_error, this);
+      wkargs = wkopts.concat([tempFile, fOut]);
+      SPAWN('wkhtmltopdf', wkargs, false, on_error, this);
     },
 
     /**
