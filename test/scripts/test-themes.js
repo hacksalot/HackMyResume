@@ -30,7 +30,7 @@ function genThemes( title, src, fmt ) {
     + ' resume ' + '(' + fmt + ')' , function () {
 
     // Increase the timeout since resume generation can be expensive..
-    this.timeout(30000);
+    this.timeout(50000);
 
     // Define a local function to build a single resume to MULTIPLE themes
     function genTheme( fmt, src, themeName, themeLoc, testTitle ) {
