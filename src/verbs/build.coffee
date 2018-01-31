@@ -350,15 +350,39 @@ _verifyTheme = ( themeNameOrPath ) ->
 
 ###*
 Load the specified theme, which could be either a FRESH theme or a JSON Resume
-theme.
+theme (or both).
 ###
 _loadTheme = ( tFolder ) ->
 
+  themeJsonPath = PATH.join tFolder, 'theme.json' # [^1]
+  exists = require('path-exists').sync
+
   # Create a FRESH or JRS theme object
   theTheme =
-    if _opts.theme.indexOf('jsonresume-theme-') > -1
-    then new JRSTheme().open(tFolder) else new FRESHTheme().open( tFolder );
+    if exists themeJsonPath
+    then new FRESHTheme().open tFolder
+    else new JRSTheme().open tFolder
 
   # Cache the theme object
   _opts.themeObj = theTheme;
   theTheme
+
+
+# FOOTNOTES
+# ------------------------------------------------------------------------------
+# [^1] We don't know ahead of time whether this is a FRESH or JRS theme.
+#      However, all FRESH themes have a theme.json file, so we'll use that as a
+#      canary for now, as an interim solution.
+#
+#      Unfortunately, with the exception of FRESH's theme.json, both FRESH and
+#      JRS themes are free-form and don't have a ton of reliable distinguishing
+#      marks, which makes a simple task like ad hoc theme detection harder than
+#      it should be to do cleanly.
+#
+#      Another complicating factor is that it's possible for a theme to be BOTH.
+#      That is, a single set of theme files can serve as a FRESH theme -and- a
+#      JRS theme.
+#
+#      TODO: The most robust way to deal with all these issues is with a strong
+#      theme validator. If a theme structure validates as a particular theme
+#      type, then for all intents and purposes, it IS a theme of that type.

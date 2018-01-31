@@ -441,12 +441,14 @@ Implementation of the 'build' verb for HackMyResume.
 
   /**
   Load the specified theme, which could be either a FRESH theme or a JSON Resume
-  theme.
+  theme (or both).
    */
 
   _loadTheme = function(tFolder) {
-    var theTheme;
-    theTheme = _opts.theme.indexOf('jsonresume-theme-') > -1 ? new JRSTheme().open(tFolder) : new FRESHTheme().open(tFolder);
+    var exists, theTheme, themeJsonPath;
+    themeJsonPath = PATH.join(tFolder, 'theme.json');
+    exists = require('path-exists').sync;
+    theTheme = exists(themeJsonPath) ? new FRESHTheme().open(tFolder) : new JRSTheme().open(tFolder);
     _opts.themeObj = theTheme;
     return theTheme;
   };
