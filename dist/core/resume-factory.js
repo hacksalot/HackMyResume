@@ -56,9 +56,8 @@ Definition of the ResumeFactory class.
 
     /** Load a single resume from disk. */
     loadOne: function(src, opts, emitter) {
-      var ResumeClass, info, json, objectify, orgFormat, reqLib, rez, toFormat;
+      var ResumeClass, info, json, orgFormat, reqLib, rez, toFormat;
       toFormat = opts.format;
-      objectify = opts.objectify;
       toFormat && (toFormat = toFormat.toLowerCase().trim());
       info = _parse(src, opts, emitter);
       if (info.fluenterror) {
@@ -74,7 +73,7 @@ Definition of the ResumeFactory class.
         json = ResumeConverter['to' + toFormat.toUpperCase()](json);
       }
       rez = null;
-      if (objectify) {
+      if (opts.objectify) {
         reqLib = '../core/' + (toFormat || orgFormat) + '-resume';
         ResumeClass = require(reqLib);
         rez = new ResumeClass().parseJSON(json, opts.inner);

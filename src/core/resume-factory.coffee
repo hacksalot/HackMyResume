@@ -52,7 +52,6 @@ ResumeFactory = module.exports =
   loadOne: ( src, opts, emitter ) ->
 
     toFormat = opts.format     # Can be null
-    objectify = opts.objectify
 
     # Get the destination format. Can be 'fresh', 'jrs', or null/undefined.
     toFormat && (toFormat = toFormat.toLowerCase().trim())
@@ -75,7 +74,7 @@ ResumeFactory = module.exports =
     # Objectify the resume, that is, convert it from JSON to a FRESHResume
     # or JRSResume object.
     rez = null
-    if objectify
+    if opts.objectify
       reqLib = '../core/' + (toFormat || orgFormat) + '-resume'
       ResumeClass = require reqLib
       rez = new ResumeClass().parseJSON( json, opts.inner )
