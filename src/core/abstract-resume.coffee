@@ -65,7 +65,7 @@ class AbstractResume
     privateList = []
     includePrivates = if not opts?.private? then true else opts?.private
 
-    scrubbed = traverse( rep ).map ( x ) ->
+    scrubbed = traverse( rep ).map () -> # [^1]
       if !@isLeaf
         if @node.ignore == true || @node.ignore == 'true'
           ignoreList.push @node
@@ -73,6 +73,10 @@ class AbstractResume
         else if (@node.private == true || @node.private == 'true') && !includePrivates
           privateList.push @node
           @delete()
+      if _.isArray(@node) # [^2]
+        @after () ->
+          @update _.compact this.node
+          return
       return
 
     scrubbed: scrubbed
@@ -80,3 +84,15 @@ class AbstractResume
     privateList: privateList
 
 module.exports = AbstractResume
+
+
+# [^1]: As of this writing, the NPM traverse library has a quirk when attempting
+# to remove array elements directly using traverse's `this.remove`. See:
+#
+# https://github.com/substack/js-traverse/issues/48
+#
+# [^2]: The workaround is to use traverse's 'this.delete' to nullify the value
+# first, followed by removal with something like _.compact.
+#
+# https://github.com/substack/js-traverse/issues/48#issuecomment-142607200
+#

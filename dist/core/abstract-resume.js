@@ -79,7 +79,7 @@ Definition of the AbstractResume class.
       ignoreList = [];
       privateList = [];
       includePrivates = (opts != null ? opts["private"] : void 0) == null ? true : opts != null ? opts["private"] : void 0;
-      scrubbed = traverse(rep).map(function(x) {
+      scrubbed = traverse(rep).map(function() {
         if (!this.isLeaf) {
           if (this.node.ignore === true || this.node.ignore === 'true') {
             ignoreList.push(this.node);
@@ -88,6 +88,11 @@ Definition of the AbstractResume class.
             privateList.push(this.node);
             this["delete"]();
           }
+        }
+        if (_.isArray(this.node)) {
+          this.after(function() {
+            this.update(_.compact(this.node));
+          });
         }
       });
       return {
