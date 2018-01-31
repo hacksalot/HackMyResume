@@ -69,10 +69,11 @@ class AbstractResume
       if !@isLeaf
         if @node.ignore == true || @node.ignore == 'true'
           ignoreList.push @node
-          @remove()
+          @delete()
         else if (@node.private == true || @node.private == 'true') && !includePrivates
           privateList.push @node
-          @remove()
+          @delete()
+      return
 
     scrubbed: scrubbed
     ingoreList: ignoreList

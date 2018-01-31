@@ -83,10 +83,10 @@ Definition of the AbstractResume class.
         if (!this.isLeaf) {
           if (this.node.ignore === true || this.node.ignore === 'true') {
             ignoreList.push(this.node);
-            return this.remove();
+            this["delete"]();
           } else if ((this.node["private"] === true || this.node["private"] === 'true') && !includePrivates) {
             privateList.push(this.node);
-            return this.remove();
+            this["delete"]();
           }
         }
       });
