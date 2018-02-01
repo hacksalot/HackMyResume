@@ -36,7 +36,10 @@ Definition of the FRESHTheme class.
    */
 
   FRESHTheme = (function() {
-    function FRESHTheme() {}
+    function FRESHTheme() {
+      this.baseFolder = 'src';
+      return;
+    }
 
 
     /* Open and parse the specified theme. */
@@ -98,7 +101,7 @@ Definition of the FRESHTheme class.
     var copyOnly, fmts, jsFiles, major, that, tplFolder;
     that = this;
     major = false;
-    tplFolder = PATH.join(this.folder, 'src');
+    tplFolder = PATH.join(this.folder, this.baseFolder);
     copyOnly = ['.ttf', '.otf', '.png', '.jpg', '.jpeg', '.pdf'];
     fmts = READFILES(tplFolder).map(function(absPath) {
       return _loadOne.call(this, absPath, formatsHash, tplFolder);

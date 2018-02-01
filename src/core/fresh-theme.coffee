@@ -24,7 +24,9 @@ READFILES = require 'recursive-readdir-sync'
 @class FRESHTheme ###
 class FRESHTheme
 
-
+  constructor: () ->
+    @baseFolder = 'src'
+    return
 
   ### Open and parse the specified theme. ###
   open: ( themeFolder ) ->
@@ -86,7 +88,7 @@ _load = (formatsHash) ->
 
   that = @
   major = false
-  tplFolder = PATH.join @folder, 'src'
+  tplFolder = PATH.join @folder, @baseFolder
 
   copyOnly = ['.ttf','.otf', '.png','.jpg','.jpeg','.pdf']
 
