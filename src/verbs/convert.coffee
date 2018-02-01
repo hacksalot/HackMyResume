@@ -77,7 +77,11 @@ _convert = ( srcs, dst, opts ) ->
 _convertOne = (src, dst, idx) ->
 
   # Load the resume
-  rinfo = ResumeFactory.loadOne src, format: null, objectify: true
+  rinfo = ResumeFactory.loadOne src,
+    format: null
+    objectify: true,
+    inner:
+      privatize: false
 
   # If a load error occurs, report it and move on to the next file (if any)
   if rinfo.fluenterror

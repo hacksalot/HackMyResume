@@ -93,7 +93,10 @@ Implementation of the 'convert' verb for HackMyResume.
     var rez, rinfo, srcFmt, targetFormat;
     rinfo = ResumeFactory.loadOne(src, {
       format: null,
-      objectify: true
+      objectify: true,
+      inner: {
+        privatize: false
+      }
     });
     if (rinfo.fluenterror) {
       this.stat(HMEVENT.beforeConvert, {

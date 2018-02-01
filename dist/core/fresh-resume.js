@@ -77,10 +77,11 @@ Definition of the FRESHResume class.
      */
 
     FreshResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, ref1, scrubbed, that;
-      that = this;
-      ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
-      extend(true, this, scrubbed);
+      var ignoreList, privateList, ref, ref1, scrubbed;
+      if (opts && opts.privatize) {
+        ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
+      }
+      extend(true, this, opts && opts.privatize ? scrubbed : rep);
       if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
         opts = opts || {};
         if (opts.imp === void 0 || opts.imp) {

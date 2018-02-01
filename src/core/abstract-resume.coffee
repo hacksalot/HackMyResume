@@ -63,7 +63,7 @@ class AbstractResume
     traverse = require 'traverse'
     ignoreList = []
     privateList = []
-    includePrivates = if not opts?.private? then true else opts?.private
+    includePrivates = opts && opts.private
 
     scrubbed = traverse( rep ).map () -> # [^1]
       if !@isLeaf
@@ -86,7 +86,7 @@ class AbstractResume
 module.exports = AbstractResume
 
 
-# [^1]: As of this writing, the NPM traverse library has a quirk when attempting
+# [^1]: As of v0.6.6, the NPM traverse library has a quirk when attempting
 # to remove array elements directly using traverse's `this.remove`. See:
 #
 # https://github.com/substack/js-traverse/issues/48

@@ -78,7 +78,7 @@ Definition of the AbstractResume class.
       traverse = require('traverse');
       ignoreList = [];
       privateList = [];
-      includePrivates = (opts != null ? opts["private"] : void 0) == null ? true : opts != null ? opts["private"] : void 0;
+      includePrivates = opts && opts["private"];
       scrubbed = traverse(rep).map(function() {
         if (!this.isLeaf) {
           if (this.node.ignore === true || this.node.ignore === 'true') {

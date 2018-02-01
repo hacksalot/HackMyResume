@@ -48,12 +48,12 @@ class JRSResume extends AbstractResume
   ###
   parseJSON: ( rep, opts ) ->
     opts = opts || { };
-    # Ignore any element with the 'ignore: true' or 'private: true' designator.
-    that = this
-    { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+    if opts.privatize
+      # Ignore any element with the 'ignore: true' or 'private: true' designator.
+      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
 
     # Extend resume properties onto ourself.
-    extend true, this, scrubbed
+    extend true, this, if opts.privatize then scrubbed else rep
 
     # Set up metadata
     if !@imp?.processed

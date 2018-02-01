@@ -53,12 +53,12 @@ class FreshResume extends AbstractResume
   ###
   parseJSON: ( rep, opts ) ->
 
-    # Ignore any element with the 'ignore: true' or 'private: true' designator.
-    that = @
-    { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+    if opts and opts.privatize
+      # Ignore any element with the 'ignore: true' or 'private: true' designator.
+      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
 
     # Now apply the resume representation onto this object
-    extend( true, @, scrubbed );
+    extend true, @, if opts and opts.privatize then scrubbed else rep
 
     # If the resume has already been processed, then we are being called from
     # the .dupe method, and there's no need to do any post processing
