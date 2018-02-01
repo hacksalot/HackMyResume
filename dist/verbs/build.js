@@ -423,19 +423,22 @@ Implementation of the 'build' verb for HackMyResume.
    */
 
   _verifyTheme = function(themeNameOrPath) {
-    var exists, tFolder;
-    tFolder = PATH.join(parsePath(require.resolve('fresh-themes')).dirname, '/themes/', themeNameOrPath);
-    exists = require('path-exists').sync;
-    if (!exists(tFolder)) {
+    var exists, tFolder, themesObj;
+    themesObj = require('fresh-themes');
+    if (_.has(themesObj.themes, themeNameOrPath)) {
+      tFolder = PATH.join(parsePath(require.resolve('fresh-themes')).dirname, '/themes/', themeNameOrPath);
+    } else {
       tFolder = PATH.resolve(themeNameOrPath);
-      if (!exists(tFolder)) {
-        return {
-          fluenterror: HMSTATUS.themeNotFound,
-          data: _opts.theme
-        };
-      }
     }
-    return tFolder;
+    exists = require('path-exists').sync;
+    if (exists(tFolder)) {
+      return tFolder;
+    } else {
+      return {
+        fluenterror: HMSTATUS.themeNotFound,
+        data: _opts.theme
+      };
+    }
   };
 
 

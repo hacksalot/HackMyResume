@@ -334,17 +334,30 @@ _expand = ( dst, theTheme ) ->
 Verify the specified theme name/path.
 ###
 _verifyTheme = ( themeNameOrPath ) ->
-  tFolder = PATH.join(
-    parsePath( require.resolve('fresh-themes') ).dirname,
-    '/themes/',
-    themeNameOrPath
-  )
-  exists = require('path-exists').sync
-  if !exists( tFolder )
+
+  # First, see if this is one of the predefined FRESH themes. There are only a
+  # handful of these, but they may change over time, so we need to query
+  # the official source of truth: the fresh-themes repository, which mounts the
+  # themes conveniently by name to the module object, and which is embedded
+  # locally inside the HackMyResume installation.
+  themesObj = require 'fresh-themes'
+  if _.has themesObj.themes, themeNameOrPath
+    tFolder = PATH.join(
+      parsePath( require.resolve('fresh-themes') ).dirname,
+      '/themes/',
+      themeNameOrPath
+    )
+  else
+  # Otherwsie it's a path to an arbitrary FRESH or JRS theme sitting somewhere
+  # on the user's system (or, in the future, at a URI).
     tFolder = PATH.resolve themeNameOrPath
-    if !exists tFolder
-      return fluenterror: HMSTATUS.themeNotFound, data: _opts.theme
-  tFolder
+
+  # In either case, make sure the theme folder exists
+  exists = require('path-exists').sync
+  if exists tFolder
+    tFolder
+  else
+    fluenterror: HMSTATUS.themeNotFound, data: _opts.theme
 
 
 
