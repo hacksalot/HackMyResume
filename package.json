@@ -89,7 +89,7 @@
     "chai": "*",
     "chai-as-promised": "^7.1.1",
     "dir-compare": "0.0.2",
-    "fresh-test-resumes": "^0.9.0",
+    "fresh-test-resumes": "^0.9.1",
     "grunt": "*",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.7.0",
