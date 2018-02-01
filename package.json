@@ -57,7 +57,7 @@
     "fresca": "~0.6.1",
     "fresh-jrs-converter": "^0.2.3",
     "fresh-resume-starter": "^0.3.1",
-    "fresh-themes": "^0.15.1-beta",
+    "fresh-themes": "^0.16.0-beta",
     "fs-extra": "^0.26.4",
     "glob": "^7.1.2",
     "handlebars": "^4.0.5",
