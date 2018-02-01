@@ -101,14 +101,14 @@ var tests = [
   ],
 
   [ 'validate',
-    ['test/resumes/jrs-0.0.0/richard-hendriks.json'],
+    ['node_modules/fresh-test-resumes/src/jrs/richard-hendriks.json'],
     [],
     opts2,
     ' (richard-hendriks.json|JRS)'
   ],
 
   [ 'validate',
-    ['test/resumes/jrs-0.0.0/jane-incomplete.json'],
+    ['node_modules/fresh-test-resumes/src/jrs/jane-incomplete.json'],
     [],
     opts2,
     ' (jane-incomplete.json|JRS)'
@@ -130,7 +130,7 @@ var tests = [
   ],
 
   [ 'analyze',
-    ['test/resumes/jrs-0.0.0/richard-hendriks.json'],
+    ['node_modules/fresh-test-resumes/src/jrs/richard-hendriks.json'],
     [],
     opts2,
     ' (richard-hendriks|JRS)'

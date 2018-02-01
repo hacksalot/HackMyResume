@@ -124,7 +124,7 @@ genThemes(
 
 genThemes(
   'richard-hendriks',
-  ['test/resumes/jrs-0.0.0/richard-hendriks.json'],
+  ['node_modules/fresh-test-resumes/src/jrs/richard-hendriks.json'],
   'JRS'
 );
 
