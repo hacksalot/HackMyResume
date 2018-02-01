@@ -59,6 +59,7 @@
     "fresh-resume-starter": "^0.3.1",
     "fresh-themes": "^0.15.1-beta",
     "fs-extra": "^0.26.4",
+    "glob": "^7.1.2",
     "handlebars": "^4.0.5",
     "html": "0.0.10",
     "is-my-json-valid": "^2.12.4",
