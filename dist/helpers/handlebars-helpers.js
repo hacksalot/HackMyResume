@@ -27,7 +27,7 @@ Template helper definitions for Handlebars.
    */
 
   module.exports = function(theme, opts) {
-    var curGlob, ex, glob, wrappedHelpers;
+    var curGlob, ex, glob, slash, wrappedHelpers;
     helpers.theme = theme;
     helpers.opts = opts;
     helpers.type = 'handlebars';
@@ -50,18 +50,25 @@ Template helper definitions for Handlebars.
     }
     if (_.isArray(theme.helpers)) {
       glob = require('glob');
+      slash = require('slash');
       curGlob = null;
       try {
         _.each(theme.helpers, function(fGlob) {
+          var files;
           curGlob = fGlob;
           fGlob = path.join(theme.folder, fGlob);
-          glob(fGlob, {}, function(er, files) {
-            if (er === null && files.length > 0) {
-              _.each(files, function(f) {
-                HANDLEBARS.registerHelper(require(f));
-              });
-            }
-          });
+          files = glob.sync(slash(fGlob));
+          if (files.length > 0) {
+            _.each(files, function(f) {
+              HANDLEBARS.registerHelper(require(f));
+            });
+          } else {
+            throw {
+              fluenterror: HMS.themeHelperLoad,
+              inner: er,
+              glob: fGlob
+            };
+          }
         });
       } catch (_error) {
         ex = _error;

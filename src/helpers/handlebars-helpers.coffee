@@ -43,24 +43,24 @@ module.exports = ( theme, opts ) ->
 
   if _.isArray theme.helpers
     glob = require 'glob'
+    slash = require 'slash'
     curGlob = null
     try
       _.each theme.helpers, (fGlob) ->            # foreach theme.helpers entry
-        curGlob = fGlob                           #   cache in case of exception
-        fGlob = path.join theme.folder, fGlob     #   make relative to theme
-        glob fGlob, { }, (er, files) ->           #   expand the glob to paths
-          if er is null and files.length > 0      #   guard against the error
-            _.each files, (f) ->                  #   loop over concrete paths
-              HANDLEBARS.registerHelper require f #     register the path
-              return
-          # else if er                              # glob error occurred
-          #   throw fluenterror: HMS.themeHelperLoad, inner: er, glob: fGlob
-          # else if files.length < 1                # glob returned no results
-          #   throw fluenterror: HMS.themeHelperLoad
-          return
+        curGlob = fGlob                           # ..cache in case of exception
+        fGlob = path.join theme.folder, fGlob     # ..make relative to theme
+        files = glob.sync slash fGlob             # ..expand the glob
+        if files.length > 0                       # ..guard against empty glob
+          _.each files, (f) ->                    # ..loop over concrete paths
+            HANDLEBARS.registerHelper require f   # ..register the path
+            return
+        else
+          throw fluenterror: HMS.themeHelperLoad, inner: er, glob: fGlob
         return
       return
     catch ex
-      # If a non-path is passed to glob() it will throw an error
-      throw fluenterror: HMS.themeHelperLoad, inner: ex, glob: curGlob, exit: true
+      throw
+        fluenterror: HMS.themeHelperLoad
+        inner: ex
+        glob: curGlob, exit: true
       return
