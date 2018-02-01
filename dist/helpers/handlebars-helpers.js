@@ -6,7 +6,7 @@ Template helper definitions for Handlebars.
  */
 
 (function() {
-  var HANDLEBARS, _, blockHelpers, helpers;
+  var HANDLEBARS, HMS, _, blockHelpers, helpers, path;
 
   HANDLEBARS = require('handlebars');
 
@@ -14,7 +14,11 @@ Template helper definitions for Handlebars.
 
   helpers = require('./generic-helpers');
 
+  path = require('path');
+
   blockHelpers = require('./block-helpers');
+
+  HMS = require('../core/status-codes');
 
 
   /**
@@ -23,7 +27,7 @@ Template helper definitions for Handlebars.
    */
 
   module.exports = function(theme, opts) {
-    var i, len, ref, themeHelpers, wrappedHelpers;
+    var curGlob, ex, glob, wrappedHelpers;
     helpers.theme = theme;
     helpers.opts = opts;
     helpers.type = 'handlebars';
@@ -41,10 +45,33 @@ Template helper definitions for Handlebars.
     }, this);
     HANDLEBARS.registerHelper(wrappedHelpers);
     HANDLEBARS.registerHelper(blockHelpers);
-    ref = theme.jsFiles;
-    for (i = 0, len = ref.length; i < len; i++) {
-      themeHelpers = ref[i];
-      HANDLEBARS.registerHelper(require(themeHelpers));
+    if (_.isString(theme.helpers)) {
+      theme.helpers = [theme.helpers];
+    }
+    if (_.isArray(theme.helpers)) {
+      glob = require('glob');
+      curGlob = null;
+      try {
+        _.each(theme.helpers, function(fGlob) {
+          curGlob = fGlob;
+          fGlob = path.join(theme.folder, fGlob);
+          glob(fGlob, {}, function(er, files) {
+            if (er === null && files.length > 0) {
+              _.each(files, function(f) {
+                HANDLEBARS.registerHelper(require(f));
+              });
+            }
+          });
+        });
+      } catch (_error) {
+        ex = _error;
+        throw {
+          fluenterror: HMS.themeHelperLoad,
+          inner: ex,
+          glob: curGlob,
+          exit: true
+        };
+      }
     }
   };
 

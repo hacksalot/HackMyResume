@@ -132,3 +132,8 @@ errors:
           "basics": {
             "name": "John Doe"
           }
+  themeHelperLoad:
+    msg: >-
+      An error occurred while attempting to load the '%s' theme helper. Is the
+      theme correctly installed?
+    dummy: dontcare

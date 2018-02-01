@@ -57,7 +57,7 @@ ErrorHandler = module.exports =
         stack && o( chalk.gray( stack ) );
 
       # Quit if necessary
-      if shouldExit
+      if shouldExit or ex.exit
         if @debug
           o chalk.cyan('Exiting with error code ' + ex.fluenterror.toString())
         if @assert
@@ -252,6 +252,11 @@ assembleError = ( ex ) ->
       msg = M2C( @msgs.unknownSchema.msg[0] )
       #msg += "\n" + M2C( @msgs.unknownSchema.msg[1], 'yellow' )
       etype = 'error'
+
+    when HMSTATUS.themeHelperLoad
+      msg = printf M2C( @msgs.themeHelperLoad.msg ), ex.glob
+      etype = 'error'
+
 
   msg: msg              # The error message to display
   withStack: withStack  # Whether to include the stack

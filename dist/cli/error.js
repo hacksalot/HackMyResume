@@ -61,7 +61,7 @@ Error-handling routines for HackMyResume.
           stack = ex.stack || (ex.inner && ex.inner.stack);
           stack && o(chalk.gray(stack));
         }
-        if (shouldExit) {
+        if (shouldExit || ex.exit) {
           if (this.debug) {
             o(chalk.cyan('Exiting with error code ' + ex.fluenterror.toString()));
           }
@@ -261,6 +261,10 @@ Error-handling routines for HackMyResume.
         break;
       case HMSTATUS.unknownSchema:
         msg = M2C(this.msgs.unknownSchema.msg[0]);
+        etype = 'error';
+        break;
+      case HMSTATUS.themeHelperLoad:
+        msg = printf(M2C(this.msgs.themeHelperLoad.msg), ex.glob);
         etype = 'error';
     }
     return {

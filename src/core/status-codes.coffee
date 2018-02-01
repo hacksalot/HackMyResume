@@ -36,3 +36,4 @@ module.exports =
   invalidOptionsFile: 27
   optionsFileNotFound: 28
   unknownSchema: 29
+  themeHelperLoad: 30
