@@ -129,6 +129,8 @@ _load = (formatsHash) ->
 _loadOne = ( absPath, formatsHash, tplFolder ) ->
 
   pathInfo = parsePath absPath
+  return if pathInfo.basename.toLowerCase() == 'theme.json'
+
   absPathSafe = absPath.trim().toLowerCase()
   outFmt = ''
   act = 'copy'

@@ -142,6 +142,9 @@ Definition of the FRESHTheme class.
   _loadOne = function(absPath, formatsHash, tplFolder) {
     var absPathSafe, act, defFormats, idx, isPrimary, obj, outFmt, pathInfo, portion, ref, ref1, reg, res;
     pathInfo = parsePath(absPath);
+    if (pathInfo.basename.toLowerCase() === 'theme.json') {
+      return;
+    }
     absPathSafe = absPath.trim().toLowerCase();
     outFmt = '';
     act = 'copy';
