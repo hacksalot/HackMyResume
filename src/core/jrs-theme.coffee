@@ -10,6 +10,7 @@ _ = require 'underscore'
 PATH = require 'path'
 parsePath = require 'parse-filepath'
 pathExists = require('path-exists').sync
+errors = require './status-codes'
 
 
 
@@ -22,22 +23,19 @@ class JRSTheme
 
 
   ###*
-  Open and parse the specified theme.
+  Open and parse the specified JRS theme.
   @method open
   ###
   open: ( thFolder ) ->
 
     @folder = thFolder
-
-    # Open the [theme-name].json file; should have the same
-    # name as folder
     pathInfo = parsePath thFolder
 
-    # Open and parse the theme's package.json file.
+    # Open and parse the theme's package.json file
     pkgJsonPath = PATH.join thFolder, 'package.json'
     if pathExists pkgJsonPath
-      thApi = require thFolder
-      thPkg = require pkgJsonPath
+      thApi = require thFolder     # Requiring the folder yields whatever the package.json's "main" is set to
+      thPkg = require pkgJsonPath  # Get the package.json as JSON
       this.name = thPkg.name
       this.render = (thApi && thApi.render) || undefined
       this.engine = 'jrs'
@@ -65,7 +63,7 @@ class JRSTheme
             css: null
           }]
     else
-      throw { fluenterror: HACKMYSTATUS.missingPackageJSON };
+      throw fluenterror: errors.missingPackageJSON
     @
 
 

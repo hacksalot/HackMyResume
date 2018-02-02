@@ -6,7 +6,7 @@ Definition of the JRSTheme class.
  */
 
 (function() {
-  var JRSTheme, PATH, _, parsePath, pathExists;
+  var JRSTheme, PATH, _, errors, parsePath, pathExists;
 
   _ = require('underscore');
 
@@ -15,6 +15,8 @@ Definition of the JRSTheme class.
   parsePath = require('parse-filepath');
 
   pathExists = require('path-exists').sync;
+
+  errors = require('./status-codes');
 
 
   /**
@@ -27,7 +29,7 @@ Definition of the JRSTheme class.
 
 
     /**
-    Open and parse the specified theme.
+    Open and parse the specified JRS theme.
     @method open
      */
 
@@ -70,7 +72,7 @@ Definition of the JRSTheme class.
         };
       } else {
         throw {
-          fluenterror: HACKMYSTATUS.missingPackageJSON
+          fluenterror: errors.missingPackageJSON
         };
       }
       return this;
