@@ -1,5 +1,78 @@
 CHANGELOG
 =========
+
+## v2.0.0
+
+*Welcome to the first new version of HackMyResume in over a year. The purpose of
+this release is to gather feature enhancements, bug fixes, and pull requests
+along with branding and identity changes collected over the past 18 months.
+Given the amount of time since the last release and the likelihood of breaking
+changes, we've decided to bump the major version number, bringing us to the
+official `2.0.0`. This shouldn't affect most common scenarios and use cases but
+complex resume and/or theme setups may behave differently under 2.0.0 than under
+1.8.0 and may even exhibit breakage in certain cases.*
+
+### Added
+
+- Support for **private resume fields**. Mark any non-leaf node in your resume JSON
+with the `private` property and it will be omitted from outbound resumes.
+
+    ```json
+    "employment": {
+      "history": [
+        {
+          "employer": "Acme Real Estate"
+        },
+        {
+          "employer": "Area 51 Alien Research Laboratory",
+          "private": true
+        },
+        {
+          "employer": "H&R Block"
+        }
+      ]
+    }
+    ```
+- Support for **PDF generation through WeasyPrint** in addition to the
+existing support for wkhtmltopdf and PhantomJS.
+
+- Theme authors can now develop and package **custom Handlebars theme helpers**
+via the `helpers` key of the `theme.json` file (FRESH themes only).
+
+- Theme authors can **relocate theme assets** with the `baseFolder` property in
+the FRESH `theme.json`.
+
+- HackMyResume will now **validate the options file** (if any) loaded with `-o`
+or `--options` and warn the user if necessary.
+
+- Ability to **disable Handlebars encoding/escaping** of resume fields with
+`--no-escape`.
+
+- Introduced the [fresh-test-themes][ftt] project as a repository for simple,
+test-only resume themes in the FRESH format.
+
+### Changed
+
+- The FRESCA project has been renamed to [fresh-resume-schema]. FRESCA is still
+the nickname.
+
+- The HackMyResume project has moved to https://fluentdesk.com/hackmyresume.
+
+### Fixed
+
+- Fixed an issue that would cause the `CONVERT` command to detect the inbound
+resume type (FRESH or JRS) incorrectly.
+
+- Fixed an issue where generating new JRS resumes would cause a `null` or
+`undefined` error/
+
+- Fixed an issue preventing mixed-case themes from being loaded.
+
+- Fixed an issue requiring JSON Resume themes contain `json-resume-theme` in the
+theme path.
+
+-
+
 ## v1.8.0
 
 ### Added
@@ -409,3 +482,4 @@ theme.
 [themes]: https://github.com/fluentdesk/fresh-themes
 [awefork]: https://github.com/fluentdesk/Awesome-CV
 [acv]: https://github.com/posquit0/Awesome-CV
+[ftt]: https://github.com/fresh-standard/fresh-test-themes

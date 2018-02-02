@@ -62,7 +62,7 @@ Alternately, install the latest bleeding-edge version (updated daily):
 HackMyResume tries not to impose a specific PDF engine requirement on
 the user, but will instead work with whatever PDF engines you have installed.
 
-Currently, HackMyResume's PDF generation requires either [Phantom.js][2],
+Currently, HackMyResume's PDF generation requires one of [Phantom.js][2],
 [wkhtmltopdf][3], or [WeasyPrint][11] to be installed on your system and the
 corresponding binary to be accessible on your PATH. This is an optional
 requirement for users who care about PDF formats. If you don't care about PDF
@@ -91,7 +91,7 @@ Then when you're ready to generate your resume, just reference the location of
 the theme folder as you installed it:
 
 ```bash
-hackmyresume BUILD resume.json TO out/resume.all -t node_modules/jsonresume-theme-classy
+hackmyresume build resume.json TO out/resume.all -t node_modules/jsonresume-theme-classy
 ```
 
 Note: You can use install themes anywhere on your file system. You don't need a
@@ -108,26 +108,26 @@ Use it when you need to submit, upload, print, or email resumes in specific
 formats.
 
     ```bash
-    # hackmyresume BUILD <INPUTS...> TO <OUTPUTS...> [-t THEME]
-    hackmyresume BUILD resume.json TO out/resume.all
-    hackmyresume BUILD r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
+    # hackmyresume build <INPUTS...> TO <OUTPUTS...> [-t THEME]
+    hackmyresume build resume.json TO out/resume.all
+    hackmyresume build r1.json r2.json TO out/rez.html out/rez.md foo/rez.all
     ```
 
 - **new** creates a new resume in FRESH or JSON Resume format.
 
     ```bash
-    # hackmyresume NEW <OUTPUTS...> [-f <FORMAT>]
-    hackmyresume NEW resume.json
-    hackmyresume NEW resume.json -f fresh
-    hackmyresume NEW r1.json r2.json -f jrs
+    # hackmyresume new <OUTPUTS...> [-f <FORMAT>]
+    hackmyresume new resume.json
+    hackmyresume new resume.json -f fresh
+    hackmyresume new r1.json r2.json -f jrs
     ```
 
 - **analyze** inspects your resume for keywords, duration, and other metrics.
 
     ```bash
-    # hackmyresume ANALYZE <INPUTS...>
-    hackmyresume ANALYZE resume.json
-    hackmyresume ANALYZE r1.json r2.json
+    # hackmyresume analyze <INPUTS...>
+    hackmyresume analyze resume.json
+    hackmyresume analyze r1.json r2.json
     ```
 
 - **convert** converts your source resume between FRESH and JSON Resume
@@ -135,29 +135,29 @@ formats. Use it to convert between the two formats to take advantage of tools
 and services.
 
     ```bash
-    # hackmyresume CONVERT <INPUTS...> TO <OUTPUTS...>
-    hackmyresume CONVERT resume.json TO resume-jrs.json
-    hackmyresume CONVERT 1.json 2.json 3.json TO out/1.json out/2.json out/3.json
+    # hackmyresume convert <INPUTS...> TO <OUTPUTS...>
+    hackmyresume convert resume.json TO resume-jrs.json
+    hackmyresume convert 1.json 2.json 3.json TO out/1.json out/2.json out/3.json
     ```
 
 - **validate** validates the specified resume against either the FRESH or JSON
 Resume schema. Use it to make sure your resume data is sufficient and complete.
 
     ```bash
-    # hackmyresume VALIDATE <INPUTS...>
-    hackmyresume VALIDATE resume.json
-    hackmyresume VALIDATE r1.json r2.json r3.json
+    # hackmyresume validate <INPUTS...>
+    hackmyresume validate resume.json
+    hackmyresume validate r1.json r2.json r3.json
     ```
 
 - **peek** echoes your resume or any field, property, or object path on your
 resume to standard output.
 
     ```bash
-    # hackmyresume PEEK <INPUTS...> [OBJECT-PATH]
-    hackmyresume PEEK rez.json # Echo the whole resume
-    hackmyresume PEEK rez.json info.brief # Echo the "info.brief" field
-    hackmyresume PEEK rez.json employment.history[1] # Echo the 1st job
-    hackmyresume PEEK rez.json rez2.json info.brief # Compare value
+    # hackmyresume peek <INPUTS...> [OBJECT-PATH]
+    hackmyresume peek rez.json # Echo the whole resume
+    hackmyresume peek rez.json info.brief # Echo the "info.brief" field
+    hackmyresume peek rez.json employment.history[1] # Echo the 1st job
+    hackmyresume peek rez.json rez2.json info.brief # Compare value
     ```    
 
 ## Supported Output Formats
@@ -184,7 +184,7 @@ Assuming you've got a JSON-formatted resume handy, generating resumes in
 different formats and combinations is easy. Just run:
 
 ```bash
-hackmyresume BUILD <INPUTS> TO <OUTPUTS> [-t theme].
+hackmyresume build <inputs> to <outputs> [-t theme].
 ```
 
 Where `<INPUTS>` is one or more .json resume files, separated by spaces;
@@ -193,19 +193,19 @@ theme (default to Modern). For example:
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, YML, etc.)
-hackmyresume BUILD resume.json TO out/resume.all -t modern
+hackmyresume build resume.json TO out/resume.all -t modern
 
 # Generate a specific resume format
-hackmyresume BUILD resume.json TO out/resume.html
-hackmyresume BUILD resume.json TO out/resume.pdf
-hackmyresume BUILD resume.json TO out/resume.md
-hackmyresume BUILD resume.json TO out/resume.doc
-hackmyresume BUILD resume.json TO out/resume.json
-hackmyresume BUILD resume.json TO out/resume.txt
-hackmyresume BUILD resume.json TO out/resume.yml
+hackmyresume build resume.json TO out/resume.html
+hackmyresume build resume.json TO out/resume.pdf
+hackmyresume build resume.json TO out/resume.md
+hackmyresume build resume.json TO out/resume.doc
+hackmyresume build resume.json TO out/resume.json
+hackmyresume build resume.json TO out/resume.txt
+hackmyresume build resume.json TO out/resume.yml
 
 # Specify 2 inputs and 3 outputs
-hackmyresume BUILD in1.json in2.json TO out.html out.doc out.pdf
+hackmyresume build in1.json in2.json TO out.html out.doc out.pdf
 ```
 
 You should see something to the effect of:
@@ -232,16 +232,16 @@ installed first). To specify a theme when generating your resume, use the `-t`
 or `--theme` parameter:
 
 ```bash
-hackmyresume BUILD resume.json TO out/rez.all -t [theme]
+hackmyresume build resume.json TO out/rez.all -t [theme]
 ```
 
 The `[theme]` parameter can be the name of a predefined theme OR the path to any
 FRESH or JSON Resume theme folder:
 
 ```bash
-hackmyresume BUILD resume.json TO out/rez.all -t modern
-hackmyresume BUILD resume.json TO OUT.rez.all -t ../some-folder/my-custom-theme/
-hackmyresume BUILD resume.json TO OUT.rez.all -t node_modules/jsonresume-theme-classy
+hackmyresume build resume.json TO out/rez.all -t modern
+hackmyresume build resume.json TO OUT.rez.all -t ../some-folder/my-custom-theme/
+hackmyresume build resume.json TO OUT.rez.all -t node_modules/jsonresume-theme-classy
 ```
 
 FRESH themes are currently pre-installed with HackMyResume. JSON Resume themes
@@ -265,7 +265,7 @@ most generic to most specific:
 
 ```bash
 # Merge specific.json onto base.json and generate all formats
-hackmyresume BUILD base.json specific.json TO resume.all
+hackmyresume build base.json specific.json TO resume.all
 ```
 
 This can be useful for overriding a base (generic) resume with information from
@@ -276,7 +276,7 @@ resume. Merging follows conventional [extend()][9]-style behavior and there's
 no arbitrary limit to how many resumes you can merge:
 
 ```bash
-hackmyresume BUILD in1.json in2.json in3.json in4.json TO out.html out.doc
+hackmyresume build in1.json in2.json in3.json in4.json TO out.html out.doc
 Reading JSON resume: in1.json
 Reading JSON resume: in2.json
 Reading JSON resume: in3.json
@@ -292,7 +292,7 @@ You can specify **multiple output targets** and HackMyResume will build them:
 
 ```bash
 # Generate out1.doc, out1.pdf, and foo.txt from me.json.
-hackmyresume BUILD me.json TO out1.doc out1.pdf foo.txt
+hackmyresume build me.json TO out1.doc out1.pdf foo.txt
 ```
 
 ### Using .all
@@ -302,7 +302,7 @@ formats for the given resume. For example, this...
 
 ```bash
 # Generate all resume formats (HTML, PDF, DOC, TXT, etc.)
-hackmyresume BUILD me.json TO out/resume.all
+hackmyresume build me.json TO out/resume.all
 ```
 
 ..tells HackMyResume to read `me.json` and generate `out/resume.md`,
@@ -317,15 +317,15 @@ and formats with the `--pdf none` switch.*
 HackMyResume takes a unique approach to PDF generation. Instead of enforcing
 a specific PDF engine on users, HackMyResume will attempt to work with whatever
 PDF engine you have installed through the engine's command-line interface (CLI).
-Currently that means one or both of...
+Currently that means any of...
 
 - [wkhtmltopdf][3]
 - [Phantom.js][2]
 - [WeasyPrint][11]
 
 ..with support for other engines planned in the future. But for now, **one or
-both of these engines must be installed and accessible on your PATH in order to
-generate PDF resumes with HackMyResume**. That means you should be able to
+more of these engines must be installed and accessible on your PATH in order
+to generate PDF resumes with HackMyResume**. That means you should be able to
 invoke either of these tools directly from your shell or terminal without error:
 
 ```bash
@@ -339,10 +339,10 @@ tell HackMyResume which flavor of PDF generation to use via the `--pdf` option
 (`-p` for short):
 
 ```bash
-hackmyresume BUILD resume.json TO out.all --pdf phantom
-hackmyresume BUILD resume.json TO out.all --pdf wkhtmltopdf
-hackmyresume BUILD resume.json TO out.all --pdf weasyprint
-hackmyresume BUILD resume.json TO out.all --pdf none
+hackmyresume build resume.json TO out.all --pdf phantom
+hackmyresume build resume.json TO out.all --pdf wkhtmltopdf
+hackmyresume build resume.json TO out.all --pdf weasyprint
+hackmyresume build resume.json TO out.all --pdf none
 ```
 
 ### Analyzing
@@ -351,7 +351,7 @@ HackMyResume can analyze your resume for keywords, employment gaps, and other
 metrics. Run:
 
 ```bash
-hackmyresume ANALYZE <my-resume>.json
+hackmyresume analyze <my-resume>.json
 ```
 
 Depending on the HackMyResume version, you should see output similar to:
@@ -448,7 +448,7 @@ resumes, use the `validate` command:
 
 ```bash
 # Validate myresume.json against either the FRESH or JSON Resume schema.
-hackmyresume VALIDATE resumeA.json resumeB.json
+hackmyresume validate resumeA.json resumeB.json
 ```
 
 HackMyResume will validate each specified resume in turn:
@@ -465,7 +465,7 @@ HackMyResume can convert between the [FRESH][fresca] and [JSON Resume][6]
 formats. Just run:
 
 ```bash
-hackmyresume CONVERT <INPUTS> <OUTPUTS>
+hackmyresume convert <INPUTS> <OUTPUTS>
 ```
 
 where <INPUTS> is one or more resumes in FRESH or JSON Resume format, and
@@ -479,7 +479,7 @@ You can pass options into HackMyResume via an external options or ".hackmyrc"
 file with the `--options` or `-o` switch:
 
 ```bash
-hackmyresume BUILD resume.json -o path/to/options.json
+hackmyresume build resume.json -o path/to/options.json
 ```
 
 The options file can contain any documented HackMyResume option, including
@@ -488,24 +488,25 @@ The options file can contain any documented HackMyResume option, including
 ```json
 {
   "theme": "compact",
+
   "sectionTitles": {
     "employment": "Work"
-  }
-  // Change wkhtmltopdf margins
+  },
+
   "wkhtmltopdf": {
     "margin-top": "20mm"
   }
 }
 ```
 
-If a particular option is specified both on the command line and in an external
-options file, the explicit command-line option takes precedence.
+If an option is specified on both the command line and in an external options
+file, the command-line option wins.
 
 ```bash
 # path/to/options.json specifes the POSITIVE theme
 # -t parameter specifies the COMPACT theme
 # The -t parameter wins.
-hackmyresume BUILD resume.json -o path/to/options.json -t compact
+hackmyresume build resume.json -o path/to/options.json -t compact
 > Reading resume: resume.json
 > Applying COMPACT theme (7 formats)
 ```
@@ -517,7 +518,7 @@ HTML-formatted resumes. To disable prettification, the `--no-prettify` or `-n`
 flag can be used:
 
 ```bash
-hackmyresume BUILD resume.json out.all --no-prettify
+hackmyresume build resume.json out.all --no-prettify
 ```
 
 ### Silent Mode
@@ -525,8 +526,8 @@ hackmyresume BUILD resume.json out.all --no-prettify
 Use `-s` or `--silent` to run in silent mode:
 
 ```bash
-hackmyresume BUILD resume.json -o someFile.all -s
-hackmyresume BUILD resume.json -o someFile.all --silent
+hackmyresume build resume.json -o someFile.all -s
+hackmyresume build resume.json -o someFile.all --silent
 ```
 
 ### Debug Mode
@@ -535,8 +536,8 @@ Use `-d` or `--debug` to force HMR to emit a call stack when errors occur. In
 the future, this option will emit detailed error logging.
 
 ```bash
-hackmyresume BUILD resume.json -d
-hackmyresume ANALYZE resume.json --debug
+hackmyresume build resume.json -d
+hackmyresume analyze resume.json --debug
 ```
 
 ### Disable Encoding
@@ -545,14 +546,70 @@ Use the `--no-escape` option to disable encoding in Handlebars themes. Note:
 this option has no effect for non-Handlebars themes.
 
 ```bash
-hackmyresume BUILD resume.json --no-escape
+hackmyresume build resume.json --no-escape
 ```
+
+### Private Resume Fields
+
+Have a gig, education stint, membership, or other relevant history that you'd
+like to hide from *most* (e.g. public) resumes but sometimes show on others? Tag it with
+`"private": true` to omit it from outbound generated resumes by default.
+
+
+```json
+"employment": {
+  "history": [
+    {
+      "employer": "Acme Real Estate"
+    },
+    {
+      "employer": "Area 51 Alien Research Laboratory",
+      "private": true
+    },
+    {
+      "employer": "H&R Block"
+    }
+  ]
+}
+```
+
+Then, when you want a copy of your resume that includes the private gig / stint
+/ etc., tell HackMyResume that it's OK to emit private fields. The way you do
+that is with the `--private` switch.
+
+```bash
+hackmyresume build resume.json private-resume.all --private
+```
+
+
+### Custom theme helpers
+
+You can attach your own custom Handlebars helpers to a FRESH theme with the
+`helpers` key of your theme's `theme.json` file.
+
+```js
+{
+  "title": "my-cool-theme",
+
+  // ...
+
+  "helpers": [
+    "../path/to/helpers/*.js",
+    "some-other-helper.js"
+  ]
+}
+```
+
+HackMyResume will attempt to load each path or glob and register any specified
+files with [Handlebars.registerHelper][hrh], making them available to your
+theme.
+
 
 ## Contributing
 
 HackMyResume is a community-driven free and open source project under the MIT
-License. Contributions are encouraged and we respond to all PRs and issues,
-usually within 24 hours. See [CONTRIBUTING.md][contribute] for details.
+License. Contributions are encouraged and we respond to all PRs and issues in
+time. See [CONTRIBUTING.md][contribute] for details.
 
 ## License
 
@@ -581,3 +638,4 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [contribute]: CONTRIBUTING.md
 [fresh-themes]: https://github.com/fluentdesk/fresh-themes
 [jrst]: https://www.npmjs.com/search?q=jsonresume-theme
+[hrh]: http://handlebarsjs.com/reference.html#base-registerHelper
