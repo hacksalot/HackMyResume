@@ -36,7 +36,7 @@ _validate = (sources, unused, opts)  ->
 
   validator = require 'is-my-json-valid'
   schemas =
-    fresh: require 'fresca'
+    fresh: require 'fresh-resume-schema'
     jars: require '../core/resume.json'
 
   results = _.map sources, (t)  ->

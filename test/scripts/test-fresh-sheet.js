@@ -60,7 +60,7 @@ function testResume(opts) {
 
       it('should validate against the FRESH resume schema', function() {
         var result = _sheet.isValid();
-        // var schemaJson = require('fresca');
+        // var schemaJson = require('fresh-resume-schema');
         // var validate = validator( schemaJson, { verbose: true } );
         // var result = validate( JSON.parse( _sheet.imp.raw ) );
         result || console.log("\n\nOops, resume didn't validate. " +

@@ -285,7 +285,7 @@ class FreshResume extends AbstractResume
 
   ###* Validate the sheet against the FRESH Resume schema. ###
   isValid: ( info ) ->
-    schemaObj = require 'fresca'
+    schemaObj = require 'fresh-resume-schema'
     validator = require 'is-my-json-valid'
     validate = validator( schemaObj, { # See Note [1].
       formats: { date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/ }

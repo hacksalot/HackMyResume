@@ -352,7 +352,7 @@ Definition of the FRESHResume class.
 
     FreshResume.prototype.isValid = function(info) {
       var ret, schemaObj, validate;
-      schemaObj = require('fresca');
+      schemaObj = require('fresh-resume-schema');
       validator = require('is-my-json-valid');
       validate = validator(schemaObj, {
         formats: {

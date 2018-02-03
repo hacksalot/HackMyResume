@@ -627,7 +627,7 @@ MIT. Go crazy. See [LICENSE.md][1] for details.
 [10]: https://github.com/beautify-web/js-beautify
 [11]: http://weasyprint.org/
 [fresh]: https://github.com/fluentdesk/FRESH
-[fresca]: https://github.com/fluentdesk/FRESCA
+[fresca]: https://github.com/fresh-standard/fresh-resume-schema
 [dry]: https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [img-release]: https://img.shields.io/github/release/hacksalot/HackMyResume.svg?label=version
 [img-master]: https://img.shields.io/travis/hacksalot/HackMyResume/master.svg
