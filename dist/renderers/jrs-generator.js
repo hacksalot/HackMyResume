@@ -46,8 +46,8 @@ Definition of the JRSGenerator class.
       turnoff.forEach(function(c, idx) {
         return console[c] = org[idx];
       });
-      return rezHtml = rezHtml.replace(/@@@@~.*?~@@@@/gm, function(val) {
-        return MDIN(val.replace(/~@@@@/gm, '').replace(/@@@@~/gm, ''));
+      return rezHtml = rezHtml.replace(/@@@@~[\s\S]*?~@@@@/g, function(val) {
+        return MDIN(val.replace(/~@@@@/g, '').replace(/@@@@~/g, ''));
       });
     }
   };
