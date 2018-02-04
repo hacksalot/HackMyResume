@@ -39,7 +39,7 @@ Definition of the HandlebarsGenerator class.
         template = HANDLEBARS.compile(tpl, {
           strict: false,
           assumeObjects: false,
-          noEscape: data.opts.noescape || false
+          noEscape: data.opts.noescape
         });
         return template(data);
       } catch (_error) {
