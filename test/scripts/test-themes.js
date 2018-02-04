@@ -75,7 +75,7 @@ function genThemes( title, src, fmt ) {
     //genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
     genTheme(fmt, src, 'modern');
-    genTheme(fmt, src, 'underscore', path.parse( require.resolve('fresh-theme-underscore') ).dir );
+    genTheme(fmt, src, 'underscore', 'node_modules/fresh-theme-underscore' );
     //genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
     genTheme(fmt, src, 'jsonresume-theme-boilerplate',
