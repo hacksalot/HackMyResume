@@ -33,7 +33,7 @@ Template helper definitions for Handlebars.
     helpers.type = 'handlebars';
     wrappedHelpers = _.mapObject(helpers, function(hVal, hKey) {
       if (_.isFunction(hVal)) {
-        _.wrap(hVal, function(func) {
+        return _.wrap(hVal, function(func) {
           var args;
           args = Array.prototype.slice.call(arguments);
           args.shift();

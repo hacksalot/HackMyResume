@@ -25,7 +25,7 @@ module.exports = ( theme, opts ) ->
 
   wrappedHelpers = _.mapObject helpers, ( hVal, hKey ) ->
     if _.isFunction hVal
-      _.wrap hVal, (func) ->
+      return _.wrap hVal, (func) ->
         args = Array.prototype.slice.call arguments
         args.shift() # lose the 1st element (func)
         args.pop() # lose the last element (the Handlebars options hash)
