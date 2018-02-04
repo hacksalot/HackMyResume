@@ -56,8 +56,9 @@ function genThemes( title, src, fmt ) {
         // Run the command!
         var v = new HackMyResume.verbs.build();
         v.on('hmr:error', function(ex) {
-          console.log('Error thrown');
-          assert(false);
+          console.error('Error thrown: %o', ex);
+          throw ex;
+          //assert(false);
         });
         var p = v.invoke( src, dst, opts );
 
@@ -74,7 +75,7 @@ function genThemes( title, src, fmt ) {
     //genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
     genTheme(fmt, src, 'modern');
-    //genTheme(fmt, src, 'underscore');
+    genTheme(fmt, src, 'underscore', 'node_modules/fresh-test-themes/node_modules/fresh-theme-underscore');
     //genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
     genTheme(fmt, src, 'jsonresume-theme-boilerplate',
