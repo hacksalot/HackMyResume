@@ -242,38 +242,12 @@ class JRSResume# extends AbstractResume
       #return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
       return HD txt
 
-    # TODO: refactor recursion
-    hardenStringsInObject = ( obj, inline ) ->
-
-      return if !obj
-      inline = inline == undefined || inline
-
-      if Object.prototype.toString.call( obj ) == '[object Array]'
-        obj.forEach (elem, idx, ar) ->
-          if typeof elem == 'string' || elem instanceof String
-            ar[idx] = if inline then HDIN(elem) else HD( elem )
-          else
-            hardenStringsInObject elem
-      else if typeof obj == 'object'
-        Object.keys( obj ).forEach (key) ->
-          sub = obj[key]
-          if typeof sub == 'string' || sub instanceof String
-            if _.contains(['skills','url','website','startDate','endDate',
-              'releaseDate','date','phone','email','address','postalCode',
-              'city','country','region'], key)
-              return
-            if key == 'summary'
-              obj[key] = HD( obj[key] )
-            else
-              obj[key] = if inline then HDIN( obj[key] ) else HD( obj[key] )
-          else
-            hardenStringsInObject sub
-
-
-    Object.keys( ret ).forEach (member) ->
-      hardenStringsInObject ret[ member ]
-
-    ret
+    transformer = require '../utils/string-transformer'
+    transformer ret,
+      [ 'skills','url','website','startDate','endDate', 'releaseDate', 'date',
+      'phone','email','address','postalCode','city','country','region',
+      'safeStartDate','safeEndDate' ],
+      (key, val) -> HD val
 
 
 

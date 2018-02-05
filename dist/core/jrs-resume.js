@@ -285,7 +285,7 @@ Definition of the JRSResume class.
      */
 
     JRSResume.prototype.harden = function() {
-      var HD, HDIN, hardenStringsInObject, ret, that;
+      var HD, HDIN, ret, that, transformer;
       that = this;
       ret = this.dupe();
       HD = function(txt) {
@@ -294,42 +294,10 @@ Definition of the JRSResume class.
       HDIN = function(txt) {
         return HD(txt);
       };
-      hardenStringsInObject = function(obj, inline) {
-        if (!obj) {
-          return;
-        }
-        inline = inline === void 0 || inline;
-        if (Object.prototype.toString.call(obj) === '[object Array]') {
-          return obj.forEach(function(elem, idx, ar) {
-            if (typeof elem === 'string' || elem instanceof String) {
-              return ar[idx] = inline ? HDIN(elem) : HD(elem);
-            } else {
-              return hardenStringsInObject(elem);
-            }
-          });
-        } else if (typeof obj === 'object') {
-          return Object.keys(obj).forEach(function(key) {
-            var sub;
-            sub = obj[key];
-            if (typeof sub === 'string' || sub instanceof String) {
-              if (_.contains(['skills', 'url', 'website', 'startDate', 'endDate', 'releaseDate', 'date', 'phone', 'email', 'address', 'postalCode', 'city', 'country', 'region'], key)) {
-                return;
-              }
-              if (key === 'summary') {
-                return obj[key] = HD(obj[key]);
-              } else {
-                return obj[key] = inline ? HDIN(obj[key]) : HD(obj[key]);
-              }
-            } else {
-              return hardenStringsInObject(sub);
-            }
-          });
-        }
-      };
-      Object.keys(ret).forEach(function(member) {
-        return hardenStringsInObject(ret[member]);
+      transformer = require('../utils/string-transformer');
+      return transformer(ret, ['skills', 'url', 'website', 'startDate', 'endDate', 'releaseDate', 'date', 'phone', 'email', 'address', 'postalCode', 'city', 'country', 'region', 'safeStartDate', 'safeEndDate'], function(key, val) {
+        return HD(val);
       });
-      return ret;
     };
 
     return JRSResume;
