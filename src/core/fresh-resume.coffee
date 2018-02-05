@@ -18,7 +18,6 @@ MD = require 'marked'
 CONVERTER = require 'fresh-jrs-converter'
 JRSResume = require './jrs-resume'
 FluentDate = require './fluent-date'
-AbstractResume = require './abstract-resume'
 
 
 
@@ -27,7 +26,7 @@ A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
 object is an instantiation of that JSON decorated with utility methods.
 @constructor
 ###
-class FreshResume extends AbstractResume
+class FreshResume# extends AbstractResume
 
 
 
@@ -55,7 +54,8 @@ class FreshResume extends AbstractResume
 
     if opts and opts.privatize
       # Ignore any element with the 'ignore: true' or 'private: true' designator.
-      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+      scrubber = require '../utils/resume-scrubber'
+      { scrubbed, ignoreList, privateList } = scrubber.scrubResume rep, opts
 
     # Now apply the resume representation onto this object
     extend true, @, if opts and opts.privatize then scrubbed else rep
@@ -299,7 +299,9 @@ class FreshResume extends AbstractResume
 
 
   duration: (unit) ->
-    super('employment.history', 'start', 'end', unit)
+    inspector = require '../inspectors/duration-inspector'
+    inspector.run @, 'employment.history', 'start', 'end', unit
+
 
 
 

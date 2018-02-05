@@ -6,9 +6,7 @@ Definition of the JRSResume class.
  */
 
 (function() {
-  var AbstractResume, CONVERTER, FS, JRSResume, MD, PATH, _, _parseDates, extend, moment, validator,
-    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  var CONVERTER, FS, JRSResume, MD, PATH, _, _parseDates, extend, moment, validator;
 
   FS = require('fs');
 
@@ -26,8 +24,6 @@ Definition of the JRSResume class.
 
   moment = require('moment');
 
-  AbstractResume = require('./abstract-resume');
-
 
   /**
   A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
@@ -35,14 +31,10 @@ Definition of the JRSResume class.
   @class JRSResume
    */
 
-  JRSResume = (function(superClass) {
+  JRSResume = (function() {
     var clear;
 
-    extend1(JRSResume, superClass);
-
-    function JRSResume() {
-      return JRSResume.__super__.constructor.apply(this, arguments);
-    }
+    function JRSResume() {}
 
 
     /** Initialize the the JSResume from string. */
@@ -71,10 +63,11 @@ Definition of the JRSResume class.
      */
 
     JRSResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, ref1, scrubbed;
+      var ignoreList, privateList, ref, ref1, scrubbed, scrubber;
       opts = opts || {};
       if (opts.privatize) {
-        ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
+        scrubber = require('../utils/resume-scrubber');
+        ref = scrubber.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
       }
       extend(true, this, opts.privatize ? scrubbed : rep);
       if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
@@ -239,7 +232,9 @@ Definition of the JRSResume class.
     };
 
     JRSResume.prototype.duration = function(unit) {
-      return JRSResume.__super__.duration.call(this, 'work', 'startDate', 'endDate', unit);
+      var inspector;
+      inspector = require('../inspectors/duration-inspector');
+      return inspector.run(this, 'work', 'startDate', 'endDate', unit);
     };
 
 
@@ -339,7 +334,7 @@ Definition of the JRSResume class.
 
     return JRSResume;
 
-  })(AbstractResume);
+  })();
 
 
   /** Get the default (empty) sheet. */

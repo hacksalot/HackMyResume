@@ -6,9 +6,7 @@ Definition of the FRESHResume class.
  */
 
 (function() {
-  var AbstractResume, CONVERTER, FS, FluentDate, FreshResume, JRSResume, MD, PATH, XML, _, __, _parseDates, extend, moment, validator,
-    extend1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  var CONVERTER, FS, FluentDate, FreshResume, JRSResume, MD, PATH, XML, _, __, _parseDates, extend, moment, validator;
 
   FS = require('fs');
 
@@ -34,8 +32,6 @@ Definition of the FRESHResume class.
 
   FluentDate = require('./fluent-date');
 
-  AbstractResume = require('./abstract-resume');
-
 
   /**
   A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
@@ -43,12 +39,8 @@ Definition of the FRESHResume class.
   @constructor
    */
 
-  FreshResume = (function(superClass) {
-    extend1(FreshResume, superClass);
-
-    function FreshResume() {
-      return FreshResume.__super__.constructor.apply(this, arguments);
-    }
+  FreshResume = (function() {
+    function FreshResume() {}
 
 
     /** Initialize the the FreshResume from JSON string data. */
@@ -77,9 +69,10 @@ Definition of the FRESHResume class.
      */
 
     FreshResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, ref1, scrubbed;
+      var ignoreList, privateList, ref, ref1, scrubbed, scrubber;
       if (opts && opts.privatize) {
-        ref = this.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
+        scrubber = require('../utils/resume-scrubber');
+        ref = scrubber.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
       }
       extend(true, this, opts && opts.privatize ? scrubbed : rep);
       if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
@@ -368,7 +361,9 @@ Definition of the FRESHResume class.
     };
 
     FreshResume.prototype.duration = function(unit) {
-      return FreshResume.__super__.duration.call(this, 'employment.history', 'start', 'end', unit);
+      var inspector;
+      inspector = require('../inspectors/duration-inspector');
+      return inspector.run(this, 'employment.history', 'start', 'end', unit);
     };
 
 
@@ -415,7 +410,7 @@ Definition of the FRESHResume class.
 
     return FreshResume;
 
-  })(AbstractResume);
+  })();
 
 
   /**

@@ -14,7 +14,6 @@ PATH = require('path')
 MD = require('marked')
 CONVERTER = require('fresh-jrs-converter')
 moment = require('moment')
-AbstractResume = require('./abstract-resume')
 
 
 ###*
@@ -22,7 +21,7 @@ A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
 is an instantiation of that JSON decorated with utility methods.
 @class JRSResume
 ###
-class JRSResume extends AbstractResume
+class JRSResume# extends AbstractResume
 
 
 
@@ -49,8 +48,9 @@ class JRSResume extends AbstractResume
   parseJSON: ( rep, opts ) ->
     opts = opts || { };
     if opts.privatize
+      scrubber = require '../utils/resume-scrubber'
       # Ignore any element with the 'ignore: true' or 'private: true' designator.
-      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+      { scrubbed, ignoreList, privateList } = scrubber.scrubResume rep, opts
 
     # Extend resume properties onto ourself.
     extend true, this, if opts.privatize then scrubbed else rep
@@ -188,7 +188,8 @@ class JRSResume extends AbstractResume
 
 
   duration: (unit) ->
-    super('work', 'startDate', 'endDate', unit)
+    inspector = require '../inspectors/duration-inspector';
+    inspector.run @, 'work', 'startDate', 'endDate', unit
 
 
 
