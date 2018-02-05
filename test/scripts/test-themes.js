@@ -93,13 +93,17 @@ function genThemes( title, src, fmt ) {
 }
 
 function folderContains( needle, haystack ) {
+  var ignoreExts = ['.png','.jpg','.jpeg','.bmp','.pdf', '.gif'];
   var safePath = path.normalize( path.join(__dirname, haystack));
   return _.some( readFolder( safePath ), function( absPath ) {
     if( require('fs').lstatSync( absPath ).isFile() ) {
-      if( fileContains( absPath, needle ) ) {
+      var pathInfo = path.parse( absPath );
+      if( !_.contains(ignoreExts, pathInfo.ext) &&
+          fileContains(absPath, needle) ) {
         console.error('Found invalid metadata in ' + absPath);
         return true;
       }
+      return false;
     }
   });
 }
