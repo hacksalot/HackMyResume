@@ -76,10 +76,11 @@ function genThemes( title, src, fmt ) {
     genTheme(fmt, src, 'compact');
     genTheme(fmt, src, 'modern');
     genTheme(fmt, src, 'underscore', 'node_modules/fresh-theme-underscore' );
-    //genTheme(fmt, src, 'awesome');
+    genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
+
     genTheme(fmt, src, 'jsonresume-theme-boilerplate',
-      'node_modules/jsonresume-theme-boilerplate' );
+       'node_modules/jsonresume-theme-boilerplate' );
     genTheme(fmt, src, 'jsonresume-theme-sceptile',
       'node_modules/jsonresume-theme-sceptile' );
     genTheme(fmt, src, 'jsonresume-theme-modern',
@@ -129,17 +130,17 @@ genThemes(
   'JRS'
 );
 
-// describe('Verifying generated theme files...', function() {
-//
-//   it('Generated files should not contain ICE.', function() {
-//     var q = folderContains('@@@@', '../sandbox');
-//     q.should.equal(false);
-//   });
-//
-//   it('Generated files should match exemplars...', function() {
-//     var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
-//         'test/expected/modern' );
-//     q.should.equal(true);
-//   });
-//
-// });
+describe('Verifying generated theme files...', function() {
+
+  it('Generated files should not contain ICE.', function() {
+    var q = folderContains('@@@@', '../sandbox');
+    q.should.equal(false);
+  });
+
+  // it('Generated files should match exemplars...', function() {
+  //   var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
+  //       'test/expected/modern' );
+  //   q.should.equal(true);
+  // });
+
+});
