@@ -285,8 +285,7 @@ Definition of the JRSResume class.
      */
 
     JRSResume.prototype.harden = function() {
-      var HD, HDIN, ret, that, transformer;
-      that = this;
+      var HD, HDIN, ret, transformer;
       ret = this.dupe();
       HD = function(txt) {
         return '@@@@~' + txt + '~@@@@';

@@ -233,7 +233,6 @@ class JRSResume# extends AbstractResume
   ###
   harden: () ->
 
-    that = @
     ret = @dupe()
 
     HD = (txt) -> '@@@@~' + txt + '~@@@@'
