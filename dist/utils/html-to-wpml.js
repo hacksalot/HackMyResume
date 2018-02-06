@@ -6,7 +6,9 @@ Definition of the Markdown to WordProcessingML conversion routine.
  */
 
 (function() {
-  var HTML5Tokenizer, _;
+  var HTML5Tokenizer, XML, _;
+
+  XML = require('xml-escape');
 
   _ = require('underscore');
 
@@ -51,7 +53,7 @@ Definition of the Markdown to WordProcessingML conversion routine.
             style = is_bold ? '<w:b/>' : '';
             style += is_italic ? '<w:i/>' : '';
             style += is_link ? '<w:rStyle w:val="Hyperlink"/>' : '';
-            return final += (is_link ? '<w:hlink w:dest="' + link_url + '">' : '') + '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + tok.chars + '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
+            return final += (is_link ? '<w:hlink w:dest="' + link_url + '">' : '') + '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + XML(tok.chars) + '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
           }
       }
     });
