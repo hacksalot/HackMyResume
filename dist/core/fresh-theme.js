@@ -62,10 +62,14 @@ Definition of the FRESHTheme class.
       if (this.inherits) {
         cached = {};
         _.each(this.inherits, function(th, key) {
-          var d, themePath, themesFolder;
-          themesFolder = require.resolve('fresh-themes');
-          d = parsePath(themeFolder).dirname;
-          themePath = PATH.join(d, th);
+          var d, themePath, themesObj;
+          themesObj = require('fresh-themes');
+          if (_.has(themesObj.themes, th)) {
+            themePath = PATH.join(parsePath(require.resolve('fresh-themes')).dirname, '/themes/', th);
+          } else {
+            d = parsePath(th).dirname;
+            themePath = PATH.join(d, th);
+          }
           cached[th] = cached[th] || new FRESHTheme().open(themePath);
           return formatsHash[key] = cached[th].getFormat(key);
         });
