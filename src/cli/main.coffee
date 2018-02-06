@@ -288,7 +288,7 @@ executeSuccess = (obj) ->
 
 ### Failure handler for verb invocations. Calls process.exit by default ###
 executeFail = (err) ->
-  console.dir err
+  #console.dir err
   finalErrorCode = -1
   if err
     if err.fluenterror
