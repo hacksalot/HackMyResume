@@ -43,6 +43,16 @@ Block helper definitions for HackMyResume / FluentCV.
       }
       return ret;
     },
+    ifHasSkill: function(rez, skill, options) {
+      var ret, skUp;
+      skUp = skill.toUpperCase();
+      ret = _.some(rez.skills.list, function(sk) {
+        return (skUp.toUpperCase() === sk.name.toUpperCase()) && sk.years;
+      }, this);
+      if (ret) {
+        return options.fn(this);
+      }
+    },
 
     /**
     Emit the enclosed content if the resume has the named

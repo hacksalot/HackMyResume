@@ -6,7 +6,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
  */
 
 (function() {
-  var FS, FluentDate, GenericHelpers, H2W, HMSTATUS, LO, MD, PATH, XML, _, _fromTo, _reportError, moment, printf, skillLevelToIndex, unused;
+  var FS, FluentDate, GenericHelpers, H2W, HMSTATUS, LO, MD, PATH, XML, _, _fromTo, _reportError, _skillLevelToIndex, moment, printf, unused;
 
   MD = require('marked');
 
@@ -391,7 +391,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
      */
     skillColor: function(lvl) {
       var idx, skillColors;
-      idx = skillLevelToIndex(lvl);
+      idx = _skillLevelToIndex(lvl);
       skillColors = (this.theme && this.theme.palette && this.theme.palette.skillLevels) || ['#FFFFFF', '#5CB85C', '#F1C40F', '#428BCA', '#C00000'];
       return skillColors[idx];
     },
@@ -402,7 +402,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
      */
     skillHeight: function(lvl) {
       var idx;
-      idx = skillLevelToIndex(lvl);
+      idx = _skillLevelToIndex(lvl);
       return ['38.25', '30', '16', '8', '0'][idx];
     },
 
@@ -541,6 +541,17 @@ Generic template helper definitions for HackMyResume / FluentCV.
         ret = PAD(stringOrArray, stringOrArray.length + Math.abs(padAmount), null, padAmount < 0 ? PAD.LEFT : PAD.RIGHT);
       }
       return ret;
+    },
+    skillYears: function(skill, rez) {
+      var sk;
+      sk = _.find(rez.skills.list, function(sk) {
+        return sk.name.toUpperCase() === skill.toUpperCase();
+      });
+      if (sk) {
+        return sk.years;
+      } else {
+        return '?';
+      }
     }
   };
 
@@ -599,7 +610,7 @@ Generic template helper definitions for HackMyResume / FluentCV.
     return '';
   };
 
-  skillLevelToIndex = function(lvl) {
+  _skillLevelToIndex = function(lvl) {
     var idx, intVal;
     idx = 0;
     if (String.is(lvl)) {

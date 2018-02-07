@@ -38,6 +38,14 @@ BlockHelpers = module.exports =
 
 
 
+  ifHasSkill: ( rez, skill, options ) ->
+    skUp = skill.toUpperCase()
+    ret = _.some rez.skills.list, (sk) ->
+      (skUp.toUpperCase() == sk.name.toUpperCase()) and sk.years
+    , @
+    options.fn @ if ret
+
+
   ###*
   Emit the enclosed content if the resume has the named
   property or subproperty.
@@ -55,4 +63,4 @@ BlockHelpers = module.exports =
   Return true if either value is truthy.
   @method either
   ###
-  either: ( lhs, rhs, options ) -> options.fn @ if lhs || rhs    
+  either: ( lhs, rhs, options ) -> options.fn @ if lhs || rhs
