@@ -26,7 +26,7 @@ Template helper definitions for Handlebars.
   @method registerHelpers
    */
 
-  module.exports = function(theme, opts) {
+  module.exports = function(theme, rez, opts) {
     var curGlob, ex, glob, slash, wrappedHelpers;
     helpers.theme = theme;
     helpers.opts = opts;
@@ -37,7 +37,7 @@ Template helper definitions for Handlebars.
           var args;
           args = Array.prototype.slice.call(arguments);
           args.shift();
-          args.pop();
+          args[args.length - 1] = rez;
           return func.apply(this, args);
         });
       }

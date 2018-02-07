@@ -51,8 +51,6 @@ Definition of the HandlebarsGenerator class.
     },
     generate: function(json, jst, format, curFmt, opts, theme) {
       var ctx, encData;
-      registerPartials(format, theme);
-      registerHelpers(theme, opts);
       encData = json;
       if (format === 'html' || format === 'pdf') {
         encData = json.markdownify();
@@ -60,6 +58,8 @@ Definition of the HandlebarsGenerator class.
       if (format === 'doc') {
         encData = json.xmlify();
       }
+      registerPartials(format, theme);
+      registerHelpers(theme, encData, opts);
       ctx = {
         r: encData,
         RAW: json,
