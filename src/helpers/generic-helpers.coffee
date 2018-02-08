@@ -360,6 +360,15 @@ GenericHelpers = module.exports =
 
 
   ###*
+  Emit a conditional Markdown link.
+  @method link
+  ###
+  linkMD: ( text, url ) ->
+    return if url && url.trim() then ('[' + text + '](' + url + ')') else text
+
+
+
+  ###*
   Return the last word of the specified text.
   @method lastWord
   ###
@@ -492,6 +501,9 @@ GenericHelpers = module.exports =
 
 
 
+  ###*
+  Emit padded text.
+  ###
   pad: (stringOrArray, padAmount, unused ) ->
     stringOrArray = stringOrArray || ''
     padAmount = padAmount || 0
@@ -506,9 +518,23 @@ GenericHelpers = module.exports =
     ret
 
 
+
+  ###*
+  Given the name of a skill ("JavaScript" or "HVAC repair"), return the number
+  of years assigned to that skill in the resume.skills.list collection.
+  ###
   skillYears: ( skill, rez ) ->
     sk = _.find rez.skills.list, (sk) -> sk.name.toUpperCase() == skill.toUpperCase()
     if sk then sk.years else '?'
+
+
+
+  ###*
+  Given an object that may be a string or an object, return it as-is if it's a
+  string, otherwise return the value at obj[objPath].
+  ###
+  stringOrObject: ( obj, objPath, rez ) ->
+    if _.isString obj then obj else LO.get obj, objPath
 
 
 

@@ -370,6 +370,18 @@ Generic template helper definitions for HackMyResume / FluentCV.
     },
 
     /**
+    Emit a conditional Markdown link.
+    @method link
+     */
+    linkMD: function(text, url) {
+      if (url && url.trim()) {
+        return '[' + text + '](' + url + ')';
+      } else {
+        return text;
+      }
+    },
+
+    /**
     Return the last word of the specified text.
     @method lastWord
      */
@@ -527,6 +539,10 @@ Generic template helper definitions for HackMyResume / FluentCV.
         return options.inverse(this);
       }
     },
+
+    /**
+    Emit padded text.
+     */
     pad: function(stringOrArray, padAmount, unused) {
       var PAD, ret;
       stringOrArray = stringOrArray || '';
@@ -542,6 +558,11 @@ Generic template helper definitions for HackMyResume / FluentCV.
       }
       return ret;
     },
+
+    /**
+    Given the name of a skill ("JavaScript" or "HVAC repair"), return the number
+    of years assigned to that skill in the resume.skills.list collection.
+     */
     skillYears: function(skill, rez) {
       var sk;
       sk = _.find(rez.skills.list, function(sk) {
@@ -551,6 +572,18 @@ Generic template helper definitions for HackMyResume / FluentCV.
         return sk.years;
       } else {
         return '?';
+      }
+    },
+
+    /**
+    Given an object that may be a string or an object, return it as-is if it's a
+    string, otherwise return the value at obj[objPath].
+     */
+    stringOrObject: function(obj, objPath, rez) {
+      if (_.isString(obj)) {
+        return obj;
+      } else {
+        return LO.get(obj, objPath);
       }
     }
   };
