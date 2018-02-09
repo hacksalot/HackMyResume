@@ -1,5 +1,6 @@
 FluentDate = require '../core/fluent-date'
 _ = require 'underscore'
+lo = require 'lodash'
 
 module.exports =
 
@@ -12,7 +13,7 @@ module.exports =
   ###
   run: (rez, collKey, startKey, endKey, unit) ->
     unit = unit || 'years'
-    hist = __.get rez, collKey
+    hist = lo.get rez, collKey
     return 0 if !hist or !hist.length
 
     # BEGIN CODE DUPLICATION --> src/inspectors/gap-inspector.coffee (TODO)

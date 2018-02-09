@@ -1,9 +1,11 @@
 (function() {
-  var FluentDate, _;
+  var FluentDate, _, lo;
 
   FluentDate = require('../core/fluent-date');
 
   _ = require('underscore');
+
+  lo = require('lodash');
 
   module.exports = {
 
@@ -17,7 +19,7 @@
     run: function(rez, collKey, startKey, endKey, unit) {
       var firstDate, hist, lastDate, new_e;
       unit = unit || 'years';
-      hist = __.get(rez, collKey);
+      hist = lo.get(rez, collKey);
       if (!hist || !hist.length) {
         return 0;
       }
