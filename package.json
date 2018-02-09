@@ -57,6 +57,7 @@
     "fresh-jrs-converter": "^0.2.3",
     "fresh-resume-schema": "^1.0.0-beta",
     "fresh-resume-starter": "^0.3.1",
+    "fresh-resume-validator": "^0.1.0",
     "fresh-themes": "^0.16.0-beta",
     "fs-extra": "^0.26.4",
     "glob": "^7.1.2",
