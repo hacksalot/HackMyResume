@@ -213,7 +213,9 @@ Definition of the FRESHResume class.
     };
 
 
-    /** Return a unique list of all keywords across all skills. */
+    /**
+    Return a unique list of all skills declared in the resume.
+     */
 
     FreshResume.prototype.keywords = function() {
       var flatSkills;

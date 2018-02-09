@@ -180,7 +180,24 @@ class FreshResume# extends AbstractResume
 
 
 
-  ###* Return a unique list of all keywords across all skills. ###
+  ###*
+  Return a unique list of all skills declared in the resume.
+  ###
+
+  # TODO: Several problems here:
+  # 1) Confusing name. Easily confused with the keyword-inspector module, which
+  # parses resume body text looking for these same keywords. This should probably
+  # be renamed.
+  #
+  # 2) Doesn't bother trying to integrate skills.list with skills.sets if they
+  # happen to declare different skills, and if skills.sets declares ONE skill and
+  # skills.list declared 50, only 1 skill will be registered.
+  #
+  # 3) In the future, skill.sets should only be able to use skills declared in
+  # skills.list. That is, skills.list is the official record of a candidate's
+  # declared skills. skills.sets is just a way of grouping those into skillsets
+  # for easier consumption.
+
   keywords: () ->
     flatSkills = []
     if @skills
