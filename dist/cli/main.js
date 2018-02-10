@@ -92,6 +92,16 @@ Definition of the `main` function.
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);
     });
+    program.command('help')["arguments"]('[command]').description('Get help on a HackMyResume command').action(function(command) {
+      var cmd, manPage;
+      cmd = command && command.trim();
+      if (cmd) {
+        manPage = FS.readFileSync(PATH.join(__dirname, 'help/' + cmd + '.txt'), 'utf8');
+      } else {
+        manPage = FS.readFileSync(PATH.join(__dirname, 'use.txt'), 'utf8');
+      }
+      console.log(M2C(manPage, 'white', 'yellow.bold'));
+    });
     program.parse(args);
     if (!program.args.length) {
       throw {
@@ -135,7 +145,7 @@ Definition of the `main` function.
       _out.log('');
     }
     _err.init(o.debug, o.assert, o.silent);
-    if (o.verb && !HMR.verbs[o.verb] && !HMR.alias[o.verb]) {
+    if (o.verb && !HMR.verbs[o.verb] && !HMR.alias[o.verb] && o.verb !== 'help') {
       _err.err({
         fluenterror: HMSTATUS.invalidCommand,
         quit: true,
@@ -143,14 +153,16 @@ Definition of the `main` function.
       }, true);
     }
     Command.prototype.missingArgument = function(name) {
-      _err.err({
-        fluenterror: this.name() !== 'new' ? HMSTATUS.resumeNotFound : HMSTATUS.createNameMissing
-      }, true);
+      if (this.name() !== 'help') {
+        _err.err({
+          fluenterror: this.name() !== 'new' ? HMSTATUS.resumeNotFound : HMSTATUS.createNameMissing
+        }, true);
+      }
     };
     Command.prototype.helpInformation = function() {
       var manPage;
       manPage = FS.readFileSync(PATH.join(__dirname, 'use.txt'), 'utf8');
-      return chalk.green.bold(manPage);
+      return M2C(manPage, 'white', 'yellow');
     };
     return {
       args: o.args,

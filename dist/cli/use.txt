@@ -1,32 +1,28 @@
+**HackMyResume** | A Swiss Army knife for resumes and CVs.
+
 Usage:
 
-  hackmyresume <command> <sources> [TO <targets>] [<options>]
+  hackmyresume <command> <params> [<options>]
 
-Available commands:
+Available commands (type "hackmyresume help COMMAND" for details):
 
-  BUILD         Build your resume to the destination format(s).
-  ANALYZE       Analyze your resume for keywords, gaps, and metrics.
-  VALIDATE      Validate your resume for errors and typos.
-  CONVERT       Convert your resume between FRESH and JSON Resume.
-  NEW           Create a new resume in FRESH or JSON Resume format.
-  PEEK          View a specific field or element on your resume.
+  **BUILD**         Build your resume to the destination format(s).
+  **ANALYZE**       Analyze your resume for keywords, gaps, and metrics.
+  **VALIDATE**      Validate your resume for errors and typos.
+  **NEW**           Create a new resume in FRESH or JSON Resume format.
+  **CONVERT**       Convert your resume between FRESH and JSON Resume.
+  **PEEK**          View a specific field or element on your resume.
+  **HELP**          View help on a specific HackMyResume command.
 
 Available options:
 
-  --theme -t    Path to a FRESH or JSON Resume theme.
-  --pdf -p      Specify the PDF engine to use (wkhtmltopdf or phantom).
-  --options -o  Load options from an external JSON file.
-  --format -f   The format (FRESH or JSON Resume) to use.
-  --debug -d    Emit extended debugging info.
-  --assert -a   Treat resume validation warnings as errors.
-  --private     Include resume fields marked as private
-  --no-colors   Disable terminal colors.
-  --tips        Display theme messages and tips.
-  --help -h     Display help documentation.
-  --version -v  Display the current version.
-
-Not all options are supported for all commands. For example, the
---theme option is only supported for the BUILD command.
+  **--options -o**  Load options from an external JSON file.
+  **--debug -d**    Emit extended debugging info.
+  **--assert -a**   Treat resume validation warnings as errors.
+  **--no-colors**   Disable terminal colors.
+  **--tips**        Display theme messages and tips.
+  **--help -h**     Display help documentation.
+  **--version -v**  Display the current version.
 
 Examples:
 
@@ -47,6 +43,6 @@ Tips:
     theme, or the path to a local FRESH or JSON Resume theme.
   - Visit https://www.npmjs.com/search?q=jsonresume-theme for a full
     listing of all available JSON Resume themes.
-  - Visit https://github.com/fluentdesk/fresh-themes for a complete
+  - Visit https://github.com/fresh-standard/fresh-themes for a complete
     listing of all available FRESH themes.
   - Report bugs to https://githut.com/hacksalot/HackMyResume/issues.
