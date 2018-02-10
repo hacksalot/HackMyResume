@@ -137,15 +137,12 @@ main = module.exports = ( rawArgs, exitCallback ) ->
     .command('help')
     .arguments('[command]')
     .description('Get help on a HackMyResume command')
-    .action ( command ) ->
-      cmd = command && command.trim()
-      if cmd
-        manPage = FS.readFileSync(
-          PATH.join(__dirname, 'help/' + cmd + '.txt'), 'utf8' )
-      else
-        manPage = FS.readFileSync(
-          PATH.join(__dirname, 'use.txt'), 'utf8' )
-      console.log M2C(manPage, 'white', 'yellow.bold')
+    .action ( cmd ) ->
+      cmd = cmd || 'use'
+      manPage = FS.readFileSync(
+        PATH.join(__dirname, 'help/' + cmd + '.txt'),
+        'utf8')
+      _out.log M2C(manPage, 'white', 'yellow.bold')
       return
 
   program.parse( args )
@@ -204,7 +201,7 @@ initialize = ( ar, exitCallback ) ->
   # Override the .helpInformation behavior
   Command.prototype.helpInformation = ->
     manPage = FS.readFileSync(
-      PATH.join(__dirname, 'use.txt'), 'utf8' )
+      PATH.join(__dirname, 'help/use.txt'), 'utf8' )
     return M2C(manPage, 'white', 'yellow')
 
   return {

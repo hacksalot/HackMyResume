@@ -92,15 +92,11 @@ Definition of the `main` function.
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);
     });
-    program.command('help')["arguments"]('[command]').description('Get help on a HackMyResume command').action(function(command) {
-      var cmd, manPage;
-      cmd = command && command.trim();
-      if (cmd) {
-        manPage = FS.readFileSync(PATH.join(__dirname, 'help/' + cmd + '.txt'), 'utf8');
-      } else {
-        manPage = FS.readFileSync(PATH.join(__dirname, 'use.txt'), 'utf8');
-      }
-      console.log(M2C(manPage, 'white', 'yellow.bold'));
+    program.command('help')["arguments"]('[command]').description('Get help on a HackMyResume command').action(function(cmd) {
+      var manPage;
+      cmd = cmd || 'use';
+      manPage = FS.readFileSync(PATH.join(__dirname, 'help/' + cmd + '.txt'), 'utf8');
+      _out.log(M2C(manPage, 'white', 'yellow.bold'));
     });
     program.parse(args);
     if (!program.args.length) {
@@ -161,7 +157,7 @@ Definition of the `main` function.
     };
     Command.prototype.helpInformation = function() {
       var manPage;
-      manPage = FS.readFileSync(PATH.join(__dirname, 'use.txt'), 'utf8');
+      manPage = FS.readFileSync(PATH.join(__dirname, 'help/use.txt'), 'utf8');
       return M2C(manPage, 'white', 'yellow');
     };
     return {
