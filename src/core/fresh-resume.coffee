@@ -94,13 +94,26 @@ class FreshResume# extends AbstractResume
   ###*
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   ###
-  saveAs: ( filename, format ) ->
-    if format != 'JRS'
+  saveAs: ( filename, format, version ) ->
+
+    # If format isn't specified, default to FRESH
+    safeFormat = (format || 'FRESH').trim()
+    safeVersion = version || "0"
+
+    # Validate against the FRESH version regex
+    # freshVersionReg = require '../utils/fresh-version-regex'
+    # if (not freshVersionReg().test( safeFormat ))
+    #   throw badVer: safeFormat
+
+    parts = safeFormat.split '@'
+    if parts[0] == 'FRESH'
       @imp.file = filename || @imp.file
       FS.writeFileSync @imp.file, @stringify(), 'utf8'
-    else
-      newRep = CONVERTER.toJRS this
+    else if parts[0] == 'JRS'
+      newRep = CONVERTER.toJRS @, null, if parts.length > 1 then parts[1] else "1"
       FS.writeFileSync filename, JRSResume.stringify( newRep ), 'utf8'
+    else
+      throw badVer: safeFormat
     @
 
 

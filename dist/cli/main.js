@@ -74,7 +74,7 @@ Definition of the `main` function.
     program.command('validate')["arguments"]('<sources...>').description('Validate a resume in FRESH or JSON RESUME format.').action(function(sources) {
       execute.call(this, sources, [], this.opts(), logMsg);
     });
-    program.command('convert').description('Convert a resume to/from FRESH or JSON RESUME format.').action(function() {
+    program.command('convert').description('Convert a resume to/from FRESH or JSON RESUME format.').option('-f --format <fmt>', 'FRESH or JRS format and optional version', void 0).action(function() {
       var x;
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);

@@ -257,6 +257,9 @@ assembleError = ( ex ) ->
       msg = printf M2C( @msgs.themeHelperLoad.msg ), ex.glob
       etype = 'error'
 
+    when HMSTATUS.invalidSchemaVersion
+      msg = printf M2C( @msgs.invalidSchemaVersion.msg ), ex.data
+      etype = 'error'
 
   msg: msg              # The error message to display
   withStack: withStack  # Whether to include the stack

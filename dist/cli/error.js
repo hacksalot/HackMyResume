@@ -266,6 +266,10 @@ Error-handling routines for HackMyResume.
       case HMSTATUS.themeHelperLoad:
         msg = printf(M2C(this.msgs.themeHelperLoad.msg), ex.glob);
         etype = 'error';
+        break;
+      case HMSTATUS.invalidSchemaVersion:
+        msg = printf(M2C(this.msgs.invalidSchemaVersion.msg), ex.data);
+        etype = 'error';
     }
     return {
       msg: msg,

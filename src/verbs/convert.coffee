@@ -46,6 +46,20 @@ _convert = ( srcs, dst, opts ) ->
   if srcs && dst && srcs.length && dst.length && srcs.length != dst.length
     @err HMSTATUS.inputOutputParity, { quit: true }
 
+  # Validate the destination format (if specified)
+  targetVer = null
+  if opts.format
+    fmtUp = opts.format.trim().toUpperCase()
+    freshVerRegex = require '../utils/fresh-version-regex'
+    matches = fmtUp.match freshVerRegex()
+    # null
+    # [ 'JRS@1.0', 'JRS', '1.0', index: 0, input: 'FRESH' ]
+    # [ 'FRESH', 'FRESH', undefined, index: 0, input: 'FRESH' ]
+    if not matches
+      @err HMSTATUS.invalidSchemaVersion, data: opts.format.trim(), quit: true
+    targetSchema = matches[1]
+    targetVer = matches[2] || '1'
+
   # If any errors have occurred this early, we're done.
   if @hasError()
     @reject @errorCode
@@ -55,7 +69,7 @@ _convert = ( srcs, dst, opts ) ->
   results = _.map srcs, ( src, idx ) ->
 
     # Convert each resume in turn
-    r = _convertOne.call @, src, dst, idx
+    r = _convertOne.call @, src, dst, idx, targetSchema, targetVer
 
     # Handle conversion errors
     if r.fluenterror
@@ -74,12 +88,12 @@ _convert = ( srcs, dst, opts ) ->
 
 
 ###* Private workhorse method. Convert a single resume. ###
-_convertOne = (src, dst, idx) ->
+_convertOne = (src, dst, idx, targetSchema, targetVer) ->
 
   # Load the resume
   rinfo = ResumeFactory.loadOne src,
     format: null
-    objectify: true,
+    objectify: true
     inner:
       privatize: false
 
@@ -94,6 +108,8 @@ _convertOne = (src, dst, idx) ->
     #@err rinfo.fluenterror, rinfo
     return rinfo
 
+  # Determine the resume's SOURCE format
+  # TODO: replace with detector component
   rez = rinfo.rez
   srcFmt = ''
   if rez.meta && rez.meta.format #&& rez.meta.format.substr(0, 5).toUpperCase() == 'FRESH'
@@ -104,8 +120,10 @@ _convertOne = (src, dst, idx) ->
     rinfo.fluenterror = HMSTATUS.unknownSchema
     return rinfo
 
-  targetFormat = if srcFmt == 'JRS' then 'FRESH' else 'JRS'
+  # Determine the TARGET format for the conversion
+  targetFormat = targetSchema or (if srcFmt == 'JRS' then 'FRESH' else 'JRS')
 
+  # Fire the beforeConvert event
   this.stat HMEVENT.beforeConvert,
     srcFile: rinfo.file
     srcFmt: srcFmt
@@ -113,5 +131,9 @@ _convertOne = (src, dst, idx) ->
     dstFmt: targetFormat
 
   # Save it to the destination format
-  rez.saveAs dst[idx], targetFormat
+  try
+    rez.saveAs dst[idx], targetFormat, targetVer
+  catch err
+    if err.badVer
+      return fluenterror: HMSTATUS.invalidSchemaVersion, quit: true, data: err.badVer
   rez

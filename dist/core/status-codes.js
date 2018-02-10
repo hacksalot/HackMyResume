@@ -37,7 +37,8 @@ Status codes for HackMyResume.
     invalidOptionsFile: 27,
     optionsFileNotFound: 28,
     unknownSchema: 29,
-    themeHelperLoad: 30
+    themeHelperLoad: 30,
+    invalidSchemaVersion: 31
   };
 
 }).call(this);

@@ -39,7 +39,7 @@ Implementation of the 'convert' verb for HackMyResume.
    */
 
   _convert = function(srcs, dst, opts) {
-    var results;
+    var fmtUp, freshVerRegex, matches, results, targetSchema, targetVer;
     if (!srcs || !srcs.length) {
       this.err(HMSTATUS.resumeNotFound, {
         quit: true
@@ -65,13 +65,27 @@ Implementation of the 'convert' verb for HackMyResume.
         quit: true
       });
     }
+    targetVer = null;
+    if (opts.format) {
+      fmtUp = opts.format.trim().toUpperCase();
+      freshVerRegex = require('../utils/fresh-version-regex');
+      matches = fmtUp.match(freshVerRegex());
+      if (!matches) {
+        this.err(HMSTATUS.invalidSchemaVersion, {
+          data: opts.format.trim(),
+          quit: true
+        });
+      }
+      targetSchema = matches[1];
+      targetVer = matches[2] || '1';
+    }
     if (this.hasError()) {
       this.reject(this.errorCode);
       return null;
     }
     results = _.map(srcs, function(src, idx) {
       var r;
-      r = _convertOne.call(this, src, dst, idx);
+      r = _convertOne.call(this, src, dst, idx, targetSchema, targetVer);
       if (r.fluenterror) {
         r.quit = opts.assert;
         this.err(r.fluenterror, r);
@@ -89,8 +103,8 @@ Implementation of the 'convert' verb for HackMyResume.
 
   /** Private workhorse method. Convert a single resume. */
 
-  _convertOne = function(src, dst, idx) {
-    var rez, rinfo, srcFmt, targetFormat;
+  _convertOne = function(src, dst, idx, targetSchema, targetVer) {
+    var err, rez, rinfo, srcFmt, targetFormat;
     rinfo = ResumeFactory.loadOne(src, {
       format: null,
       objectify: true,
@@ -118,14 +132,25 @@ Implementation of the 'convert' verb for HackMyResume.
       rinfo.fluenterror = HMSTATUS.unknownSchema;
       return rinfo;
     }
-    targetFormat = srcFmt === 'JRS' ? 'FRESH' : 'JRS';
+    targetFormat = targetSchema || (srcFmt === 'JRS' ? 'FRESH' : 'JRS');
     this.stat(HMEVENT.beforeConvert, {
       srcFile: rinfo.file,
       srcFmt: srcFmt,
       dstFile: dst[idx],
       dstFmt: targetFormat
     });
-    rez.saveAs(dst[idx], targetFormat);
+    try {
+      rez.saveAs(dst[idx], targetFormat, targetVer);
+    } catch (_error) {
+      err = _error;
+      if (err.badVer) {
+        return {
+          fluenterror: HMSTATUS.invalidSchemaVersion,
+          quit: true,
+          data: err.badVer
+        };
+      }
+    }
     return rez;
   };
 

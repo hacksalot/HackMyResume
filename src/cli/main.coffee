@@ -84,6 +84,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
   program
     .command('convert')
     .description('Convert a resume to/from FRESH or JSON RESUME format.')
+    .option('-f --format <fmt>', 'FRESH or JRS format and optional version', undefined)
     .action(->
       x = splitSrcDest.call( this );
       execute.call( this, x.src, x.dst, this.opts(), logMsg)
