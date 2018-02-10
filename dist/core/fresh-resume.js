@@ -109,22 +109,18 @@ Definition of the FRESHResume class.
     Save the sheet to disk in a specific format, either FRESH or JSON Resume.
      */
 
-    FreshResume.prototype.saveAs = function(filename, format, version) {
-      var freshVersionReg, newRep, parts, safeFormat, safeVersion;
-      safeFormat = (format || 'FRESH').trim();
-      safeVersion = version || "0";
-      freshVersionReg = require('../utils/fresh-version-regex');
-      if (!freshVersionReg().test(safeFormat)) {
-        throw {
-          badVer: safeFormat
-        };
-      }
+    FreshResume.prototype.saveAs = function(filename, format) {
+      var newRep, parts, safeFormat, useEdgeSchema;
+      safeFormat = (format && format.trim()) || 'FRESH';
       parts = safeFormat.split('@');
       if (parts[0] === 'FRESH') {
         this.imp.file = filename || this.imp.file;
         FS.writeFileSync(this.imp.file, this.stringify(), 'utf8');
       } else if (parts[0] === 'JRS') {
-        newRep = CONVERTER.toJRS(this, null, parts.length > 1 ? parts[1] : "1.0.0");
+        useEdgeSchema = parts.length > 1 ? parts[1] === '1' : false;
+        newRep = CONVERTER.toJRS(this, {
+          edge: useEdgeSchema
+        });
         FS.writeFileSync(filename, JRSResume.stringify(newRep), 'utf8');
       } else {
         throw {

@@ -50,15 +50,17 @@ _convert = ( srcs, dst, opts ) ->
   targetVer = null
   if opts.format
     fmtUp = opts.format.trim().toUpperCase()
-    freshVerRegex = require '../utils/fresh-version-regex'
-    matches = fmtUp.match freshVerRegex()
-    # null
-    # [ 'JRS@1.0', 'JRS', '1.0', index: 0, input: 'FRESH' ]
-    # [ 'FRESH', 'FRESH', undefined, index: 0, input: 'FRESH' ]
-    if not matches
+    if not _.contains ['FRESH','FRESCA','JRS','JRS@1','JRS@edge'], fmtUp
       @err HMSTATUS.invalidSchemaVersion, data: opts.format.trim(), quit: true
-    targetSchema = matches[1]
-    targetVer = matches[2] || '1'
+    # freshVerRegex = require '../utils/fresh-version-regex'
+    # matches = fmtUp.match freshVerRegex()
+    # # null
+    # # [ 'JRS@1.0', 'JRS', '1.0', index: 0, input: 'FRESH' ]
+    # # [ 'FRESH', 'FRESH', undefined, index: 0, input: 'FRESH' ]
+    # if not matches
+    #   @err HMSTATUS.invalidSchemaVersion, data: opts.format.trim(), quit: true
+    # targetSchema = matches[1]
+    # targetVer = matches[2] || '1'
 
   # If any errors have occurred this early, we're done.
   if @hasError()
@@ -69,7 +71,7 @@ _convert = ( srcs, dst, opts ) ->
   results = _.map srcs, ( src, idx ) ->
 
     # Convert each resume in turn
-    r = _convertOne.call @, src, dst, idx, targetSchema, targetVer
+    r = _convertOne.call @, src, dst, idx, fmtUp
 
     # Handle conversion errors
     if r.fluenterror
@@ -88,7 +90,7 @@ _convert = ( srcs, dst, opts ) ->
 
 
 ###* Private workhorse method. Convert a single resume. ###
-_convertOne = (src, dst, idx, targetSchema, targetVer) ->
+_convertOne = (src, dst, idx, targetSchema) ->
 
   # Load the resume
   rinfo = ResumeFactory.loadOne src,
@@ -132,7 +134,7 @@ _convertOne = (src, dst, idx, targetSchema, targetVer) ->
 
   # Save it to the destination format
   try
-    rez.saveAs dst[idx], targetFormat, targetVer
+    rez.saveAs dst[idx], targetFormat
   catch err
     if err.badVer
       return fluenterror: HMSTATUS.invalidSchemaVersion, quit: true, data: err.badVer

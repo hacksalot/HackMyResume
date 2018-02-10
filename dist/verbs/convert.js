@@ -39,7 +39,7 @@ Implementation of the 'convert' verb for HackMyResume.
    */
 
   _convert = function(srcs, dst, opts) {
-    var fmtUp, freshVerRegex, matches, results, targetSchema, targetVer;
+    var fmtUp, results, targetVer;
     if (!srcs || !srcs.length) {
       this.err(HMSTATUS.resumeNotFound, {
         quit: true
@@ -68,16 +68,12 @@ Implementation of the 'convert' verb for HackMyResume.
     targetVer = null;
     if (opts.format) {
       fmtUp = opts.format.trim().toUpperCase();
-      freshVerRegex = require('../utils/fresh-version-regex');
-      matches = fmtUp.match(freshVerRegex());
-      if (!matches) {
+      if (!_.contains(['FRESH', 'FRESCA', 'JRS', 'JRS@1', 'JRS@edge'], fmtUp)) {
         this.err(HMSTATUS.invalidSchemaVersion, {
           data: opts.format.trim(),
           quit: true
         });
       }
-      targetSchema = matches[1];
-      targetVer = matches[2] || '1';
     }
     if (this.hasError()) {
       this.reject(this.errorCode);
@@ -85,7 +81,7 @@ Implementation of the 'convert' verb for HackMyResume.
     }
     results = _.map(srcs, function(src, idx) {
       var r;
-      r = _convertOne.call(this, src, dst, idx, targetSchema, targetVer);
+      r = _convertOne.call(this, src, dst, idx, fmtUp);
       if (r.fluenterror) {
         r.quit = opts.assert;
         this.err(r.fluenterror, r);
@@ -103,7 +99,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
   /** Private workhorse method. Convert a single resume. */
 
-  _convertOne = function(src, dst, idx, targetSchema, targetVer) {
+  _convertOne = function(src, dst, idx, targetSchema) {
     var err, rez, rinfo, srcFmt, targetFormat;
     rinfo = ResumeFactory.loadOne(src, {
       format: null,
@@ -140,7 +136,7 @@ Implementation of the 'convert' verb for HackMyResume.
       dstFmt: targetFormat
     });
     try {
-      rez.saveAs(dst[idx], targetFormat, targetVer);
+      rez.saveAs(dst[idx], targetFormat);
     } catch (_error) {
       err = _error;
       if (err.badVer) {
