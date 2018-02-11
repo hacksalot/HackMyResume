@@ -151,7 +151,8 @@ Definition of the `main` function.
     Command.prototype.missingArgument = function(name) {
       if (this.name() !== 'help') {
         _err.err({
-          fluenterror: this.name() !== 'new' ? HMSTATUS.resumeNotFound : HMSTATUS.createNameMissing
+          verb: this.name(),
+          fluenterror: HMSTATUS.resumeNotFound
         }, true);
       }
     };
@@ -328,6 +329,7 @@ Definition of the `main` function.
     if (params.length === 0) {
       throw {
         fluenterror: HMSTATUS.resumeNotFound,
+        verb: this.name(),
         quit: true
       };
     }

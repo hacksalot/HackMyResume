@@ -1,18 +1,21 @@
-**validate** - Validate a resume for correctness
+**validate** | Validate a resume for correctness
 
 Usage:
 
-   hackmyresume VALIDATE <resume> [<options>]
-   hackmyresume VALIDATE <resumes...> [<options>]
+   **hackmyresume VALIDATE <resume> [--assert]**
+
+   The VALIDATE command validates a FRESH or JRS document
+   against its governing schema, verifying that the resume
+   is correctly structured and formatted.
 
 Parameters:
 
-   **<resume(s)>**
+   **<resume>**
 
-      Absolute or relative path(s) to one or more FRESH or
-      JSON Resume documents to be validated. Multiple resumes
-      can be specified, separated by spaces:
+      Path to a FRESH or JRS resume. Multiple resumes can be
+      specified.
 
+         hackmyresume ANALYZE resume.json
          hackmyresume ANALYZE r1.json r2.json r3.json
 
 Options:
@@ -21,7 +24,3 @@ Options:
 
       Tell HackMyResume to return a non-zero process exit
       code if a resume fails to validate.
-
-The VALIDATE command validates a FRESH or JSON Resume
-document against its governing schema, verifying that the
-resume is correctly structured.

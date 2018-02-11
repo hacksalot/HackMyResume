@@ -2,16 +2,23 @@
 
 Usage:
 
-   hackmyresume NEW <resumes...> [<options>]
+   **hackmyresume NEW <fileName> [--format]**
+
+   The NEW command generates a new resume document in FRESH
+   or JSON Resume format. This document can serve as an
+   official source of truth for your resume and career data
+   as well an input to tools like HackMyResume.
 
 Parameters:
 
-   **<resumes...>**
+   **<fileName>**
 
-      Absolute or relative path(s) to one or more FRESH or
-      JSON Resume documents (*.json), separated by spaces:
+      The filename (relative or absolute path) of the resume
+      to be created. Multiple resume paths can be specified,
+      and each will be created in turn.
 
-         hackmyresume NEW r1.json r2.json r3.json
+         hackmyresume NEW resume.json
+         hackmyresume NEW r1.json foo/r2.json ../r3.json
 
 Options:
 
@@ -20,8 +27,3 @@ Options:
       The desired format for the new resume(s). Valid values
       are 'FRESH', 'JRS', or, to target the latest edge
       version of the JSON Resume Schema, 'JRS@1'.
-
-The NEW command generates one or more new resumes in FRESH
-or JSON Resume format. This document can serve as a source
-of truth for resume and career data and an input to tools
-like HackMyResume or resume-cli.

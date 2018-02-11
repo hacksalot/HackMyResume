@@ -110,17 +110,19 @@ assembleError = ( ex ) ->
       quit = false
 
     when HMSTATUS.resumeNotFound
-      msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
+      #msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
+      msg += M2C(FS.readFileSync(
+        PATH.resolve(__dirname, 'help/' + ex.verb + '.txt'), 'utf8' ), 'white', 'yellow')
 
     when HMSTATUS.missingCommand
-      msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
-      msg += Object.keys( FCMD.verbs ).map( (v, idx, ar) ->
-        return ( if idx == ar.length - 1 then chalk.yellow('or ') else '') +
-          chalk.yellow.bold(v.toUpperCase());
-      ).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
+      # msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
+      # msg += Object.keys( FCMD.verbs ).map( (v, idx, ar) ->
+      #   return ( if idx == ar.length - 1 then chalk.yellow('or ') else '') +
+      #     chalk.yellow.bold(v.toUpperCase());
+      # ).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
 
-      msg += chalk.gray(FS.readFileSync(
-        PATH.resolve(__dirname, '../cli/use.txt'), 'utf8' ))
+      msg += M2C(FS.readFileSync(
+        PATH.resolve(__dirname, 'help/use.txt'), 'utf8' ), 'white', 'yellow')
 
     when HMSTATUS.invalidCommand
       msg = printf( M2C( this.msgs.invalidCommand.msg, 'yellow'), ex.attempted )

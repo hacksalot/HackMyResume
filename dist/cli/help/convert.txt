@@ -2,20 +2,22 @@
 
 Usage:
 
-   hackmyresume CONVERT <sources...> TO <targets...> [<options>]
+   **hackmyresume CONVERT <resume> TO <target> [--format]**
+
+   The CONVERT command converts one or more resume documents
+   between the FRESH Resume Schema and JSON Resume formats.
 
 Parameters:
 
-   **<sources...>**
+   **<resume>**
 
-      Absolute or relative path(s) to one or more FRESH or
-      JSON Resume documents (*.json), separated by spaces.
+      Path to a FRESH or JRS resume. Multiple resumes can be
+      specified.
 
-   **<targets...>**
+   **<targets>**
 
-      The desired absolute or relative path(s) of the newly
-      converted resume(s). HackMyResume will create the
-      converted resume(s) here.
+      The path of the converted resume. Multiple resumes can
+      be specified, one per provided input resume.
 
 Options:
 
@@ -29,6 +31,3 @@ Options:
       will be inferred from the source resume's format. If
       the source format is FRESH, the destination format
       will be JSON Resume, and vice-versa.
-
-The CONVERT command converts one or more resume documents
-between FRESH and JSON Resume formats.

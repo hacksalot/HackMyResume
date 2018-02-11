@@ -1,48 +1,70 @@
-**HackMyResume** | A Swiss Army knife for resumes and CVs.
+**HackMyResume** | A Swiss Army knife for resumes and CVs
 
 Usage:
 
-  hackmyresume <command> <params> [<options>]
+   **hackmyresume [--version] [--help] [--silent] [--debug]**
+      **[--options] [--no-colors] <command> [<args>]**
 
-Available commands (type "hackmyresume help COMMAND" for details):
+Commands: (type "hackmyresume help COMMAND" for details)
 
-  **BUILD**         Build your resume to the destination format(s).
-  **ANALYZE**       Analyze your resume for keywords, gaps, and metrics.
-  **VALIDATE**      Validate your resume for errors and typos.
-  **NEW**           Create a new resume in FRESH or JSON Resume format.
-  **CONVERT**       Convert your resume between FRESH and JSON Resume.
-  **PEEK**          View a specific field or element on your resume.
-  **HELP**          View help on a specific HackMyResume command.
+   **BUILD**         Build your resume to the destination format(s).
+   **ANALYZE**       Analyze your resume for keywords, gaps, and metrics.
+   **VALIDATE**      Validate your resume for errors and typos.
+   **NEW**           Create a new resume in FRESH or JSON Resume format.
+   **CONVERT**       Convert your resume between FRESH and JSON Resume.
+   **PEEK**          View a specific field or element on your resume.
+   **HELP**          View help on a specific HackMyResume command.
 
-Available options:
+Common Tasks:
 
-  **--options -o**  Load options from an external JSON file.
-  **--debug -d**    Emit extended debugging info.
-  **--assert -a**   Treat resume validation warnings as errors.
-  **--no-colors**   Disable terminal colors.
-  **--tips**        Display theme messages and tips.
-  **--help -h**     Display help documentation.
-  **--version -v**  Display the current version.
+   Generate a resume in a specific format (HTML, Word, PDF, etc.)
 
-Examples:
+      **hackmyresume build rez.json to out/rez.html**
+      **hackmyresume build rez.json to out/rez.doc**
+      **hackmyresume build rez.json to out/rez.pdf**
+      **hackmyresume build rez.json to out/rez.txt**
+      **hackmyresume build rez.json to out/rez.md**
+      **hackmyresume build rez.json to out/rez.png**
+      **hackmyresume build rez.json to out/rez.tex**
 
-  hackmyresume  BUILD resume.json TO out/resume.all --theme modern
-  hackmyresume  ANALYZE resume.json
-  hackmyresume  NEW my-new-resume.json --format JRS
-  hackmyresume  CONVERT resume-fresh.json TO resume-jrs.json
-  hackmyresume  VALIDATE resume.json
-  hackmyresume  PEEK resume.json employment[2].summary
+   Build a resume to ALL available formats:
 
-Tips:
+      **hackmyresume build rez.json to out/rez.all**
 
-  - You can specify multiple sources and/or targets for all commands.
-  - You can use any FRESH or JSON Resume theme with HackMyResume.
-  - Specify a file extension of .all to generate your resume to all
-    available formats supported by the theme. (BUILD command.)
-  - The --theme parameter can specify either the name of a preinstalled
-    theme, or the path to a local FRESH or JSON Resume theme.
-  - Visit https://www.npmjs.com/search?q=jsonresume-theme for a full
-    listing of all available JSON Resume themes.
-  - Visit https://github.com/fresh-standard/fresh-themes for a complete
-    listing of all available FRESH themes.
-  - Report bugs to https://githut.com/hacksalot/HackMyResume/issues.
+   Build a resume with a specific theme:
+
+      **hackmyresume build rez.json to out/rez.all -t themeName**
+
+   Create a new empty resume:
+
+      **hackmyresume new rez.json**
+
+   Convert a resume between FRESH and JRS formats:
+
+      **hackmyresume convert rez.json converted.json**
+
+   Analyze a resume for important metrics
+
+      **hackmyresume analyze rez.json**
+
+   Find more resume themes:
+
+      **https://www.npmjs.com/search?q=jsonresume-theme**
+      **https://www.npmjs.com/search?q=fresh-theme**
+      **https://github.com/fresh-standard/fresh-themes**
+
+   Validate a resume's structure and syntax:
+
+      **hackmyresume validate resume.json**
+
+   View help on a specific command:
+
+      **hackmyresume help [build|convert|new|analyze|validate|peek|help]**
+
+   Submit a bug or request:
+
+      **https://githut.com/hacksalot/HackMyResume/issues**
+
+HackMyResume is free and open source software published
+under the MIT license. For more information, visit the
+HackMyResume website or GitHub project page.

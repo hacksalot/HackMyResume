@@ -1,28 +1,29 @@
-**build** | Generate resumes in supported output formats
+**build** | Generate themed resumes in multiple formats
 
 Usage:
 
-   hackmyresume BUILD <sources...> TO <targets...> [<options>]
+   **hackmyresume BUILD <resume> TO <target> [--theme]**
+      **[--pdf] [--no-escape] [--private]**
+
+   The BUILD command generates themed resumes and CVs in
+   multiple formats. Use it to create outbound resumes in
+   specific formats such HTML, MS Word, and PDF.
 
 Parameters:
 
-   **<sources...>**
+   **<resume>**
 
-      Absolute or relative path(s) to one or more resumes in
-      FRESH or JSON format, separated by spaces. If multiple
-      resumes are specified, they will be merged into a
-      single resume prior to transformation.
+      Path to a FRESH or JRS resume (*.json) containing your
+      resume data. Multiple resumes may be specified.
 
-         hackmyresume BUILD resume.json output.all
-         hackmyresume BUILD base.json developer.json gamedev.json TO out/resume.all
+      If multiple resumes are specified, they will be merged
+      into a single resume prior to transformation.
 
-   **<targets...>**
+   **<target>**
 
-      Absolute or relative path(s) to one or more outbound
-      resume(s), separated by spaces. If multiple output
-      resumes are specified, all of them will be generated.
-      The desired format of each resume will be determined
-      from the file extension:
+      Path to the desired output resume. Multiple resumes
+      may be specified. The file extension will determine
+      the format.
 
          .all        Generate all supported formats
          .html       HTML 5
@@ -33,27 +34,22 @@ Parameters:
          .png        PNG Image
          .latex      LaTeX
 
-       Note: not all formats are supported by all themes.
-       Check the theme's documentation for details.
+      Note: not all formats are supported by all themes!
+      Check the theme's documentation for details or use
+      the .all extension to build all available formats.
 
 Options:
 
    **--theme -t <theme-name-or-path>**
 
-      Relative or absolute path to a FRESH or JSON Resume
-      theme, or the name of a built-in theme.
-
-      As of 1.9.0, the following built-in themes are
-      provided: basis, modern, positive, compact, awesome.
+      Path to a FRESH or JSON Resume theme OR the name of a
+      built-in theme. Valid theme names are 'modern',
+      'positive', 'compact', 'awesome', and 'basis'.
 
    **--pdf -p <engine>**
 
-      Specify the PDF engine to use. Legal values are:
-
-         - none: Don't generate a PDF.
-         - wkhtmltopdf: Use the wkhtmltopdf PDF engine.
-         - phantom: use the PhantomJS PDF engine.
-         - weazyprint: use the WeazyPrint PDF engine.
+      Specify the PDF engine to use. Legal values are
+      'none', 'wkhtmltopdf', 'phantom', or 'weasyprint'.
 
    **--no-escape**
 
@@ -64,6 +60,10 @@ Options:
 
       Include resume fields marked as private.
 
-The BUILD command generates themed resumes and CVs in
-multiple formats from a single source of truth in the form
-of a FRESH or JSON Resume document.
+Notes:
+
+The BUILD command can be run against multiple source as well
+as multiple target resumes. If multiple source resumes are
+provided, they will be merged into a single source resume
+before generation. If multiple output resumes are provided,
+each will be generated in turn.

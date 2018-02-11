@@ -191,10 +191,8 @@ initialize = ( ar, exitCallback ) ->
   Command.prototype.missingArgument = (name) ->
     if this.name() != 'help'
       _err.err
-        fluenterror:
-          if this.name() != 'new'
-          then HMSTATUS.resumeNotFound
-          else HMSTATUS.createNameMissing
+        verb: @name()
+        fluenterror: HMSTATUS.resumeNotFound
         , true
     return
 
@@ -363,7 +361,8 @@ splitSrcDest = () ->
 
   params = this.parent.args.filter((j) -> return String.is(j) )
   if params.length == 0
-    throw { fluenterror: HMSTATUS.resumeNotFound, quit: true }
+    #tmpName = @name()
+    throw { fluenterror: HMSTATUS.resumeNotFound, verb: @name(), quit: true }
 
   # Find the TO keyword, if any
   splitAt = _.findIndex( params, (p) -> return p.toLowerCase() == 'to'; )

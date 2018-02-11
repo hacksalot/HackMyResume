@@ -1,23 +1,25 @@
-**analyze** | Analyze a FRESH resume document for statistics
+**analyze** | Analyze a resume for statistical insight
 
 Usage:
 
-   hackmyresume ANALYZE <resume> [<options>]
-   hackmyresume ANALYZE <resumes...> [<options>]
+   **hackmyresume ANALYZE <resume>**
+
+   The ANALYZE command evaluates the specified resume(s) for
+   coverage, duration, gaps, keywords, and other metrics.
+
+   This command can be run against multiple resumes. Each
+   will be analyzed in turn.
 
 Parameters:
 
-   **<resume/resumes>**
+   **<resume>**
 
-      Absolute or relative path(s) to one or more FRESH or
-      JSON Resume documents to be analyzed. Multiple resumes
-      can be specified, separated by spaces:
+      Path to a FRESH or JRS resume. Multiple resumes can be
+      specified, separated by spaces.
 
-         hackmyresume ANALYZE r1.json r2.json r3.json
+      hackmyresume ANALYZE resume.json
+      hackmyresume ANALYZE r1.json r2.json r3.json
 
 Options:
 
    **None.**
-
-The ANALYZE command performs simple analysis on a FRESH or
-JSON Resume document.

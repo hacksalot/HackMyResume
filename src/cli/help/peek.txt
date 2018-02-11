@@ -2,29 +2,30 @@
 
 Usage:
 
-   hackmyresume PEEK <resumes> <path> [<options>]
+   **hackmyresume PEEK <resume> <at>**
+
+   The PEEK command displays a specific piece or part of the
+   resume without requiring the resume to be opened in an
+   editor.
 
 Parameters:
 
-   **<resumes>**
+   **<resume>**
 
-      Absolute or relative path(s) to one or more FRESH or
-      JSON Resume documents to be validated. Multiple resumes
-      can be specified, separated by spaces:
+     Path to a FRESH or JRS resume. Multiple resumes can be
+     specified, separated by spaces.
 
-         hackmyresume PEEK r1.json r2.json r3.json
+         hackmyresume PEEK r1.json r2.json r3.json "employment.history[2]"
 
-   **<path>**
+   **<at>**
 
-      The part of the resume to peek at.
+      The resume property or field to be displayed. Can be
+      any valid resume path, for example:
+
+         education[0]
+         info.name
+         employment.history[3].start
 
 Options:
 
-   **--assert -a**
-
-      Tell HackMyResume to return a non-zero process exit
-      code if a resume fails to validate.
-
-The PEEK command displays a specific piece or part of the
-resume without requiring the resume to be opened in an
-editor.
+   **None.**

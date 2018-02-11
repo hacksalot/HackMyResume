@@ -113,14 +113,10 @@ Error-handling routines for HackMyResume.
         quit = false;
         break;
       case HMSTATUS.resumeNotFound:
-        msg = M2C(this.msgs.resumeNotFound.msg, 'yellow');
+        msg += M2C(FS.readFileSync(PATH.resolve(__dirname, 'help/' + ex.verb + '.txt'), 'utf8'), 'white', 'yellow');
         break;
       case HMSTATUS.missingCommand:
-        msg = M2C(this.msgs.missingCommand.msg + " (", 'yellow');
-        msg += Object.keys(FCMD.verbs).map(function(v, idx, ar) {
-          return (idx === ar.length - 1 ? chalk.yellow('or ') : '') + chalk.yellow.bold(v.toUpperCase());
-        }).join(chalk.yellow(', ')) + chalk.yellow(").\n\n");
-        msg += chalk.gray(FS.readFileSync(PATH.resolve(__dirname, '../cli/use.txt'), 'utf8'));
+        msg += M2C(FS.readFileSync(PATH.resolve(__dirname, 'help/use.txt'), 'utf8'), 'white', 'yellow');
         break;
       case HMSTATUS.invalidCommand:
         msg = printf(M2C(this.msgs.invalidCommand.msg, 'yellow'), ex.attempted);

@@ -4,7 +4,7 @@
 4|--debug
 4|-d
 5|notacommand
-8|new
+3|new
 0|new test/sandbox/cli-test/new-empty-resume.auto.json
 0|new test/sandbox/cli-test/new-empty-resume.jrs.json -f jrs
 0|new test/sandbox/cli-test/new-empty-resume.fresh.json -f fresh
