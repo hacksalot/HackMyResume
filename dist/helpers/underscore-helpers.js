@@ -1,11 +1,9 @@
-
-/**
-Template helper definitions for Underscore.
-@license MIT. See LICENSE.md for details.
-@module handlebars-helpers.js
- */
-
 (function() {
+  /**
+  Template helper definitions for Underscore.
+  @license MIT. See LICENSE.md for details.
+  @module handlebars-helpers.js
+  */
   var HANDLEBARS, _, helpers;
 
   HANDLEBARS = require('handlebars');
@@ -14,12 +12,10 @@ Template helper definitions for Underscore.
 
   helpers = require('./generic-helpers');
 
-
   /**
   Register useful Underscore helpers.
   @method registerHelpers
-   */
-
+  */
   module.exports = function(theme, opts, cssInfo, ctx, eng) {
     helpers.theme = theme;
     helpers.opts = opts;

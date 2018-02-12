@@ -1,11 +1,9 @@
-
-/**
-Output routines for HackMyResume.
-@license MIT. See LICENSE.md for details.
-@module cli/out
- */
-
 (function() {
+  /**
+  Output routines for HackMyResume.
+  @license MIT. See LICENSE.md for details.
+  @module cli/out
+  */
   var EXTEND, FS, HANDLEBARS, HME, LO, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
 
   chalk = require('chalk');
@@ -34,29 +32,26 @@ Output routines for HackMyResume.
 
   dbgStyle = 'cyan';
 
-
-  /** A stateful output module. All HMR console output handled here. */
-
-  module.exports = OutputHandler = (function() {
-    function OutputHandler(opts) {
+  module.exports = OutputHandler = class OutputHandler {
+    constructor(opts) {
       this.init(opts);
       return;
     }
 
-    OutputHandler.prototype.init = function(opts) {
+    init(opts) {
       this.opts = EXTEND(true, this.opts || {}, opts);
       this.msgs = YAML.load(PATH.join(__dirname, 'msg.yml')).events;
-    };
+    }
 
-    OutputHandler.prototype.log = function(msg) {
+    log(msg) {
       var finished;
       msg = msg || '';
       printf = require('printf');
       finished = printf.apply(printf, arguments);
       return this.opts.silent || console.log(finished);
-    };
+    }
 
-    OutputHandler.prototype["do"] = function(evt) {
+    do(evt) {
       var L, WRAP, adj, info, msg, msgs, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
       that = this;
       L = function() {
@@ -65,6 +60,9 @@ Output routines for HackMyResume.
       switch (evt.sub) {
         case HME.begin:
           return this.opts.debug && L(M2C(this.msgs.begin.msg, dbgStyle), evt.cmd.toUpperCase());
+        //when HME.beforeCreate
+        //L( M2C( this.msgs.beforeCreate.msg, 'green' ), evt.fmt, evt.file )
+        //break;
         case HME.afterCreate:
           L(M2C(this.msgs.beforeCreate.msg, evt.isError ? 'red' : 'green'), evt.fmt, evt.file);
           break;
@@ -166,11 +164,13 @@ Output routines for HackMyResume.
           break;
         case HME.afterPeek:
           sty = evt.error ? 'red' : (evt.target !== void 0 ? 'green' : 'yellow');
+          // "Peeking at 'someKey' in 'someFile'."
           if (evt.requested) {
             L(M2C(this.msgs.beforePeek.msg[0], sty), evt.requested, evt.file);
           } else {
             L(M2C(this.msgs.beforePeek.msg[1], sty), evt.file);
           }
+          // If the key was present, print it
           if (evt.target !== void 0 && !evt.error) {
             return console.dir(evt.target, {
               depth: null,
@@ -182,11 +182,9 @@ Output routines for HackMyResume.
             return L(chalk.red(evt.error.inner.inner));
           }
       }
-    };
+    }
 
-    return OutputHandler;
-
-  })();
+  };
 
 }).call(this);
 

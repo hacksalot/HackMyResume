@@ -1,11 +1,10 @@
-
-/**
-Block helper definitions for HackMyResume / FluentCV.
-@license MIT. See LICENSE.md for details.
-@module helpers/generic-helpers
- */
-
 (function() {
+  /**
+  Block helper definitions for HackMyResume / FluentCV.
+  @license MIT. See LICENSE.md for details.
+  @module helpers/generic-helpers
+  */
+  /** Block helper function definitions. */
   var BlockHelpers, HMSTATUS, LO, _, unused;
 
   HMSTATUS = require('../core/status-codes');
@@ -16,15 +15,11 @@ Block helper definitions for HackMyResume / FluentCV.
 
   unused = require('../utils/string');
 
-
-  /** Block helper function definitions. */
-
   BlockHelpers = module.exports = {
-
     /**
     Emit the enclosed content if the resume has a section with
     the specified name. Otherwise, emit an empty string ''.
-     */
+    */
     section: function(title, options) {
       var obj, ret;
       title = title.trim().toLowerCase();
@@ -53,22 +48,20 @@ Block helper definitions for HackMyResume / FluentCV.
         return options.fn(this);
       }
     },
-
     /**
     Emit the enclosed content if the resume has the named
     property or subproperty.
-     */
+    */
     has: function(title, options) {
       title = title && title.trim().toLowerCase();
       if (LO.get(this.r, title)) {
         return options.fn(this);
       }
     },
-
     /**
     Return true if either value is truthy.
     @method either
-     */
+    */
     either: function(lhs, rhs, options) {
       if (lhs || rhs) {
         return options.fn(this);

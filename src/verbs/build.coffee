@@ -90,10 +90,10 @@ _build = ( src, dst, opts ) ->
       return
     theme = _opts.themeObj = _loadTheme tFolder
     _addFreebieFormats theme
-  catch
+  catch err
     newEx =
       fluenterror: HMSTATUS.themeLoad
-      inner: _error
+      inner: err
       attempted: _opts.theme
       quit: true
     @err HMSTATUS.themeLoad, newEx

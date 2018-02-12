@@ -1,11 +1,13 @@
-
-/**
-Definition of the HandlebarsGenerator class.
-@license MIT. See LICENSE.md for details.
-@module renderers/handlebars-generator
- */
-
 (function() {
+  /**
+  Definition of the HandlebarsGenerator class.
+  @license MIT. See LICENSE.md for details.
+  @module renderers/handlebars-generator
+  */
+  /**
+  Perform template-based resume generation using Handlebars.js.
+  @class HandlebarsGenerator
+  */
   var FS, HANDLEBARS, HMSTATUS, HandlebarsGenerator, PATH, READFILES, SLASH, _, parsePath, registerHelpers, registerPartials;
 
   _ = require('underscore');
@@ -26,31 +28,28 @@ Definition of the HandlebarsGenerator class.
 
   SLASH = require('slash');
 
-
-  /**
-  Perform template-based resume generation using Handlebars.js.
-  @class HandlebarsGenerator
-   */
-
   HandlebarsGenerator = module.exports = {
     generateSimple: function(data, tpl) {
-      var template;
+      var err, template;
       try {
+        // Compile and run the Handlebars template.
         template = HANDLEBARS.compile(tpl, {
           strict: false,
           assumeObjects: false,
           noEscape: data.opts.noescape
         });
         return template(data);
-      } catch (_error) {
+      } catch (error1) {
+        err = error1;
         throw {
           fluenterror: HMSTATUS[template ? 'invokeTemplate' : 'compileTemplate'],
-          inner: _error
+          inner: err
         };
       }
     },
     generate: function(json, jst, format, curFmt, opts, theme) {
       var ctx, encData;
+      // Preprocess text
       encData = json;
       if (format === 'html' || format === 'pdf') {
         encData = json.markdownify();
@@ -58,8 +57,10 @@ Definition of the HandlebarsGenerator class.
       if (format === 'doc') {
         encData = json.xmlify();
       }
+      // Set up partials and helpers
       registerPartials(format, theme);
       registerHelpers(theme, encData, opts);
+      // Set up the context
       ctx = {
         r: encData,
         RAW: json,
@@ -70,6 +71,7 @@ Definition of the HandlebarsGenerator class.
         results: curFmt.files,
         headFragment: opts.headFragment || ''
       };
+      // Render the template
       return this.generateSimple(ctx, jst);
     }
   };
@@ -77,7 +79,10 @@ Definition of the HandlebarsGenerator class.
   registerPartials = function(format, theme) {
     var partialsFolder;
     if (_.contains(['html', 'doc', 'md', 'txt', 'pdf'], format)) {
+      // Locate the global partials folder
       partialsFolder = PATH.join(parsePath(require.resolve('fresh-themes')).dirname, '/partials/', format === 'pdf' ? 'html' : format);
+      // Register global partials in the /partials/[format] folder
+      // TODO: Only do this once per HMR invocation.
       _.each(READFILES(partialsFolder, function(error) {
         return {};
       }), function(el) {
@@ -90,6 +95,7 @@ Definition of the HandlebarsGenerator class.
         return theme.partialsInitialized = true;
       });
     }
+    // Register theme-specific partials
     return _.each(theme.partials, function(el) {
       var compiledTemplate, tplData;
       tplData = FS.readFileSync(el.path, 'utf8');

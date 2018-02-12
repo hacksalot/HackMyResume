@@ -24,6 +24,6 @@ module.exports = ( cmd, args, isSync, callback, param ) ->
         callback?(info.error, param)
         return cmd: cmd, inner: info.error
 
-  catch
-    callback?(_error, param)
-    _error
+  catch ex
+    callback?(ex, param)
+    ex

@@ -1,32 +1,22 @@
-
-/**
-Definition of the MarkdownGenerator class.
-@module generators/markdown-generator
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var MarkdownGenerator, TemplateGenerator,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Definition of the MarkdownGenerator class.
+  @module generators/markdown-generator
+  @license MIT. See LICENSE.md for details.
+  */
+  var MarkdownGenerator, TemplateGenerator;
 
   TemplateGenerator = require('./template-generator');
 
-
   /**
   MarkdownGenerator generates a Markdown-formatted resume via TemplateGenerator.
-   */
-
-  module.exports = MarkdownGenerator = (function(superClass) {
-    extend(MarkdownGenerator, superClass);
-
-    function MarkdownGenerator() {
-      MarkdownGenerator.__super__.constructor.call(this, 'md', 'txt');
+  */
+  module.exports = MarkdownGenerator = class MarkdownGenerator extends TemplateGenerator {
+    constructor() {
+      super('md', 'txt');
     }
 
-    return MarkdownGenerator;
-
-  })(TemplateGenerator);
+  };
 
 }).call(this);
 

@@ -1,11 +1,9 @@
-
-/**
-Generic template helper definitions for command-line output.
-@module console-helpers.js
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
+  /**
+  Generic template helper definitions for command-line output.
+  @module console-helpers.js
+  @license MIT. See LICENSE.md for details.
+  */
   var CHALK, LO, PAD, _, consoleFormatHelpers;
 
   PAD = require('string-padding');
@@ -21,7 +19,7 @@ Generic template helper definitions for command-line output.
   consoleFormatHelpers = module.exports = {
     v: function(val, defaultVal, padding, style) {
       var retVal, spaces;
-      retVal = val === null || val === void 0 ? defaultVal : val;
+      retVal = (val === null || val === void 0) ? defaultVal : val;
       spaces = 0;
       if (String.is(padding)) {
         spaces = parseInt(padding, 10);

@@ -12,15 +12,15 @@ module.exports = ( file ) ->
   try
     ret.raw = FS.readFileSync( file, 'utf8' );
     ret.json = JSON.parse( ret.raw );
-  catch
+  catch err
     # If we get here, either FS.readFileSync or JSON.parse failed.
     # We'll return HMSTATUS.readError or HMSTATUS.parseError.
     retRaw = ret.raw && ret.raw.trim()
     ret.ex =
       op: if retRaw then 'parse' else 'read'
       inner:
-        if SyntaxErrorEx.is( _error )
-        then (new SyntaxErrorEx( _error, retRaw ))
-        else _error
+        if SyntaxErrorEx.is( err )
+        then (new SyntaxErrorEx( err, retRaw ))
+        else err
       file: file
   ret

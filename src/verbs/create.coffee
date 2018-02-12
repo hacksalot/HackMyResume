@@ -58,10 +58,10 @@ _createOne = ( t, opts ) ->
     newRez.save t
     ret = newRez
     return
-  catch
+  catch err
     ret =
       fluenterror: HMSTATUS.createError
-      inner: _error
+      inner: err
     return
   finally
     @.stat HMEVENT.afterCreate, fmt: safeFmt, file: t, isError: ret.fluenterror

@@ -1,21 +1,17 @@
-
-/**
-External API surface for HackMyResume.
-@license MIT. See LICENSE.md for details.
-@module hackmycore/index
- */
-
-
-/** API facade for HackMyResume. */
-
 (function() {
+  /**
+  External API surface for HackMyResume.
+  @license MIT. See LICENSE.md for details.
+  @module hackmycore/index
+  */
+  /** API facade for HackMyResume. */
   module.exports = {
     verbs: {
       build: require('./verbs/build'),
       analyze: require('./verbs/analyze'),
       validate: require('./verbs/validate'),
       convert: require('./verbs/convert'),
-      "new": require('./verbs/create'),
+      new: require('./verbs/create'),
       peek: require('./verbs/peek')
     },
     alias: {

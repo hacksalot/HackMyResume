@@ -1,11 +1,16 @@
-
-/**
-Definition of the FRESHResume class.
-@license MIT. See LICENSE.md for details.
-@module core/fresh-resume
- */
-
 (function() {
+  /**
+  Definition of the FRESHResume class.
+  @license MIT. See LICENSE.md for details.
+  @module core/fresh-resume
+  */
+  /**
+  Convert human-friendly dates into formal Moment.js dates for all collections.
+  We don't want to lose the raw textual date as entered by the user, so we store
+  the Moment-ified date as a separate property with a prefix of .safe. For ex:
+  job.startDate is the date as entered by the user. job.safeStartDate is the
+  parsed Moment.js date that we actually use in processing.
+  */
   var CONVERTER, FS, FluentDate, FreshResume, JRSResume, MD, PATH, XML, _, __, _parseDates, extend, moment, validator;
 
   FS = require('fs');
@@ -32,27 +37,20 @@ Definition of the FRESHResume class.
 
   FluentDate = require('./fluent-date');
 
-
   /**
   A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
   object is an instantiation of that JSON decorated with utility methods.
   @constructor
-   */
-
-  FreshResume = (function() {
-    function FreshResume() {}
-
-
+  */
+  FreshResume = class FreshResume { // extends AbstractResume
     /** Initialize the the FreshResume from JSON string data. */
-
-    FreshResume.prototype.parse = function(stringData, opts) {
+    parse(stringData, opts) {
       var ref;
       this.imp = (ref = this.imp) != null ? ref : {
         raw: stringData
       };
       return this.parseJSON(JSON.parse(stringData), opts);
-    };
-
+    }
 
     /**
     Initialize the FreshResume from JSON.
@@ -62,20 +60,22 @@ Definition of the FRESHResume class.
     @param rep {Object} The raw JSON representation.
     @param opts {Object} Resume loading and parsing options.
     {
-      date: Perform safe date conversion.
-      sort: Sort resume items by date.
-      compute: Prepare computed resume totals.
+    date: Perform safe date conversion.
+    sort: Sort resume items by date.
+    compute: Prepare computed resume totals.
     }
-     */
-
-    FreshResume.prototype.parseJSON = function(rep, opts) {
-      var ignoreList, privateList, ref, ref1, scrubbed, scrubber;
+    */
+    parseJSON(rep, opts) {
+      var ignoreList, privateList, ref, scrubbed, scrubber;
       if (opts && opts.privatize) {
+        // Ignore any element with the 'ignore: true' or 'private: true' designator.
         scrubber = require('../utils/resume-scrubber');
-        ref = scrubber.scrubResume(rep, opts), scrubbed = ref.scrubbed, ignoreList = ref.ignoreList, privateList = ref.privateList;
+        ({scrubbed, ignoreList, privateList} = scrubber.scrubResume(rep, opts));
       }
+      // Now apply the resume representation onto this object
       extend(true, this, opts && opts.privatize ? scrubbed : rep);
-      if (!((ref1 = this.imp) != null ? ref1.processed : void 0)) {
+      if (!((ref = this.imp) != null ? ref.processed : void 0)) {
+        // Set up metadata TODO: Clean up metadata on the object model.
         opts = opts || {};
         if (opts.imp === void 0 || opts.imp) {
           this.imp = this.imp || {};
@@ -85,6 +85,7 @@ Definition of the FRESHResume class.
           }
         }
         this.imp.processed = true;
+        // Parse dates, sort dates, and calculate computed values
         (opts.date === void 0 || opts.date) && _parseDates.call(this);
         (opts.sort === void 0 || opts.sort) && this.sort();
         (opts.compute === void 0 || opts.compute) && (this.computed = {
@@ -93,25 +94,26 @@ Definition of the FRESHResume class.
         });
       }
       return this;
-    };
-
+    }
 
     /** Save the sheet to disk (for environments that have disk access). */
-
-    FreshResume.prototype.save = function(filename) {
+    save(filename) {
       this.imp.file = filename || this.imp.file;
       FS.writeFileSync(this.imp.file, this.stringify(), 'utf8');
       return this;
-    };
-
+    }
 
     /**
     Save the sheet to disk in a specific format, either FRESH or JSON Resume.
-     */
-
-    FreshResume.prototype.saveAs = function(filename, format) {
+    */
+    saveAs(filename, format) {
       var newRep, parts, safeFormat, useEdgeSchema;
+      // If format isn't specified, default to FRESH
       safeFormat = (format && format.trim()) || 'FRESH';
+      // Validate against the FRESH version regex
+      // freshVersionReg = require '../utils/fresh-version-regex'
+      // if (not freshVersionReg().test( safeFormat ))
+      //   throw badVer: safeFormat
       parts = safeFormat.split('@');
       if (parts[0] === 'FRESH') {
         this.imp.file = filename || this.imp.file;
@@ -128,8 +130,7 @@ Definition of the FRESHResume class.
         };
       }
       return this;
-    };
-
+    }
 
     /**
     Duplicate this FreshResume instance.
@@ -137,47 +138,40 @@ Definition of the FRESHResume class.
     and then passes the result into a new FreshResume instance via .parseJSON.
     We do it this way to create a true clone of the object without re-running any
     of the associated processing.
-     */
-
-    FreshResume.prototype.dupe = function() {
+    */
+    dupe() {
       var jso, rnew;
       jso = extend(true, {}, this);
       rnew = new FreshResume();
       rnew.parseJSON(jso, {});
       return rnew;
-    };
-
+    }
 
     /**
     Convert this object to a JSON string, sanitizing meta-properties along the
     way.
-     */
-
-    FreshResume.prototype.stringify = function() {
+    */
+    stringify() {
       return FreshResume.stringify(this);
-    };
-
+    }
 
     /**
     Create a copy of this resume in which all string fields have been run through
     a transformation function (such as a Markdown filter or XML encoder).
     TODO: Move this out of FRESHResume.
-     */
-
-    FreshResume.prototype.transformStrings = function(filt, transformer) {
+    */
+    transformStrings(filt, transformer) {
       var ret, trx;
       ret = this.dupe();
       trx = require('../utils/string-transformer');
       return trx(ret, filt, transformer);
-    };
-
+    }
 
     /**
     Create a copy of this resume in which all fields have been interpreted as
     Markdown.
-     */
-
-    FreshResume.prototype.markdownify = function() {
+    */
+    markdownify() {
       var MDIN, trx;
       MDIN = function(txt) {
         return MD(txt || '').replace(/^\s*<p>|<\/p>\s*$/gi, '');
@@ -189,44 +183,49 @@ Definition of the FRESHResume class.
         return MDIN(val);
       };
       return this.transformStrings(['skills', 'url', 'start', 'end', 'date'], trx);
-    };
-
+    }
 
     /**
     Create a copy of this resume in which all fields have been interpreted as
     Markdown.
-     */
-
-    FreshResume.prototype.xmlify = function() {
+    */
+    xmlify() {
       var trx;
       trx = function(key, val) {
         return XML(val);
       };
       return this.transformStrings([], trx);
-    };
-
+    }
 
     /** Return the resume format. */
-
-    FreshResume.prototype.format = function() {
+    format() {
       return 'FRESH';
-    };
-
+    }
 
     /**
     Return internal metadata. Create if it doesn't exist.
-     */
-
-    FreshResume.prototype.i = function() {
+    */
+    i() {
       return this.imp = this.imp || {};
-    };
-
+    }
 
     /**
     Return a unique list of all skills declared in the resume.
-     */
+    */
+    // TODO: Several problems here:
+    // 1) Confusing name. Easily confused with the keyword-inspector module, which
+    // parses resume body text looking for these same keywords. This should probably
+    // be renamed.
 
-    FreshResume.prototype.keywords = function() {
+    // 2) Doesn't bother trying to integrate skills.list with skills.sets if they
+    // happen to declare different skills, and if skills.sets declares ONE skill and
+    // skills.list declared 50, only 1 skill will be registered.
+
+    // 3) In the future, skill.sets should only be able to use skills declared in
+    // skills.list. That is, skills.list is the official record of a candidate's
+    // declared skills. skills.sets is just a way of grouping those into skillsets
+    // for easier consumption.
+    keywords() {
       var flatSkills;
       flatSkills = [];
       if (this.skills) {
@@ -244,19 +243,17 @@ Definition of the FRESHResume class.
         flatSkills = _.uniq(flatSkills);
       }
       return flatSkills;
-    };
-
+    }
 
     /**
     Reset the sheet to an empty state. TODO: refactor/review
-     */
-
-    FreshResume.prototype.clear = function(clearMeta) {
+    */
+    clear(clearMeta) {
       clearMeta = ((clearMeta === void 0) && true) || clearMeta;
       if (clearMeta) {
         delete this.imp;
       }
-      delete this.computed;
+      delete this.computed; // Don't use Object.keys() here
       delete this.employment;
       delete this.service;
       delete this.education;
@@ -266,14 +263,12 @@ Definition of the FRESHResume class.
       delete this.interests;
       delete this.skills;
       return delete this.social;
-    };
-
+    }
 
     /**
     Get a safe count of the number of things in a section.
-     */
-
-    FreshResume.prototype.count = function(obj) {
+    */
+    count(obj) {
       if (!obj) {
         return 0;
       }
@@ -284,14 +279,11 @@ Definition of the FRESHResume class.
         return obj.sets.length;
       }
       return obj.length || 0;
-    };
+    }
 
-
-    /** Add work experience to the sheet. */
-
-    FreshResume.prototype.add = function(moniker) {
+    add(moniker) {
       var defSheet, newObject;
-      defSheet = FreshResume["default"]();
+      defSheet = FreshResume.default();
       newObject = defSheet[moniker].history ? $.extend(true, {}, defSheet[moniker].history[0]) : moniker === 'skills' ? $.extend(true, {}, defSheet.skills.sets[0]) : $.extend(true, {}, defSheet[moniker][0]);
       this[moniker] = this[moniker] || [];
       if (this[moniker].history) {
@@ -302,63 +294,53 @@ Definition of the FRESHResume class.
         this[moniker].push(newObject);
       }
       return newObject;
-    };
-
+    }
 
     /**
     Determine if the sheet includes a specific social profile (eg, GitHub).
-     */
-
-    FreshResume.prototype.hasProfile = function(socialNetwork) {
+    */
+    hasProfile(socialNetwork) {
       socialNetwork = socialNetwork.trim().toLowerCase();
       return this.social && _.some(this.social, function(p) {
         return p.network.trim().toLowerCase() === socialNetwork;
       });
-    };
-
+    }
 
     /** Return the specified network profile. */
-
-    FreshResume.prototype.getProfile = function(socialNetwork) {
+    getProfile(socialNetwork) {
       socialNetwork = socialNetwork.trim().toLowerCase();
       return this.social && _.find(this.social, function(sn) {
         return sn.network.trim().toLowerCase() === socialNetwork;
       });
-    };
-
+    }
 
     /**
     Return an array of profiles for the specified network, for when the user
     has multiple eg. GitHub accounts.
-     */
-
-    FreshResume.prototype.getProfiles = function(socialNetwork) {
+    */
+    getProfiles(socialNetwork) {
       socialNetwork = socialNetwork.trim().toLowerCase();
       return this.social && _.filter(this.social, function(sn) {
         return sn.network.trim().toLowerCase() === socialNetwork;
       });
-    };
-
+    }
 
     /** Determine if the sheet includes a specific skill. */
-
-    FreshResume.prototype.hasSkill = function(skill) {
+    hasSkill(skill) {
       skill = skill.trim().toLowerCase();
       return this.skills && _.some(this.skills, function(sk) {
         return sk.keywords && _.some(sk.keywords, function(kw) {
           return kw.trim().toLowerCase() === skill;
         });
       });
-    };
-
+    }
 
     /** Validate the sheet against the FRESH Resume schema. */
-
-    FreshResume.prototype.isValid = function(info) {
+    isValid(info) {
       var ret, schemaObj, validate;
       schemaObj = require('fresh-resume-schema');
       validator = require('is-my-json-valid');
-      validate = validator(schemaObj, {
+      validate = validator(schemaObj, { // See Note [1].
         formats: {
           date: /^\d{4}(?:-(?:0[0-9]{1}|1[0-2]{1})(?:-[0-9]{2})?)?$/
         }
@@ -369,21 +351,19 @@ Definition of the FRESHResume class.
         this.imp.validationErrors = validate.errors;
       }
       return ret;
-    };
+    }
 
-    FreshResume.prototype.duration = function(unit) {
+    duration(unit) {
       var inspector;
       inspector = require('../inspectors/duration-inspector');
       return inspector.run(this, 'employment.history', 'start', 'end', unit);
-    };
-
+    }
 
     /**
     Sort dated things on the sheet by start date descending. Assumes that dates
     on the sheet have been processed with _parseDates().
-     */
-
-    FreshResume.prototype.sort = function() {
+    */
+    sort() {
       var byDateDesc, sortSection;
       byDateDesc = function(a, b) {
         if (a.safe.start.isBefore(b.safe.start)) {
@@ -417,30 +397,24 @@ Definition of the FRESHResume class.
           return (a.safe.date.isAfter(b.safe.date) && -1) || 0;
         }
       });
-    };
+    }
 
-    return FreshResume;
-
-  })();
-
+  };
 
   /**
   Get the default (starter) sheet.
-   */
-
-  FreshResume["default"] = function() {
+  */
+  FreshResume.default = function() {
     return new FreshResume().parseJSON(require('fresh-resume-starter').fresh);
   };
-
 
   /**
   Convert the supplied FreshResume to a JSON string, sanitizing meta-properties
   along the way.
-   */
-
+  */
   FreshResume.stringify = function(obj) {
     var replacer;
-    replacer = function(key, value) {
+    replacer = function(key, value) { // Exclude these keys from stringification
       var exKeys;
       exKeys = ['imp', 'warnings', 'computed', 'filt', 'ctrl', 'index', 'safe', 'result', 'isModified', 'htmlPreview', 'display_progress_bar'];
       if (_.some(exKeys, function(val) {
@@ -454,19 +428,11 @@ Definition of the FRESHResume class.
     return JSON.stringify(obj, replacer, 2);
   };
 
-
-  /**
-  Convert human-friendly dates into formal Moment.js dates for all collections.
-  We don't want to lose the raw textual date as entered by the user, so we store
-  the Moment-ified date as a separate property with a prefix of .safe. For ex:
-  job.startDate is the date as entered by the user. job.safeStartDate is the
-  parsed Moment.js date that we actually use in processing.
-   */
-
   _parseDates = function() {
     var _fmt, replaceDatesInObject, that;
     _fmt = require('./fluent-date').fmt;
     that = this;
+    // TODO: refactor recursion
     replaceDatesInObject = function(obj) {
       if (!obj) {
         return;
@@ -498,10 +464,14 @@ Definition of the FRESHResume class.
     });
   };
 
-
   /** Export the Sheet function/ctor. */
-
   module.exports = FreshResume;
+
+  // Note 1: Adjust default date validation to allow YYYY and YYYY-MM formats
+// in addition to YYYY-MM-DD. The original regex:
+
+//     /^\d{4}-(?:0[0-9]{1}|1[0-2]{1})-[0-9]{2}$/
+
 
 }).call(this);
 

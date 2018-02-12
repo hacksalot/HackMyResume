@@ -104,9 +104,9 @@ _parse = ( fileName, opts, eve ) ->
 
     eve && eve.stat HME.afterParse, { file: fileName, data: ret.json, fmt: orgFormat }
     return ret
-  catch
+  catch err
     # Can be ENOENT, EACCES, SyntaxError, etc.
     fluenterror: if rawData then HMS.parseError else HMS.readError
-    inner: _error
+    inner: err
     raw: rawData
     file: fileName

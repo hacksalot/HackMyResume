@@ -24,12 +24,12 @@ UnderscoreGenerator = module.exports =
       # Compile and run the Handlebars template.
       t = _.template tpl
       t data
-    catch
+    catch err
       #console.dir _error
       HMS = require '../core/status-codes'
       throw
         fluenterror: HMS[if t then 'invokeTemplate' else 'compileTemplate']
-        inner: _error
+        inner: err
 
 
 

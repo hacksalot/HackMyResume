@@ -1,11 +1,9 @@
-
-/**
-Definition of the Markdown to WordProcessingML conversion routine.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
-@module utils/html-to-wpml
- */
-
 (function() {
+  /**
+  Definition of the Markdown to WordProcessingML conversion routine.
+  @license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+  @module utils/html-to-wpml
+  */
   var HTML5Tokenizer, XML, _;
 
   XML = require('xml-escape');
@@ -16,8 +14,12 @@ Definition of the Markdown to WordProcessingML conversion routine.
 
   module.exports = function(html) {
     var final, is_bold, is_italic, is_link, link_url, tokens;
+    // Tokenize the HTML stream.
     tokens = HTML5Tokenizer.tokenize(html);
     final = is_bold = is_italic = is_link = link_url = '';
+    // Process <em>, <strong>, and <a> elements in the HTML stream, producing
+    // equivalent WordProcessingML that can be dumped into a <w:p> or other
+    // text container element.
     _.each(tokens, function(tok) {
       var style;
       switch (tok.type) {

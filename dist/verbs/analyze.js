@@ -1,14 +1,12 @@
-
-/**
-Implementation of the 'analyze' verb for HackMyResume.
-@module verbs/analyze
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _analyzeOne, _loadInspectors, chalk,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Implementation of the 'analyze' verb for HackMyResume.
+  @module verbs/analyze
+  @license MIT. See LICENSE.md for details.
+  */
+  /** Private workhorse for the 'analyze' command. */
+  /** Analyze a single resume. */
+  var AnalyzeVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, ResumeFactory, Verb, _, _analyze, _analyzeOne, _loadInspectors, chalk;
 
   MKDIRP = require('mkdirp');
 
@@ -26,22 +24,13 @@ Implementation of the 'analyze' verb for HackMyResume.
 
   chalk = require('chalk');
 
-
   /** An invokable resume analysis command. */
-
-  module.exports = AnalyzeVerb = (function(superClass) {
-    extend(AnalyzeVerb, superClass);
-
-    function AnalyzeVerb() {
-      AnalyzeVerb.__super__.constructor.call(this, 'analyze', _analyze);
+  module.exports = AnalyzeVerb = class AnalyzeVerb extends Verb {
+    constructor() {
+      super('analyze', _analyze);
     }
 
-    return AnalyzeVerb;
-
-  })(Verb);
-
-
-  /** Private workhorse for the 'analyze' command. */
+  };
 
   _analyze = function(sources, dst, opts) {
     var nlzrs, results;
@@ -58,7 +47,7 @@ Implementation of the 'analyze' verb for HackMyResume.
         format: 'FRESH',
         objectify: true,
         inner: {
-          "private": opts["private"] === true
+          private: opts.private === true
         }
       }, this);
       if (opts.assert && this.hasError()) {
@@ -79,9 +68,6 @@ Implementation of the 'analyze' verb for HackMyResume.
     }
     return results;
   };
-
-
-  /** Analyze a single resume. */
 
   _analyzeOne = function(resumeObject, nlzrs, opts) {
     var info, rez, safeFormat;

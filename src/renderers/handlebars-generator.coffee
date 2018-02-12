@@ -34,11 +34,11 @@ HandlebarsGenerator = module.exports =
         assumeObjects: false
         noEscape: data.opts.noescape
       return template data
-    catch
+    catch err
       throw
         fluenterror:
           HMSTATUS[ if template then 'invokeTemplate' else 'compileTemplate' ]
-        inner: _error
+        inner: err
 
 
 

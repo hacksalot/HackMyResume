@@ -1,11 +1,9 @@
-
-/*
-Event code definitions.
-@module core/event-codes
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
+  /*
+  Event code definitions.
+  @module core/event-codes
+  @license MIT. See LICENSE.md for details.
+  */
   module.exports = {
     error: -1,
     success: 0,

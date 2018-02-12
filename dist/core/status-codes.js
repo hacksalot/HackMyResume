@@ -1,11 +1,9 @@
-
-/**
-Status codes for HackMyResume.
-@module core/status-codes
-@license MIT. See LICENSE.MD for details.
- */
-
 (function() {
+  /**
+  Status codes for HackMyResume.
+  @module core/status-codes
+  @license MIT. See LICENSE.MD for details.
+  */
   module.exports = {
     success: 0,
     themeNotFound: 1,

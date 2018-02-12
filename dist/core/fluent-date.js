@@ -1,17 +1,14 @@
-
-/**
-The HackMyResume date representation.
-@license MIT. See LICENSE.md for details.
-@module core/fluent-date
- */
-
 (function() {
+  /**
+  The HackMyResume date representation.
+  @license MIT. See LICENSE.md for details.
+  @module core/fluent-date
+  */
   var FluentDate, abbr, moment, months;
 
   moment = require('moment');
 
   require('../utils/string');
-
 
   /**
   Create a FluentDate from a string or Moment date object. There are a few date
@@ -28,20 +25,17 @@ The HackMyResume date representation.
   deprecation warnings, it's recommended to either a) explicitly specify the date
   format or b) use an ISO format. For clarity, we handle these cases explicitly.
   @class FluentDate
-   */
-
-  FluentDate = (function() {
-    function FluentDate(dt) {
+  */
+  FluentDate = class FluentDate {
+    constructor(dt) {
       this.rep = this.fmt(dt);
     }
 
-    FluentDate.isCurrent = function(dt) {
+    static isCurrent(dt) {
       return !dt || (String.is(dt) && /^(present|now|current)$/.test(dt));
-    };
+    }
 
-    return FluentDate;
-
-  })();
+  };
 
   months = {};
 
@@ -64,20 +58,20 @@ The HackMyResume date representation.
     throws = (throws === void 0 || throws === null) || throws;
     if (typeof dt === 'string' || dt instanceof String) {
       dt = dt.toLowerCase().trim();
-      if (/^(present|now|current)$/.test(dt)) {
+      if (/^(present|now|current)$/.test(dt)) { // "Present", "Now"
         return moment();
-      } else if (/^\D+\s+\d{4}$/.test(dt)) {
+      } else if (/^\D+\s+\d{4}$/.test(dt)) { // "Mar 2015"
         parts = dt.split(' ');
         month = months[parts[0]] || abbr[parts[0]];
         temp = parts[1] + '-' + ((ref = month < 10) != null ? ref : '0' + {
           month: month.toString()
         });
         return moment(temp, 'YYYY-MM');
-      } else if (/^\d{4}-\d{1,2}$/.test(dt)) {
+      } else if (/^\d{4}-\d{1,2}$/.test(dt)) { // "2015-03", "1998-4"
         return moment(dt, 'YYYY-MM');
-      } else if (/^\s*\d{4}\s*$/.test(dt)) {
+      } else if (/^\s*\d{4}\s*$/.test(dt)) { // "2015"
         return moment(dt, 'YYYY');
-      } else if (/^\s*$/.test(dt)) {
+      } else if (/^\s*$/.test(dt)) { // "", " "
         return moment();
       } else {
         mt = moment(dt);

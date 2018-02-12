@@ -1,11 +1,11 @@
-
-/**
-Error-handling routines for HackMyResume.
-@module cli/error
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
+  /**
+  Error-handling routines for HackMyResume.
+  @module cli/error
+  @license MIT. See LICENSE.md for details.
+  */
+  /** Error handler for HackMyResume. All errors are handled here.
+  @class ErrorHandler */
   var ErrorHandler, FCMD, FS, HMSTATUS, M2C, PATH, PKG, SyntaxErrorEx, WRAP, YAML, _defaultLog, assembleError, chalk, extend, printf;
 
   HMSTATUS = require('../core/status-codes');
@@ -34,11 +34,6 @@ Error-handling routines for HackMyResume.
 
   require('string.prototype.startswith');
 
-
-  /** Error handler for HackMyResume. All errors are handled here.
-  @class ErrorHandler
-   */
-
   ErrorHandler = module.exports = {
     init: function(debug, assert, silent) {
       this.debug = debug;
@@ -49,14 +44,20 @@ Error-handling routines for HackMyResume.
     },
     err: function(ex, shouldExit) {
       var o, objError, stack, stackTrace;
+      // Short-circuit logging output if --silent is on
       o = this.silent ? function() {} : _defaultLog;
       if (ex.pass) {
+        // Special case; can probably be removed.
         throw ex;
       }
+      // Load error messages
       this.msgs = this.msgs || require('./msg').errors;
+      // Handle packaged HMR exceptions
       if (ex.fluenterror) {
+        // Output the error message
         objError = assembleError.call(this, ex);
         o(this['format_' + objError.etype](objError.msg));
+        // Output the stack (sometimes)
         if (objError.withStack) {
           stack = ex.stack || (ex.inner && ex.inner.stack);
           stack && o(chalk.gray(stack));
@@ -72,6 +73,7 @@ Error-handling routines for HackMyResume.
           return process.exit(ex.fluenterror);
         }
       } else {
+        // Handle raw exceptions
         o(ex);
         stackTrace = ex.stack || (ex.inner && ex.inner.stack);
         if (stackTrace && this.debug) {
@@ -113,9 +115,15 @@ Error-handling routines for HackMyResume.
         quit = false;
         break;
       case HMSTATUS.resumeNotFound:
+        //msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
         msg += M2C(FS.readFileSync(PATH.resolve(__dirname, 'help/' + ex.verb + '.txt'), 'utf8'), 'white', 'yellow');
         break;
       case HMSTATUS.missingCommand:
+        // msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
+        // msg += Object.keys( FCMD.verbs ).map( (v, idx, ar) ->
+        //   return ( if idx == ar.length - 1 then chalk.yellow('or ') else '') +
+        //     chalk.yellow.bold(v.toUpperCase());
+        // ).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
         msg += M2C(FS.readFileSync(PATH.resolve(__dirname, 'help/use.txt'), 'utf8'), 'white', 'yellow');
         break;
       case HMSTATUS.invalidCommand:
@@ -224,6 +232,7 @@ Error-handling routines for HackMyResume.
         etype = 'error';
         break;
       case HMSTATUS.createError:
+        // inner.code could be EPERM, EACCES, etc
         msg = printf(M2C(this.msgs.createError.msg), ex.inner.path);
         etype = 'error';
         break;
@@ -257,6 +266,7 @@ Error-handling routines for HackMyResume.
         break;
       case HMSTATUS.unknownSchema:
         msg = M2C(this.msgs.unknownSchema.msg[0]);
+        //msg += "\n" + M2C( @msgs.unknownSchema.msg[1], 'yellow' )
         etype = 'error';
         break;
       case HMSTATUS.themeHelperLoad:
@@ -268,8 +278,8 @@ Error-handling routines for HackMyResume.
         etype = 'error';
     }
     return {
-      msg: msg,
-      withStack: withStack,
+      msg: msg, // The error message to display
+      withStack: withStack, // Whether to include the stack
       quit: quit,
       etype: etype
     };
