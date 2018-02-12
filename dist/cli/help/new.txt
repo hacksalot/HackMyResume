@@ -1,0 +1,29 @@
+**new** | Create a new FRESH or JRS resume document
+
+Usage:
+
+   **hackmyresume NEW <fileName> [--format]**
+
+   The NEW command generates a new resume document in FRESH
+   or JSON Resume format. This document can serve as an
+   official source of truth for your resume and career data
+   as well an input to tools like HackMyResume.
+
+Parameters:
+
+   **<fileName>**
+
+      The filename (relative or absolute path) of the resume
+      to be created. Multiple resume paths can be specified,
+      and each will be created in turn.
+
+         hackmyresume NEW resume.json
+         hackmyresume NEW r1.json foo/r2.json ../r3.json
+
+Options:
+
+   **--format -f <fmt>**
+
+      The desired format for the new resume(s). Valid values
+      are 'FRESH', 'JRS', or, to target the latest edge
+      version of the JSON Resume Schema, 'JRS@1'.

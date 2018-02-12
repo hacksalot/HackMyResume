@@ -1,11 +1,9 @@
-
-/**
-Inline Markdown-to-Chalk conversion routines.
-@license MIT. See LICENSE.md for details.
-@module utils/md2chalk
- */
-
 (function() {
+  /**
+  Inline Markdown-to-Chalk conversion routines.
+  @license MIT. See LICENSE.md for details.
+  @module utils/md2chalk
+  */
   var CHALK, LO, MD;
 
   MD = require('marked');

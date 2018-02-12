@@ -1,14 +1,10 @@
-
-/**
-Definition of the HtmlPdfCLIGenerator class.
-@module generators/html-pdf-generator.js
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var FS, HMSTATUS, HtmlPdfCLIGenerator, PATH, SLASH, SPAWN, TemplateGenerator, _, engines,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Definition of the HtmlPdfCLIGenerator class.
+  @module generators/html-pdf-generator.js
+  @license MIT. See LICENSE.md for details.
+  */
+  var FS, HMSTATUS, HtmlPdfCLIGenerator, PATH, SLASH, SPAWN, TemplateGenerator, _, engines;
 
   TemplateGenerator = require('./template-generator');
 
@@ -24,26 +20,21 @@ Definition of the HtmlPdfCLIGenerator class.
 
   SPAWN = require('../utils/safe-spawn');
 
-
   /**
   An HTML-driven PDF resume generator for HackMyResume. Talks to Phantom,
   wkhtmltopdf, and other PDF engines over a CLI (command-line interface).
   If an engine isn't installed for a particular platform, error out gracefully.
-   */
-
-  module.exports = HtmlPdfCLIGenerator = (function(superClass) {
-    extend(HtmlPdfCLIGenerator, superClass);
-
-    function HtmlPdfCLIGenerator() {
-      HtmlPdfCLIGenerator.__super__.constructor.call(this, 'pdf', 'html');
+  */
+  module.exports = HtmlPdfCLIGenerator = class HtmlPdfCLIGenerator extends TemplateGenerator {
+    constructor() {
+      super('pdf', 'html');
     }
 
-
     /** Generate the binary PDF. */
-
-    HtmlPdfCLIGenerator.prototype.onBeforeSave = function(info) {
+    onBeforeSave(info) {
       var safe_eng;
       if (info.ext !== 'html' && info.ext !== 'pdf') {
+        //console.dir _.omit( info, 'mk' ), depth: null, colors: true
         return info.mk;
       }
       safe_eng = info.opts.pdf || 'wkhtmltopdf';
@@ -53,43 +44,40 @@ Definition of the HtmlPdfCLIGenerator class.
       if (_.has(engines, safe_eng)) {
         this.errHandler = info.opts.errHandler;
         engines[safe_eng].call(this, info.mk, info.outputFile, info.opts, this.onError);
-        return null;
+        return null; // halt further processing
       }
-    };
-
+    }
 
     /* Low-level error callback for spawn(). May be called after HMR process
     termination, so object references may not be valid here. That's okay; if
     the references are invalid, the error was already logged. We could use
-    spawn-watch here but that causes issues on legacy Node.js.
-     */
-
-    HtmlPdfCLIGenerator.prototype.onError = function(ex, param) {
+    spawn-watch here but that causes issues on legacy Node.js. */
+    onError(ex, param) {
       var ref;
       if ((ref = param.errHandler) != null) {
         if (typeof ref.err === "function") {
           ref.err(HMSTATUS.pdfGeneration, ex);
         }
       }
-    };
+    }
 
-    return HtmlPdfCLIGenerator;
+  };
 
-  })(TemplateGenerator);
-
+  // TODO: Move each engine to a separate module
   engines = {
-
     /**
     Generate a PDF from HTML using wkhtmltopdf's CLI interface.
     Spawns a child process with `wkhtmltopdf <source> <target>`. wkhtmltopdf
     must be installed and path-accessible.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease wkhtmltopdf rendering
-     */
+    */
     wkhtmltopdf: function(markup, fOut, opts, on_error) {
       var tempFile, wkargs, wkopts;
+      // Save the markup to a temporary file
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
+      // Prepare wkhtmltopdf arguments.
       wkopts = _.extend({
         'margin-top': '10mm',
         'margin-bottom': '10mm'
@@ -100,16 +88,16 @@ Definition of the HtmlPdfCLIGenerator class.
       wkargs = wkopts.concat([tempFile, fOut]);
       SPAWN('wkhtmltopdf', wkargs, false, on_error, this);
     },
-
     /**
     Generate a PDF from HTML using Phantom's CLI interface.
     Spawns a child process with `phantomjs <script> <source> <target>`. Phantom
     must be installed and path-accessible.
     TODO: If HTML generation has run, reuse that output
     TODO: Local web server to ease Phantom rendering
-     */
+    */
     phantomjs: function(markup, fOut, opts, on_error) {
       var destPath, scriptPath, sourcePath, tempFile;
+      // Save the markup to a temporary file
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
       scriptPath = PATH.relative(process.cwd(), PATH.resolve(__dirname, '../utils/rasterize.js'));
@@ -118,15 +106,15 @@ Definition of the HtmlPdfCLIGenerator class.
       destPath = SLASH(PATH.relative(process.cwd(), fOut));
       SPAWN('phantomjs', [scriptPath, sourcePath, destPath], false, on_error, this);
     },
-
     /**
     Generate a PDF from HTML using WeasyPrint's CLI interface.
     Spawns a child process with `weasyprint <source> <target>`. Weasy Print
     must be installed and path-accessible.
     TODO: If HTML generation has run, reuse that output
-     */
+    */
     weasyprint: function(markup, fOut, opts, on_error) {
       var tempFile;
+      // Save the markup to a temporary file
       tempFile = fOut.replace(/\.pdf$/i, '.pdf.html');
       FS.writeFileSync(tempFile, markup, 'utf8');
       SPAWN('weasyprint', [tempFile, fOut], false, on_error, this);

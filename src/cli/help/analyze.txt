@@ -1,0 +1,25 @@
+**analyze** | Analyze a resume for statistical insight
+
+Usage:
+
+   **hackmyresume ANALYZE <resume>**
+
+   The ANALYZE command evaluates the specified resume(s) for
+   coverage, duration, gaps, keywords, and other metrics.
+
+   This command can be run against multiple resumes. Each
+   will be analyzed in turn.
+
+Parameters:
+
+   **<resume>**
+
+      Path to a FRESH or JRS resume. Multiple resumes can be
+      specified, separated by spaces.
+
+      hackmyresume ANALYZE resume.json
+      hackmyresume ANALYZE r1.json r2.json r3.json
+
+Options:
+
+   **None.**

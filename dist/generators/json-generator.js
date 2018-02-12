@@ -1,14 +1,10 @@
-
-/**
-Definition of the JsonGenerator class.
-@module generators/json-generator
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var BaseGenerator, FJCV, FS, JsonGenerator, _,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Definition of the JsonGenerator class.
+  @module generators/json-generator
+  @license MIT. See LICENSE.md for details.
+  */
+  var BaseGenerator, FJCV, FS, JsonGenerator, _;
 
   BaseGenerator = require('./base-generator');
 
@@ -18,29 +14,24 @@ Definition of the JsonGenerator class.
 
   FJCV = require('fresh-jrs-converter');
 
-
   /** The JsonGenerator generates a FRESH or JRS resume as an output. */
-
-  module.exports = JsonGenerator = (function(superClass) {
-    extend(JsonGenerator, superClass);
-
-    function JsonGenerator() {
-      JsonGenerator.__super__.constructor.call(this, 'json');
+  module.exports = JsonGenerator = class JsonGenerator extends BaseGenerator {
+    constructor() {
+      super('json');
     }
 
-    JsonGenerator.prototype.invoke = function(rez) {
+    invoke(rez) {
       var altRez;
       altRez = FJCV['to' + (rez.format() === 'FRESH' ? 'JRS' : 'FRESH')](rez);
       return altRez = FJCV.toSTRING(altRez);
-    };
+    }
 
-    JsonGenerator.prototype.generate = function(rez, f) {
+    //altRez.stringify()
+    generate(rez, f) {
       FS.writeFileSync(f, this.invoke(rez), 'utf8');
-    };
+    }
 
-    return JsonGenerator;
-
-  })(BaseGenerator);
+  };
 
 }).call(this);
 

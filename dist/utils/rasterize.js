@@ -1,4 +1,7 @@
 (function() {
+  // Exemplar script for generating documents with Phantom.js.
+  // https://raw.githubusercontent.com/ariya/phantomjs/master/examples/rasterize.js
+  // Converted to CoffeeScript by hacksalot
   "use strict";
   var address, output, page, pageHeight, pageWidth, size, system;
 
@@ -50,7 +53,7 @@
       } else {
         console.log("size:", system.args[3]);
         pageWidth = parseInt(system.args[3], 10);
-        pageHeight = parseInt(pageWidth * 3 / 4, 10);
+        pageHeight = parseInt(pageWidth * 3 / 4, 10); // it's as good an assumption as any
         console.log("pageHeight:", pageHeight);
         page.viewportSize = {
           width: pageWidth,

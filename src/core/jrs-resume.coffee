@@ -14,7 +14,6 @@ PATH = require('path')
 MD = require('marked')
 CONVERTER = require('fresh-jrs-converter')
 moment = require('moment')
-AbstractResume = require('./abstract-resume')
 
 
 ###*
@@ -22,7 +21,7 @@ A JRS resume or CV. JRS resumes are backed by JSON, and each JRSResume object
 is an instantiation of that JSON decorated with utility methods.
 @class JRSResume
 ###
-class JRSResume extends AbstractResume
+class JRSResume# extends AbstractResume
 
 
 
@@ -49,8 +48,9 @@ class JRSResume extends AbstractResume
   parseJSON: ( rep, opts ) ->
     opts = opts || { };
     if opts.privatize
+      scrubber = require '../utils/resume-scrubber'
       # Ignore any element with the 'ignore: true' or 'private: true' designator.
-      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+      { scrubbed, ignoreList, privateList } = scrubber.scrubResume rep, opts
 
     # Extend resume properties onto ourself.
     extend true, this, if opts.privatize then scrubbed else rep
@@ -188,7 +188,8 @@ class JRSResume extends AbstractResume
 
 
   duration: (unit) ->
-    super('work', 'startDate', 'endDate', unit)
+    inspector = require '../inspectors/duration-inspector';
+    inspector.run @, 'work', 'startDate', 'endDate', unit
 
 
 
@@ -232,7 +233,6 @@ class JRSResume extends AbstractResume
   ###
   harden: () ->
 
-    that = @
     ret = @dupe()
 
     HD = (txt) -> '@@@@~' + txt + '~@@@@'
@@ -241,38 +241,12 @@ class JRSResume extends AbstractResume
       #return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '');
       return HD txt
 
-    # TODO: refactor recursion
-    hardenStringsInObject = ( obj, inline ) ->
-
-      return if !obj
-      inline = inline == undefined || inline
-
-      if Object.prototype.toString.call( obj ) == '[object Array]'
-        obj.forEach (elem, idx, ar) ->
-          if typeof elem == 'string' || elem instanceof String
-            ar[idx] = if inline then HDIN(elem) else HD( elem )
-          else
-            hardenStringsInObject elem
-      else if typeof obj == 'object'
-        Object.keys( obj ).forEach (key) ->
-          sub = obj[key]
-          if typeof sub == 'string' || sub instanceof String
-            if _.contains(['skills','url','website','startDate','endDate',
-              'releaseDate','date','phone','email','address','postalCode',
-              'city','country','region'], key)
-              return
-            if key == 'summary'
-              obj[key] = HD( obj[key] )
-            else
-              obj[key] = if inline then HDIN( obj[key] ) else HD( obj[key] )
-          else
-            hardenStringsInObject sub
-
-
-    Object.keys( ret ).forEach (member) ->
-      hardenStringsInObject ret[ member ]
-
-    ret
+    transformer = require '../utils/string-transformer'
+    transformer ret,
+      [ 'skills','url','website','startDate','endDate', 'releaseDate', 'date',
+      'phone','email','address','postalCode','city','country','region',
+      'safeStartDate','safeEndDate' ],
+      (key, val) -> HD val
 
 
 

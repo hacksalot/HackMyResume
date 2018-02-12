@@ -94,9 +94,9 @@ _validateOne = (t, validator, schemas, opts) ->
         inner: obj.ex.inner,
         quiet: errCode == HMSTATUS.readError
 
-  catch
+  catch err
     # Package any unexpected exceptions
-    ret.error = fluenterror: HMSTATUS.validateError, inner: _error
+    ret.error = fluenterror: HMSTATUS.validateError, inner: err
 
   @stat HMEVENT.afterValidate, ret
   ret

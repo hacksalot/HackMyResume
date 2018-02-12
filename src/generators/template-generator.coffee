@@ -122,14 +122,14 @@ module.exports = class TemplateGenerator extends BaseGenerator
           return
 
       # Write the file
-      opts.beforeWrite? thisFilePath
+      opts.beforeWrite? data: thisFilePath
       MKDIRP.sync PATH.dirname( thisFilePath )
 
       if file.info.action != 'copy'
         FS.writeFileSync thisFilePath, file.data, encoding: 'utf8', flags: 'w'
       else
         FS.copySync file.info.path, thisFilePath
-      opts.afterWrite? thisFilePath
+      opts.afterWrite? data: thisFilePath
 
       # Post-processing
       if @onAfterSave
@@ -174,9 +174,9 @@ createSymLinks = ( curFmt, outFolder ) ->
 
       try
         FS.symlinkSync absTarg, absLoc, type
-      catch
+      catch err
         succeeded = false
-        if _error.code == 'EEXIST'
+        if err.code == 'EEXIST'
           FS.unlinkSync absLoc
           try
             FS.symlinkSync absTarg, absLoc, type

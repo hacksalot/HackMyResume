@@ -1,32 +1,27 @@
-
-/**
-Section analysis for HackMyResume.
-@license MIT. See LICENSE.md for details.
-@module inspectors/totals-inspector
- */
-
 (function() {
+  /**
+  Section analysis for HackMyResume.
+  @license MIT. See LICENSE.md for details.
+  @module inspectors/totals-inspector
+  */
+  /**
+  Retrieve sectional overview and summary information.
+  @class totalsInspector
+  */
   var FluentDate, _, totalsInspector;
 
   _ = require('underscore');
 
   FluentDate = require('../core/fluent-date');
 
-
-  /**
-  Retrieve sectional overview and summary information.
-  @class totalsInspector
-   */
-
   totalsInspector = module.exports = {
     moniker: 'totals-inspector',
-
     /**
     Run the Totals Inspector on a resume.
     @method run
     @return An object containing summary information for each section on the
     resume.
-     */
+    */
     run: function(rez) {
       var sectionTotals;
       sectionTotals = {};

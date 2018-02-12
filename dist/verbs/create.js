@@ -1,14 +1,12 @@
-
-/**
-Implementation of the 'create' verb for HackMyResume.
-@module verbs/create
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var CreateVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, Verb, _, _create, _createOne, chalk,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Implementation of the 'create' verb for HackMyResume.
+  @module verbs/create
+  @license MIT. See LICENSE.md for details.
+  */
+  /** Create a new empty resume in either FRESH or JRS format. */
+  /** Create a single new resume */
+  var CreateVerb, HMEVENT, HMSTATUS, MKDIRP, PATH, Verb, _, _create, _createOne, chalk;
 
   MKDIRP = require('mkdirp');
 
@@ -24,19 +22,12 @@ Implementation of the 'create' verb for HackMyResume.
 
   HMEVENT = require('../core/event-codes');
 
-  module.exports = CreateVerb = (function(superClass) {
-    extend(CreateVerb, superClass);
-
-    function CreateVerb() {
-      CreateVerb.__super__.constructor.call(this, 'new', _create);
+  module.exports = CreateVerb = class CreateVerb extends Verb {
+    constructor() {
+      super('new', _create);
     }
 
-    return CreateVerb;
-
-  })(Verb);
-
-
-  /** Create a new empty resume in either FRESH or JRS format. */
+  };
 
   _create = function(src, dst, opts) {
     var results;
@@ -66,11 +57,8 @@ Implementation of the 'create' verb for HackMyResume.
     return results;
   };
 
-
-  /** Create a single new resume */
-
   _createOne = function(t, opts) {
-    var RezClass, newRez, ret, safeFmt;
+    var RezClass, err, newRez, ret, safeFmt;
     try {
       ret = null;
       safeFmt = opts.format.toUpperCase();
@@ -78,15 +66,16 @@ Implementation of the 'create' verb for HackMyResume.
         fmt: safeFmt,
         file: t
       });
-      MKDIRP.sync(PATH.dirname(t));
+      MKDIRP.sync(PATH.dirname(t)); // Ensure dest folder exists;
       RezClass = require('../core/' + safeFmt.toLowerCase() + '-resume');
-      newRez = RezClass["default"]();
+      newRez = RezClass.default();
       newRez.save(t);
       ret = newRez;
-    } catch (_error) {
+    } catch (error) {
+      err = error;
       ret = {
         fluenterror: HMSTATUS.createError,
-        inner: _error
+        inner: err
       };
     } finally {
       this.stat(HMEVENT.afterCreate, {

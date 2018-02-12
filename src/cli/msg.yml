@@ -137,3 +137,5 @@ errors:
       An error occurred while attempting to load the '%s' theme helper. Is the
       theme correctly installed?
     dummy: dontcare
+  invalidSchemaVersion:
+    msg: "'%s' is not recognized as a valid schema version."

@@ -1,0 +1,23 @@
+**help** | View help on a specific HackMyResume command
+
+Usage:
+
+   **hackmyresume HELP [<command>]**
+
+   The HELP command displays help information for a specific
+   HackMyResume command, including the HELP command itself.
+
+Parameters:
+
+   **<command>**
+
+      The HackMyResume command to view help information for.
+      Must be BUILD, NEW, CONVERT, ANALYZE, VALIDATE, PEEK,
+      or HELP.
+
+         hackmyresume help convert
+         hackmyresume help help
+
+Options:
+
+   **None.**

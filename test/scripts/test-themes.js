@@ -56,8 +56,9 @@ function genThemes( title, src, fmt ) {
         // Run the command!
         var v = new HackMyResume.verbs.build();
         v.on('hmr:error', function(ex) {
-          console.log('Error thrown');
-          assert(false);
+          console.error('Error thrown: %o', ex);
+          throw ex;
+          //assert(false);
         });
         var p = v.invoke( src, dst, opts );
 
@@ -74,11 +75,12 @@ function genThemes( title, src, fmt ) {
     //genTheme(fmt, src, 'hello-world');
     genTheme(fmt, src, 'compact');
     genTheme(fmt, src, 'modern');
-    //genTheme(fmt, src, 'underscore');
-    //genTheme(fmt, src, 'awesome');
+    genTheme(fmt, src, 'underscore', 'node_modules/fresh-theme-underscore' );
+    genTheme(fmt, src, 'awesome');
     genTheme(fmt, src, 'positive');
+
     genTheme(fmt, src, 'jsonresume-theme-boilerplate',
-      'node_modules/jsonresume-theme-boilerplate' );
+       'node_modules/jsonresume-theme-boilerplate' );
     genTheme(fmt, src, 'jsonresume-theme-sceptile',
       'node_modules/jsonresume-theme-sceptile' );
     genTheme(fmt, src, 'jsonresume-theme-modern',
@@ -91,13 +93,17 @@ function genThemes( title, src, fmt ) {
 }
 
 function folderContains( needle, haystack ) {
+  var ignoreExts = ['.png','.jpg','.jpeg','.bmp','.pdf', '.gif'];
   var safePath = path.normalize( path.join(__dirname, haystack));
   return _.some( readFolder( safePath ), function( absPath ) {
     if( require('fs').lstatSync( absPath ).isFile() ) {
-      if( fileContains( absPath, needle ) ) {
+      var pathInfo = path.parse( absPath );
+      if( !_.contains(ignoreExts, pathInfo.ext) &&
+          fileContains(absPath, needle) ) {
         console.error('Found invalid metadata in ' + absPath);
         return true;
       }
+      return false;
     }
   });
 }
@@ -128,17 +134,17 @@ genThemes(
   'JRS'
 );
 
-// describe('Verifying generated theme files...', function() {
-//
-//   it('Generated files should not contain ICE.', function() {
-//     var q = folderContains('@@@@', '../sandbox');
-//     q.should.equal(false);
-//   });
-//
-//   it('Generated files should match exemplars...', function() {
-//     var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
-//         'test/expected/modern' );
-//     q.should.equal(true);
-//   });
-//
-// });
+describe('Verifying generated theme files...', function() {
+
+  it('Generated files should not contain ICE.', function() {
+    var q = folderContains('@@@@', '../sandbox');
+    q.should.equal(false);
+  });
+
+  // it('Generated files should match exemplars...', function() {
+  //   var q = foldersMatch( 'test/sandbox/FRESH/jane-q-fullstacker/modern',
+  //       'test/expected/modern' );
+  //   q.should.equal(true);
+  // });
+
+});

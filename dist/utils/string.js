@@ -1,17 +1,13 @@
-
-/**
-Definitions of string utility functions.
-@module utils/string
- */
-
-
-/**
-Determine if the string is null, empty, or whitespace.
-See: http://stackoverflow.com/a/32800728/4942583
-@method isNullOrWhitespace
- */
-
 (function() {
+  /**
+  Definitions of string utility functions.
+  @module utils/string
+  */
+  /**
+  Determine if the string is null, empty, or whitespace.
+  See: http://stackoverflow.com/a/32800728/4942583
+  @method isNullOrWhitespace
+  */
   String.isNullOrWhitespace = function(input) {
     return !input || !input.trim();
   };

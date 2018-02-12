@@ -1,14 +1,21 @@
-
-/**
-Implementation of the 'validate' verb for HackMyResume.
-@module verbs/validate
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, _validate, _validateOne, chalk, safeLoadJSON,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Implementation of the 'validate' verb for HackMyResume.
+  @module verbs/validate
+  @license MIT. See LICENSE.md for details.
+  */
+  /**
+  Validate a single resume.
+  @returns {
+  file: <fileName>,
+  isValid: <validFlag>,
+  status: <validationStatus>,
+  violations: <validationErrors>,
+  schema: <schemaType>,
+  error: <errorObject>
+  }
+  */
+  var FS, HMEVENT, HMSTATUS, ResumeFactory, SyntaxErrorEx, ValidateVerb, Verb, _, _validate, _validateOne, chalk, safeLoadJSON;
 
   FS = require('fs');
 
@@ -28,20 +35,15 @@ Implementation of the 'validate' verb for HackMyResume.
 
   safeLoadJSON = require('../utils/safe-json-loader');
 
-
   /** An invokable resume validation command. */
-
-  module.exports = ValidateVerb = (function(superClass) {
-    extend(ValidateVerb, superClass);
-
-    function ValidateVerb() {
-      ValidateVerb.__super__.constructor.call(this, 'validate', _validate);
+  module.exports = ValidateVerb = class ValidateVerb extends Verb {
+    constructor() {
+      super('validate', _validate);
     }
 
-    return ValidateVerb;
+  };
 
-  })(Verb);
-
+  // Validate 1 to N resumes in FRESH or JSON Resume format.
   _validate = function(sources, unused, opts) {
     var results, schemas, validator;
     if (!sources || !sources.length) {
@@ -71,21 +73,8 @@ Implementation of the 'validate' verb for HackMyResume.
     return results;
   };
 
-
-  /**
-  Validate a single resume.
-  @returns {
-    file: <fileName>,
-    isValid: <validFlag>,
-    status: <validationStatus>,
-    violations: <validationErrors>,
-    schema: <schemaType>,
-    error: <errorObject>
-  }
-   */
-
   _validateOne = function(t, validator, schemas, opts) {
-    var errCode, obj, ret, validate;
+    var err, errCode, obj, ret, validate;
     ret = {
       file: t,
       isValid: false,
@@ -93,6 +82,7 @@ Implementation of the 'validate' verb for HackMyResume.
       schema: '-----'
     };
     try {
+      // Read and parse the resume JSON. Won't throw.
       obj = safeLoadJSON(t);
       if (!obj.ex) {
         if (obj.json.basics) {
@@ -111,6 +101,7 @@ Implementation of the 'validate' verb for HackMyResume.
           ret.violations = validate.errors;
         }
       } else {
+        // If failure, package JSON read/parse errors
         if (obj.ex.op === 'parse') {
           errCode = HMSTATUS.parseError;
           ret.status = 'broken';
@@ -124,10 +115,12 @@ Implementation of the 'validate' verb for HackMyResume.
           quiet: errCode === HMSTATUS.readError
         };
       }
-    } catch (_error) {
+    } catch (error) {
+      err = error;
+      // Package any unexpected exceptions
       ret.error = {
         fluenterror: HMSTATUS.validateError,
-        inner: _error
+        inner: err
       };
     }
     this.stat(HMEVENT.afterValidate, ret);

@@ -1,0 +1,69 @@
+**build** | Generate themed resumes in multiple formats
+
+Usage:
+
+   **hackmyresume BUILD <resume> TO <target> [--theme]**
+      **[--pdf] [--no-escape] [--private]**
+
+   The BUILD command generates themed resumes and CVs in
+   multiple formats. Use it to create outbound resumes in
+   specific formats such HTML, MS Word, and PDF.
+
+Parameters:
+
+   **<resume>**
+
+      Path to a FRESH or JRS resume (*.json) containing your
+      resume data. Multiple resumes may be specified.
+
+      If multiple resumes are specified, they will be merged
+      into a single resume prior to transformation.
+
+   **<target>**
+
+      Path to the desired output resume. Multiple resumes
+      may be specified. The file extension will determine
+      the format.
+
+         .all        Generate all supported formats
+         .html       HTML 5
+         .doc        MS Word
+         .pdf        Adobe Acrobat PDF
+         .txt        plain text
+         .md         Markdown
+         .png        PNG Image
+         .latex      LaTeX
+
+      Note: not all formats are supported by all themes!
+      Check the theme's documentation for details or use
+      the .all extension to build all available formats.
+
+Options:
+
+   **--theme -t <theme-name-or-path>**
+
+      Path to a FRESH or JSON Resume theme OR the name of a
+      built-in theme. Valid theme names are 'modern',
+      'positive', 'compact', 'awesome', and 'basis'.
+
+   **--pdf -p <engine>**
+
+      Specify the PDF engine to use. Legal values are
+      'none', 'wkhtmltopdf', 'phantom', or 'weasyprint'.
+
+   **--no-escape**
+
+      Disable escaping / encoding of resume data during
+      resume generation. Handlebars themes only.
+
+   **--private**
+
+      Include resume fields marked as private.
+
+Notes:
+
+The BUILD command can be run against multiple source as well
+as multiple target resumes. If multiple source resumes are
+provided, they will be merged into a single source resume
+before generation. If multiple output resumes are provided,
+each will be generated in turn.

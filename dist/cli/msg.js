@@ -1,11 +1,9 @@
-
-/**
-Message-handling routines for HackMyResume.
-@module cli/msg
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
+  /**
+  Message-handling routines for HackMyResume.
+  @module cli/msg
+  @license MIT. See LICENSE.md for details.
+  */
   var PATH, YAML;
 
   PATH = require('path');

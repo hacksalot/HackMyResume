@@ -1,12 +1,12 @@
-
-/**
-Definition of the Markdown to WordProcessingML conversion routine.
-@license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
-@module utils/html-to-wpml
- */
-
 (function() {
-  var HTML5Tokenizer, _;
+  /**
+  Definition of the Markdown to WordProcessingML conversion routine.
+  @license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
+  @module utils/html-to-wpml
+  */
+  var HTML5Tokenizer, XML, _;
+
+  XML = require('xml-escape');
 
   _ = require('underscore');
 
@@ -14,8 +14,12 @@ Definition of the Markdown to WordProcessingML conversion routine.
 
   module.exports = function(html) {
     var final, is_bold, is_italic, is_link, link_url, tokens;
+    // Tokenize the HTML stream.
     tokens = HTML5Tokenizer.tokenize(html);
     final = is_bold = is_italic = is_link = link_url = '';
+    // Process <em>, <strong>, and <a> elements in the HTML stream, producing
+    // equivalent WordProcessingML that can be dumped into a <w:p> or other
+    // text container element.
     _.each(tokens, function(tok) {
       var style;
       switch (tok.type) {
@@ -51,7 +55,7 @@ Definition of the Markdown to WordProcessingML conversion routine.
             style = is_bold ? '<w:b/>' : '';
             style += is_italic ? '<w:i/>' : '';
             style += is_link ? '<w:rStyle w:val="Hyperlink"/>' : '';
-            return final += (is_link ? '<w:hlink w:dest="' + link_url + '">' : '') + '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + tok.chars + '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
+            return final += (is_link ? '<w:hlink w:dest="' + link_url + '">' : '') + '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + XML(tok.chars) + '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
           }
       }
     });

@@ -59,9 +59,23 @@ class FRESHTheme
     if @inherits
       cached = { }
       _.each @inherits, (th, key) ->
-        themesFolder = require.resolve 'fresh-themes'
-        d = parsePath( themeFolder ).dirname
-        themePath = PATH.join d, th
+        # First, see if this is one of the predefined FRESH themes. There are
+        # only a handful of these, but they may change over time, so we need to
+        # query the official source of truth: the fresh-themes repository, which
+        # mounts the themes conveniently by name to the module object, and which
+        # is embedded locally inside the HackMyResume installation.
+        # TODO: merge this code with
+        themesObj = require 'fresh-themes'
+        if _.has themesObj.themes, th
+          themePath = PATH.join(
+            parsePath( require.resolve('fresh-themes') ).dirname,
+            '/themes/',
+            th
+          )
+        else
+          d = parsePath( th ).dirname
+          themePath = PATH.join d, th
+
         cached[ th ] = cached[th] || new FRESHTheme().open( themePath )
         formatsHash[ key ] = cached[ th ].getFormat( key )
 

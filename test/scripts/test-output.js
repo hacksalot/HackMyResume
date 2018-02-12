@@ -84,19 +84,23 @@ describe('Testing Ouput interface', function () {
 
   var title = '*** HackMyResume v' + PKG.version + ' ***';
   var feedMe = 'Please feed me a resume in FRESH or JSON Resume format.';
-  var manPage = FS.readFileSync( PATH.resolve( __dirname, '../../src/cli/use.txt' ), 'utf8');
+  var manPage = FS.readFileSync( PATH.resolve( __dirname, '../../src/cli/help/use.txt' ), 'utf8').replace(/\*\*/g, '');
+  var manPages = { };
+  ['build','new','convert','analyze','validate','peek'].forEach( function(verb) {
+    manPages[verb] = FS.readFileSync( PATH.resolve( __dirname, '../../src/cli/help/' + verb  + '.txt' ), 'utf8').replace(/\*\*/g, '');
+  });
 
-  run('HMR should output a help string when no command is specified',
-      [], [ title, 'Please give me a command (BUILD, ANALYZE, VALIDATE, CONVERT, NEW, or PEEK).' ]);
+  // run('HMR should output a help string when no command is specified',
+  //     [], [ title, 'Please give me a command (BUILD, ANALYZE, VALIDATE, CONVERT, NEW, or PEEK).' ]);
 
-  run('BUILD should output a tip when no source is specified',
-      ['build'], [ title, feedMe ]);
+  run('BUILD should output a help message when no source is specified',
+      ['build'], [ title, manPages.build ]);
 
-  run('VALIDATE should output a tip when no source is specified',
-     ['validate'], [ title, feedMe ]);
+  run('VALIDATE should output a help message when no source is specified',
+     ['validate'], [ title, manPages.validate ]);
 
-  run('ANALYZE should output a tip when no source is specified',
-      ['analyze'], [ title, feedMe ]);
+  run('ANALYZE should output a help message when no source is specified',
+      ['analyze'], [ title, manPages.analyze ]);
 
   run('BUILD should display an error on a broken resume',
      ['build',
@@ -104,11 +108,11 @@ describe('Testing Ouput interface', function () {
       '-t', 'modern'
     ], [ title, 'Error: Invalid or corrupt JSON on line'  ]);
 
-  run('CONVERT should output a tip when no source is specified',
-      ['convert'], [ title, feedMe ]);
+  run('CONVERT should output a help message when no source is specified',
+      ['convert'], [ title, manPages.convert ]);
 
-  run('NEW should output a tip when no source is specified',
-      ['new'], [ title, 'Please specify the filename of the resume to create.' ]);
+  run('NEW should output a help message when no source is specified',
+      ['new'], [ title, manPages.new ]);
 
   // This will cause the HELP doc to be emitted, followed by an "unknown option --help"
   // error in the log, based on the way we're calling into HMR. As long as the test

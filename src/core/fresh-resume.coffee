@@ -18,7 +18,6 @@ MD = require 'marked'
 CONVERTER = require 'fresh-jrs-converter'
 JRSResume = require './jrs-resume'
 FluentDate = require './fluent-date'
-AbstractResume = require './abstract-resume'
 
 
 
@@ -27,7 +26,7 @@ A FRESH resume or CV. FRESH resumes are backed by JSON, and each FreshResume
 object is an instantiation of that JSON decorated with utility methods.
 @constructor
 ###
-class FreshResume extends AbstractResume
+class FreshResume# extends AbstractResume
 
 
 
@@ -55,7 +54,8 @@ class FreshResume extends AbstractResume
 
     if opts and opts.privatize
       # Ignore any element with the 'ignore: true' or 'private: true' designator.
-      { scrubbed, ignoreList, privateList } = @scrubResume rep, opts
+      scrubber = require '../utils/resume-scrubber'
+      { scrubbed, ignoreList, privateList } = scrubber.scrubResume rep, opts
 
     # Now apply the resume representation onto this object
     extend true, @, if opts and opts.privatize then scrubbed else rep
@@ -95,12 +95,27 @@ class FreshResume extends AbstractResume
   Save the sheet to disk in a specific format, either FRESH or JSON Resume.
   ###
   saveAs: ( filename, format ) ->
-    if format != 'JRS'
+
+    # If format isn't specified, default to FRESH
+    safeFormat = (format && format.trim()) || 'FRESH'
+
+    # Validate against the FRESH version regex
+    # freshVersionReg = require '../utils/fresh-version-regex'
+    # if (not freshVersionReg().test( safeFormat ))
+    #   throw badVer: safeFormat
+
+    parts = safeFormat.split '@'
+
+    if parts[0] == 'FRESH'
       @imp.file = filename || @imp.file
       FS.writeFileSync @imp.file, @stringify(), 'utf8'
-    else
-      newRep = CONVERTER.toJRS this
+
+    else if parts[0] == 'JRS'
+      useEdgeSchema = if parts.length > 1 then parts[1] == '1' else false
+      newRep = CONVERTER.toJRS @, edge: useEdgeSchema
       FS.writeFileSync filename, JRSResume.stringify( newRep ), 'utf8'
+    else
+      throw badVer: safeFormat
     @
 
 
@@ -180,7 +195,24 @@ class FreshResume extends AbstractResume
 
 
 
-  ###* Return a unique list of all keywords across all skills. ###
+  ###*
+  Return a unique list of all skills declared in the resume.
+  ###
+
+  # TODO: Several problems here:
+  # 1) Confusing name. Easily confused with the keyword-inspector module, which
+  # parses resume body text looking for these same keywords. This should probably
+  # be renamed.
+  #
+  # 2) Doesn't bother trying to integrate skills.list with skills.sets if they
+  # happen to declare different skills, and if skills.sets declares ONE skill and
+  # skills.list declared 50, only 1 skill will be registered.
+  #
+  # 3) In the future, skill.sets should only be able to use skills declared in
+  # skills.list. That is, skills.list is the official record of a candidate's
+  # declared skills. skills.sets is just a way of grouping those into skillsets
+  # for easier consumption.
+
   keywords: () ->
     flatSkills = []
     if @skills
@@ -299,7 +331,9 @@ class FreshResume extends AbstractResume
 
 
   duration: (unit) ->
-    super('employment.history', 'start', 'end', unit)
+    inspector = require '../inspectors/duration-inspector'
+    inspector.run @, 'employment.history', 'start', 'end', unit
+
 
 
 

@@ -84,6 +84,7 @@ main = module.exports = ( rawArgs, exitCallback ) ->
   program
     .command('convert')
     .description('Convert a resume to/from FRESH or JSON RESUME format.')
+    .option('-f --format <fmt>', 'FRESH or JRS format and optional version', undefined)
     .action(->
       x = splitSrcDest.call( this );
       execute.call( this, x.src, x.dst, this.opts(), logMsg)
@@ -131,6 +132,19 @@ main = module.exports = ( rawArgs, exitCallback ) ->
       return
     )
 
+  # Create the HELP command
+  program
+    .command('help')
+    .arguments('[command]')
+    .description('Get help on a HackMyResume command')
+    .action ( cmd ) ->
+      cmd = cmd || 'use'
+      manPage = FS.readFileSync(
+        PATH.join(__dirname, 'help/' + cmd + '.txt'),
+        'utf8')
+      _out.log M2C(manPage, 'white', 'yellow.bold')
+      return
+
   program.parse( args )
 
   if !program.args.length
@@ -170,24 +184,23 @@ initialize = ( ar, exitCallback ) ->
   _err.init o.debug, o.assert, o.silent
 
   # Handle invalid verbs here (a bit easier here than in commander.js)...
-  if o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ]
+  if o.verb && !HMR.verbs[ o.verb ] && !HMR.alias[ o.verb ] && o.verb != 'help'
     _err.err fluenterror: HMSTATUS.invalidCommand, quit: true, attempted: o.orgVerb, true
 
   # Override the .missingArgument behavior
   Command.prototype.missingArgument = (name) ->
-    _err.err
-      fluenterror:
-        if this.name() != 'new'
-        then HMSTATUS.resumeNotFound
-        else HMSTATUS.createNameMissing
-      , true
+    if this.name() != 'help'
+      _err.err
+        verb: @name()
+        fluenterror: HMSTATUS.resumeNotFound
+        , true
     return
 
   # Override the .helpInformation behavior
   Command.prototype.helpInformation = ->
     manPage = FS.readFileSync(
-      PATH.join(__dirname, 'use.txt'), 'utf8' )
-    return chalk.green.bold(manPage)
+      PATH.join(__dirname, 'help/use.txt'), 'utf8' )
+    return M2C(manPage, 'white', 'yellow')
 
   return {
     args: o.args,
@@ -288,7 +301,7 @@ executeSuccess = (obj) ->
 
 ### Failure handler for verb invocations. Calls process.exit by default ###
 executeFail = (err) ->
-  console.dir err
+  #console.dir err
   finalErrorCode = -1
   if err
     if err.fluenterror
@@ -348,7 +361,8 @@ splitSrcDest = () ->
 
   params = this.parent.args.filter((j) -> return String.is(j) )
   if params.length == 0
-    throw { fluenterror: HMSTATUS.resumeNotFound, quit: true }
+    #tmpName = @name()
+    throw { fluenterror: HMSTATUS.resumeNotFound, verb: @name(), quit: true }
 
   # Find the TO keyword, if any
   splitAt = _.findIndex( params, (p) -> return p.toLowerCase() == 'to'; )

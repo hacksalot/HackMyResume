@@ -329,6 +329,7 @@ GenericHelpers = module.exports =
     # If not provided by the user, stitle should default to sname. ps.
     # Handlebars silently passes in the options object to the last param,
     # where in Underscore stitle will be null/undefined, so we check both.
+    # TODO: not actually sure that's true, given that we _.wrap these functions
     stitle = (stitle && String.is(stitle) && stitle) || sname
 
     # If there's a section title override, use it.
@@ -342,7 +343,7 @@ GenericHelpers = module.exports =
   wpml: ( txt, inline ) ->
     return '' if !txt
     inline = (inline && !inline.hash) || false
-    txt = XML(txt.trim())
+    txt = XML txt.trim()
     txt = if inline then MD(txt).replace(/^\s*<p>|<\/p>\s*$/gi, '') else MD(txt)
     txt = H2W( txt )
     return txt
@@ -355,6 +356,15 @@ GenericHelpers = module.exports =
   ###
   link: ( text, url ) ->
     return if url && url.trim() then ('<a href="' + url + '">' + text + '</a>') else text
+
+
+
+  ###*
+  Emit a conditional Markdown link.
+  @method link
+  ###
+  linkMD: ( text, url ) ->
+    return if url && url.trim() then ('[' + text + '](' + url + ')') else text
 
 
 
@@ -376,7 +386,7 @@ GenericHelpers = module.exports =
   '#FFFFAA').
   ###
   skillColor: ( lvl ) ->
-    idx = skillLevelToIndex lvl
+    idx = _skillLevelToIndex lvl
     skillColors = (this.theme && this.theme.palette &&
       this.theme.palette.skillLevels) ||
       [ '#FFFFFF', '#5CB85C', '#F1C40F', '#428BCA', '#C00000' ]
@@ -389,7 +399,7 @@ GenericHelpers = module.exports =
   @method lastWord
   ###
   skillHeight: ( lvl ) ->
-    idx = skillLevelToIndex lvl
+    idx = _skillLevelToIndex lvl
     ['38.25', '30', '16', '8', '0'][idx]
 
 
@@ -491,6 +501,9 @@ GenericHelpers = module.exports =
 
 
 
+  ###*
+  Emit padded text.
+  ###
   pad: (stringOrArray, padAmount, unused ) ->
     stringOrArray = stringOrArray || ''
     padAmount = padAmount || 0
@@ -503,6 +516,25 @@ GenericHelpers = module.exports =
     else
       ret = PAD stringOrArray, stringOrArray.length + Math.abs(padAmount), null, if padAmount < 0 then PAD.LEFT else PAD.RIGHT
     ret
+
+
+
+  ###*
+  Given the name of a skill ("JavaScript" or "HVAC repair"), return the number
+  of years assigned to that skill in the resume.skills.list collection.
+  ###
+  skillYears: ( skill, rez ) ->
+    sk = _.find rez.skills.list, (sk) -> sk.name.toUpperCase() == skill.toUpperCase()
+    if sk then sk.years else '?'
+
+
+
+  ###*
+  Given an object that may be a string or an object, return it as-is if it's a
+  string, otherwise return the value at obj[objPath].
+  ###
+  stringOrObject: ( obj, objPath, rez ) ->
+    if _.isString obj then obj else LO.get obj, objPath
 
 
 
@@ -562,7 +594,7 @@ _fromTo = ( dateA, dateB, fmt, sep, fallback ) ->
 
 
 
-skillLevelToIndex = ( lvl ) ->
+_skillLevelToIndex = ( lvl ) ->
   idx = 0
   if String.is( lvl )
     lvl = lvl.trim().toLowerCase()

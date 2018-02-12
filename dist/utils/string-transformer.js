@@ -1,26 +1,23 @@
-
-/**
-Object string transformation.
-@module utils/string-transformer
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
+  /**
+  Object string transformation.
+  @module utils/string-transformer
+  @license MIT. See LICENSE.md for details.
+  */
   var _, moment;
 
   _ = require('underscore');
 
   moment = require('moment');
 
-
   /**
   Create a copy of this object in which all string fields have been run through
   a transformation function (such as a Markdown filter or XML encoder).
-   */
-
+  */
   module.exports = function(ret, filt, transformer) {
     var that, transformStringsInObject;
     that = this;
+    // TODO: refactor recursion
     transformStringsInObject = function(obj, filters) {
       if (!obj) {
         return;

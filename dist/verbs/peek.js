@@ -1,14 +1,12 @@
-
-/**
-Implementation of the 'peek' verb for HackMyResume.
-@module verbs/peek
-@license MIT. See LICENSE.md for details.
- */
-
 (function() {
-  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, _peek, _peekOne, safeLoadJSON,
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+  /**
+  Implementation of the 'peek' verb for HackMyResume.
+  @module verbs/peek
+  @license MIT. See LICENSE.md for details.
+  */
+  /** Peek at a resume, resume section, or resume field. */
+  /** Peek at a single resume, resume section, or resume field. */
+  var HMEVENT, HMSTATUS, PeekVerb, Verb, _, __, _peek, _peekOne, safeLoadJSON;
 
   Verb = require('../verbs/verb');
 
@@ -22,19 +20,12 @@ Implementation of the 'peek' verb for HackMyResume.
 
   HMEVENT = require('../core/event-codes');
 
-  module.exports = PeekVerb = (function(superClass) {
-    extend(PeekVerb, superClass);
-
-    function PeekVerb() {
-      PeekVerb.__super__.constructor.call(this, 'peek', _peek);
+  module.exports = PeekVerb = class PeekVerb extends Verb {
+    constructor() {
+      super('peek', _peek);
     }
 
-    return PeekVerb;
-
-  })(Verb);
-
-
-  /** Peek at a resume, resume section, or resume field. */
+  };
 
   _peek = function(src, dst, opts) {
     var objPath, results;
@@ -54,6 +45,8 @@ Implementation of the 'peek' verb for HackMyResume.
       if (tgt.error) {
         this.setError(tgt.error.fluenterror, tgt.error);
       }
+      //tgt.error.quit = opts.assert
+      //@err tgt.error.fluenterror, tgt.error
       return tgt;
     }, this);
     if (this.hasError() && !opts.assert) {
@@ -64,20 +57,20 @@ Implementation of the 'peek' verb for HackMyResume.
     return results;
   };
 
-
-  /** Peek at a single resume, resume section, or resume field. */
-
   _peekOne = function(t, objPath) {
     var errCode, obj, pkgError, tgt;
     this.stat(HMEVENT.beforePeek, {
       file: t,
       target: objPath
     });
+    // Load the input file JSON 1st
     obj = safeLoadJSON(t);
+    // Fetch the requested object path (or the entire file)
     tgt = null;
     if (!obj.ex) {
       tgt = objPath ? __.get(obj.json, objPath) : obj.json;
     }
+    //# safeLoadJSON can only return a READ error or a PARSE error
     pkgError = null;
     if (obj.ex) {
       errCode = obj.ex.op === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
@@ -89,6 +82,7 @@ Implementation of the 'peek' verb for HackMyResume.
         inner: obj.ex
       };
     }
+    // Fire the 'afterPeek' event with collected info
     this.stat(HMEVENT.afterPeek, {
       file: t,
       requested: objPath,

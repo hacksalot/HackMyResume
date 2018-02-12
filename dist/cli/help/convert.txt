@@ -1,0 +1,33 @@
+**convert** | Convert resumes between FRESH and JRS formats
+
+Usage:
+
+   **hackmyresume CONVERT <resume> TO <target> [--format]**
+
+   The CONVERT command converts one or more resume documents
+   between the FRESH Resume Schema and JSON Resume formats.
+
+Parameters:
+
+   **<resume>**
+
+      Path to a FRESH or JRS resume. Multiple resumes can be
+      specified.
+
+   **<targets>**
+
+      The path of the converted resume. Multiple resumes can
+      be specified, one per provided input resume.
+
+Options:
+
+   **--format -f <fmt>**
+
+      The desired format for the new resume(s). Valid values
+      are 'FRESH', 'JRS', or, to target the latest edge
+      version of the JSON Resume Schema, 'JRS@1'.
+
+      If this parameter is omitted, the destination format
+      will be inferred from the source resume's format. If
+      the source format is FRESH, the destination format
+      will be JSON Resume, and vice-versa.

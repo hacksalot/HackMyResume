@@ -5,6 +5,7 @@ Definition of the Markdown to WordProcessingML conversion routine.
 ###
 
 
+XML = require 'xml-escape'
 _ = require 'underscore'
 HTML5Tokenizer = require 'simple-html-tokenizer'
 
@@ -44,6 +45,6 @@ module.exports = ( html ) ->
           style += if is_link then '<w:rStyle w:val="Hyperlink"/>' else ''
           final +=
             (if is_link then ('<w:hlink w:dest="' + link_url + '">') else '') +
-            '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + tok.chars +
+            '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + XML(tok.chars) +
             '</w:t></w:r>' + (if is_link then '</w:hlink>' else '')
   final

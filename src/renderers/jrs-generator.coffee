@@ -37,8 +37,8 @@ JRSGenerator = module.exports =
     turnoff.forEach (c, idx) -> console[c] = org[idx]
 
     # Unfreeze and apply Markdown
-    rezHtml = rezHtml.replace /@@@@~.*?~@@@@/gm, (val) ->
-      MDIN( val.replace( /~@@@@/gm,'' ).replace( /@@@@~/gm,'' ) )
+    rezHtml = rezHtml.replace /@@@@~[\s\S]*?~@@@@/g, (val) ->
+      MDIN( val.replace( /~@@@@/g,'' ).replace( /@@@@~/g,'' ) )
 
 
 MDIN = (txt) -> # TODO: Move this

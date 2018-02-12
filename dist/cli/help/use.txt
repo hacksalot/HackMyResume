@@ -1,0 +1,70 @@
+**HackMyResume** | A Swiss Army knife for resumes and CVs
+
+Usage:
+
+   **hackmyresume [--version] [--help] [--silent] [--debug]**
+      **[--options] [--no-colors] <command> [<args>]**
+
+Commands: (type "hackmyresume help COMMAND" for details)
+
+   **BUILD**         Build your resume to the destination format(s).
+   **ANALYZE**       Analyze your resume for keywords, gaps, and metrics.
+   **VALIDATE**      Validate your resume for errors and typos.
+   **NEW**           Create a new resume in FRESH or JSON Resume format.
+   **CONVERT**       Convert your resume between FRESH and JSON Resume.
+   **PEEK**          View a specific field or element on your resume.
+   **HELP**          View help on a specific HackMyResume command.
+
+Common Tasks:
+
+   Generate a resume in a specific format (HTML, Word, PDF, etc.)
+
+      **hackmyresume build rez.json to out/rez.html**
+      **hackmyresume build rez.json to out/rez.doc**
+      **hackmyresume build rez.json to out/rez.pdf**
+      **hackmyresume build rez.json to out/rez.txt**
+      **hackmyresume build rez.json to out/rez.md**
+      **hackmyresume build rez.json to out/rez.png**
+      **hackmyresume build rez.json to out/rez.tex**
+
+   Build a resume to ALL available formats:
+
+      **hackmyresume build rez.json to out/rez.all**
+
+   Build a resume with a specific theme:
+
+      **hackmyresume build rez.json to out/rez.all -t themeName**
+
+   Create a new empty resume:
+
+      **hackmyresume new rez.json**
+
+   Convert a resume between FRESH and JRS formats:
+
+      **hackmyresume convert rez.json converted.json**
+
+   Analyze a resume for important metrics
+
+      **hackmyresume analyze rez.json**
+
+   Find more resume themes:
+
+      **https://www.npmjs.com/search?q=jsonresume-theme**
+      **https://www.npmjs.com/search?q=fresh-theme**
+      **https://github.com/fresh-standard/fresh-themes**
+
+   Validate a resume's structure and syntax:
+
+      **hackmyresume validate resume.json**
+
+   View help on a specific command:
+
+      **hackmyresume help [build|convert|new|analyze|validate|peek|help]**
+
+   Submit a bug or request:
+
+      **https://githut.com/hacksalot/HackMyResume/issues**
+
+HackMyResume is free and open source software published
+under the MIT license. For more information, visit the
+HackMyResume website or GitHub project page.

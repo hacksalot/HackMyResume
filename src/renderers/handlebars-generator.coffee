@@ -30,21 +30,19 @@ HandlebarsGenerator = module.exports =
     try
       # Compile and run the Handlebars template.
       template = HANDLEBARS.compile tpl,
-        strict: false, assumeObjects: false, noEscape: data.opts.noescape || false
+        strict: false
+        assumeObjects: false
+        noEscape: data.opts.noescape
       return template data
-    catch
+    catch err
       throw
         fluenterror:
           HMSTATUS[ if template then 'invokeTemplate' else 'compileTemplate' ]
-        inner: _error
+        inner: err
 
 
 
   generate: ( json, jst, format, curFmt, opts, theme ) ->
-
-    # Set up partials and helpers
-    registerPartials format, theme
-    registerHelpers theme, opts
 
     # Preprocess text
     encData = json
@@ -52,6 +50,10 @@ HandlebarsGenerator = module.exports =
       encData = json.markdownify()
     if( format == 'doc' )
       encData = json.xmlify()
+
+    # Set up partials and helpers
+    registerPartials format, theme
+    registerHelpers theme, encData, opts
 
     # Set up the context
     ctx =

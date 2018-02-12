@@ -1,0 +1,31 @@
+**peek** | View portions of a resume from the command line
+
+Usage:
+
+   **hackmyresume PEEK <resume> <at>**
+
+   The PEEK command displays a specific piece or part of the
+   resume without requiring the resume to be opened in an
+   editor.
+
+Parameters:
+
+   **<resume>**
+
+     Path to a FRESH or JRS resume. Multiple resumes can be
+     specified, separated by spaces.
+
+         hackmyresume PEEK r1.json r2.json r3.json "employment.history[2]"
+
+   **<at>**
+
+      The resume property or field to be displayed. Can be
+      any valid resume path, for example:
+
+         education[0]
+         info.name
+         employment.history[3].start
+
+Options:
+
+   **None.**
