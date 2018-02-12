@@ -3,5 +3,12 @@ assets/
 test/
 doc/
 .travis.yml
+.eslintrc.yml
 Gruntfile.js
 .gitattributes
+ROADMAP.md
+BUILDING.md
+CONTRIBUTING.md
+CHANGELOG.md
+FAQ.md
+*.map
