@@ -11,7 +11,6 @@ HME = require('../core/event-codes')
 _ = require('underscore')
 M2C = require('../utils/md2chalk.js')
 PATH = require('path')
-LO = require('lodash')
 FS = require('fs')
 EXTEND = require('extend')
 HANDLEBARS = require('handlebars')
@@ -23,7 +22,7 @@ dbgStyle = 'cyan';
 
 
 ###* A stateful output module. All HMR console output handled here. ###
-module.exports = class OutputHandler
+class OutputHandler
 
 
 
@@ -40,11 +39,10 @@ module.exports = class OutputHandler
 
 
 
-  log: ( msg ) ->
-    msg = msg || ''
+  log: ->
     printf = require('printf')
     finished = printf.apply( printf, arguments )
-    @opts.silent || console.log( finished )
+    @opts.silent || console.log( finished ) # eslint-disable-line no-console
 
 
 
@@ -94,7 +92,6 @@ module.exports = class OutputHandler
         if evt.cmd == 'build'
           themeName = this.theme.name.toUpperCase()
           if this.opts.tips && (this.theme.message || this.theme.render)
-            WRAP = require('word-wrap')
             if this.theme.message
               L( M2C( this.msgs.afterBuild.msg[0], 'cyan' ), themeName )
               L( M2C( this.theme.message, 'white' ))
@@ -153,7 +150,7 @@ module.exports = class OutputHandler
         L(M2C( msgs[0], 'white' ) + chalk[style].bold(adj), evt.file, evt.schema)
 
         if evt.violations
-          _.each evt.violations, (err,idx) ->
+          _.each evt.violations, (err) ->
             L( chalk.yellow.bold('--> ') +
                chalk.yellow(err.field.replace('data.','resume.').toUpperCase() +
                ' ' + err.message))
@@ -172,6 +169,7 @@ module.exports = class OutputHandler
 
         # If the key was present, print it
         if evt.target != undefined and !evt.error
+          # eslint-disable-next-line no-console
           console.dir( evt.target, { depth: null, colors: true } )
 
         # If the key was not present, but no error occurred, print it
@@ -180,3 +178,5 @@ module.exports = class OutputHandler
 
         else if evt.error
           L chalk.red( evt.error.inner.inner )
+
+module.exports = OutputHandler

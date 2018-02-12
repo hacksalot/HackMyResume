@@ -4,7 +4,7 @@
   @license MIT. See LICENSE.md for details.
   @module cli/out
   */
-  var EXTEND, FS, HANDLEBARS, HME, LO, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
+  var EXTEND, FS, HANDLEBARS, HME, M2C, OutputHandler, PATH, YAML, _, chalk, dbgStyle, pad, printf;
 
   chalk = require('chalk');
 
@@ -15,8 +15,6 @@
   M2C = require('../utils/md2chalk.js');
 
   PATH = require('path');
-
-  LO = require('lodash');
 
   FS = require('fs');
 
@@ -32,7 +30,7 @@
 
   dbgStyle = 'cyan';
 
-  module.exports = OutputHandler = class OutputHandler {
+  OutputHandler = class OutputHandler {
     constructor(opts) {
       this.init(opts);
       return;
@@ -43,16 +41,15 @@
       this.msgs = YAML.load(PATH.join(__dirname, 'msg.yml')).events;
     }
 
-    log(msg) {
+    log() {
       var finished;
-      msg = msg || '';
       printf = require('printf');
       finished = printf.apply(printf, arguments);
-      return this.opts.silent || console.log(finished);
+      return this.opts.silent || console.log(finished); // eslint-disable-line no-console
     }
 
     do(evt) {
-      var L, WRAP, adj, info, msg, msgs, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
+      var L, adj, info, msg, msgs, numFormats, output, rawTpl, sty, style, suffix, template, that, themeName, tot;
       that = this;
       L = function() {
         return that.log.apply(that, arguments);
@@ -84,7 +81,6 @@
           if (evt.cmd === 'build') {
             themeName = this.theme.name.toUpperCase();
             if (this.opts.tips && (this.theme.message || this.theme.render)) {
-              WRAP = require('word-wrap');
               if (this.theme.message) {
                 L(M2C(this.msgs.afterBuild.msg[0], 'cyan'), themeName);
                 return L(M2C(this.theme.message, 'white'));
@@ -157,7 +153,7 @@
           evt.schema = evt.schema.replace('jars', 'JSON Resume').toUpperCase();
           L(M2C(msgs[0], 'white') + chalk[style].bold(adj), evt.file, evt.schema);
           if (evt.violations) {
-            _.each(evt.violations, function(err, idx) {
+            _.each(evt.violations, function(err) {
               L(chalk.yellow.bold('--> ') + chalk.yellow(err.field.replace('data.', 'resume.').toUpperCase() + ' ' + err.message));
             }, this);
           }
@@ -172,6 +168,7 @@
           }
           // If the key was present, print it
           if (evt.target !== void 0 && !evt.error) {
+            // eslint-disable-next-line no-console
             return console.dir(evt.target, {
               depth: null,
               colors: true
@@ -185,6 +182,8 @@
     }
 
   };
+
+  module.exports = OutputHandler;
 
 }).call(this);
 

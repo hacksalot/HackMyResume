@@ -4,17 +4,11 @@
   @module cli/error
   @license MIT. See LICENSE.md for details.
   */
-  /** Error handler for HackMyResume. All errors are handled here.
-  @class ErrorHandler */
-  var ErrorHandler, FCMD, FS, HMSTATUS, M2C, PATH, PKG, SyntaxErrorEx, WRAP, YAML, _defaultLog, assembleError, chalk, extend, printf;
+  var FS, HMSTATUS, M2C, PATH, SyntaxErrorEx, WRAP, _defaultLog, assembleError, chalk, extend, printf;
 
   HMSTATUS = require('../core/status-codes');
 
-  PKG = require('../../package.json');
-
   FS = require('fs');
-
-  FCMD = require('../index');
 
   PATH = require('path');
 
@@ -26,15 +20,15 @@
 
   extend = require('extend');
 
-  YAML = require('yamljs');
-
   printf = require('printf');
 
   SyntaxErrorEx = require('../utils/syntax-error-ex');
 
   require('string.prototype.startswith');
 
-  ErrorHandler = module.exports = {
+  /** Error handler for HackMyResume. All errors are handled here.
+  @class ErrorHandler */
+  module.exports = {
     init: function(debug, assert, silent) {
       this.debug = debug;
       this.assert = assert;
@@ -94,7 +88,7 @@
   };
 
   _defaultLog = function() {
-    return console.log.apply(console.log, arguments);
+    return console.log.apply(console.log, arguments); // eslint-disable-line no-console
   };
 
   assembleError = function(ex) {
@@ -185,6 +179,7 @@
         break;
       case HMSTATUS.readError:
         if (!ex.quiet) {
+          // eslint-disable-next-line no-console
           console.error(printf(M2C(this.msgs.readError.msg, 'red'), ex.file));
         }
         msg = ex.inner.toString();
@@ -215,6 +210,7 @@
         break;
       case HMSTATUS.parseError:
         if (SyntaxErrorEx.is(ex.inner)) {
+          // eslint-disable-next-line no-console
           console.error(printf(M2C(this.msgs.readError.msg, 'red'), ex.file));
           se = new SyntaxErrorEx(ex, ex.raw);
           if ((se.line != null) && (se.col != null)) {
@@ -243,6 +239,7 @@
       case HMSTATUS.invalidOptionsFile:
         msg = M2C(this.msgs.invalidOptionsFile.msg[0]);
         if (SyntaxErrorEx.is(ex.inner)) {
+          // eslint-disable-next-line no-console
           console.error(printf(M2C(this.msgs.readError.msg, 'red'), ex.file));
           se = new SyntaxErrorEx(ex, ex.raw);
           if ((se.line != null) && (se.col != null)) {

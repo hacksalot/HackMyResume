@@ -13,9 +13,8 @@ EXTEND = require 'extend'
 chalk = require 'chalk'
 PATH = require 'path'
 HMSTATUS = require '../core/status-codes'
-HME = require '../core/event-codes'
 safeLoadJSON = require '../utils/safe-json-loader'
-StringUtils = require '../utils/string.js'
+#StringUtils = require '../utils/string.js'
 _ = require 'underscore'
 OUTPUT = require './out'
 PAD = require 'string-padding'
@@ -37,7 +36,7 @@ line interface as a single method accepting a parameter array.
 @param rawArgs {Array} An array of command-line parameters. Will either be
 process.argv (in production) or custom parameters (in test).
 ###
-main = module.exports = ( rawArgs, exitCallback ) ->
+module.exports = ( rawArgs, exitCallback ) ->
 
   initInfo = initialize( rawArgs, exitCallback )
   if initInfo is null
@@ -107,7 +106,8 @@ main = module.exports = ( rawArgs, exitCallback ) ->
     .command('peek')
     .arguments('<sources...>')
     .description('Peek at a resume field or section')
-    .action(( sources, sectionOrField ) ->
+    #.action(( sources, sectionOrField ) ->
+    .action(( sources ) ->
       dst = if (sources && sources.length > 1) then [sources.pop()] else []
       execute.call( this, sources, dst, this.opts(), logMsg)
       return
@@ -124,9 +124,10 @@ main = module.exports = ( rawArgs, exitCallback ) ->
     .option('--no-sort', 'Sort resume sections by date', false)
     .option('--tips', 'Display theme tips and warnings.', false)
     .option('--private', 'Include resume fields marked as private', false)
-    .option('--no-escape', "Turn off encoding in Handlebars themes.", false)
+    .option('--no-escape', 'Turn off encoding in Handlebars themes.', false)
     .description('Generate resume to multiple formats')
-    .action(( sources, targets, options ) ->
+    #.action(( sources, targets, options ) ->
+    .action(->
       x = splitSrcDest.call( this );
       execute.call( this, x.src, x.dst, this.opts(), logMsg)
       return
@@ -188,7 +189,7 @@ initialize = ( ar, exitCallback ) ->
     _err.err fluenterror: HMSTATUS.invalidCommand, quit: true, attempted: o.orgVerb, true
 
   # Override the .missingArgument behavior
-  Command.prototype.missingArgument = (name) ->
+  Command.prototype.missingArgument = (### unused ###) ->
     if this.name() != 'help'
       _err.err
         verb: @name()
@@ -293,7 +294,7 @@ execute = ( src, dst, opts, log ) ->
 
 
 ### Success handler for verb invocations. Calls process.exit by default ###
-executeSuccess = (obj) ->
+executeSuccess = (###obj###) ->
   # Can't call _exitCallback here (process.exit) when PDF is running in BK
   #_exitCallback 0; return
 
@@ -385,4 +386,5 @@ splitSrcDest = () ->
 
 ### Simple logging placeholder. ###
 logMsg = () ->
+  # eslint-disable-next-line no-console
   _opts.silent || console.log.apply( console.log, arguments )

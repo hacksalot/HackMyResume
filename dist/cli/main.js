@@ -15,15 +15,8 @@
   - Need to accept JSON inputs from the command line.
   */
   /* Simple logging placeholder. */
-  /*
-  A callable implementation of the HackMyResume CLI. Encapsulates the command
-  line interface as a single method accepting a parameter array.
-  @alias module:cli/main.main
-  @param rawArgs {Array} An array of command-line parameters. Will either be
-  process.argv (in production) or custom parameters (in test).
-  */
   /* Split multiple command-line filenames by the 'TO' keyword */
-  var Command, EXTEND, FS, HME, HMR, HMSTATUS, M2C, OUTPUT, PAD, PATH, PKG, StringUtils, _, _err, _exitCallback, _opts, _out, _title, chalk, execute, executeFail, executeSuccess, initOptions, initialize, loadOptions, logMsg, main, printf, safeLoadJSON, splitSrcDest;
+  var Command, EXTEND, FS, HMR, HMSTATUS, M2C, OUTPUT, PAD, PATH, PKG, _, _err, _exitCallback, _opts, _out, _title, chalk, execute, executeFail, executeSuccess, initOptions, initialize, loadOptions, logMsg, printf, safeLoadJSON, splitSrcDest;
 
   HMR = require('../index');
 
@@ -39,12 +32,9 @@
 
   HMSTATUS = require('../core/status-codes');
 
-  HME = require('../core/event-codes');
-
   safeLoadJSON = require('../utils/safe-json-loader');
 
-  StringUtils = require('../utils/string.js');
-
+  //StringUtils = require '../utils/string.js'
   _ = require('underscore');
 
   OUTPUT = require('./out');
@@ -67,7 +57,14 @@
 
   _exitCallback = null;
 
-  main = module.exports = function(rawArgs, exitCallback) {
+  /*
+  A callable implementation of the HackMyResume CLI. Encapsulates the command
+  line interface as a single method accepting a parameter array.
+  @alias module:cli/main.main
+  @param rawArgs {Array} An array of command-line parameters. Will either be
+  process.argv (in production) or custom parameters (in test).
+  */
+  module.exports = function(rawArgs, exitCallback) {
     var args, initInfo, program;
     initInfo = initialize(rawArgs, exitCallback);
     if (initInfo === null) {
@@ -96,13 +93,15 @@
       execute.call(this, sources, [], this.opts(), logMsg);
     });
     // Create the PEEK command
-    program.command('peek').arguments('<sources...>').description('Peek at a resume field or section').action(function(sources, sectionOrField) {
+    //.action(( sources, sectionOrField ) ->
+    program.command('peek').arguments('<sources...>').description('Peek at a resume field or section').action(function(sources) {
       var dst;
       dst = (sources && sources.length > 1) ? [sources.pop()] : [];
       execute.call(this, sources, dst, this.opts(), logMsg);
     });
     // Create the BUILD command
-    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).option('--private', 'Include resume fields marked as private', false).option('--no-escape', "Turn off encoding in Handlebars themes.", false).description('Generate resume to multiple formats').action(function(sources, targets, options) {
+    //.action(( sources, targets, options ) ->
+    program.command('build').alias('generate').option('-t --theme <theme>', 'Theme name or path').option('-n --no-prettify', 'Disable HTML prettification', true).option('-c --css <option>', 'CSS linking / embedding').option('-p --pdf <engine>', 'PDF generation engine').option('--no-sort', 'Sort resume sections by date', false).option('--tips', 'Display theme tips and warnings.', false).option('--private', 'Include resume fields marked as private', false).option('--no-escape', 'Turn off encoding in Handlebars themes.', false).description('Generate resume to multiple formats').action(function() {
       var x;
       x = splitSrcDest.call(this);
       execute.call(this, x.src, x.dst, this.opts(), logMsg);
@@ -166,7 +165,7 @@
       }, true);
     }
     // Override the .missingArgument behavior
-    Command.prototype.missingArgument = function(name) {
+    Command.prototype.missingArgument = function(/* unused */) {
       if (this.name() !== 'help') {
         _err.err({
           verb: this.name(),
@@ -277,7 +276,7 @@
     prom.then(executeSuccess, executeFail);
   };
 
-  executeSuccess = function(obj) {};
+  executeSuccess = function(/*obj*/) {};
 
   // Can't call _exitCallback here (process.exit) when PDF is running in BK
   //_exitCallback 0; return
@@ -363,6 +362,7 @@
   };
 
   logMsg = function() {
+    // eslint-disable-next-line no-console
     return _opts.silent || console.log.apply(console.log, arguments);
   };
 

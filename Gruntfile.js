@@ -59,14 +59,14 @@ module.exports = function (grunt) {
 
   // Use 'grunt test' for local testing
   grunt.registerTask('test', 'Test the HackMyResume application.',
-    function( config ) {
+    function() {
       grunt.task.run(['clean:test','build','eslint','simplemocha:all']);
     }
   );
 
   // Use 'grunt build' to build HMR
   grunt.registerTask('build', 'Build the HackMyResume application.',
-    function( config ) {
+    function() {
       grunt.task.run( ['clean:dist','copy','coffee','eslint'] );
     }
   );

@@ -7,15 +7,12 @@ Error-handling routines for HackMyResume.
 
 
 HMSTATUS = require '../core/status-codes'
-PKG = require '../../package.json'
 FS = require 'fs'
-FCMD = require '../index'
 PATH = require 'path'
 WRAP = require 'word-wrap'
 M2C = require '../utils/md2chalk'
 chalk = require 'chalk'
 extend = require 'extend'
-YAML = require 'yamljs'
 printf = require 'printf'
 SyntaxErrorEx = require '../utils/syntax-error-ex'
 require 'string.prototype.startswith'
@@ -24,7 +21,7 @@ require 'string.prototype.startswith'
 
 ###* Error handler for HackMyResume. All errors are handled here.
 @class ErrorHandler ###
-ErrorHandler = module.exports =
+module.exports =
 
   init: ( debug, assert, silent ) ->
     @debug = debug
@@ -86,8 +83,7 @@ ErrorHandler = module.exports =
   format_custom: ( msg ) -> msg
 
 
-
-_defaultLog = () -> console.log.apply console.log, arguments
+_defaultLog = () -> console.log.apply console.log, arguments # eslint-disable-line no-console
 
 
 
@@ -180,6 +176,7 @@ assembleError = ( ex ) ->
 
     when HMSTATUS.readError
       if !ex.quiet
+        # eslint-disable-next-line no-console
         console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file))
       msg = ex.inner.toString()
       etype = 'error'
@@ -205,6 +202,7 @@ assembleError = ( ex ) ->
 
     when HMSTATUS.parseError
       if SyntaxErrorEx.is ex.inner
+        # eslint-disable-next-line no-console
         console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
         se = new SyntaxErrorEx ex, ex.raw
         if se.line? and se.col?
@@ -231,6 +229,7 @@ assembleError = ( ex ) ->
     when HMSTATUS.invalidOptionsFile
       msg = M2C @msgs.invalidOptionsFile.msg[0]
       if SyntaxErrorEx.is ex.inner
+        # eslint-disable-next-line no-console
         console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
         se = new SyntaxErrorEx ex, ex.raw
         if se.line? and se.col?
