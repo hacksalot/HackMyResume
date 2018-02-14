@@ -11,8 +11,8 @@ var chai = require('chai')
   , should = chai.should()
   , path = require('path')
   , _ = require('underscore')
-	, JRSResume = require('../../dist/core/jrs-resume')
-  , ResumeFactory = require('../../dist/core/resume-factory')
+	, JRSResume = require('../../src/core/jrs-resume')
+  , ResumeFactory = require('../../src/core/resume-factory')
   , validator = require('is-my-json-valid');
 
 

@@ -11,8 +11,8 @@ var chai = require('chai')
   , should = chai.should()
   , path = require('path')
   , _ = require('underscore')
-	, FRESHResume = require('../../dist/core/fresh-resume')
-  , ResumeFactory = require('../../dist/core/resume-factory')
+	, FRESHResume = require('../../src/core/fresh-resume')
+  , ResumeFactory = require('../../src/core/resume-factory')
   , validator = require('is-my-json-valid');
 
 

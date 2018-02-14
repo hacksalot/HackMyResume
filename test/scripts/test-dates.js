@@ -11,8 +11,8 @@ var chai = require('chai')
   , should = chai.should()
   , path = require('path')
   , _ = require('underscore')
-	, FRESHResume = require('../../dist/core/fresh-resume')
-  , FCMD = require( '../../dist/index')
+	, FRESHResume = require('../../src/core/fresh-resume')
+  , FCMD = require( '../../src/index')
   , validator = require('is-my-json-valid')
   , EXTEND = require('extend');
 

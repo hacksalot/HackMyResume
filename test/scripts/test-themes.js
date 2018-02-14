@@ -12,9 +12,9 @@ var chai         = require('chai')
   , should       = chai.should()
   , path         = require('path')
   , _            = require('underscore')
-  , HackMyResume = require( '../../dist/index')
+  , HackMyResume = require( '../../src/index')
   , readFolder   = require('recursive-readdir-sync')
-  , fileContains = require('../../dist/utils/file-contains')
+  , fileContains = require('../../src/utils/file-contains')
   , dirCompare   = require('dir-compare');
 
 // Include stack traces for failed tests.
