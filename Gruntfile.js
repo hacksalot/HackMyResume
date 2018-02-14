@@ -35,18 +35,11 @@ module.exports = function (grunt) {
   // Use 'grunt test' for local testing
   grunt.registerTask('test', 'Test the HackMyResume application.',
     function() {
-      grunt.task.run(['clean:test','build','eslint','simplemocha:all']);
+      grunt.task.run(['clean:test','eslint','simplemocha:all']);
     }
   );
 
-  // Use 'grunt build' to build HMR
-  grunt.registerTask('build', 'Build the HackMyResume application.',
-    function() {
-      grunt.task.run( ['eslint'] );
-    }
-  );
-
-  // Default task does everything
+  // Default task - nothing to do but test
   grunt.registerTask('default', [ 'test' ]);
 
 };
