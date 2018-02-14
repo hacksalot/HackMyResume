@@ -11,7 +11,6 @@ Template helper definitions for Underscore.
 
 
 
-const HANDLEBARS = require('handlebars');
 const _ = require('underscore');
 const helpers = require('./generic-helpers');
 
@@ -27,7 +26,7 @@ module.exports = function( theme, opts, cssInfo, ctx, eng ) {
   helpers.cssInfo = cssInfo;
   helpers.engine = eng;
   ctx.h = helpers;
-  _.each(helpers, function( hVal, hKey ) {
+  _.each(helpers, function( hVal ) {
     if (_.isFunction(hVal)) {
       return _.bind(hVal, ctx);
     }

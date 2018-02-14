@@ -19,7 +19,7 @@ require('../utils/string');
 
 
 
-const consoleFormatHelpers = (module.exports = {
+module.exports = {
 
   v( val, defaultVal, padding, style ) {
     let retVal = ( (val === null) || (val === undefined) ) ? defaultVal : val;
@@ -64,4 +64,4 @@ const consoleFormatHelpers = (module.exports = {
   pad( val, spaces ) {
     return PAD(val, Math.abs(spaces), null, spaces > 0 ? PAD.LEFT : PAD.RIGHT);
   }
-});
+};

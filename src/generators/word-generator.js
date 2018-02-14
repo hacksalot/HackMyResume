@@ -5,10 +5,10 @@ Definition of the WordGenerator class.
 */
 
 
-let WordGenerator;
 const TemplateGenerator = require('./template-generator');
 
-module.exports = (WordGenerator = class WordGenerator extends TemplateGenerator {
-
+class WordGenerator extends TemplateGenerator {
   constructor() { super('doc', 'xml'); }
-});
+}
+
+module.exports = WordGenerator;

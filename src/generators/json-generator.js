@@ -9,15 +9,13 @@ Definition of the JsonGenerator class.
 @license MIT. See LICENSE.md for details.
 */
 
-let JsonGenerator;
 const BaseGenerator = require('./base-generator');
 const FS = require('fs');
-const _ = require('underscore');
 const FJCV = require('fresh-jrs-converter');
 
 /** The JsonGenerator generates a FRESH or JRS resume as an output. */
 
-module.exports = (JsonGenerator = class JsonGenerator extends BaseGenerator {
+class JsonGenerator extends BaseGenerator {
 
   constructor() { super('json'); }
 
@@ -30,4 +28,6 @@ module.exports = (JsonGenerator = class JsonGenerator extends BaseGenerator {
   generate( rez, f ) {
     FS.writeFileSync(f, this.invoke(rez), 'utf8');
   }
-});
+}
+
+module.exports = JsonGenerator;

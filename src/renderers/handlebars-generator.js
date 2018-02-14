@@ -26,7 +26,7 @@ const SLASH = require('slash');
 Perform template-based resume generation using Handlebars.js.
 @class HandlebarsGenerator
 */
-const HandlebarsGenerator = (module.exports = {
+module.exports = {
 
 
 
@@ -83,7 +83,7 @@ const HandlebarsGenerator = (module.exports = {
     // Render the template
     return this.generateSimple(ctx, jst);
   }
-});
+};
 
 
 
@@ -100,8 +100,7 @@ var registerPartials = function(format, theme) {
 
     // Register global partials in the /partials/[format] folder
     // TODO: Only do this once per HMR invocation.
-    _.each(READFILES( partialsFolder, error=> ({ })), function( el ) {
-      const pathInfo = parsePath(el);
+    _.each(READFILES( partialsFolder ), function( el ) {
       const name = SLASH(PATH.relative( partialsFolder, el ).replace(/\.(?:html|xml|hbs|md|txt)$/i, ''));
       const tplData = FS.readFileSync(el, 'utf8');
       const compiledTemplate = HANDLEBARS.compile(tplData);

@@ -11,10 +11,8 @@ Definition of the HtmlPngGenerator class.
 
 
 
-let HtmlPngGenerator;
 const TemplateGenerator = require('./template-generator');
 const FS = require('fs-extra');
-const HTML = require('html');
 const SLASH = require('slash');
 const SPAWN = require('../utils/safe-spawn');
 const PATH = require('path');
@@ -23,11 +21,11 @@ const PATH = require('path');
 /**
 An HTML-based PNG resume generator for HackMyResume.
 */
-module.exports = (HtmlPngGenerator = class HtmlPngGenerator extends TemplateGenerator {
+class HtmlPngGenerator extends TemplateGenerator {
 
   constructor() { super('png', 'html'); }
 
-  invoke( rez, themeMarkup, cssInfo, opts ) {}
+  invoke( /*rez, themeMarkup, cssInfo, opts*/ ) {}
     // TODO: Not currently called or callable.
 
   generate( rez, f, opts ) {
@@ -35,7 +33,9 @@ module.exports = (HtmlPngGenerator = class HtmlPngGenerator extends TemplateGene
     const htmlFile = htmlResults[0].final.files.filter(fl => fl.info.ext === 'html');
     phantom(htmlFile[0].data, f);
   }
-});
+}
+
+module.exports = HtmlPngGenerator;
 
 /**
 Generate a PDF from HTML using Phantom's CLI interface.
@@ -54,5 +54,5 @@ var phantom = function( markup, fOut ) {
     PATH.resolve( __dirname, '../utils/rasterize.js' ) ) );
   const sourcePath = SLASH( PATH.relative( process.cwd(), tempFile) );
   const destPath = SLASH( PATH.relative( process.cwd(), fOut) );
-  const info = SPAWN('phantomjs', [ scriptPath, sourcePath, destPath ]);
+  SPAWN('phantomjs', [ scriptPath, sourcePath, destPath ]);
 };

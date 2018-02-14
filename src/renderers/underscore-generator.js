@@ -20,7 +20,7 @@ const escapeLaTeX = require('escape-latex');
 Perform template-based resume generation using Underscore.js.
 @class UnderscoreGenerator
 */
-const UnderscoreGenerator = (module.exports = {
+module.exports = {
 
 
 
@@ -47,7 +47,7 @@ const UnderscoreGenerator = (module.exports = {
     // Tweak underscore's default template delimeters
     let delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
     if (opts.themeObj && opts.themeObj.delimeters) {
-      delims = _.mapObject(delims, (val,key) => new RegExp(val, "ig"));
+      delims = _.mapObject(delims, (val) => new RegExp(val, 'ig'));
     }
     _.templateSettings = delims;
 
@@ -59,7 +59,7 @@ const UnderscoreGenerator = (module.exports = {
       case 'png': r = json.markdownify(); break;
       case 'latex':
         var traverse = require('traverse');
-        r = traverse(json).map(function(x) {
+        r = traverse(json).map(function() {
           if (this.isLeaf && String.is(this.node)) {
             return escapeLaTeX(this.node);
           }
@@ -87,4 +87,4 @@ const UnderscoreGenerator = (module.exports = {
     // Generate!
     return this.generateSimple(ctx, jst);
   }
-});
+};

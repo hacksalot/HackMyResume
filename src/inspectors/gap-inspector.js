@@ -21,7 +21,7 @@ const LO = require('lodash');
 /**
 Identify gaps in the candidate's employment history.
 */
-const gapInspector = (module.exports = {
+module.exports = {
 
   moniker: 'gap-inspector',
 
@@ -84,10 +84,8 @@ const gapInspector = (module.exports = {
     // When the reference count is > 0, the candidate is employed. When the
     // reference count reaches 2, the candidate is overlapped.
 
-    const num_gaps = 0;
     let ref_count = 0;
     let total_gap_days = 0;
-    const gap_start = null;
 
     new_e.forEach(function(point) {
 
@@ -156,4 +154,4 @@ const gapInspector = (module.exports = {
     coverage.duration = dur;
     return coverage;
   }
-});
+};

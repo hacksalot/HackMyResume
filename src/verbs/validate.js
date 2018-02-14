@@ -11,11 +11,6 @@ Implementation of the 'validate' verb for HackMyResume.
 
 
 
-let ValidateVerb;
-const FS = require('fs');
-const ResumeFactory = require('../core/resume-factory');
-const SyntaxErrorEx = require('../utils/syntax-error-ex');
-const chalk = require('chalk');
 const Verb = require('../verbs/verb');
 const HMSTATUS = require('../core/status-codes');
 const HMEVENT = require('../core/event-codes');
@@ -25,12 +20,9 @@ const safeLoadJSON = require('../utils/safe-json-loader');
 
 
 /** An invokable resume validation command. */
-module.exports = (ValidateVerb = class ValidateVerb extends Verb {
-
-
-
+class ValidateVerb extends Verb {
   constructor() { super('validate', _validate); }
-});
+}
 
 
 
@@ -63,6 +55,7 @@ var _validate = function(sources, unused, opts)  {
   return results;
 };
 
+module.exports = ValidateVerb;
 
 /**
 Validate a single resume.
@@ -75,7 +68,7 @@ Validate a single resume.
   error: <errorObject>
 }
 */
-var _validateOne = function(t, validator, schemas, opts) {
+var _validateOne = function(t, validator, schemas) {
 
   const ret = {file: t, isValid: false, status: 'unknown', schema: '-----'};
 

@@ -22,8 +22,6 @@ See: http://stackoverflow.com/q/13323356
 
 class SyntaxErrorEx {
   constructor( ex, rawData ) {
-    const lineNum = null;
-    const colNum = null;
     let JSONLint = require('json-lint');
     const lint = JSONLint(rawData, { comments: false });
     if (lint.error) { [this.line, this.col] = Array.from([lint.line, lint.character]); }

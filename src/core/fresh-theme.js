@@ -14,14 +14,11 @@ Definition of the FRESHTheme class.
 
 
 const FS = require('fs');
-const validator = require('is-my-json-valid');
 const _ = require('underscore');
 const PATH = require('path');
 const parsePath = require('parse-filepath');
-const pathExists = require('path-exists').sync;
 const EXTEND = require('extend');
 const HMSTATUS = require('./status-codes');
-const moment = require('moment');
 const loadSafeJson = require('../utils/safe-json-loader');
 const READFILES = require('recursive-readdir-sync');
 
@@ -40,9 +37,6 @@ class FRESHTheme {
 
     this.folder = themeFolder;
 
-    // Open the [theme-name].json file; should have the same name as folder
-    const pathInfo = parsePath(themeFolder);
-
     // Set up a formats hash for the theme
     let formatsHash = { };
 
@@ -58,8 +52,6 @@ class FRESHTheme {
       inner: themeInfo.ex.inner
       };
     }
-
-    const that = this;
 
     // Move properties from the theme JSON file to the theme object
     EXTEND(true, this, themeInfo.json);
@@ -116,10 +108,7 @@ class FRESHTheme {
 var _load = function(formatsHash) {
 
   const that = this;
-  const major = false;
   const tplFolder = PATH.join(this.folder, this.baseFolder);
-
-  const copyOnly = ['.ttf','.otf', '.png','.jpg','.jpeg','.pdf'];
 
   // Iterate over all files in the theme folder, producing an array, fmts,
   // containing info for each file. While we're doing that, also build up

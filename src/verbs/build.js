@@ -12,11 +12,8 @@ Implementation of the 'build' verb for HackMyResume.
 
 
 
-let BuildVerb;
 const _              = require('underscore');
 const PATH           = require('path');
-const FS             = require('fs');
-const MD             = require('marked');
 const MKDIRP         = require('mkdirp');
 const extend         = require('extend');
 const parsePath      = require('parse-filepath');
@@ -34,24 +31,27 @@ const ResumeFactory  = require('../core/resume-factory');
 const _fmts          = require('../core/default-formats');
 const Verb           = require('../verbs/verb');
 
-const _err = null;
-const _log = null;
+//const _err = null;
+//const _log = null;
 let _rezObj = null;
-const build = null;
-const prep = null;
-const single = null;
-const verifyOutputs = null;
-const addFreebieFormats = null;
-const expand = null;
-const verifyTheme = null;
-const loadTheme = null;
+//const build = null;
+//const prep = null;
+//const single = null;
+//const verifyOutputs = null;
+//const addFreebieFormats = null;
+//const expand = null;
+//const verifyTheme = null;
+//const loadTheme = null;
 
 /** An invokable resume generation command. */
-module.exports = (BuildVerb = class BuildVerb extends Verb {
+class BuildVerb extends Verb {
 
   /** Create a new build verb. */
   constructor() { super('build', _build); }
-});
+}
+
+
+module.exports = BuildVerb;
 
 
 
@@ -134,7 +134,7 @@ var _build = function( src, dst, opts ) {
     if (mixed) {
       this.err(HMSTATUS.mixedMerge);
     }
-    rez = _.reduceRight(sheets, ( a, b, idx ) => extend( true, b, a ));
+    rez = _.reduceRight(sheets, ( a, b ) => extend( true, b, a ));
     this.stat(HMEVENT.afterMerge, { r: rez });
   } else {
     rez = sheets[0];
@@ -243,8 +243,6 @@ var _single = function( targInfo, theme, finished ) {
     if (!targInfo.fmt) {
       return { };
     }
-    const fType = targInfo.fmt.outFormat;
-    const fName = PATH.basename(f, `.${fType}`);
     let theFormat = null;
 
     this.stat(HMEVENT.beforeGenerate, {

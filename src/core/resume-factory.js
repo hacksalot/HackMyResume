@@ -15,9 +15,6 @@ const FS              = require('fs');
 const HMS    = require('./status-codes');
 const HME             = require('./event-codes');
 const ResumeConverter = require('fresh-jrs-converter');
-const chalk           = require('chalk');
-const SyntaxErrorEx   = require('../utils/syntax-error-ex');
-const _               = require('underscore');
 const resumeDetect    = require('../utils/resume-detector');
 require('string.prototype.startswith');
 
@@ -28,7 +25,7 @@ A simple factory class for FRESH and JSON Resumes.
 @class ResumeFactory
 */
 
-const ResumeFactory = (module.exports = {
+module.exports = {
 
 
 
@@ -96,7 +93,7 @@ const ResumeFactory = (module.exports = {
       rez
     };
   }
-});
+};
 
 
 var _parse = function( fileName, opts, eve ) {

@@ -13,7 +13,6 @@ Definition of the JRSTheme class.
 
 const _ = require('underscore');
 const PATH = require('path');
-const parsePath = require('parse-filepath');
 const pathExists = require('path-exists').sync;
 const errors = require('./status-codes');
 
@@ -34,7 +33,7 @@ class JRSTheme {
   open( thFolder ) {
 
     this.folder = thFolder;
-    const pathInfo = parsePath(thFolder);
+    //const pathInfo = parsePath(thFolder);
 
     // Open and parse the theme's package.json file
     const pkgJsonPath = PATH.join(thFolder, 'package.json');

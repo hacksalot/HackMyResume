@@ -11,23 +11,20 @@ Implementation of the 'analyze' verb for HackMyResume.
 
 
 
-let AnalyzeVerb;
-const MKDIRP        = require('mkdirp');
-const PATH          = require('path');
 const HMEVENT       = require('../core/event-codes');
 const HMSTATUS      = require('../core/status-codes');
 const _             = require('underscore');
 const ResumeFactory = require('../core/resume-factory');
 const Verb          = require('../verbs/verb');
-const chalk         = require('chalk');
 
 
 
 /** An invokable resume analysis command. */
-module.exports = (AnalyzeVerb = class AnalyzeVerb extends Verb {
-
+class AnalyzeVerb extends Verb {
   constructor() { super('analyze', _analyze); }
-});
+}
+
+module.exports = AnalyzeVerb;
 
 
 
@@ -69,14 +66,14 @@ var _analyze = function( sources, dst, opts ) {
 
 
 /** Analyze a single resume. */
-var _analyzeOne = function( resumeObject, nlzrs, opts ) {
+var _analyzeOne = function( resumeObject, nlzrs ) {
   const { rez } = resumeObject;
   const safeFormat =
     rez.meta && rez.meta.format && rez.meta.format.startsWith('FRESH')
     ? 'FRESH' : 'JRS';
 
   this.stat( HMEVENT.beforeAnalyze, { fmt: safeFormat, file: resumeObject.file });
-  const info = _.mapObject(nlzrs, (val, key) => val.run(rez));
+  const info = _.mapObject(nlzrs, (val) => val.run(rez));
   this.stat(HMEVENT.afterAnalyze, { info });
   return info;
 };

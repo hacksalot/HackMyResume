@@ -4,13 +4,13 @@ Definition of the TextGenerator class.
 @license MIT. See LICENSE.md for details.
 */
 
-let TextGenerator;
 const TemplateGenerator = require('./template-generator');
 
 /**
 The TextGenerator generates a plain-text resume via the TemplateGenerator.
 */
-module.exports = (TextGenerator = class TextGenerator extends TemplateGenerator {
-
+class TextGenerator extends TemplateGenerator {
   constructor() { super('txt'); }
-});
+}
+
+module.exports = TextGenerator;

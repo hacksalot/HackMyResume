@@ -11,7 +11,6 @@ Implementation of the 'peek' verb for HackMyResume.
 
 
 
-let PeekVerb;
 const Verb = require('../verbs/verb');
 const _ = require('underscore');
 const __ = require('lodash');
@@ -21,12 +20,14 @@ const HMEVENT = require('../core/event-codes');
 
 
 
-module.exports = (PeekVerb = class PeekVerb extends Verb {
+class PeekVerb extends Verb {
 
   constructor() { super('peek', _peek); }
-});
+
+}
 
 
+module.exports = PeekVerb;
 
 /** Peek at a resume, resume section, or resume field. */
 var _peek = function( src, dst, opts ) {

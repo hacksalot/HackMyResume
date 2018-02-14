@@ -11,7 +11,6 @@ Definition of the HtmlPdfCLIGenerator class.
 
 
 
-let HtmlPdfCLIGenerator;
 const TemplateGenerator = require('./template-generator');
 const FS = require('fs-extra');
 const PATH = require('path');
@@ -27,7 +26,7 @@ wkhtmltopdf, and other PDF engines over a CLI (command-line interface).
 If an engine isn't installed for a particular platform, error out gracefully.
 */
 
-module.exports = (HtmlPdfCLIGenerator = class HtmlPdfCLIGenerator extends TemplateGenerator {
+class HtmlPdfCLIGenerator extends TemplateGenerator {
 
 
 
@@ -57,9 +56,9 @@ module.exports = (HtmlPdfCLIGenerator = class HtmlPdfCLIGenerator extends Templa
   onError(ex, param) {
     __guardMethod__(param.errHandler, 'err', o => o.err(HMSTATUS.pdfGeneration, ex));
   }
-});
+}
 
-
+module.exports = HtmlPdfCLIGenerator;
 
 // TODO: Move each engine to a separate module
 var engines = {

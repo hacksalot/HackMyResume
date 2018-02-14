@@ -19,8 +19,6 @@ a transformation function (such as a Markdown filter or XML encoder).
 
 module.exports = function( ret, filt, transformer ) {
 
-  const that = this;
-
   // TODO: refactor recursion
   var transformStringsInObject = function( obj, filters ) {
     if (!obj) { return; }

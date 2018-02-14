@@ -23,7 +23,7 @@ const LO = require('lodash');
 const PATH = require('path');
 const printf = require('printf');
 const _ = require('underscore');
-const unused = require('../utils/string');
+require('../utils/string');
 
 
 
@@ -152,7 +152,7 @@ var GenericHelpers = (module.exports = {
   @param key {String} A named style from the "fonts" section of the theme's
   theme.json file. For example: 'default' or 'heading1'.
   */
-  fontSize( key, defSize, units ) {
+  fontSize( key, defSize/*, units*/ ) {
 
     let ret = '';
     const hasDef = defSize && ( String.is( defSize ) || _.isNumber( defSize ));
@@ -534,9 +534,9 @@ var GenericHelpers = (module.exports = {
   */
   compare(lvalue, rvalue, options) {
     if (arguments.length < 3) {
-      throw new Error("Template helper 'compare' needs 2 parameters");
+      throw new Error('Template helper \'compare\' needs 2 parameters');
     }
-    const operator = options.hash.operator || "==";
+    const operator = options.hash.operator || '==';
     const operators = {
         '=='(l,r) { return l === r; },
         '==='(l,r) { return l === r; },
@@ -559,7 +559,7 @@ var GenericHelpers = (module.exports = {
   /**
   Emit padded text.
   */
-  pad(stringOrArray, padAmount, unused ) {
+  pad(stringOrArray, padAmount/*, unused*/ ) {
     stringOrArray = stringOrArray || '';
     padAmount = padAmount || 0;
     let ret = '';
@@ -591,7 +591,7 @@ var GenericHelpers = (module.exports = {
   Given an object that may be a string or an object, return it as-is if it's a
   string, otherwise return the value at obj[objPath].
   */
-  stringOrObject( obj, objPath, rez ) {
+  stringOrObject( obj, objPath/*, rez */) {
     if (_.isString(obj)) { return obj; } else { return LO.get(obj, objPath); }
   }
 });

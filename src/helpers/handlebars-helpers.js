@@ -30,7 +30,7 @@ module.exports = function( theme, rez, opts ) {
 
   // Prepare generic helpers for use with Handlebars. We do this by wrapping them
   // in a Handlebars-aware wrapper which calls the helper internally.
-  const wrappedHelpers = _.mapObject(helpers, function( hVal, hKey ) {
+  const wrappedHelpers = _.mapObject(helpers, function( hVal/*, hKey*/ ) {
     if (_.isFunction(hVal)) {
       return _.wrap(hVal, function(func) {
         const args = Array.prototype.slice.call(arguments);
@@ -68,7 +68,7 @@ module.exports = function( theme, rez, opts ) {
             HANDLEBARS.registerHelper(require(f));   // ..register the path
           });
         } else {
-          throw {fluenterror: HMS.themeHelperLoad, inner: er, glob: fGlob};
+          throw {fluenterror: HMS.themeHelperLoad, inner: null, glob: fGlob};
         }
       });
       return;
@@ -78,7 +78,6 @@ module.exports = function( theme, rez, opts ) {
         inner: ex,
         glob: curGlob, exit: true
       };
-      return;
     }
   }
 };

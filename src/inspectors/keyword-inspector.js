@@ -9,16 +9,13 @@ Keyword analysis for HackMyResume.
 @module inspectors/keyword-inspector
 */
 
-const _ = require('underscore');
-const FluentDate = require('../core/fluent-date');
-
 /**
 Analyze the resume's use of keywords.
 TODO: BUG: Keyword search regex is inaccurate, especially for one or two
 letter keywords like "C" or "CLI".
 @class keywordInspector
 */
-const keywordInspector = (module.exports = {
+module.exports = {
 
   /** A unique name for this inspector. */
   moniker: 'keyword-inspector',
@@ -33,7 +30,7 @@ const keywordInspector = (module.exports = {
     // "Quote" or safely escape a keyword so it can be used as a regex. For
     // example, if the keyword is "C++", yield "C\+\+".
     // http://stackoverflow.com/a/2593661/4942583
-    const regex_quote = str => (str + '').replace(/[.?*+^$[\]\\(){}|-]/ig, "\\$&");
+    const regex_quote = str => (str + '').replace(/[.?*+^$[\]\\(){}|-]/ig, '\\$&');
 
     // Create a searchable plain-text digest of the resume
     // TODO: BUG: Don't search within keywords for other keywords. Job A
@@ -64,9 +61,8 @@ const keywordInspector = (module.exports = {
 
       const regex_str = prefix + regex_quote( kw ) + suffix;
       const regex = new RegExp( regex_str, 'ig');
-      let myArray = null;
       let count = 0;
-      while ((myArray = regex.exec( searchable )) !== null) {
+      while (regex.exec( searchable ) !== null) {
         count++;
       }
       return {
@@ -75,4 +71,4 @@ const keywordInspector = (module.exports = {
       };
     });
   }
-});
+};

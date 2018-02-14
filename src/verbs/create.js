@@ -11,10 +11,8 @@ Implementation of the 'create' verb for HackMyResume.
 
 
 
-let CreateVerb;
 const MKDIRP = require('mkdirp');
 const PATH = require('path');
-const chalk = require('chalk');
 const Verb = require('../verbs/verb');
 const _ = require('underscore');
 const HMSTATUS = require('../core/status-codes');
@@ -22,10 +20,13 @@ const HMEVENT = require('../core/event-codes');
 
 
 
-module.exports = (CreateVerb = class CreateVerb extends Verb {
+class CreateVerb extends Verb {
 
   constructor() { super('new', _create); }
-});
+}
+
+
+module.exports = CreateVerb;
 
 
 
@@ -76,10 +77,9 @@ var _createOne = function( t, opts ) {
       fluenterror: HMSTATUS.createError,
       inner: err
     };
-    return;
   }
   finally {
     this.stat(HMEVENT.afterCreate, {fmt: safeFmt, file: t, isError: ret.fluenterror});
-    return ret;
   }
+  return ret;
 };

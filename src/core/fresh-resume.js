@@ -17,13 +17,10 @@ const extend = require('extend');
 let validator = require('is-my-json-valid');
 const _ = require('underscore');
 const __ = require('lodash');
-const PATH = require('path');
-const moment = require('moment');
 const XML = require('xml-escape');
 const MD = require('marked');
 const CONVERTER = require('fresh-jrs-converter');
 const JRSResume = require('./jrs-resume');
-const FluentDate = require('./fluent-date');
 
 
 
@@ -62,9 +59,9 @@ class FreshResume {// extends AbstractResume
     let scrubbed;
     if (opts && opts.privatize) {
       // Ignore any element with the 'ignore: true' or 'private: true' designator.
-      let ignoreList, privateList;
       const scrubber = require('../utils/resume-scrubber');
-      ({ scrubbed, ignoreList, privateList } = scrubber.scrubResume(rep, opts));
+      var ret = scrubber.scrubResume(rep, opts);
+      scrubbed = ret.scrubbed;
     }
 
     // Now apply the resume representation onto this object
@@ -287,11 +284,11 @@ class FreshResume {// extends AbstractResume
     const defSheet = FreshResume.default();
     const newObject =
       defSheet[moniker].history
-      ? $.extend( true, {}, defSheet[ moniker ].history[0] )
+      ? extend( true, {}, defSheet[ moniker ].history[0] )
       :
         moniker === 'skills'
-        ? $.extend( true, {}, defSheet.skills.sets[0] )
-        : $.extend( true, {}, defSheet[ moniker ][0] );
+        ? extend( true, {}, defSheet.skills.sets[0] )
+        : extend( true, {}, defSheet[ moniker ][0] );
 
     this[ moniker ] = this[ moniker ] || [];
     if (this[ moniker ].history) {
@@ -346,7 +343,7 @@ class FreshResume {// extends AbstractResume
 
 
   /** Validate the sheet against the FRESH Resume schema. */
-  isValid( info ) {
+  isValid() {
     const schemaObj = require('fresh-resume-schema');
     validator = require('is-my-json-valid');
     const validate = validator( schemaObj, { // See Note [1].
@@ -385,7 +382,7 @@ class FreshResume {// extends AbstractResume
     const sortSection = function( key ) {
       const ar = __.get(this, key);
       if (ar && ar.length) {
-        const datedThings = obj.filter(o => o.start);
+        const datedThings = ar.filter(o => o.start);
         return datedThings.sort( byDateDesc );
       }
     };

@@ -11,7 +11,6 @@ Definition of the Verb class.
 
 
 
-let Verb;
 const EVENTS = require('events');
 const HMEVENT = require('../core/event-codes');
 const Promise = require('pinkie-promise');
@@ -25,7 +24,7 @@ error handling, event management, and promise support.
 @class Verb
 */
 
-module.exports = (Verb = class Verb {
+class Verb {
 
 
 
@@ -111,4 +110,6 @@ module.exports = (Verb = class Verb {
     this.errorCode = code;
     this.errorObj = obj;
   }
-});
+}
+
+module.exports = Verb;

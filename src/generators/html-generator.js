@@ -11,16 +11,13 @@ Definition of the HTMLGenerator class.
 
 
 
-let HtmlGenerator;
 const TemplateGenerator = require('./template-generator');
-const FS = require('fs-extra');
 const HTML = require('html');
-const PATH = require('path');
 require('string.prototype.endswith');
 
 
 
-module.exports = (HtmlGenerator = class HtmlGenerator extends TemplateGenerator {
+class HtmlGenerator extends TemplateGenerator {
 
   constructor() { super('html'); }
 
@@ -36,4 +33,7 @@ module.exports = (HtmlGenerator = class HtmlGenerator extends TemplateGenerator 
     return HTML.prettyPrint(info.mk, this.opts.prettify);
     } else { return info.mk; }
   }
-});
+}
+
+
+module.exports = HtmlGenerator;

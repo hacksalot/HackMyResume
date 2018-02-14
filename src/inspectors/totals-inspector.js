@@ -10,13 +10,12 @@ Section analysis for HackMyResume.
 */
 
 const _ = require('underscore');
-const FluentDate = require('../core/fluent-date');
 
 /**
 Retrieve sectional overview and summary information.
 @class totalsInspector
 */
-const totalsInspector = (module.exports = {
+module.exports = {
 
   moniker: 'totals-inspector',
 
@@ -44,4 +43,4 @@ const totalsInspector = (module.exports = {
       numSections: Object.keys( sectionTotals ).length
     };
   }
-});
+};

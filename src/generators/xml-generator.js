@@ -4,11 +4,11 @@ Definition of the XMLGenerator class.
 @module generatprs/xml-generator
 */
 
-let XMLGenerator;
 const BaseGenerator = require('./base-generator');
 
 /** The XmlGenerator generates an XML resume via the TemplateGenerator. */
-module.exports = (XMLGenerator = class XMLGenerator extends BaseGenerator {
-
+class XMLGenerator extends BaseGenerator {
   constructor() { super('xml'); }
-});
+}
+
+module.exports = XMLGenerator;

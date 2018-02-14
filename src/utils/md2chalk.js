@@ -10,7 +10,6 @@ Inline Markdown-to-Chalk conversion routines.
 */
 
 
-const MD = require('marked');
 const CHALK = require('chalk');
 const LO = require('lodash');
 

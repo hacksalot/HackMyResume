@@ -11,7 +11,6 @@ Definition of the TemplateGenerator class. TODO: Refactor
 
 
 
-let TemplateGenerator;
 const FS = require('fs-extra');
 const _ = require('underscore');
 const MD = require('marked');
@@ -21,8 +20,6 @@ const parsePath = require('parse-filepath');
 const MKDIRP = require('mkdirp');
 const BaseGenerator = require('./base-generator');
 const EXTEND = require('extend');
-const FRESHTheme = require('../core/fresh-theme');
-const JRSTheme = require('../core/jrs-theme');
 
 
 
@@ -33,7 +30,7 @@ plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
 @class TemplateGenerator
 */
 
-module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenerator {
+class TemplateGenerator extends BaseGenerator {
 
 
 
@@ -41,7 +38,7 @@ module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenera
   generator. Will usually be called by a derived generator such as
   HTMLGenerator or MarkdownGenerator. */
 
-  constructor( outputFormat, templateFormat, cssFile ) {
+  constructor( outputFormat, templateFormat/*, cssFile */) {
     super(outputFormat);
     this.tplFormat = templateFormat || outputFormat;
   }
@@ -78,7 +75,7 @@ module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenera
       }
           //tplInfo.css contains the CSS data loaded by theme
           //tplInfo.cssPath contains the absolute path to the source CSS File
-      else {}
+      //else {}
         // Images and non-transformable binary files
       if (typeof opts.onTransform === 'function') {
         opts.onTransform(tplInfo);
@@ -153,7 +150,7 @@ module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenera
 
       // Post-processing
       if (this.onAfterSave) {
-        return this.onAfterSave({outputFile: fileName, mk: file.data, opts: this.opts});
+        return this.onAfterSave({outputFile: thisFilePath, mk: file.data, opts: this.opts});
       }
     }
 
@@ -186,7 +183,10 @@ module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenera
     }
     return result;
   }
-});
+}
+
+
+module.exports = TemplateGenerator;
 
 
 
@@ -208,10 +208,12 @@ var createSymLinks = function( curFmt, outFolder ) {
           try {
             FS.symlinkSync(absTarg, absLoc, type);
             succeeded = true;
-          } catch (error) {}
+          } catch (error) {
+            throw error;
+          }
         }
         if (!succeeded) {
-          throw ex;
+          throw err;
         }
       }
     });
@@ -245,9 +247,9 @@ var _defaultOpts = {
   rSym: '&retn;', // return entity
   template: {
     interpolate: /\{\{(.+?)\}\}/g,
-    escape: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\%(.+?)\%\}/g,
-    comment: /\{\#(.+?)\#\}/g
+    escape: /\{\{=(.+?)\}\}/g,
+    evaluate: /\{%(.+?)%\}/g,
+    comment: /\{#(.+?)#\}/g
   },
   filters: {
     out( txt ) { return txt; },
@@ -271,9 +273,11 @@ var _defaultOpts = {
 
 
 /** Regexes for linebreak preservation. */
+/* eslint-disable no-control-regex */
 var _reg = {
   regN: new RegExp( '\n', 'g' ),
   regR: new RegExp( '\r', 'g' ),
   regSymN: new RegExp( _defaultOpts.nSym, 'g' ),
   regSymR: new RegExp( _defaultOpts.rSym, 'g' )
 };
+/* eslint-enable no-control-regex */

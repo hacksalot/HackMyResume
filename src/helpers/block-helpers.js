@@ -11,15 +11,14 @@ Block helper definitions for HackMyResume / FluentCV.
 
 
 
-const HMSTATUS = require('../core/status-codes');
 const LO = require('lodash');
 const _ = require('underscore');
-const unused = require('../utils/string');
+require('../utils/string');
 
 
 
 /** Block helper function definitions. */
-const BlockHelpers = (module.exports = {
+module.exports = {
 
 
 
@@ -75,4 +74,4 @@ const BlockHelpers = (module.exports = {
   @method either
   */
   either( lhs, rhs, options ) { if (lhs || rhs) { return options.fn(this); } }
-});
+};

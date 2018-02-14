@@ -5,14 +5,15 @@ Definition of the YAMLGenerator class.
 */
 
 
-let YAMLGenerator;
 const TemplateGenerator = require('./template-generator');
 
 /**
 YamlGenerator generates a YAML-formatted resume via TemplateGenerator.
 */
 
-module.exports = (YAMLGenerator = class YAMLGenerator extends TemplateGenerator {
-
+class YAMLGenerator extends TemplateGenerator {
   constructor() { super('yml', 'yml'); }
-});
+}
+
+
+module.exports = YAMLGenerator;

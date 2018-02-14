@@ -11,9 +11,7 @@ Implementation of the 'convert' verb for HackMyResume.
 
 
 
-let ConvertVerb;
 const ResumeFactory = require('../core/resume-factory');
-const chalk = require('chalk');
 const Verb = require('../verbs/verb');
 const HMSTATUS = require('../core/status-codes');
 const _ = require('underscore');
@@ -21,10 +19,11 @@ const HMEVENT = require('../core/event-codes');
 
 
 
-module.exports = (ConvertVerb = class ConvertVerb extends Verb {
-
+class ConvertVerb extends Verb {
   constructor() { super('convert', _convert); }
-});
+}
+
+module.exports = ConvertVerb;
 
 
 
@@ -59,7 +58,7 @@ var _convert = function( srcs, dst, opts ) {
   }
 
   // Validate the destination format (if specified)
-  const targetVer = null;
+  //const targetVer = null;
   if (opts.format) {
     fmtUp = opts.format.trim().toUpperCase();
     if (!_.contains(['FRESH','FRESCA','JRS','JRS@1','JRS@edge'], fmtUp)) {

@@ -4,13 +4,14 @@ Definition of the LaTeXGenerator class.
 @license MIT. See LICENSE.md for details.
 */
 
-let LaTeXGenerator;
 const TemplateGenerator = require('./template-generator');
 
 /**
 LaTeXGenerator generates a LaTeX resume via TemplateGenerator.
 */
-module.exports = (LaTeXGenerator = class LaTeXGenerator extends TemplateGenerator {
+class LaTeXGenerator extends TemplateGenerator {
 
   constructor() { super('latex', 'tex'); }
-});
+}
+
+module.exports = LaTeXGenerator;
