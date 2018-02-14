@@ -1,82 +1,102 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Implementation of the 'peek' verb for HackMyResume.
 @module verbs/peek
 @license MIT. See LICENSE.md for details.
-###
+*/
 
 
 
-Verb = require('../verbs/verb')
-_ = require('underscore')
-__ = require('lodash')
-safeLoadJSON = require('../utils/safe-json-loader')
-HMSTATUS = require('../core/status-codes')
-HMEVENT = require('../core/event-codes')
+let PeekVerb;
+const Verb = require('../verbs/verb');
+const _ = require('underscore');
+const __ = require('lodash');
+const safeLoadJSON = require('../utils/safe-json-loader');
+const HMSTATUS = require('../core/status-codes');
+const HMEVENT = require('../core/event-codes');
 
 
 
-module.exports = class PeekVerb extends Verb
+module.exports = (PeekVerb = class PeekVerb extends Verb {
 
-  constructor: -> super 'peek', _peek
-
-
-
-###* Peek at a resume, resume section, or resume field. ###
-_peek = ( src, dst, opts ) ->
-
-  if !src || !src.length
-    @err HMSTATUS.resumeNotFound, { quit: true }
-    return null
-
-  objPath = (dst && dst[0]) || ''
-
-  results = _.map src, ( t ) ->
-
-    return { } if opts.assert and @hasError()
-
-    tgt = _peekOne.call @, t, objPath
-    if tgt.error
-      @setError tgt.error.fluenterror, tgt.error
-      #tgt.error.quit = opts.assert
-      #@err tgt.error.fluenterror, tgt.error
-    tgt
-  , @
-
-  if @hasError() and !opts.assert
-    @reject @errorCode
-  else if !@hasError()
-    @resolve results
-  results
+  constructor() { super('peek', _peek); }
+});
 
 
 
-###* Peek at a single resume, resume section, or resume field. ###
-_peekOne = ( t, objPath ) ->
+/** Peek at a resume, resume section, or resume field. */
+var _peek = function( src, dst, opts ) {
 
-  @stat HMEVENT.beforePeek, { file: t, target: objPath }
+  if (!src || !src.length) {
+    this.err(HMSTATUS.resumeNotFound, { quit: true });
+    return null;
+  }
 
-  # Load the input file JSON 1st
-  obj = safeLoadJSON t
+  const objPath = (dst && dst[0]) || '';
 
-  # Fetch the requested object path (or the entire file)
-  tgt = null
-  if !obj.ex
-    tgt = if objPath then __.get obj.json, objPath else obj.json
+  const results = _.map(src, function( t ) {
 
-  ## safeLoadJSON can only return a READ error or a PARSE error
-  pkgError = null
-  if obj.ex
-    errCode = if obj.ex.op == 'parse' then HMSTATUS.parseError else HMSTATUS.readError
-    if errCode == HMSTATUS.readError
-      obj.ex.quiet = true
-    pkgError = fluenterror: errCode, inner: obj.ex
+    if (opts.assert && this.hasError()) { return { }; }
 
-  # Fire the 'afterPeek' event with collected info
-  @stat HMEVENT.afterPeek,
-    file: t
-    requested: objPath
-    target: if obj.ex then undefined else tgt
+    const tgt = _peekOne.call(this, t, objPath);
+    if (tgt.error) {
+      this.setError(tgt.error.fluenterror, tgt.error);
+    }
+      //tgt.error.quit = opts.assert
+      //@err tgt.error.fluenterror, tgt.error
+    return tgt;
+  }
+  , this);
+
+  if (this.hasError() && !opts.assert) {
+    this.reject(this.errorCode);
+  } else if (!this.hasError()) {
+    this.resolve(results);
+  }
+  return results;
+};
+
+
+
+/** Peek at a single resume, resume section, or resume field. */
+var _peekOne = function( t, objPath ) {
+
+  this.stat(HMEVENT.beforePeek, { file: t, target: objPath });
+
+  // Load the input file JSON 1st
+  const obj = safeLoadJSON(t);
+
+  // Fetch the requested object path (or the entire file)
+  let tgt = null;
+  if (!obj.ex) {
+    tgt = objPath ? __.get(obj.json, objPath) : obj.json;
+  }
+
+  //# safeLoadJSON can only return a READ error or a PARSE error
+  let pkgError = null;
+  if (obj.ex) {
+    const errCode = obj.ex.op === 'parse' ? HMSTATUS.parseError : HMSTATUS.readError;
+    if (errCode === HMSTATUS.readError) {
+      obj.ex.quiet = true;
+    }
+    pkgError = {fluenterror: errCode, inner: obj.ex};
+  }
+
+  // Fire the 'afterPeek' event with collected info
+  this.stat(HMEVENT.afterPeek, {
+    file: t,
+    requested: objPath,
+    target: obj.ex ? undefined : tgt,
     error: pkgError
+  }
+  );
 
-  val: if obj.ex then undefined else tgt
-  error: pkgError
+  return {
+    val: obj.ex ? undefined : tgt,
+    error: pkgError
+  };
+};

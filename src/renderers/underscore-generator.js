@@ -1,73 +1,90 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Definition of the UnderscoreGenerator class.
 @license MIT. See LICENSE.md for details.
 @module underscore-generator.js
-###
+*/
 
 
 
-_ = require 'underscore'
-registerHelpers = require '../helpers/underscore-helpers'
-require '../utils/string'
-escapeLaTeX = require 'escape-latex'
+const _ = require('underscore');
+const registerHelpers = require('../helpers/underscore-helpers');
+require('../utils/string');
+const escapeLaTeX = require('escape-latex');
 
-###*
+/**
 Perform template-based resume generation using Underscore.js.
 @class UnderscoreGenerator
-###
-UnderscoreGenerator = module.exports =
+*/
+const UnderscoreGenerator = (module.exports = {
 
 
 
-  generateSimple: ( data, tpl ) ->
-    try
-      # Compile and run the Handlebars template.
-      t = _.template tpl
-      t data
-    catch err
-      #console.dir _error
-      HMS = require '../core/status-codes'
-      throw
-        fluenterror: HMS[if t then 'invokeTemplate' else 'compileTemplate']
+  generateSimple( data, tpl ) {
+    let t;
+    try {
+      // Compile and run the Handlebars template.
+      t = _.template(tpl);
+      return t(data);
+    } catch (err) {
+      //console.dir _error
+      const HMS = require('../core/status-codes');
+      throw{
+        fluenterror: HMS[t ? 'invokeTemplate' : 'compileTemplate'],
         inner: err
+      };
+    }
+  },
 
 
 
-  generate: ( json, jst, format, cssInfo, opts, theme ) ->
+  generate( json, jst, format, cssInfo, opts, theme ) {
 
-    # Tweak underscore's default template delimeters
-    delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
-    if opts.themeObj && opts.themeObj.delimeters
-      delims = _.mapObject delims, (val,key) -> new RegExp val, "ig"
+    // Tweak underscore's default template delimeters
+    let delims = (opts.themeObj && opts.themeObj.delimeters) || opts.template;
+    if (opts.themeObj && opts.themeObj.delimeters) {
+      delims = _.mapObject(delims, (val,key) => new RegExp(val, "ig"));
+    }
     _.templateSettings = delims;
 
-    # Massage resume strings / text
-    r = null
-    switch format
-      when 'html' then r = json.markdownify()
-      when 'pdf' then r = json.markdownify()
-      when 'png' then r = json.markdownify()
-      when 'latex'
-        traverse = require 'traverse'
-        r = traverse(json).map (x) ->
-          if @isLeaf && String.is @node
-            return escapeLaTeX @node
-          @node
-      else r = json
+    // Massage resume strings / text
+    let r = null;
+    switch (format) {
+      case 'html': r = json.markdownify(); break;
+      case 'pdf': r = json.markdownify(); break;
+      case 'png': r = json.markdownify(); break;
+      case 'latex':
+        var traverse = require('traverse');
+        r = traverse(json).map(function(x) {
+          if (this.isLeaf && String.is(this.node)) {
+            return escapeLaTeX(this.node);
+          }
+          return this.node;
+        });
+        break;
+      default: r = json;
+    }
 
-    # Set up the context
-    ctx =
-      r: r
-      filt: opts.filters
-      XML: require 'xml-escape'
-      RAW: json
-      cssInfo: cssInfo
-      #engine: @
-      headFragment: opts.headFragment || ''
-      opts: opts
+    // Set up the context
+    const ctx = {
+      r,
+      filt: opts.filters,
+      XML: require('xml-escape'),
+      RAW: json,
+      cssInfo,
+      //engine: @
+      headFragment: opts.headFragment || '',
+      opts
+    };
 
-    # Link to our helpers
-    registerHelpers theme, opts, cssInfo, ctx, @
+    // Link to our helpers
+    registerHelpers(theme, opts, cssInfo, ctx, this);
 
-    # Generate!
-    @generateSimple ctx, jst
+    // Generate!
+    return this.generateSimple(ctx, jst);
+  }
+});

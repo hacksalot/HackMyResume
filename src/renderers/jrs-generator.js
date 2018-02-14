@@ -1,45 +1,53 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Definition of the JRSGenerator class.
 @license MIT. See LICENSE.md for details.
 @module renderers/jrs-generator
-###
+*/
 
-_ = require('underscore')
-HANDLEBARS = require('handlebars')
-FS = require('fs')
-registerHelpers = require('../helpers/handlebars-helpers')
-PATH = require('path')
-parsePath = require('parse-filepath')
-READFILES = require('recursive-readdir-sync')
-SLASH = require('slash')
-MD = require('marked')
+const _ = require('underscore');
+const HANDLEBARS = require('handlebars');
+const FS = require('fs');
+const registerHelpers = require('../helpers/handlebars-helpers');
+const PATH = require('path');
+const parsePath = require('parse-filepath');
+const READFILES = require('recursive-readdir-sync');
+const SLASH = require('slash');
+const MD = require('marked');
 
-###*
+/**
 Perform template-based resume generation for JSON Resume themes.
 @class JRSGenerator
-###
+*/
 
-JRSGenerator = module.exports =
+const JRSGenerator = (module.exports = {
 
-  generate: ( json, jst, format, cssInfo, opts, theme ) ->
+  generate( json, jst, format, cssInfo, opts, theme ) {
 
-    # Disable JRS theme chatter (console.log, console.error, etc.)
-    turnoff = ['log', 'error', 'dir'];
-    org = turnoff.map (c) ->
-      ret = console[c]
-      console[c] = () ->
-      ret
+    // Disable JRS theme chatter (console.log, console.error, etc.)
+    const turnoff = ['log', 'error', 'dir'];
+    const org = turnoff.map(function(c) {
+      const ret = console[c];
+      console[c] = function() {};
+      return ret;
+    });
 
-    # Freeze and render
-    rezHtml = theme.render json.harden()
+    // Freeze and render
+    let rezHtml = theme.render(json.harden());
 
-    # Turn logging back on
-    turnoff.forEach (c, idx) -> console[c] = org[idx]
+    // Turn logging back on
+    turnoff.forEach((c, idx) => console[c] = org[idx]);
 
-    # Unfreeze and apply Markdown
-    rezHtml = rezHtml.replace /@@@@~[\s\S]*?~@@@@/g, (val) ->
-      MDIN( val.replace( /~@@@@/g,'' ).replace( /@@@@~/g,'' ) )
+    // Unfreeze and apply Markdown
+    return rezHtml = rezHtml.replace(/@@@@~[\s\S]*?~@@@@/g, val => MDIN( val.replace( /~@@@@/g,'' ).replace( /@@@@~/g,'' ) ));
+  }
+});
 
 
-MDIN = (txt) -> # TODO: Move this
+var MDIN = txt => // TODO: Move this
   MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '')
+;

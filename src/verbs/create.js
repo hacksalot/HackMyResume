@@ -1,68 +1,85 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Implementation of the 'create' verb for HackMyResume.
 @module verbs/create
 @license MIT. See LICENSE.md for details.
-###
+*/
 
 
 
-MKDIRP = require 'mkdirp'
-PATH = require 'path'
-chalk = require 'chalk'
-Verb = require '../verbs/verb'
-_ = require 'underscore'
-HMSTATUS = require '../core/status-codes'
-HMEVENT = require '../core/event-codes'
+let CreateVerb;
+const MKDIRP = require('mkdirp');
+const PATH = require('path');
+const chalk = require('chalk');
+const Verb = require('../verbs/verb');
+const _ = require('underscore');
+const HMSTATUS = require('../core/status-codes');
+const HMEVENT = require('../core/event-codes');
 
 
 
-module.exports = class CreateVerb extends Verb
+module.exports = (CreateVerb = class CreateVerb extends Verb {
 
-  constructor: -> super 'new', _create
-
-
-
-###* Create a new empty resume in either FRESH or JRS format. ###
-_create = ( src, dst, opts ) ->
-
-  if !src || !src.length
-    @err HMSTATUS.createNameMissing, { quit: true }
-    return null
-
-  results = _.map src, ( t ) ->
-    return { } if opts.assert and @hasError()
-    r = _createOne.call @, t, opts
-    if r.fluenterror
-      r.quit = opts.assert
-      @err r.fluenterror, r
-    r
-  , @
-
-  if @hasError() and !opts.assert
-    @reject @errorCode
-  else if !@hasError()
-    @resolve results
-  results
+  constructor() { super('new', _create); }
+});
 
 
 
-###* Create a single new resume ###
-_createOne = ( t, opts ) ->
-  try
-    ret = null
-    safeFmt = opts.format.toUpperCase()
-    @.stat HMEVENT.beforeCreate, { fmt: safeFmt, file: t }
-    MKDIRP.sync PATH.dirname( t ) # Ensure dest folder exists;
-    RezClass = require '../core/' + safeFmt.toLowerCase() + '-resume'
-    newRez = RezClass.default()
-    newRez.save t
-    ret = newRez
-    return
-  catch err
-    ret =
-      fluenterror: HMSTATUS.createError
+/** Create a new empty resume in either FRESH or JRS format. */
+var _create = function( src, dst, opts ) {
+
+  if (!src || !src.length) {
+    this.err(HMSTATUS.createNameMissing, { quit: true });
+    return null;
+  }
+
+  const results = _.map(src, function( t ) {
+    if (opts.assert && this.hasError()) { return { }; }
+    const r = _createOne.call(this, t, opts);
+    if (r.fluenterror) {
+      r.quit = opts.assert;
+      this.err(r.fluenterror, r);
+    }
+    return r;
+  }
+  , this);
+
+  if (this.hasError() && !opts.assert) {
+    this.reject(this.errorCode);
+  } else if (!this.hasError()) {
+    this.resolve(results);
+  }
+  return results;
+};
+
+
+
+/** Create a single new resume */
+var _createOne = function( t, opts ) {
+  let ret, safeFmt;
+  try {
+    ret = null;
+    safeFmt = opts.format.toUpperCase();
+    this.stat(HMEVENT.beforeCreate, { fmt: safeFmt, file: t });
+    MKDIRP.sync(PATH.dirname( t )); // Ensure dest folder exists;
+    const RezClass = require(`../core/${safeFmt.toLowerCase()}-resume`);
+    const newRez = RezClass.default();
+    newRez.save(t);
+    ret = newRez;
+    return;
+  } catch (err) {
+    ret = {
+      fluenterror: HMSTATUS.createError,
       inner: err
-    return
-  finally
-    @.stat HMEVENT.afterCreate, fmt: safeFmt, file: t, isError: ret.fluenterror
-    return ret
+    };
+    return;
+  }
+  finally {
+    this.stat(HMEVENT.afterCreate, {fmt: safeFmt, file: t, isError: ret.fluenterror});
+    return ret;
+  }
+};

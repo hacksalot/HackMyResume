@@ -1,268 +1,328 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Error-handling routines for HackMyResume.
 @module cli/error
 @license MIT. See LICENSE.md for details.
-###
+*/
 
 
 
-HMSTATUS = require '../core/status-codes'
-FS = require 'fs'
-PATH = require 'path'
-WRAP = require 'word-wrap'
-M2C = require '../utils/md2chalk'
-chalk = require 'chalk'
-extend = require 'extend'
-printf = require 'printf'
-SyntaxErrorEx = require '../utils/syntax-error-ex'
-require 'string.prototype.startswith'
+const HMSTATUS = require('../core/status-codes');
+const FS = require('fs');
+const PATH = require('path');
+const WRAP = require('word-wrap');
+const M2C = require('../utils/md2chalk');
+const chalk = require('chalk');
+const extend = require('extend');
+const printf = require('printf');
+const SyntaxErrorEx = require('../utils/syntax-error-ex');
+require('string.prototype.startswith');
 
 
 
-###* Error handler for HackMyResume. All errors are handled here.
-@class ErrorHandler ###
-module.exports =
+/** Error handler for HackMyResume. All errors are handled here.
+@class ErrorHandler */
+module.exports = {
 
-  init: ( debug, assert, silent ) ->
-    @debug = debug
-    @assert = assert
-    @silent = silent
-    @msgs = require('./msg').errors
-    @
+  init( debug, assert, silent ) {
+    this.debug = debug;
+    this.assert = assert;
+    this.silent = silent;
+    this.msgs = require('./msg').errors;
+    return this;
+  },
 
-  err: ( ex, shouldExit ) ->
+  err( ex, shouldExit ) {
 
-    # Short-circuit logging output if --silent is on
-    o = if @silent then () -> else _defaultLog
+    // Short-circuit logging output if --silent is on
+    let stack;
+    const o = this.silent ? function() {} : _defaultLog;
 
-    # Special case; can probably be removed.
-    throw ex if ex.pass
+    // Special case; can probably be removed.
+    if (ex.pass) { throw ex; }
 
-    # Load error messages
-    @msgs = @msgs || require('./msg').errors
+    // Load error messages
+    this.msgs = this.msgs || require('./msg').errors;
 
-    # Handle packaged HMR exceptions
-    if ex.fluenterror
+    // Handle packaged HMR exceptions
+    if (ex.fluenterror) {
 
-      # Output the error message
-      objError = assembleError.call @, ex
-      o( @[ 'format_' + objError.etype ]( objError.msg ))
+      // Output the error message
+      const objError = assembleError.call(this, ex);
+      o( this[ `format_${objError.etype}` ]( objError.msg ));
 
-      # Output the stack (sometimes)
-      if objError.withStack
+      // Output the stack (sometimes)
+      if (objError.withStack) {
         stack = ex.stack || (ex.inner && ex.inner.stack);
         stack && o( chalk.gray( stack ) );
+      }
 
-      # Quit if necessary
-      if shouldExit or ex.exit
-        if @debug
-          o chalk.cyan('Exiting with error code ' + ex.fluenterror.toString())
-        if @assert
-          ex.pass = true
-          throw ex
-        process.exit ex.fluenterror
+      // Quit if necessary
+      if (shouldExit || ex.exit) {
+        if (this.debug) {
+          o(chalk.cyan(`Exiting with error code ${ex.fluenterror.toString()}`));
+        }
+        if (this.assert) {
+          ex.pass = true;
+          throw ex;
+        }
+        return process.exit(ex.fluenterror);
+      }
 
-    # Handle raw exceptions
-    else
-      o ex
-      stackTrace = ex.stack || (ex.inner && ex.inner.stack)
-      if stackTrace && this.debug
-        o M2C(ex.stack || ex.inner.stack, 'gray')
-
-
-
-  format_error: ( msg ) ->
-    msg = msg || ''
-    chalk.red.bold( if msg.toUpperCase().startsWith('ERROR:') then msg else 'Error: ' + msg )
-
-
-  format_warning: ( brief, msg ) ->
-    chalk.yellow(brief) + chalk.yellow(msg || '')
-
-
-  format_custom: ( msg ) -> msg
-
-
-_defaultLog = () -> console.log.apply console.log, arguments # eslint-disable-line no-console
+    // Handle raw exceptions
+    } else {
+      o(ex);
+      const stackTrace = ex.stack || (ex.inner && ex.inner.stack);
+      if (stackTrace && this.debug) {
+        return o(M2C(ex.stack || ex.inner.stack, 'gray'));
+      }
+    }
+  },
 
 
 
+  format_error( msg ) {
+    msg = msg || '';
+    return chalk.red.bold( msg.toUpperCase().startsWith('ERROR:') ? msg : `Error: ${msg}` );
+  },
 
-assembleError = ( ex ) ->
 
-  msg = ''
-  withStack = false
-  quit = false
-  etype = 'warning'
-  withStack = true if @debug
+  format_warning( brief, msg ) {
+    return chalk.yellow(brief) + chalk.yellow(msg || '');
+  },
 
-  switch ex.fluenterror
 
-    when HMSTATUS.themeNotFound
-      msg = printf( M2C( this.msgs.themeNotFound.msg, 'yellow' ), ex.data)
+  format_custom( msg ) { return msg; }
+};
 
-    when HMSTATUS.copyCSS
-      msg = M2C( this.msgs.copyCSS.msg, 'red' )
-      quit = false
 
-    when HMSTATUS.resumeNotFound
-      #msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
+var _defaultLog = function() { return console.log.apply(console.log, arguments); }; // eslint-disable-line no-console
+
+
+
+
+var assembleError = function( ex ) {
+
+  let se;
+  let msg = '';
+  let withStack = false;
+  let quit = false;
+  let etype = 'warning';
+  if (this.debug) { withStack = true; }
+
+  switch (ex.fluenterror) {
+
+    case HMSTATUS.themeNotFound:
+      msg = printf( M2C( this.msgs.themeNotFound.msg, 'yellow' ), ex.data);
+      break;
+
+    case HMSTATUS.copyCSS:
+      msg = M2C( this.msgs.copyCSS.msg, 'red' );
+      quit = false;
+      break;
+
+    case HMSTATUS.resumeNotFound:
+      //msg = M2C( this.msgs.resumeNotFound.msg, 'yellow' );
       msg += M2C(FS.readFileSync(
-        PATH.resolve(__dirname, 'help/' + ex.verb + '.txt'), 'utf8' ), 'white', 'yellow')
+        PATH.resolve(__dirname, `help/${ex.verb}.txt`), 'utf8' ), 'white', 'yellow');
+      break;
 
-    when HMSTATUS.missingCommand
-      # msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
-      # msg += Object.keys( FCMD.verbs ).map( (v, idx, ar) ->
-      #   return ( if idx == ar.length - 1 then chalk.yellow('or ') else '') +
-      #     chalk.yellow.bold(v.toUpperCase());
-      # ).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
+    case HMSTATUS.missingCommand:
+      // msg = M2C( this.msgs.missingCommand.msg + " (", 'yellow');
+      // msg += Object.keys( FCMD.verbs ).map( (v, idx, ar) ->
+      //   return ( if idx == ar.length - 1 then chalk.yellow('or ') else '') +
+      //     chalk.yellow.bold(v.toUpperCase());
+      // ).join( chalk.yellow(', ')) + chalk.yellow(").\n\n");
 
       msg += M2C(FS.readFileSync(
-        PATH.resolve(__dirname, 'help/use.txt'), 'utf8' ), 'white', 'yellow')
+        PATH.resolve(__dirname, 'help/use.txt'), 'utf8' ), 'white', 'yellow');
+      break;
 
-    when HMSTATUS.invalidCommand
-      msg = printf( M2C( this.msgs.invalidCommand.msg, 'yellow'), ex.attempted )
+    case HMSTATUS.invalidCommand:
+      msg = printf( M2C( this.msgs.invalidCommand.msg, 'yellow'), ex.attempted );
+      break;
 
-    when HMSTATUS.resumeNotFoundAlt
-      msg = M2C( this.msgs.resumeNotFoundAlt.msg, 'yellow' )
+    case HMSTATUS.resumeNotFoundAlt:
+      msg = M2C( this.msgs.resumeNotFoundAlt.msg, 'yellow' );
+      break;
 
-    when HMSTATUS.inputOutputParity
-      msg = M2C( this.msgs.inputOutputParity.msg )
+    case HMSTATUS.inputOutputParity:
+      msg = M2C( this.msgs.inputOutputParity.msg );
+      break;
 
-    when HMSTATUS.createNameMissing
-      msg = M2C( this.msgs.createNameMissing.msg )
+    case HMSTATUS.createNameMissing:
+      msg = M2C( this.msgs.createNameMissing.msg );
+      break;
 
-    when HMSTATUS.pdfGeneration
-      msg = M2C( this.msgs.pdfGeneration.msg, 'bold' )
-      msg += chalk.red('\n' + ex.inner) if ex.inner
-      quit = false
-      etype = 'error'
+    case HMSTATUS.pdfGeneration:
+      msg = M2C( this.msgs.pdfGeneration.msg, 'bold' );
+      if (ex.inner) { msg += chalk.red(`\n${ex.inner}`); }
+      quit = false;
+      etype = 'error';
+      break;
 
-    when HMSTATUS.invalid
-      msg = M2C( this.msgs.invalid.msg, 'red' )
-      etype = 'error'
+    case HMSTATUS.invalid:
+      msg = M2C( this.msgs.invalid.msg, 'red' );
+      etype = 'error';
+      break;
 
-    when HMSTATUS.generateError
-      msg = (ex.inner && ex.inner.toString()) || ex
-      quit = false
-      etype = 'error'
+    case HMSTATUS.generateError:
+      msg = (ex.inner && ex.inner.toString()) || ex;
+      quit = false;
+      etype = 'error';
+      break;
 
-    when HMSTATUS.fileSaveError
-      msg = printf( M2C( this.msgs.fileSaveError.msg ), (ex.inner || ex).toString() )
-      etype = 'error'
-      quit = false
+    case HMSTATUS.fileSaveError:
+      msg = printf( M2C( this.msgs.fileSaveError.msg ), (ex.inner || ex).toString() );
+      etype = 'error';
+      quit = false;
+      break;
 
-    when HMSTATUS.invalidFormat
-      ex.data.forEach( (d) ->
-        msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
-          ex.theme.name.toUpperCase(), d.format.toUpperCase())
-      , @);
+    case HMSTATUS.invalidFormat:
+      ex.data.forEach( function(d) {
+        return msg += printf( M2C( this.msgs.invalidFormat.msg, 'bold' ),
+          ex.theme.name.toUpperCase(), d.format.toUpperCase());
+      }
+      , this);
+      break;
 
-    when HMSTATUS.missingParam
-      msg = printf(M2C( this.msgs.missingParam.msg ), ex.expected, ex.helper)
+    case HMSTATUS.missingParam:
+      msg = printf(M2C( this.msgs.missingParam.msg ), ex.expected, ex.helper);
+      break;
 
-    when HMSTATUS.invalidHelperUse
-      msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper )
-      if ex.error
-        msg += '\n--> ' + assembleError.call( this, extend( true, {}, ex, {fluenterror: ex.error} )).msg;
-        #msg += printf( '\n--> ' + M2C( this.msgs.invalidParamCount.msg ), ex.expected );
-      quit = false
-      etype = 'warning'
+    case HMSTATUS.invalidHelperUse:
+      msg = printf( M2C( this.msgs.invalidHelperUse.msg ), ex.helper );
+      if (ex.error) {
+        msg += `\n--> ${assembleError.call( this, extend( true, {}, ex, {fluenterror: ex.error} )).msg}`;
+      }
+        //msg += printf( '\n--> ' + M2C( this.msgs.invalidParamCount.msg ), ex.expected );
+      quit = false;
+      etype = 'warning';
+      break;
 
-    when HMSTATUS.notOnPath
-      msg = printf( M2C(this.msgs.notOnPath.msg, 'bold'), ex.engine)
-      quit = false
-      etype = 'error'
+    case HMSTATUS.notOnPath:
+      msg = printf( M2C(this.msgs.notOnPath.msg, 'bold'), ex.engine);
+      quit = false;
+      etype = 'error';
+      break;
 
-    when HMSTATUS.readError
-      if !ex.quiet
-        # eslint-disable-next-line no-console
-        console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file))
-      msg = ex.inner.toString()
-      etype = 'error'
+    case HMSTATUS.readError:
+      if (!ex.quiet) {
+        // eslint-disable-next-line no-console
+        console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file));
+      }
+      msg = ex.inner.toString();
+      etype = 'error';
+      break;
 
-    when HMSTATUS.mixedMerge
-      msg = M2C this.msgs.mixedMerge.msg
-      quit = false
+    case HMSTATUS.mixedMerge:
+      msg = M2C(this.msgs.mixedMerge.msg);
+      quit = false;
+      break;
 
-    when HMSTATUS.invokeTemplate
-      msg = M2C this.msgs.invokeTemplate.msg, 'red'
-      msg += M2C( '\n' + WRAP(ex.inner.toString(), { width: 60, indent: '   ' }), 'gray' );
-      etype = 'custom'
+    case HMSTATUS.invokeTemplate:
+      msg = M2C(this.msgs.invokeTemplate.msg, 'red');
+      msg += M2C( `\n${WRAP(ex.inner.toString(), { width: 60, indent: '   ' })}`, 'gray' );
+      etype = 'custom';
+      break;
 
-    when HMSTATUS.compileTemplate
-      etype = 'error'
+    case HMSTATUS.compileTemplate:
+      etype = 'error';
+      break;
 
-    when HMSTATUS.themeLoad
+    case HMSTATUS.themeLoad:
       msg = M2C( printf( this.msgs.themeLoad.msg, ex.attempted.toUpperCase() ), 'red');
-      if ex.inner && ex.inner.fluenterror
-        msg += M2C('\nError: ', 'red') + assembleError.call( this, ex.inner ).msg
-      quit = true
-      etype = 'custom'
+      if (ex.inner && ex.inner.fluenterror) {
+        msg += M2C('\nError: ', 'red') + assembleError.call( this, ex.inner ).msg;
+      }
+      quit = true;
+      etype = 'custom';
+      break;
 
-    when HMSTATUS.parseError
-      if SyntaxErrorEx.is ex.inner
-        # eslint-disable-next-line no-console
-        console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
-        se = new SyntaxErrorEx ex, ex.raw
-        if se.line? and se.col?
-          msg = printf M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col
-        else if se.line?
-          msg = printf M2C( this.msgs.parseError.msg[1], 'red' ), se.line
-        else
-          msg = M2C @msgs.parseError.msg[2], 'red'
-      else if ex.inner && ex.inner.line? && ex.inner.col?
-        msg = printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col)
-      else
-        msg = ex
-      etype = 'error'
+    case HMSTATUS.parseError:
+      if (SyntaxErrorEx.is(ex.inner)) {
+        // eslint-disable-next-line no-console
+        console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file ));
+        se = new SyntaxErrorEx(ex, ex.raw);
+        if ((se.line != null) && (se.col != null)) {
+          msg = printf(M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col);
+        } else if (se.line != null) {
+          msg = printf(M2C( this.msgs.parseError.msg[1], 'red' ), se.line);
+        } else {
+          msg = M2C(this.msgs.parseError.msg[2], 'red');
+        }
+      } else if (ex.inner && (ex.inner.line != null) && (ex.inner.col != null)) {
+        msg = printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col);
+      } else {
+        msg = ex;
+      }
+      etype = 'error';
+      break;
 
-    when HMSTATUS.createError
-      # inner.code could be EPERM, EACCES, etc
-      msg = printf M2C( this.msgs.createError.msg ), ex.inner.path
-      etype = 'error'
+    case HMSTATUS.createError:
+      // inner.code could be EPERM, EACCES, etc
+      msg = printf(M2C( this.msgs.createError.msg ), ex.inner.path);
+      etype = 'error';
+      break;
 
-    when HMSTATUS.validateError
-      msg = printf M2C( @msgs.validateError.msg ), ex.inner.toString()
-      etype = 'error'
+    case HMSTATUS.validateError:
+      msg = printf(M2C( this.msgs.validateError.msg ), ex.inner.toString());
+      etype = 'error';
+      break;
 
-    when HMSTATUS.invalidOptionsFile
-      msg = M2C @msgs.invalidOptionsFile.msg[0]
-      if SyntaxErrorEx.is ex.inner
-        # eslint-disable-next-line no-console
-        console.error printf( M2C(this.msgs.readError.msg, 'red'), ex.file )
-        se = new SyntaxErrorEx ex, ex.raw
-        if se.line? and se.col?
-          msg += printf M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col
-        else if se.line?
-          msg += printf M2C( this.msgs.parseError.msg[1], 'red' ), se.line
-        else
-          msg += M2C @msgs.parseError.msg[2], 'red'
-      else if ex.inner && ex.inner.line? && ex.inner.col?
-        msg += printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col)
-      else
-        msg += ex
-      msg += @msgs.invalidOptionsFile.msg[1]
-      etype = 'error'
+    case HMSTATUS.invalidOptionsFile:
+      msg = M2C(this.msgs.invalidOptionsFile.msg[0]);
+      if (SyntaxErrorEx.is(ex.inner)) {
+        // eslint-disable-next-line no-console
+        console.error(printf( M2C(this.msgs.readError.msg, 'red'), ex.file ));
+        se = new SyntaxErrorEx(ex, ex.raw);
+        if ((se.line != null) && (se.col != null)) {
+          msg += printf(M2C( this.msgs.parseError.msg[0], 'red' ), se.line, se.col);
+        } else if (se.line != null) {
+          msg += printf(M2C( this.msgs.parseError.msg[1], 'red' ), se.line);
+        } else {
+          msg += M2C(this.msgs.parseError.msg[2], 'red');
+        }
+      } else if (ex.inner && (ex.inner.line != null) && (ex.inner.col != null)) {
+        msg += printf( M2C( this.msgs.parseError.msg[0], 'red' ), ex.inner.line, ex.inner.col);
+      } else {
+        msg += ex;
+      }
+      msg += this.msgs.invalidOptionsFile.msg[1];
+      etype = 'error';
+      break;
 
-    when HMSTATUS.optionsFileNotFound
-      msg = M2C( @msgs.optionsFileNotFound.msg )
-      etype = 'error'
+    case HMSTATUS.optionsFileNotFound:
+      msg = M2C( this.msgs.optionsFileNotFound.msg );
+      etype = 'error';
+      break;
 
-    when HMSTATUS.unknownSchema
-      msg = M2C( @msgs.unknownSchema.msg[0] )
-      #msg += "\n" + M2C( @msgs.unknownSchema.msg[1], 'yellow' )
-      etype = 'error'
+    case HMSTATUS.unknownSchema:
+      msg = M2C( this.msgs.unknownSchema.msg[0] );
+      //msg += "\n" + M2C( @msgs.unknownSchema.msg[1], 'yellow' )
+      etype = 'error';
+      break;
 
-    when HMSTATUS.themeHelperLoad
-      msg = printf M2C( @msgs.themeHelperLoad.msg ), ex.glob
-      etype = 'error'
+    case HMSTATUS.themeHelperLoad:
+      msg = printf(M2C( this.msgs.themeHelperLoad.msg ), ex.glob);
+      etype = 'error';
+      break;
 
-    when HMSTATUS.invalidSchemaVersion
-      msg = printf M2C( @msgs.invalidSchemaVersion.msg ), ex.data
-      etype = 'error'
+    case HMSTATUS.invalidSchemaVersion:
+      msg = printf(M2C( this.msgs.invalidSchemaVersion.msg ), ex.data);
+      etype = 'error';
+      break;
+  }
 
-  msg: msg              # The error message to display
-  withStack: withStack  # Whether to include the stack
-  quit: quit
-  etype: etype
+  return {
+    msg,              // The error message to display
+    withStack,  // Whether to include the stack
+    quit,
+    etype
+  };
+};

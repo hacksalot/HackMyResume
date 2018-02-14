@@ -1,237 +1,279 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Definition of the TemplateGenerator class. TODO: Refactor
 @module generators/template-generator
 @license MIT. See LICENSE.md for details.
-###
+*/
 
 
 
-FS = require 'fs-extra'
-_ = require 'underscore'
-MD = require 'marked'
-XML = require 'xml-escape'
-PATH = require 'path'
-parsePath = require 'parse-filepath'
-MKDIRP = require 'mkdirp'
-BaseGenerator = require './base-generator'
-EXTEND = require 'extend'
-FRESHTheme = require '../core/fresh-theme'
-JRSTheme = require '../core/jrs-theme'
+let TemplateGenerator;
+const FS = require('fs-extra');
+const _ = require('underscore');
+const MD = require('marked');
+const XML = require('xml-escape');
+const PATH = require('path');
+const parsePath = require('parse-filepath');
+const MKDIRP = require('mkdirp');
+const BaseGenerator = require('./base-generator');
+const EXTEND = require('extend');
+const FRESHTheme = require('../core/fresh-theme');
+const JRSTheme = require('../core/jrs-theme');
 
 
 
-###*
+/**
 TemplateGenerator performs resume generation via local Handlebar or Underscore
 style template expansion and is appropriate for text-based formats like HTML,
 plain text, and XML versions of Microsoft Word, Excel, and OpenOffice.
 @class TemplateGenerator
-###
+*/
 
-module.exports = class TemplateGenerator extends BaseGenerator
+module.exports = (TemplateGenerator = class TemplateGenerator extends BaseGenerator {
 
 
 
-  ###* Constructor. Set the output format and template format for this
+  /** Constructor. Set the output format and template format for this
   generator. Will usually be called by a derived generator such as
-  HTMLGenerator or MarkdownGenerator. ###
+  HTMLGenerator or MarkdownGenerator. */
 
-  constructor: ( outputFormat, templateFormat, cssFile ) ->
-    super outputFormat
-    @tplFormat = templateFormat || outputFormat
-    return
+  constructor( outputFormat, templateFormat, cssFile ) {
+    super(outputFormat);
+    this.tplFormat = templateFormat || outputFormat;
+  }
 
 
 
-  ###* Generate a resume using string-based inputs and outputs without touching
+  /** Generate a resume using string-based inputs and outputs without touching
   the filesystem.
   @method invoke
   @param rez A FreshResume object.
   @param opts Generator options.
   @returns {Array} An array of objects representing the generated output
-  files. ###
+  files. */
 
-  invoke: ( rez, opts ) ->
+  invoke( rez, opts ) {
 
     opts =
-      if opts
-      then (@opts = EXTEND( true, { }, _defaultOpts, opts ))
-      else @opts
+      opts
+      ? (this.opts = EXTEND( true, { }, _defaultOpts, opts ))
+      : this.opts;
 
-    # Sort such that CSS files are processed before others
-    curFmt = opts.themeObj.getFormat( this.format )
-    curFmt.files = _.sortBy curFmt.files, (fi) -> fi.ext != 'css'
+    // Sort such that CSS files are processed before others
+    const curFmt = opts.themeObj.getFormat( this.format );
+    curFmt.files = _.sortBy(curFmt.files, fi => fi.ext !== 'css');
 
-    # Run the transformation!
-    results = curFmt.files.map ( tplInfo, idx ) ->
-      if tplInfo.action == 'transform'
-        trx = @transform rez, tplInfo.data, @format, opts, opts.themeObj, curFmt
-        if tplInfo.ext == 'css'
-          curFmt.files[idx].data = trx
-        else tplInfo.ext == 'html'
-          #tplInfo.css contains the CSS data loaded by theme
-          #tplInfo.cssPath contains the absolute path to the source CSS File
-      else
-        # Images and non-transformable binary files
-      opts.onTransform? tplInfo
-      return info: tplInfo, data: trx
-    , @
+    // Run the transformation!
+    const results = curFmt.files.map(function( tplInfo, idx ) {
+      let trx;
+      if (tplInfo.action === 'transform') {
+        trx = this.transform(rez, tplInfo.data, this.format, opts, opts.themeObj, curFmt);
+        if (tplInfo.ext === 'css') {
+          curFmt.files[idx].data = trx;
+        } else { tplInfo.ext === 'html'; }
+      }
+          //tplInfo.css contains the CSS data loaded by theme
+          //tplInfo.cssPath contains the absolute path to the source CSS File
+      else {}
+        // Images and non-transformable binary files
+      if (typeof opts.onTransform === 'function') {
+        opts.onTransform(tplInfo);
+      }
+      return {info: tplInfo, data: trx};
+    }
+    , this);
 
-    files: results
+    return {files: results};
+  }
 
 
 
-  ###* Generate a resume using file-based inputs and outputs. Requires access
+  /** Generate a resume using file-based inputs and outputs. Requires access
   to the local filesystem.
   @method generate
   @param rez A FreshResume object.
   @param f Full path to the output resume file to generate.
-  @param opts Generator options. ###
+  @param opts Generator options. */
 
-  generate: ( rez, f, opts ) ->
+  generate( rez, f, opts ) {
 
-    # Prepare
-    @opts = EXTEND true, { }, _defaultOpts, opts
+    // Prepare
+    this.opts = EXTEND(true, { }, _defaultOpts, opts);
 
-    # Call the string-based generation method
-    genInfo = @invoke rez, null
-    outFolder = parsePath( f ).dirname
-    curFmt = opts.themeObj.getFormat @format
+    // Call the string-based generation method
+    const genInfo = this.invoke(rez, null);
+    const outFolder = parsePath( f ).dirname;
+    const curFmt = opts.themeObj.getFormat(this.format);
 
-    # Process individual files within this format. For example, the HTML
-    # output format for a theme may have multiple HTML files, CSS files,
-    # etc. Process them here.
-    genInfo.files.forEach ( file ) ->
+    // Process individual files within this format. For example, the HTML
+    // output format for a theme may have multiple HTML files, CSS files,
+    // etc. Process them here.
+    genInfo.files.forEach(function( file ) {
 
-      # console.dir _.omit(file.info,'cssData','data','css' )
+      // console.dir _.omit(file.info,'cssData','data','css' )
 
-      # Pre-processing
-      file.info.orgPath = file.info.orgPath || ''
-      thisFilePath =
-        if file.info.primary
-        then f
-        else PATH.join outFolder, file.info.orgPath
+      // Pre-processing
+      file.info.orgPath = file.info.orgPath || '';
+      const thisFilePath =
+        file.info.primary
+        ? f
+        : PATH.join(outFolder, file.info.orgPath);
 
-      if file.info.action != 'copy' and @onBeforeSave
-        file.data = this.onBeforeSave
-          theme: opts.themeObj
-          outputFile: thisFilePath
-          mk: file.data
-          opts: @opts,
+      if ((file.info.action !== 'copy') && this.onBeforeSave) {
+        file.data = this.onBeforeSave({
+          theme: opts.themeObj,
+          outputFile: thisFilePath,
+          mk: file.data,
+          opts: this.opts,
           ext: file.info.ext
-        if !file.data
-          return
+        });
+        if (!file.data) {
+          return;
+        }
+      }
 
-      # Write the file
-      opts.beforeWrite? data: thisFilePath
-      MKDIRP.sync PATH.dirname( thisFilePath )
+      // Write the file
+      if (typeof opts.beforeWrite === 'function') {
+        opts.beforeWrite({data: thisFilePath});
+      }
+      MKDIRP.sync(PATH.dirname( thisFilePath ));
 
-      if file.info.action != 'copy'
-        FS.writeFileSync thisFilePath, file.data, encoding: 'utf8', flags: 'w'
-      else
-        FS.copySync file.info.path, thisFilePath
-      opts.afterWrite? data: thisFilePath
+      if (file.info.action !== 'copy') {
+        FS.writeFileSync(thisFilePath, file.data, {encoding: 'utf8', flags: 'w'});
+      } else {
+        FS.copySync(file.info.path, thisFilePath);
+      }
+      if (typeof opts.afterWrite === 'function') {
+        opts.afterWrite({data: thisFilePath});
+      }
 
-      # Post-processing
-      if @onAfterSave
-        @onAfterSave outputFile: fileName, mk: file.data, opts: this.opts
+      // Post-processing
+      if (this.onAfterSave) {
+        return this.onAfterSave({outputFile: fileName, mk: file.data, opts: this.opts});
+      }
+    }
 
-    , @
+    , this);
 
-    # Some themes require a symlink structure. If so, create it.
-    createSymLinks curFmt, outFolder
+    // Some themes require a symlink structure. If so, create it.
+    createSymLinks(curFmt, outFolder);
 
-    genInfo
+    return genInfo;
+  }
 
 
 
-  ###* Perform a single resume resume transformation using string-based inputs
+  /** Perform a single resume resume transformation using string-based inputs
   and outputs without touching the local file system.
   @param json A FRESH or JRS resume object.
   @param jst The stringified template data
   @param format The format name, such as "html" or "latex"
   @param cssInfo Needs to be refactored.
-  @param opts Options and passthrough data. ###
+  @param opts Options and passthrough data. */
 
-  transform: ( json, jst, format, opts, theme, curFmt ) ->
-    if @opts.freezeBreaks
-      jst = freeze jst
-    eng = require '../renderers/' + theme.engine  + '-generator'
-    result = eng.generate json, jst, format, curFmt, opts, theme
-    if this.opts.freezeBreaks
-      result = unfreeze result
-    result
-
-
-
-createSymLinks = ( curFmt, outFolder ) ->
-  # Some themes require a symlink structure. If so, create it.
-  if curFmt.symLinks
-    Object.keys( curFmt.symLinks ).forEach (loc) ->
-      absLoc = PATH.join outFolder, loc
-      absTarg = PATH.join PATH.dirname(absLoc), curFmt.symLinks[loc]
-      # Set type to 'file', 'dir', or 'junction' (Windows only)
-      type = if parsePath( absLoc ).extname then 'file' else 'junction'
-
-      try
-        FS.symlinkSync absTarg, absLoc, type
-      catch err
-        succeeded = false
-        if err.code == 'EEXIST'
-          FS.unlinkSync absLoc
-          try
-            FS.symlinkSync absTarg, absLoc, type
-            succeeded = true
-        if !succeeded
-          throw ex
-    return
-
-
-###* Freeze newlines for protection against errant JST parsers. ###
-freeze = ( markup ) ->
-  markup.replace( _reg.regN, _defaultOpts.nSym )
-  markup.replace( _reg.regR, _defaultOpts.rSym )
+  transform( json, jst, format, opts, theme, curFmt ) {
+    if (this.opts.freezeBreaks) {
+      jst = freeze(jst);
+    }
+    const eng = require(`../renderers/${theme.engine}-generator`);
+    let result = eng.generate(json, jst, format, curFmt, opts, theme);
+    if (this.opts.freezeBreaks) {
+      result = unfreeze(result);
+    }
+    return result;
+  }
+});
 
 
 
-###* Unfreeze newlines when the coast is clear. ###
-unfreeze = ( markup ) ->
-  markup.replace _reg.regSymR, '\r'
-  markup.replace _reg.regSymN, '\n'
+var createSymLinks = function( curFmt, outFolder ) {
+  // Some themes require a symlink structure. If so, create it.
+  if (curFmt.symLinks) {
+    Object.keys( curFmt.symLinks ).forEach(function(loc) {
+      const absLoc = PATH.join(outFolder, loc);
+      const absTarg = PATH.join(PATH.dirname(absLoc), curFmt.symLinks[loc]);
+      // Set type to 'file', 'dir', or 'junction' (Windows only)
+      const type = parsePath( absLoc ).extname ? 'file' : 'junction';
+
+      try {
+        return FS.symlinkSync(absTarg, absLoc, type);
+      } catch (err) {
+        let succeeded = false;
+        if (err.code === 'EEXIST') {
+          FS.unlinkSync(absLoc);
+          try {
+            FS.symlinkSync(absTarg, absLoc, type);
+            succeeded = true;
+          } catch (error) {}
+        }
+        if (!succeeded) {
+          throw ex;
+        }
+      }
+    });
+    return;
+  }
+};
+
+
+/** Freeze newlines for protection against errant JST parsers. */
+var freeze = function( markup ) {
+  markup.replace( _reg.regN, _defaultOpts.nSym );
+  return markup.replace( _reg.regR, _defaultOpts.rSym );
+};
 
 
 
-###* Default template generator options. ###
-_defaultOpts =
-  engine: 'underscore'
-  keepBreaks: true
-  freezeBreaks: false
-  nSym: '&newl;' # newline entity
-  rSym: '&retn;' # return entity
-  template:
-    interpolate: /\{\{(.+?)\}\}/g
-    escape: /\{\{\=(.+?)\}\}/g
-    evaluate: /\{\%(.+?)\%\}/g
+/** Unfreeze newlines when the coast is clear. */
+var unfreeze = function( markup ) {
+  markup.replace(_reg.regSymR, '\r');
+  return markup.replace(_reg.regSymN, '\n');
+};
+
+
+
+/** Default template generator options. */
+var _defaultOpts = {
+  engine: 'underscore',
+  keepBreaks: true,
+  freezeBreaks: false,
+  nSym: '&newl;', // newline entity
+  rSym: '&retn;', // return entity
+  template: {
+    interpolate: /\{\{(.+?)\}\}/g,
+    escape: /\{\{\=(.+?)\}\}/g,
+    evaluate: /\{\%(.+?)\%\}/g,
     comment: /\{\#(.+?)\#\}/g
-  filters:
-    out: ( txt ) -> txt
-    raw: ( txt ) -> txt
-    xml: ( txt ) -> XML(txt)
-    md: ( txt ) -> MD( txt || '' )
-    mdin: ( txt ) -> MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, '')
-    lower: ( txt ) -> txt.toLowerCase()
-    link: ( name, url ) ->
-      return if url then '<a href="' + url + '">' + name + '</a>' else name
-  prettify: # ← See https://github.com/beautify-web/js-beautify#options
-    indent_size: 2
-    unformatted: ['em','strong','a']
-    max_char: 80 # ← See lib/html.js in above-linked repo
-    #wrap_line_length: 120, <-- Don't use this
+  },
+  filters: {
+    out( txt ) { return txt; },
+    raw( txt ) { return txt; },
+    xml( txt ) { return XML(txt); },
+    md( txt ) { return MD( txt || '' ); },
+    mdin( txt ) { return MD(txt || '' ).replace(/^\s*<p>|<\/p>\s*$/gi, ''); },
+    lower( txt ) { return txt.toLowerCase(); },
+    link( name, url ) {
+      if (url) { return `<a href="${url}">${name}</a>`; } else { return name; }
+    }
+  },
+  prettify: { // ← See https://github.com/beautify-web/js-beautify#options
+    indent_size: 2,
+    unformatted: ['em','strong','a'],
+    max_char: 80
+  } // ← See lib/html.js in above-linked repo
+};
+    //wrap_line_length: 120, <-- Don't use this
 
 
 
-###* Regexes for linebreak preservation. ###
-_reg =
-  regN: new RegExp( '\n', 'g' )
-  regR: new RegExp( '\r', 'g' )
-  regSymN: new RegExp( _defaultOpts.nSym, 'g' )
+/** Regexes for linebreak preservation. */
+var _reg = {
+  regN: new RegExp( '\n', 'g' ),
+  regR: new RegExp( '\r', 'g' ),
+  regSymN: new RegExp( _defaultOpts.nSym, 'g' ),
   regSymR: new RegExp( _defaultOpts.rSym, 'g' )
+};

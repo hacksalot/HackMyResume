@@ -1,10 +1,10 @@
-###
+/*
 Event code definitions.
 @module core/default-formats
 @license MIT. See LICENSE.md for details.
-###
+*/
 
-###* Supported resume formats. ###
+/** Supported resume formats. */
 module.exports = [
   { name: 'html', ext: 'html', gen: new (require('../generators/html-generator'))() },
   { name: 'txt',  ext: 'txt', gen: new (require('../generators/text-generator'))()  },
@@ -15,4 +15,4 @@ module.exports = [
   { name: 'json', ext: 'json', gen: new (require('../generators/json-generator'))() },
   { name: 'yml', ext: 'yml', fmt: 'yml', gen: new (require('../generators/json-yaml-generator'))() },
   { name: 'latex', ext: 'tex', fmt: 'latex', gen: new (require('../generators/latex-generator'))() }
-]
+];

@@ -1,50 +1,65 @@
-###*
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+/**
 Definition of the Markdown to WordProcessingML conversion routine.
 @license MIT. Copyright (c) 2015 James Devlin / FluentDesk.
 @module utils/html-to-wpml
-###
+*/
 
 
-XML = require 'xml-escape'
-_ = require 'underscore'
-HTML5Tokenizer = require 'simple-html-tokenizer'
+const XML = require('xml-escape');
+const _ = require('underscore');
+const HTML5Tokenizer = require('simple-html-tokenizer');
 
-module.exports = ( html ) ->
+module.exports = function( html ) {
 
-  # Tokenize the HTML stream.
-  tokens = HTML5Tokenizer.tokenize( html )
-  final = is_bold = is_italic = is_link = link_url = ''
+  // Tokenize the HTML stream.
+  let is_bold, is_italic, is_link, link_url;
+  const tokens = HTML5Tokenizer.tokenize( html );
+  let final = (is_bold = (is_italic = (is_link = (link_url = ''))));
 
-  # Process <em>, <strong>, and <a> elements in the HTML stream, producing
-  # equivalent WordProcessingML that can be dumped into a <w:p> or other
-  # text container element.
-  _.each tokens, ( tok ) ->
+  // Process <em>, <strong>, and <a> elements in the HTML stream, producing
+  // equivalent WordProcessingML that can be dumped into a <w:p> or other
+  // text container element.
+  _.each(tokens, function( tok ) {
 
-    switch tok.type
+    switch (tok.type) {
 
-      when 'StartTag'
-        switch tok.tagName
-          when 'p' then final += '<w:p>'
-          when 'strong' then is_bold = true
-          when 'em' then is_italic = true
-          when 'a'
+      case 'StartTag':
+        switch (tok.tagName) {
+          case 'p': return final += '<w:p>';
+          case 'strong': return is_bold = true;
+          case 'em': return is_italic = true;
+          case 'a':
             is_link = true;
-            link_url = tok.attributes.filter((attr) -> attr[0] == 'href' )[0][1];
+            return link_url = tok.attributes.filter(attr => attr[0] === 'href')[0][1];
+        }
+        break;
 
-      when 'EndTag'
-        switch tok.tagName
-          when 'p' then final += '</w:p>'
-          when 'strong' then is_bold = false
-          when 'em' then is_italic = false
-          when 'a' then is_link = false
+      case 'EndTag':
+        switch (tok.tagName) {
+          case 'p': return final += '</w:p>';
+          case 'strong': return is_bold = false;
+          case 'em': return is_italic = false;
+          case 'a': return is_link = false;
+        }
+        break;
 
-      when 'Chars'
-        if( tok.chars.trim().length )
-          style = if is_bold then '<w:b/>' else ''
-          style += if is_italic then '<w:i/>' else ''
-          style += if is_link then '<w:rStyle w:val="Hyperlink"/>' else ''
-          final +=
-            (if is_link then ('<w:hlink w:dest="' + link_url + '">') else '') +
+      case 'Chars':
+        if( tok.chars.trim().length ) {
+          let style = is_bold ? '<w:b/>' : '';
+          style += is_italic ? '<w:i/>' : '';
+          style += is_link ? '<w:rStyle w:val="Hyperlink"/>' : '';
+          return final +=
+            (is_link ? (`<w:hlink w:dest="${link_url}">`) : '') +
             '<w:r><w:rPr>' + style + '</w:rPr><w:t>' + XML(tok.chars) +
-            '</w:t></w:r>' + (if is_link then '</w:hlink>' else '')
-  final
+            '</w:t></w:r>' + (is_link ? '</w:hlink>' : '');
+        }
+        break;
+    }
+  });
+  return final;
+};
