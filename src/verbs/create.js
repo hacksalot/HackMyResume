@@ -71,7 +71,6 @@ var _createOne = function( t, opts ) {
     const newRez = RezClass.default();
     newRez.save(t);
     ret = newRez;
-    return;
   } catch (err) {
     ret = {
       fluenterror: HMSTATUS.createError,
@@ -79,7 +78,7 @@ var _createOne = function( t, opts ) {
     };
   }
   finally {
-    this.stat(HMEVENT.afterCreate, {fmt: safeFmt, file: t, isError: ret.fluenterror});
+    this.stat(HMEVENT.afterCreate, { fmt: safeFmt, file: t, isError: ret.fluenterror });
   }
   return ret;
 };
