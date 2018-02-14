@@ -189,7 +189,7 @@ initialize = ( ar, exitCallback ) ->
     _err.err fluenterror: HMSTATUS.invalidCommand, quit: true, attempted: o.orgVerb, true
 
   # Override the .missingArgument behavior
-  Command.prototype.missingArgument = (### unused ###) ->
+  Command.prototype.missingArgument = () ->
     if this.name() != 'help'
       _err.err
         verb: @name()
@@ -294,7 +294,7 @@ execute = ( src, dst, opts, log ) ->
 
 
 ### Success handler for verb invocations. Calls process.exit by default ###
-executeSuccess = (###obj###) ->
+executeSuccess = () ->
   # Can't call _exitCallback here (process.exit) when PDF is running in BK
   #_exitCallback 0; return
 
