@@ -65,8 +65,8 @@ module.exports = {
     if (info.fluenterror) { return info; }
 
     // Determine the resume format: FRESH or JRS
-    let { json } = info;
-    const orgFormat = resumeDetect(json);
+    let { data } = info;
+    const orgFormat = resumeDetect(data);
     if (orgFormat === 'unk') {
       info.fluenterror = HMS.unknownSchema;
       return info;
@@ -74,7 +74,7 @@ module.exports = {
 
     // Convert between formats if necessary
     if (toFormat && ( orgFormat !== toFormat )) {
-      json = ResumeConverter[ `to${toFormat.toUpperCase()}` ](json);
+      data = ResumeConverter[ `to${toFormat.toUpperCase()}` ](data);
     }
 
     // Objectify the resume, that is, convert it from JSON to a FRESHResume
@@ -83,18 +83,34 @@ module.exports = {
     if (opts.objectify) {
       const reqLib = `../core/${toFormat || orgFormat}-resume`;
       const ResumeClass = require(reqLib);
-      rez = new ResumeClass().parseJSON( json, opts.inner );
+      rez = new ResumeClass().parseJSON( data, opts.inner );
       rez.i().file = src;
     }
 
     return {
       file: src,
-      json: info.json,
+      json: info.data,
       rez
     };
   }
 };
 
+var _parseJSON = function( rawData ) {
+  let ret = JSON.parse( rawData );
+  return ret.json;
+};
+
+var _parseYAML = function( rawData ) {
+  const yaml = require('js-yaml');
+  let ret = yaml.safeLoad(rawData);
+  return ret;
+};
+
+const parsers = {
+  'json': _parseJSON,
+  'yml': _parseYAML,
+  'yaml': _parseYAML,
+};
 
 var _parse = function( fileName, opts, eve ) {
 
@@ -105,16 +121,17 @@ var _parse = function( fileName, opts, eve ) {
     eve && eve.stat( HME.beforeRead, { file: fileName });
     rawData = FS.readFileSync( fileName, 'utf8' );
     eve && eve.stat( HME.afterRead, { file: fileName, data: rawData });
+    let extension = fileName.split('.').pop();
 
     // Parse the file
     eve && eve.stat(HME.beforeParse, { data: rawData });
-    const ret = { json: JSON.parse( rawData ) };
+    let ret = parsers[extension](rawData);
     const orgFormat =
-      ret.json.meta && ret.json.meta.format && ret.json.meta.format.startsWith('FRESH@')
+      ret.meta && ret.meta.format && ret.meta.format.startsWith('FRESH@')
       ? 'fresh' : 'jrs';
 
-    eve && eve.stat(HME.afterParse, { file: fileName, data: ret.json, fmt: orgFormat });
-    return ret;
+    eve && eve.stat(HME.afterParse, { file: fileName, data: ret, fmt: orgFormat });
+    return { data: ret };
   } catch (err) {
     // Can be ENOENT, EACCES, SyntaxError, etc.
     return {
