@@ -16,6 +16,7 @@ const FS = require('fs-extra');
 const PATH = require('path');
 const SLASH = require('slash');
 const _ = require('underscore');
+const detectInstalled = require('get-installed-path');
 const HMSTATUS = require('../core/status-codes');
 const SPAWN = require('../utils/safe-spawn');
 
@@ -81,8 +82,19 @@ var engines = {
     let wkopts = _.extend({'margin-top': '10mm', 'margin-bottom': '10mm'}, opts.wkhtmltopdf);
     wkopts = _.flatten(_.map(wkopts, (v, k) => [`--${k}`, v]));
     const wkargs = wkopts.concat([ tempFile, fOut  ]);
+    let pathToBin = 'wkhtmltopdf';
 
-    SPAWN('wkhtmltopdf', wkargs , false, on_error, this);
+    // If the executable was installed in the node_modules directory of a
+    // project, and that project includes wkhtmltopdf, use that instance
+    // instead.
+    if (detectInstalled.sync(pathToBin, {
+      cwd: process.cwd(),
+      local: true,
+    })) {
+      pathToBin = PATH.join(__dirname, 'node_modules', pathToBin);
+    }
+
+    SPAWN(pathToBin, wkargs , false, on_error, this);
   },
 
 
