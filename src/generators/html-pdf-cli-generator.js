@@ -87,12 +87,18 @@ var engines = {
     // If the executable was installed in the node_modules directory of a
     // project, and that project includes wkhtmltopdf, use that instance
     // instead.
-    if (detectInstalled.sync(pathToBin, {
-      cwd: process.cwd(),
-      local: true,
-    })) {
-      pathToBin = PATH.join(__dirname, 'node_modules', pathToBin);
+    try {
+      const installed = detectInstalled.sync(pathToBin, {
+        cwd: process.cwd(),
+        local: true,
+      });
+      if (installed) {
+        pathToBin = PATH.join(__dirname, 'node_modules', pathToBin);
+      }
+    } catch (e) {
+      return false;
     }
+
 
     SPAWN(pathToBin, wkargs , false, on_error, this);
   },
