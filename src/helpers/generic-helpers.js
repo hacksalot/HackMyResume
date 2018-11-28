@@ -383,7 +383,7 @@ var GenericHelpers = (module.exports = {
   wpml( txt, inline ) {
     if (!txt) { return ''; }
     inline = (inline && !inline.hash) || false;
-    txt = XML(txt.trim());
+    txt = XML(txt.trim(), '&');
     txt = inline ? MD(txt).replace(/^\s*<p>|<\/p>\s*$/gi, '') : MD(txt);
     txt = H2W( txt );
     return txt;
