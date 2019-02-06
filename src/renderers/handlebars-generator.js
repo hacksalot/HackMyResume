@@ -38,7 +38,7 @@ module.exports = {
       template = HANDLEBARS.compile(tpl, {
         strict: false,
         assumeObjects: false,
-        noEscape: data.opts.noescape
+        noEscape: !data.opts.escape
       }
       );
       return template(data);

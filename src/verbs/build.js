@@ -194,7 +194,7 @@ var _prep = function( src, dst, opts ) {
   _opts.theme = (opts.theme && opts.theme.toLowerCase().trim()) || 'modern';
   _opts.prettify = opts.prettify === true;
   _opts.private = opts.private === true;
-  _opts.noescape = opts.noescape === true;
+  _opts.escape = opts.escape === true;
   _opts.css = opts.css;
   _opts.pdf = opts.pdf;
   _opts.wrap = opts.wrap || 60;
