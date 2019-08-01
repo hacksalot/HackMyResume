@@ -281,7 +281,7 @@ class JRSResume {
     return transformer(ret,
       [ 'skills','url','website','startDate','endDate', 'releaseDate', 'date',
       'phone','email','address','postalCode','city','country','region',
-      'safeStartDate','safeEndDate', 'summary' ],
+      'safeStartDate','safeEndDate', 'summary', 'description' ],
       (key, val) => HD(val));
   }
 }
