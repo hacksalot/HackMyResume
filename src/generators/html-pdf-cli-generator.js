@@ -80,7 +80,7 @@ var engines = {
     // Prepare wkhtmltopdf arguments.
     let wkopts = _.extend({'margin-top': '10mm', 'margin-bottom': '10mm'}, opts.wkhtmltopdf);
     wkopts = _.flatten(_.map(wkopts, (v, k) => [`--${k}`, v]));
-    const wkargs = wkopts.concat([ tempFile, fOut  ]);
+    const wkargs = wkopts.concat(['--enable-local-file-access', tempFile, fOut  ]);
 
     SPAWN('wkhtmltopdf', wkargs , false, on_error, this);
   },
