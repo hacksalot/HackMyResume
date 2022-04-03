@@ -50,13 +50,13 @@ or Windows. View the [FAQ](FAQ.md).
 Install the latest stable version of HackMyResume with NPM:
 
 ```bash
-[sudo] npm install hackmyresume -g
+[sudo] npm install -g hackmyresume
 ```
 
 Alternately, install the latest bleeding-edge version (updated daily):
 
 ```bash
-[sudo] npm install hacksalot/hackmyresume#dev -g
+[sudo] npm install -g hacksalot/hackmyresume#dev
 ```
 
 ## Installing PDF Support (optional)
